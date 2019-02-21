@@ -85,7 +85,7 @@ func (e Engine) SendMessageNoParse(text string, chatId int64) APIResponse {
 
 
 func (e Engine) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard))
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
