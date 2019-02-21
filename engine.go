@@ -246,7 +246,7 @@ func (e Engine) KeyboardRow(buttons ...Button) KbdRow {
 }
 
 
-func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KeyboardRow) []byte {
+func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KbdRow) []byte {
 	var keyboard Keyboard
 
 	keyboard.ResizeKeyboard = resizeKeyboard
