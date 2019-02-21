@@ -30,7 +30,7 @@ type Engine struct {
 }
 
 
-func NewEngine(token string) *Engine {
+func NewEngine(token string) Engine {
 	engine := new(Engine)
 	engine.token = token
 	engine.url = fmt.Sprintf("https://api.telegram.org/bot%s/", token)
