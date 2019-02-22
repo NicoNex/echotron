@@ -6,9 +6,9 @@
 package plugins
 
 import (
+	"gitlab.com/NicoNex/echotron"
 	"fmt"
 	"encoding/json"
-	"../core"
 	"strings"
 	"time"
 	)
@@ -40,7 +40,7 @@ func GetCryptocurrencyData (cryptocurrency string, target string) CryptonatorRes
 	var response CryptonatorResponse
 
 	url := fmt.Sprintf("%s%s-%s", baseURL, cryptocurrency, target)
-	content := core.SendGetRequest(url)
+	content := echotron.SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 
@@ -52,7 +52,7 @@ func GetCryptocurrencyFullData (cryptocurrency string, target string) Cryptonato
 	var response CryptonatorResponse
 
 	url := fmt.Sprintf("%s%s-%s", baseURL, cryptocurrency, target)
-	content := core.SendGetRequest(url)
+	content := echotron.SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return response

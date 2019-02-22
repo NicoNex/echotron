@@ -22,7 +22,7 @@ import (
 		"fmt"
 		"strings"
 		"encoding/json"
-		"../core"
+		"gitlab.com/NicoNex/echotron"
 		)
 
 type article struct {
@@ -87,7 +87,7 @@ func (api *NewsApi) GetUpdates (sources []string, oldest string) NewsApiResponse
 		url = fmt.Sprintf("%severything?apiKey=%s&from=%s", api.baseUrl, api.key, oldest)
 	}
 
-	content := core.SendGetRequest(url)
+	content := echotron.SendGetRequest(url)
 	var response NewsApiResponse
 
 	json.Unmarshal(content, &response)
@@ -99,7 +99,7 @@ func (api *NewsApi) GetUpdates (sources []string, oldest string) NewsApiResponse
 func (api *NewsApi) GetSources (language string) NewsApiSources {
 	var url = fmt.Sprintf("%ssources?apiKey=%s&language=%s", api.baseUrl, api.key, language)
 
-	content := core.SendGetRequest(url)
+	content := echotron.SendGetRequest(url)
 	var response NewsApiSources
 
 	json.Unmarshal(content, &response)
