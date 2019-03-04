@@ -122,6 +122,11 @@ func (db *DB) SelectRecord(tableName string, columnName string, value string) (s
 }
 
 
+func (db *DB) SelectRecordCompared(tableName string, columnName string, columnToCompare string, value string) (string, error) {
+	return db.executeQuery(fmt.Sprintf("SELECT %s FROM %s WHERE %s = \"%s\"", columnName, tableName, columnToCompare, value))
+}
+
+
 func (db *DB) TableExists(tableName string) bool {
 	queryResult, err := db.executeQuery(fmt.Sprintf("SELECT table_name FROM information_schema.tables WHERE table_name = \"%s\"", tableName))
 
@@ -129,11 +134,7 @@ func (db *DB) TableExists(tableName string) bool {
 		return false
 	}
 
-	if len(queryResult) > 0 {
-		return true
-	} else {
-		return false
-	}
+	return len(queryResult) > 0
 }
 
 
