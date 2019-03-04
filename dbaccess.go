@@ -129,11 +129,7 @@ func (db *DB) TableExists(tableName string) bool {
 		return false
 	}
 
-	if len(queryResult) > 0 {
-		return true
-	} else {
-		return false
-	}
+	return len(queryResult) > 0
 }
 
 
