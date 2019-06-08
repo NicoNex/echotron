@@ -32,7 +32,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 
 func main() {
-	echotron.RunDispatcher("568059758:AAFRN3Xg3dOkfe2n0gNlOWjlkM6dihommPQ", false, NewBot)
+	echotron.RunDispatcher("568059758:AAFRN3Xg3dOkfe2n0gNlOWjlkM6dihommPQ", NewBot)
 }
 ```
 
