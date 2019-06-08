@@ -27,7 +27,7 @@ type Bot interface {
 var sessionMap map[int64]Bot
 
 
-func DeleteSession(chatId int64) {
+func DelSession(chatId int64) {
 	delete(sessionMap, chatId)
 }
 

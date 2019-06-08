@@ -7,6 +7,9 @@ Fetch with
 
 
 ### Usage
+
+A very simple implementation:
+
 ```go
 package main
 
@@ -27,12 +30,58 @@ func NewBot(token string, chatId int64) echotron.Bot {
 
 
 func (b *bot) Update(update *echotron.Update) {
-	b.SendMessage("Hello world", b.chatId)
+    if update.Message.Text == "/start" {
+        b.SendMessage("Hello world", b.chatId)
+    }
 }
 
 
 func main() {
-	echotron.RunDispatcher("568059758:AAFRN3Xg3dOkfe2n0gNlOWjlkM6dihommPQ", NewBot)
+	echotron.RunDispatcher("TELEGRAM TOKEN", NewBot)
 }
 ```
+
+
+Also proof of concept with self destruction for low ram usage
+
+```go
+package main
+
+import "gitlab.com/NicoNex/echotron"
+
+type bot struct {
+    chatId int64
+    *echotron.Engine
+}
+
+
+func NewBot(token string, chatId int64) echotron.Bot {
+    var bot = &bot{
+        chatId,
+        echotron.NewEngine(token),
+    }
+    echotron.AddTimer(bot.chatId, "selfDestruct", bot.selfDestruct)
+    return bot
+}
+
+
+func (b *bot) selfDestruct() {
+    b.SendMessage("goodbye", b.chatId)
+    echotron.DelTimer(b.chatId, "selfDestruct")
+    echotron.DelSession(b.chatId)
+}
+
+
+func (b *bot) Update(update *echotron.Update) {
+    if update.Message.Text == "/start" {
+        b.SendMessage("Hello world", b.chatId)
+    }
+}
+
+
+func main() {
+    echotron.RunDispatcher("TELEGRAM TOKEN", NewBot)
+}
+```
+
 
