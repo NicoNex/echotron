@@ -18,56 +18,28 @@
 
 package echotron
 
-import (
-	"time"
-	"sync"
-)
-
 
 type Bot interface {
 	Update(*Update)
 }
 
 
-/* struct type representing the active chat session with a user */
-type session struct {
-	bot Bot
-	timestamp int64
+var sessionMap map[int64]Bot
+
+
+func DeleteSession(chatId int64) {
+	delete(sessionMap, chatId)
 }
 
 
-var sessionMap 	map[int64]*session
-var mutex 		sync.Mutex
-
-
-/* routine that disposes all sessions been inactive for one hour or more */
-func garbageCollector() {
-	for {
-		mutex.Lock()
-		for key, _ := range sessionMap {
-			if time.Now().Unix() - sessionMap[key].timestamp > 3600 {
-				go delete(sessionMap, key)
-			}
-		}
-		mutex.Unlock()
-		time.Sleep(time.Minute)
-	}
-}
-
-
-func RunDispatcher(token string, gc bool, newBot func(string, int64) Bot) {
-	sessionMap = make(map[int64]*session)
-	
+func RunDispatcher(token string, newBot func(string, int64) Bot) {
 	var lastUpdateId int = -1;
 	var firstRun bool = true
 	var chatId int64
 	var response APIResponse
 
+	sessionMap = make(map[int64]Bot)
 	engine := NewEngine(token)
-
-	if gc {
-		go garbageCollector()
-	}
 
 	for {
 		response = engine.GetResponse(lastUpdateId + 1, 120)
@@ -77,23 +49,13 @@ func RunDispatcher(token string, gc bool, newBot func(string, int64) Bot) {
 				lastUpdateId = update.ID
 				chatId = update.Message.Chat.ID
 
-				mutex.Lock()
-				// if the chatId we're looking for is not in SessionMap
-				// we make a new instance of session
 				if _, isIn := sessionMap[chatId]; !isIn {
-					sessionMap[chatId] = &session{
-						bot: newBot(token, chatId),
-						timestamp: time.Now().Unix(),
-					}
+					sessionMap[chatId] = newBot(token, chatId)
 				}
 
 				if !firstRun {
-					go func() {
-						sessionMap[chatId].bot.Update(update)
-						sessionMap[chatId].timestamp = time.Now().Unix()
-					}()
+					go sessionMap[chatId].Update(update)
 				}
-				mutex.Unlock()
 
 			}
 		}
