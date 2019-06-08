@@ -21,8 +21,8 @@ package echotron
 
 
 import (
+	"fmt"
 	"time"
-	"errors"
 )
 
 
@@ -52,9 +52,19 @@ func AddTimer(chatId int64, lapse int64, name string, callback func()) {
 func SetTimerLapse(chatId int64, lapse int64, name string) error {
 	timer, ok := timerMap[chatId][name]
 	if !ok {
-		return errors.New("Error: cannot find timer")
+		return fmt.Errorf("Error: cannot find timer %s for instance %l", name, chatId)
 	}
 	timer.lapseTime = lapse
+	return nil
+}
+
+
+func ResetTimer(chatId int64, name string) error {
+	timer, ok := timerMap[chatId][name]
+	if !ok {
+		return fmt.Errorf("Error: cannot find timer %s for instance %l", name, chatId)
+	}
+	timer.timestamp = time.Now().Unix()
 	return nil
 }
 
