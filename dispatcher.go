@@ -19,7 +19,11 @@
 package echotron
 
 
+// Bot is the interface that must be implemented by your definition of
+// the struct thus representing each open session with a user on Telegram.
 type Bot interface {
+	// Update will be called upon receiving any update from Telegram
+	// belonging to the associated session.
 	Update(*Update)
 }
 
@@ -27,12 +31,18 @@ type Bot interface {
 var sessionMap map[int64]Bot
 
 
+// DelSession deletes the Bot instance, seen as a session, from the 
+// map with all of them.
 func DelSession(chatId int64) {
 	delete(sessionMap, chatId)
 }
 
 
-func RunDispatcher(token string, newBot func(string, int64) Bot) {
+// RunDispatcher is echotron's entry point.
+// It uses the bot token to initialise the engine used to communicate
+// with Telegram servers, and the newBot function that must return an
+// object that implements the Bot interface.
+func RunDispatcher(token string, newBot func(token string, chatId int64) Bot) {
 	var lastUpdateId int = -1;
 	var firstRun bool = true
 	var chatId int64

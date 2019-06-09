@@ -38,7 +38,8 @@ func NewEngine(token string) *Engine {
 	return engine
 }
 
-/* Questa funzione serve per ricevere gli update da telegram */
+
+// GetResponse returns the incoming updates from telegram.
 func (e Engine) GetResponse(offset int, timeout int) APIResponse {
 	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", e.url, timeout)
 
@@ -51,6 +52,17 @@ func (e Engine) GetResponse(offset int, timeout int) APIResponse {
 	json.Unmarshal(content, &response)
 	return response
 }
+
+
+func (e Engine) GetChat(chatId int64) Chat {
+	var url = fmt.Sprintf("%sgetChat?chat_id=%d", e.url, chatId)
+	var content []byte = SendGetRequest(url)
+	var response Chat
+
+	json.Unmarshal(content, response)
+	return response
+}
+
 
 func (e Engine) GetStickerSet(name string) StickerSet {
 	var url = fmt.Sprintf("%sgetStickerSet?name=%s", e.url, name)

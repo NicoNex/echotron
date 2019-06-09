@@ -36,6 +36,8 @@ type timer struct {
 var timerMap map[int64]map[string]*timer
 
 
+// AddTimer creates a timer associated with a name to the current 
+// bot session that calls a callback once any given amounth of time.
 func AddTimer(chatId int64, lapse int64, name string, callback func()) {
 	if timerMap[chatId] == nil {
 		timerMap[chatId] = make(map[string]*timer)
@@ -49,6 +51,7 @@ func AddTimer(chatId int64, lapse int64, name string, callback func()) {
 }
 
 
+// SetTimerLapse sets the lapse time between each call to the callback.
 func SetTimerLapse(chatId int64, lapse int64, name string) error {
 	timer, ok := timerMap[chatId][name]
 	if !ok {
@@ -59,6 +62,8 @@ func SetTimerLapse(chatId int64, lapse int64, name string) error {
 }
 
 
+// ResetTimer sets the current timestamp associated with the last call
+// to the current epoch time in Unix format.
 func ResetTimer(chatId int64, name string) error {
 	timer, ok := timerMap[chatId][name]
 	if !ok {
@@ -69,6 +74,7 @@ func ResetTimer(chatId int64, name string) error {
 }
 
 
+// DelTimer deletes the specified timer from the routine.
 func DelTimer(chatId int64, name string) {
 	if timer, ok := timerMap[chatId]; ok {
 		delete(timer, name)
