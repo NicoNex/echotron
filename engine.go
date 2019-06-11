@@ -19,10 +19,10 @@
 package echotron
 
 import (
-		"fmt"
-		"strings"
-		"encoding/json"
-		)
+	"fmt"
+	"strings"
+	"encoding/json"
+)
 
 type Engine struct {
 	token string

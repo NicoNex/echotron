@@ -19,15 +19,15 @@
 package echotron
 
 import (
-		"net/http"
-		"log"
-		"io"
-		"io/ioutil"
-		"os"
-		"bytes"
-		"mime/multipart"
-		"path/filepath"
-		)
+	"io"
+	"os"
+	"log"
+	"bytes"
+	"net/http"
+	"io/ioutil"
+	"path/filepath"
+	"mime/multipart"
+)
 
 func SendGetRequest (url string) []byte {
 	response, err := http.Get(url)

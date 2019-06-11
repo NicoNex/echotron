@@ -19,11 +19,11 @@
 package plugins
 
 import (
-		"fmt"
-		"strings"
-		"encoding/json"
-		"gitlab.com/NicoNex/echotron"
-		)
+	"fmt"
+	"strings"
+	"encoding/json"
+	"gitlab.com/NicoNex/echotron"
+)
 
 type article struct {
 	Author string `json:"author"`

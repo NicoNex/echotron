@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
-	)
+)
 
 /*
 *	It returns a string array containing the paths of the matching files

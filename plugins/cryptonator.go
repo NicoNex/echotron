@@ -11,7 +11,7 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
-	)
+)
 
 type market struct {
 	Market string `json:"market"`
