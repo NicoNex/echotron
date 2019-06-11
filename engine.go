@@ -29,6 +29,13 @@ type Engine struct {
 	url string
 }
 
+const (
+	PARSE_MARKDOWN = 1 << iota
+	PARSE_HTML = 1 << iota
+	DISABLE_WEB_PAGE_PREVIEW = 1 << iota
+	DISABLE_NOTIFICATION = 1 << iota
+)
+
 
 func NewEngine(token string) *Engine {
 	engine := new(Engine)
@@ -77,7 +84,7 @@ func (e Engine) GetStickerSet(name string) StickerSet {
 
 
 func (e Engine) SendMessage(text string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown", e.url, strings.Replace(text, "\n", "%0A", -1), chatId)
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -86,8 +93,25 @@ func (e Engine) SendMessage(text string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendMessageNoParse(text string, chatId int64) APIResponse {
+func (e Engine) SendMessageOptions(text string, chatId int64, options int) APIResponse {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId)
+
+	if options & PARSE_MARKDOWN != 0 {
+		url += "&parse_mode=markdown"
+	}
+
+	if options & PARSE_HTML != 0 {
+		url += "&parse_mode=html"
+	}
+
+	if options & DISABLE_WEB_PAGE_PREVIEW != 0 {
+		url += "&disable_web_page_preview=true"
+	}
+
+	if options & DISABLE_NOTIFICATION != 0 {
+		url += "&disable_notification=true"
+	}
+
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
