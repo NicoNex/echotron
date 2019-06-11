@@ -57,7 +57,18 @@ func RunDispatcher(token string, newBot func(token string, chatId int64) Bot) {
 		if response.Ok && len(response.Result) > 0 {
 			for _, update := range response.Result {
 				lastUpdateId = update.ID
-				chatId = update.Message.Chat.ID
+
+				if update.Message != nil {
+					chatId = update.Message.Chat.ID
+				} else if update.EditedMessage != nil {
+					chatId = update.EditedMessage.Chat.ID
+				} else if update.ChannelPost != nil {
+					chatId = update.EditedMessage.Chat.ID
+				} else if update.EditedChannelPost != nil {
+					chatId = update.EditedChannelPost.Chat.ID
+				} else {
+					continue
+				}
 
 				if _, isIn := sessionMap[chatId]; !isIn {
 					sessionMap[chatId] = newBot(token, chatId)
