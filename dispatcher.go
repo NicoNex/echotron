@@ -63,7 +63,7 @@ func RunDispatcher(token string, newBot func(token string, chatId int64) Bot) {
 				} else if update.EditedMessage != nil {
 					chatId = update.EditedMessage.Chat.ID
 				} else if update.ChannelPost != nil {
-					chatId = update.EditedMessage.Chat.ID
+					chatId = update.ChannelPost.Chat.ID
 				} else if update.EditedChannelPost != nil {
 					chatId = update.EditedChannelPost.Chat.ID
 				} else {
