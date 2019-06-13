@@ -27,10 +27,10 @@ import (
 )
 
 type DB struct {
-	Host string `json:"host"`
-	User string `json:"user"`
-	Pass string `json:"password"`
-	Name string `json:"dbname"`
+	host string `json:"host"`
+	user string `json:"user"`
+	pass string `json:"password"`
+	name string `json:"dbname"`
 }
 
 
