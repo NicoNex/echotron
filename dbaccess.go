@@ -51,7 +51,7 @@ func NewDB(credFile string) (*DB, error) {
 
 
 func (db *DB) openDB() (*sql.DB, error) {
-	database, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", db.User, db.Pass, db.Host, db.Name))
+	database, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", db.user, db.pass, db.host, db.name))
 
 	if err != nil {
 		return nil, err
@@ -91,12 +91,12 @@ func (db *DB) executeQuery(query string) (string, error) {
 
 
 func (db *DB) createDB() {
-	database, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/", db.User, db.Pass, db.Host))
+	database, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/", db.user, db.pass, db.host))
 
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		database.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", db.Name))
+		database.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", db.name))
 	}
 	defer database.Close()
 }
