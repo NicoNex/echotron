@@ -38,7 +38,7 @@ var timerMap map[int64]map[string]*timer
 
 // AddTimer creates a timer associated with a name to the current 
 // bot session that calls a callback once any given amounth of time.
-func AddTimer(chatId int64, lapse int64, name string, callback func()) {
+func AddTimer(chatId int64, name string, callback func(), lapse int64) {
 	if timerMap[chatId] == nil {
 		timerMap[chatId] = make(map[string]*timer)
 	}

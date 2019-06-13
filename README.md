@@ -60,7 +60,7 @@ func NewBot(token string, chatId int64) echotron.Bot {
         chatId,
         echotron.NewEngine(token),
     }
-    echotron.AddTimer(bot.chatId, "selfDestruct", bot.selfDestruct)
+    echotron.AddTimer(bot.chatId, "selfDestruct", bot.selfDestruct, 60)
     return bot
 }
 
