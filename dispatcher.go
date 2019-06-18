@@ -31,10 +31,18 @@ type Bot interface {
 var sessionMap map[int64]Bot
 
 
-// DelSession deletes the Bot instance, seen as a session, from the 
+// DelSession deletes the Bot instance, seen as a session, from the
 // map with all of them.
 func DelSession(chatId int64) {
 	delete(sessionMap, chatId)
+}
+
+
+// AddSession allows to create a new Bot instance from within an active one.
+func AddSession(token string, chatId int64) {
+	if _, isIn := sessionMap[chatId]; !isIn {
+		sessionMap[chatId] = newBot(token, chatId)
+	}
 }
 
 
