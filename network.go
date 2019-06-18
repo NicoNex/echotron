@@ -75,7 +75,7 @@ func SendPostRequest (url string, filename string, filetype string) []byte {
 
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 	client := &http.Client{}
-	
+
 	response, err := client.Do(request)
 
 	if err != nil {

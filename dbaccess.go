@@ -50,9 +50,9 @@ func NewDB(credFile string) (*DB, error) {
 
 	var db DB
 	json.Unmarshal(jsonFile, &db)
-	
+
 	db.createDB()
-	
+
 	return &db, nil
 }
 
@@ -73,7 +73,7 @@ func (db *DB) executeQuery(query string) (string, error) {
 
 	if err != nil {
 		return "", err
-	} 
+	}
 	defer database.Close()
 
 	rows, err := database.Query(query)
