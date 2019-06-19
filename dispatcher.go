@@ -40,7 +40,7 @@ func DelSession(chatId int64) {
 
 
 // AddSession allows to create a new Bot instance from within an active one.
-func AddSession(token string, chatId int64, newBot func(engine Engine, chatId int64) Bot) {
+func AddSession(chatId int64, newBot func(engine Engine, chatId int64) Bot) {
 	if _, isIn := sessionMap[chatId]; !isIn {
 		sessionMap[chatId] = newBot(engine, chatId)
 	}
