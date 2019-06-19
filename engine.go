@@ -25,9 +25,9 @@ import (
 )
 
 type Engine struct {
-	token string
 	url string
 }
+
 
 const (
 	PARSE_MARKDOWN = 1 << iota
@@ -37,12 +37,10 @@ const (
 )
 
 
-func NewEngine(token string) *Engine {
-	engine := new(Engine)
-	engine.token = token
-	engine.url = fmt.Sprintf("https://api.telegram.org/bot%s/", token)
-
-	return engine
+func NewEngine(token string) Engine {
+	return Engine{
+		url: fmt.Sprintf("https://api.telegram.org/bot%s/", token),
+	}
 }
 
 

@@ -29,6 +29,7 @@ type Bot interface {
 
 
 var sessionMap map[int64]Bot
+var engine Engine
 
 
 // DelSession deletes the Bot instance, seen as a session, from the
@@ -39,9 +40,9 @@ func DelSession(chatId int64) {
 
 
 // AddSession allows to create a new Bot instance from within an active one.
-func AddSession(token string, chatId int64, newBot func(token string, chatId int64) Bot) {
+func AddSession(token string, chatId int64, newBot func(engine Engine, chatId int64) Bot) {
 	if _, isIn := sessionMap[chatId]; !isIn {
-		sessionMap[chatId] = newBot(token, chatId)
+		sessionMap[chatId] = newBot(engine, chatId)
 	}
 }
 
@@ -50,14 +51,14 @@ func AddSession(token string, chatId int64, newBot func(token string, chatId int
 // It uses the bot token to initialise the engine used to communicate
 // with Telegram servers, and the newBot function that must return an
 // object that implements the Bot interface.
-func RunDispatcher(token string, newBot func(token string, chatId int64) Bot) {
+func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
 	var lastUpdateId int = -1;
 	var firstRun bool = true
 	var chatId int64
 	var response APIResponse
 
 	sessionMap = make(map[int64]Bot)
-	engine := NewEngine(token)
+	engine = NewEngine(token)
 
 	for {
 		response = engine.GetResponse(lastUpdateId + 1, 120)
@@ -79,7 +80,7 @@ func RunDispatcher(token string, newBot func(token string, chatId int64) Bot) {
 				}
 
 				if _, isIn := sessionMap[chatId]; !isIn {
-					sessionMap[chatId] = newBot(token, chatId)
+					sessionMap[chatId] = newBot(engine, chatId)
 				}
 
 				if !firstRun {
