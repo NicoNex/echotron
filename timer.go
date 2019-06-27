@@ -1,5 +1,5 @@
 /*
- * Echotron-GO
+ * Echotron
  * Copyright (C) 2019  Nicolò Santamaria
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ type timer struct {
 var timerMap map[int64]map[string]*timer
 
 
-// AddTimer creates a timer associated with a name to the current 
+// AddTimer creates a timer associated with a name to the current
 // bot session that calls a callback once any given amounth of time.
 func AddTimer(chatId int64, name string, callback func(), lapse int64) {
 	if timerMap[chatId] == nil {

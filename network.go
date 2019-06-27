@@ -1,5 +1,5 @@
 /*
- * Echotron-GO
+ * Echotron
  * Copyright (C) 2019  Nicolò Santamaria
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,17 +31,16 @@ import (
 
 func SendGetRequest (url string) []byte {
 	response, err := http.Get(url)
-
+	defer response.Body.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []byte{}
 	}
 
-	defer response.Body.Close()
-
 	content, err := ioutil.ReadAll(response.Body)
-
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []byte{}
 	}
 
 	return content
@@ -50,43 +49,43 @@ func SendGetRequest (url string) []byte {
 
 func SendPostRequest (url string, filename string, filetype string) []byte {
 	file, err := os.Open(filename)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 	defer file.Close()
+	if err != nil {
+		log.Println(err)
+		return []byte{}
+	}
 
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(filetype, filepath.Base(file.Name()))
-
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []byte{}
 	}
 
 	io.Copy(part, file)
 	writer.Close()
 	request, err := http.NewRequest("POST", url, body)
-
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []byte{}
 	}
 
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 	client := &http.Client{}
 
 	response, err := client.Do(request)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 	defer response.Body.Close()
+	if err != nil {
+		log.Println(err)
+		return []byte{}
+	}
 
 	content, err := ioutil.ReadAll(response.Body)
-
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []byte{}
 	}
 
 	return content

@@ -1,5 +1,5 @@
 /*
- * Echotron-GO
+ * Echotron
  * Copyright (C) 2019  Nicolò Santamaria, Michele Dimaggio
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ type User struct {
 }
 
 
-// This object represents one special entity in a text message. 
+// This object represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
 	Type string `json:"type"`
@@ -142,8 +142,8 @@ type ChosenInlineResult struct {
 
 
 // This object represents an incoming callback query from a callback button in an inline keyboard.
-// If the button that originated the query was attached to a message sent by the bot, 
-// the field message will be present. If the button was attached to a message sent via the bot (in inline mode), 
+// If the button that originated the query was attached to a message sent by the bot,
+// the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
 // the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
 type CallbackQuery struct {
 	ID string `json:"id"`

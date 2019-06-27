@@ -1,5 +1,5 @@
 /*
- * Echotron-GO
+ * Echotron
  * Copyright (C) 2019  Nicolò Santamaria, Michele Dimaggio, Alessandro Ianne
  *
  * This program is free software: you can redistribute it and/or modify
