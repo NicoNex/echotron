@@ -309,13 +309,11 @@ func (e Engine) KeyboardRemove(selective bool) []byte {
 
 
 func (e Engine) InlineKbdBtn(text string, url string, callbackData string) InlineButton {
-	var inlineButton InlineButton
-
-	inlineButton.Text = text
-	inlineButton.URL = url
-	inlineButton.CallbackData = callbackData
-
-	return inlineButton
+	return InlineButton{
+		text,
+		url,
+		callbackData,
+	}
 }
 
 
