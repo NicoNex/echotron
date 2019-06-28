@@ -52,18 +52,19 @@ func AddSession(chatId int64, newBot func(engine Engine, chatId int64) Bot) {
 // with Telegram servers, and the newBot function that must return an
 // object that implements the Bot interface.
 func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
-	var lastUpdateId int = -1;
-	var firstRun bool = true
+	var timeout int
 	var chatId int64
 	var response APIResponse
+
+	var firstRun = true
+	var lastUpdateId = -1
 
 	sessionMap = make(map[int64]Bot)
 	engine = NewEngine(token)
 
 	for {
-		response = engine.GetResponse(lastUpdateId + 1, 120)
-
-		if response.Ok && len(response.Result) > 0 {
+		response = engine.GetResponse(lastUpdateId+1, timeout)
+		if response.Ok {
 			for _, update := range response.Result {
 				lastUpdateId = update.ID
 
@@ -89,6 +90,10 @@ func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
 
 			}
 		}
-		firstRun = false
+
+		if firstRun {
+			firstRun = false
+			timeout = 120
+		}
 	}
 }
