@@ -31,11 +31,11 @@ import (
 
 func SendGetRequest (url string) []byte {
 	response, err := http.Get(url)
-	defer response.Body.Close()
 	if err != nil {
 		log.Println(err)
 		return []byte{}
 	}
+	defer response.Body.Close()
 
 	content, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -49,11 +49,11 @@ func SendGetRequest (url string) []byte {
 
 func SendPostRequest (url string, filename string, filetype string) []byte {
 	file, err := os.Open(filename)
-	defer file.Close()
 	if err != nil {
 		log.Println(err)
 		return []byte{}
 	}
+	defer file.Close()
 
 
 	body := &bytes.Buffer{}
@@ -76,11 +76,11 @@ func SendPostRequest (url string, filename string, filetype string) []byte {
 	client := &http.Client{}
 
 	response, err := client.Do(request)
-	defer response.Body.Close()
 	if err != nil {
 		log.Println(err)
 		return []byte{}
 	}
+	defer response.Body.Close()
 
 	content, err := ioutil.ReadAll(response.Body)
 	if err != nil {
