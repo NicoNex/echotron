@@ -55,7 +55,7 @@ func AddTimer(chatId int64, name string, callback func(), lapse int64) {
 func SetTimerLapse(chatId int64, lapse int64, name string) error {
 	timer, ok := timerMap[chatId][name]
 	if !ok {
-		return fmt.Errorf("Error: cannot find timer %s for instance %l", name, chatId)
+		return fmt.Errorf("Error: cannot find timer %s for instance %d", name, chatId)
 	}
 	timer.lapseTime = lapse
 	return nil
@@ -67,7 +67,7 @@ func SetTimerLapse(chatId int64, lapse int64, name string) error {
 func ResetTimer(chatId int64, name string) error {
 	timer, ok := timerMap[chatId][name]
 	if !ok {
-		return fmt.Errorf("Error: cannot find timer %s for instance %l", name, chatId)
+		return fmt.Errorf("Error: cannot find timer %s for instance %d", name, chatId)
 	}
 	timer.timestamp = time.Now().Unix()
 	return nil
@@ -85,14 +85,14 @@ func DelTimer(chatId int64, name string) {
 func timerRoutine() {
 	for {
 		for _, m := range timerMap {
-			go func() {
+			go func(m map[string]*timer) {
 				for _, t := range m {
 					if time.Now().Unix() - t.timestamp >= t.lapseTime {
 						t.timestamp = time.Now().Unix()
 						go t.callback()
 					}
 				}
-			}()
+			}(m)
 		}
 		time.Sleep(time.Second)
 	}

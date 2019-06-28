@@ -65,7 +65,7 @@ func (e Engine) GetChat(chatId int64) Chat {
 	var content []byte = SendGetRequest(url)
 	var response Chat
 
-	json.Unmarshal(content, response)
+	json.Unmarshal(content, &response)
 	return response
 }
 

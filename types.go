@@ -41,7 +41,7 @@ type User struct {
 	FirstName string `json:"first_name"`
 	LastName string `json:"last_name,omitempty"`
 	Username string `json:"username,omitempty"`
-	LanguageCode string `json"language_code,omitempty"`
+	LanguageCode string `json:"language_code,omitempty"`
 }
 
 
