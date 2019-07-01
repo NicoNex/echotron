@@ -260,13 +260,11 @@ func (e Engine) SendStickerByID(stickerId string, chatId int64) APIResponse {
 
 
 func (e Engine) KeyboardButton(text string, requestContact bool, requestLocation bool) Button {
-	var button Button
-
-	button.Text = text
-	button.RequestContact = requestContact
-	button.RequestLocation = requestLocation
-
-	return button
+	return Button{
+		text,
+		requestContact,
+		requestLocation,
+	}
 }
 
 
@@ -282,11 +280,12 @@ func (e Engine) KeyboardRow(buttons ...Button) KbdRow {
 
 
 func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KbdRow) []byte {
-	var keyboard Keyboard
-
-	keyboard.ResizeKeyboard = resizeKeyboard
-	keyboard.OneTimeKeyboard = oneTimeKeyboard
-	keyboard.Selective = selective
+	keyboard := Keyboard{
+		nil,
+		resizeKeyboard,
+		oneTimeKeyboard,
+		selective,
+	}
 
 	for _, row := range keyboardRows {
 		keyboard.Keyboard = append(keyboard.Keyboard, row)
@@ -298,12 +297,11 @@ func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, select
 
 
 func (e Engine) KeyboardRemove(selective bool) []byte {
-	var keyboardRemove KeyboardRemove
+	kbdrmv, _ := json.Marshal(KeyboardRemove{
+		true,
+		selective,
+	})
 
-	keyboardRemove.RemoveKeyboard = true
-	keyboardRemove.Selective = selective
-
-	kbdrmv, _ := json.Marshal(keyboardRemove)
 	return kbdrmv
 }
 
