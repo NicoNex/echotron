@@ -19,14 +19,14 @@ import "gitlab.com/NicoNex/echotron"
 
 type bot struct {
 	chatId int64
-	*echotron.Engine
+	echotron.Engine
 }
 
 
-func NewBot(token string, chatId int64) echotron.Bot {
+func NewBot(engine echotron.Engine, chatId int64) echotron.Bot {
 	return &bot{
 		chatId,
-		echotron.NewEngine(token),
+		engine,
 	}
 }
 
@@ -53,14 +53,14 @@ import "gitlab.com/NicoNex/echotron"
 
 type bot struct {
     chatId int64
-    *echotron.Engine
+    echotron.Engine
 }
 
 
-func NewBot(token string, chatId int64) echotron.Bot {
+func NewBot(engine echotron.Engine, chatId int64) echotron.Bot {
     var bot = &bot{
         chatId,
-        echotron.NewEngine(token),
+        engine,
     }
     echotron.AddTimer(bot.chatId, "selfDestruct", bot.selfDestruct, 60)
     return bot
