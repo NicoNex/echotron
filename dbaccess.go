@@ -2,12 +2,12 @@
  * Echotron
  * Copyright (C) 2019  Nicolò Santamaria, Michele Dimaggio
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Echotron is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Echotron is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -18,6 +18,7 @@
 
 package echotron
 
+
 import (
 	"database/sql"
 	"encoding/json"
@@ -25,6 +26,7 @@ import (
 	"io/ioutil"
 	_ "github.com/go-sql-driver/mysql"
 )
+
 
 // DB is the struct which contains the hostname of the database,
 // the login data and the name of the database that will be used
