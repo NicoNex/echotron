@@ -3,7 +3,9 @@
 The true echotron repo
 
 Fetch with
-`env GIT_TERMINAL_PROMPT=1 go get -u gitlab.com/NicoNex/echotron`
+```bash
+go get -u gitlab.com/NicoNex/echotron
+```
 
 
 ### Usage
