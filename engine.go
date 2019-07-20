@@ -120,6 +120,43 @@ func (e Engine) SendMessageOptions(text string, chatId int64, options int) APIRe
 }
 
 
+func (e Engine) SendMessageReply(text string, chatId int64, messageId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
+	var content []byte = SendGetRequest(url)
+	var response APIResponse
+
+	json.Unmarshal(content, &response)
+	return response
+}
+
+
+func (e Engine) SendMessageReplyOptions(text string, chatId int64, messageId int64, options int) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
+
+	if options & PARSE_MARKDOWN != 0 {
+		url += "&parse_mode=markdown"
+	}
+
+	if options & PARSE_HTML != 0 {
+		url += "&parse_mode=html"
+	}
+
+	if options & DISABLE_WEB_PAGE_PREVIEW != 0 {
+		url += "&disable_web_page_preview=true"
+	}
+
+	if options & DISABLE_NOTIFICATION != 0 {
+		url += "&disable_notification=true"
+	}
+
+	var content []byte = SendGetRequest(url)
+	var response APIResponse
+
+	json.Unmarshal(content, &response)
+	return response
+}
+
+
 func (e Engine) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponse {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard)
 	var content []byte = SendGetRequest(url)
