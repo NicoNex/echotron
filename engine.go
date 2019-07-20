@@ -120,7 +120,7 @@ func (e Engine) SendMessageOptions(text string, chatId int64, options int) APIRe
 }
 
 
-func (e Engine) SendMessageReply(text string, chatId int64, messageId int64) APIResponse {
+func (e Engine) SendMessageReply(text string, chatId int64, messageId int) APIResponse {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
@@ -130,7 +130,7 @@ func (e Engine) SendMessageReply(text string, chatId int64, messageId int64) API
 }
 
 
-func (e Engine) SendMessageReplyOptions(text string, chatId int64, messageId int64, options int) APIResponse {
+func (e Engine) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) APIResponse {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 
 	if options & PARSE_MARKDOWN != 0 {
