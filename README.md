@@ -7,6 +7,8 @@ Fetch with
 go get -u gitlab.com/NicoNex/echotron
 ```
 
+Doc at:
+https://godoc.org/gitlab.com/NicoNex/echotron
 
 ### Usage
 
