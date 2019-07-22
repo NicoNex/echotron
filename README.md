@@ -1,6 +1,6 @@
 # echotron
 
-The true echotron repo
+Library for telegram bots written in pure go
 
 Fetch with
 ```bash
