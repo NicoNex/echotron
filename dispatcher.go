@@ -28,7 +28,7 @@ type Bot interface {
 
 
 var sessionMap map[int64]Bot
-var engine Engine
+var api Api
 
 
 // DelSession deletes the Bot instance, seen as a session, from the
@@ -39,18 +39,18 @@ func DelSession(chatId int64) {
 
 
 // AddSession allows to create a new Bot instance from within an active one.
-func AddSession(chatId int64, newBot func(engine Engine, chatId int64) Bot) {
+func AddSession(chatId int64, newBot func(api Api, chatId int64) Bot) {
 	if _, isIn := sessionMap[chatId]; !isIn {
-		sessionMap[chatId] = newBot(engine, chatId)
+		sessionMap[chatId] = newBot(api, chatId)
 	}
 }
 
 
 // RunDispatcher is echotron's entry point.
-// It uses the bot token to initialise the engine used to communicate
+// It uses the bot token to initialise the api used to communicate
 // with Telegram servers, and the newBot function to get an instance
 // of a user-defined struct that implements the Bot interface.
-func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
+func RunDispatcher(token string, newBot func(api Api, chatId int64) Bot) {
 	var timeout int
 	var chatId int64
 	var response APIResponse
@@ -59,10 +59,10 @@ func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
 	var lastUpdateId = -1
 
 	sessionMap = make(map[int64]Bot)
-	engine = NewEngine(token)
+	api = NewApi(token)
 
 	for {
-		response = engine.GetResponse(lastUpdateId+1, timeout)
+		response = api.GetUpdates(lastUpdateId+1, timeout)
 		if response.Ok {
 			for _, update := range response.Result {
 				lastUpdateId = update.ID
@@ -80,7 +80,7 @@ func RunDispatcher(token string, newBot func(engine Engine, chatId int64) Bot) {
 				}
 
 				if _, isIn := sessionMap[chatId]; !isIn {
-					sessionMap[chatId] = newBot(engine, chatId)
+					sessionMap[chatId] = newBot(api, chatId)
 				}
 
 				if !firstRun {

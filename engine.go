@@ -26,7 +26,7 @@ import (
 )
 
 
-type Engine struct {
+type Api struct {
 	url string
 }
 
@@ -38,17 +38,17 @@ const (
 	DISABLE_NOTIFICATION = 1 << iota
 )
 
-
-func NewEngine(token string) Engine {
-	return Engine{
+// NewApi returns a new Api object.
+func NewApi(token string) Api {
+	return Api{
 		url: fmt.Sprintf("https://api.telegram.org/bot%s/", token),
 	}
 }
 
 
 // GetResponse returns the incoming updates from telegram.
-func (e Engine) GetResponse(offset int, timeout int) APIResponse {
-	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", e.url, timeout)
+func (a Api) GetUpdates(offset int, timeout int) APIResponse {
+	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", a.url, timeout)
 
 	if offset != 0 {
 		url = fmt.Sprintf("%s&offset=%d", url, offset)
@@ -61,8 +61,8 @@ func (e Engine) GetResponse(offset int, timeout int) APIResponse {
 }
 
 
-func (e Engine) GetChat(chatId int64) Chat {
-	var url = fmt.Sprintf("%sgetChat?chat_id=%d", e.url, chatId)
+func (a Api) GetChat(chatId int64) Chat {
+	var url = fmt.Sprintf("%sgetChat?chat_id=%d", a.url, chatId)
 	var content []byte = SendGetRequest(url)
 	var response Chat
 
@@ -71,8 +71,8 @@ func (e Engine) GetChat(chatId int64) Chat {
 }
 
 
-func (e Engine) GetStickerSet(name string) StickerSet {
-	var url = fmt.Sprintf("%sgetStickerSet?name=%s", e.url, name)
+func (a Api) GetStickerSet(name string) StickerSet {
+	var url = fmt.Sprintf("%sgetStickerSet?name=%s", a.url, name)
 
 	var content []byte = SendGetRequest(url)
 	var response StickerSet
@@ -83,8 +83,8 @@ func (e Engine) GetStickerSet(name string) StickerSet {
 }
 
 
-func (e Engine) SendMessage(text string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId)
+func (a Api) SendMessage(text string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -93,8 +93,8 @@ func (e Engine) SendMessage(text string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendMessageOptions(text string, chatId int64, options int) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId)
+func (a Api) SendMessageOptions(text string, chatId int64, options int) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId)
 
 	if options & PARSE_MARKDOWN != 0 {
 		url += "&parse_mode=markdown"
@@ -120,8 +120,8 @@ func (e Engine) SendMessageOptions(text string, chatId int64, options int) APIRe
 }
 
 
-func (e Engine) SendMessageReply(text string, chatId int64, messageId int) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
+func (a Api) SendMessageReply(text string, chatId int64, messageId int) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -130,8 +130,8 @@ func (e Engine) SendMessageReply(text string, chatId int64, messageId int) APIRe
 }
 
 
-func (e Engine) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
+func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 
 	if options & PARSE_MARKDOWN != 0 {
 		url += "&parse_mode=markdown"
@@ -157,8 +157,8 @@ func (e Engine) SendMessageReplyOptions(text string, chatId int64, messageId int
 }
 
 
-func (e Engine) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponse {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", e.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard)
+func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponse {
+	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -167,8 +167,8 @@ func (e Engine) SendMessageWithKeyboard(text string, chatId int64, keyboard []by
 }
 
 
-func (e Engine) SendPhoto(filename string, chatId int64, caption string) APIResponse {
-	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s", e.url, chatId, caption)
+func (a Api) SendPhoto(filename string, chatId int64, caption string) APIResponse {
+	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content []byte = SendPostRequest(url, filename, "photo")
 	var response APIResponse
 
@@ -177,8 +177,8 @@ func (e Engine) SendPhoto(filename string, chatId int64, caption string) APIResp
 }
 
 
-func (e Engine) SendPhotoByID(photoId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&photo=%s", e.url, chatId, photoId)
+func (a Api) SendPhotoByID(photoId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&photo=%s", a.url, chatId, photoId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -187,8 +187,8 @@ func (e Engine) SendPhotoByID(photoId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendAudio(filename string, chatId int64, caption string) APIResponse {
-	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s", e.url, chatId, caption)
+func (a Api) SendAudio(filename string, chatId int64, caption string) APIResponse {
+	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "audio")
 	var response APIResponse
 
@@ -197,8 +197,8 @@ func (e Engine) SendAudio(filename string, chatId int64, caption string) APIResp
 }
 
 
-func (e Engine) SendAudioByID(audioId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&audio=%s", e.url, chatId, audioId)
+func (a Api) SendAudioByID(audioId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&audio=%s", a.url, chatId, audioId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -207,8 +207,8 @@ func (e Engine) SendAudioByID(audioId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendDocument(filename string, caption string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s", e.url, chatId, caption)
+func (a Api) SendDocument(filename string, caption string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "document")
 	var response APIResponse
 
@@ -217,8 +217,8 @@ func (e Engine) SendDocument(filename string, caption string, chatId int64) APIR
 }
 
 
-func (e Engine) SendDocumentByID(documentId string, caption string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&document=%s&caption=%s", e.url, chatId, documentId, caption)
+func (a Api) SendDocumentByID(documentId string, caption string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&document=%s&caption=%s", a.url, chatId, documentId, caption)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -227,8 +227,8 @@ func (e Engine) SendDocumentByID(documentId string, caption string, chatId int64
 }
 
 
-func (e Engine) SendVideo(filename string, chatId int64, caption string) APIResponse {
-	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s", e.url, chatId, caption)
+func (a Api) SendVideo(filename string, chatId int64, caption string) APIResponse {
+	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "video")
 	var response APIResponse
 
@@ -237,8 +237,8 @@ func (e Engine) SendVideo(filename string, chatId int64, caption string) APIResp
 }
 
 
-func (e Engine) SendVideoByID(videoId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&video=%s", e.url, chatId, videoId)
+func (a Api) SendVideoByID(videoId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&video=%s", a.url, chatId, videoId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -247,8 +247,8 @@ func (e Engine) SendVideoByID(videoId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendVideoNoteByID(videoId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendVideoNote?chat_id=%d&video_note=%s", e.url, chatId, videoId)
+func (a Api) SendVideoNoteByID(videoId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendVideoNote?chat_id=%d&video_note=%s", a.url, chatId, videoId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -257,8 +257,8 @@ func (e Engine) SendVideoNoteByID(videoId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendVoice(filename string, chatId int64, caption string) APIResponse {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s", e.url, chatId, caption)
+func (a Api) SendVoice(filename string, chatId int64, caption string) APIResponse {
+	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "voice")
 	var response APIResponse
 
@@ -267,8 +267,8 @@ func (e Engine) SendVoice(filename string, chatId int64, caption string) APIResp
 }
 
 
-func (e Engine) SendVoiceByID(voiceId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s", e.url, chatId, voiceId)
+func (a Api) SendVoiceByID(voiceId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s", a.url, chatId, voiceId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -277,8 +277,8 @@ func (e Engine) SendVoiceByID(voiceId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) SendContact(phoneNumber string, firstName string, lastName string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s", e.url, chatId, phoneNumber, firstName, lastName)
+func (a Api) SendContact(phoneNumber string, firstName string, lastName string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s", a.url, chatId, phoneNumber, firstName, lastName)
 	var content = SendGetRequest(url)
 	var response APIResponse
 
@@ -287,8 +287,8 @@ func (e Engine) SendContact(phoneNumber string, firstName string, lastName strin
 }
 
 
-func (e Engine) SendStickerByID(stickerId string, chatId int64) APIResponse {
-	var url = fmt.Sprintf("%ssendSticker?chat_id=%d&sticker=%s", e.url, chatId, stickerId)
+func (a Api) SendStickerByID(stickerId string, chatId int64) APIResponse {
+	var url = fmt.Sprintf("%ssendSticker?chat_id=%d&sticker=%s", a.url, chatId, stickerId)
 	var content []byte = SendGetRequest(url)
 	var response APIResponse
 
@@ -297,7 +297,7 @@ func (e Engine) SendStickerByID(stickerId string, chatId int64) APIResponse {
 }
 
 
-func (e Engine) KeyboardButton(text string, requestContact bool, requestLocation bool) Button {
+func (a Api) KeyboardButton(text string, requestContact bool, requestLocation bool) Button {
 	return Button{
 		text,
 		requestContact,
@@ -306,7 +306,7 @@ func (e Engine) KeyboardButton(text string, requestContact bool, requestLocation
 }
 
 
-func (e Engine) KeyboardRow(buttons ...Button) KbdRow {
+func (a Api) KeyboardRow(buttons ...Button) KbdRow {
 	var kbdRow KbdRow
 
 	for _, button := range buttons {
@@ -317,7 +317,7 @@ func (e Engine) KeyboardRow(buttons ...Button) KbdRow {
 }
 
 
-func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KbdRow) []byte {
+func (a Api) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KbdRow) []byte {
 	keyboard := Keyboard{
 		nil,
 		resizeKeyboard,
@@ -334,7 +334,7 @@ func (e Engine) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, select
 }
 
 
-func (e Engine) KeyboardRemove(selective bool) []byte {
+func (a Api) KeyboardRemove(selective bool) []byte {
 	kbdrmv, _ := json.Marshal(KeyboardRemove{
 		true,
 		selective,
@@ -344,7 +344,7 @@ func (e Engine) KeyboardRemove(selective bool) []byte {
 }
 
 
-func (e Engine) InlineKbdBtn(text string, url string, callbackData string) InlineButton {
+func (a Api) InlineKbdBtn(text string, url string, callbackData string) InlineButton {
 	return InlineButton{
 		text,
 		url,
@@ -353,7 +353,7 @@ func (e Engine) InlineKbdBtn(text string, url string, callbackData string) Inlin
 }
 
 
-func (e Engine) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
+func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	var inlineKbdRow InlineKbdRow
 
 	for _, inlineButton := range inlineButtons {
@@ -364,7 +364,7 @@ func (e Engine) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 }
 
 
-func (e Engine) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) []byte {
+func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) []byte {
 	var inlineKeyboard InlineKeyboard
 
 	for _, row := range inlineKbdRows {
