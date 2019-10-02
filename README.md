@@ -25,7 +25,7 @@ type bot struct {
 }
 
 
-func NewBot(engine echotron.Engine, chatId int64) echotron.Bot {
+func newBot(engine echotron.Engine, chatId int64) echotron.Bot {
 	return &bot{
 		chatId,
 		engine,
@@ -41,7 +41,8 @@ func (b *bot) Update(update *echotron.Update) {
 
 
 func main() {
-	echotron.RunDispatcher("TELEGRAM TOKEN", NewBot)
+    dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
+	dsp.Run()
 }
 ```
 
@@ -59,7 +60,7 @@ type bot struct {
 }
 
 
-func NewBot(engine echotron.Engine, chatId int64) echotron.Bot {
+func newBot(engine echotron.Engine, chatId int64) echotron.Bot {
     var bot = &bot{
         chatId,
         engine,
@@ -84,8 +85,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 
 func main() {
-    echotron.RunDispatcher("TELEGRAM TOKEN", NewBot)
+    dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
+    dsp.Run()
 }
 ```
-
-
