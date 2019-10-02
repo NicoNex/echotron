@@ -34,6 +34,9 @@ type Dispatcher struct {
 }
 
 
+// NewDispatcher returns a new instance of the Dispatcher object;
+// useful for polling telegram and dispatch every update to the
+// corresponding Bot instance.
 func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) *Dispatcher {
 	return &Dispatcher {
 		NewApi(token),
@@ -58,10 +61,8 @@ func (d *Dispatcher) AddSession(chatId int64) {
 }
 
 
-// Run is echotron's entry point.
-// It uses the bot token to initialise the api used to communicate
-// with Telegram servers, and the newBot function to get an instance
-// of a user-defined struct that implements the Bot interface.
+// Run starts the polling loop and calls the function Update
+// upon receiving any update from Telegram.
 func (d *Dispatcher) Run() {
 	var timeout int
 	var chatId int64
