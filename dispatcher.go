@@ -27,30 +27,42 @@ type Bot interface {
 }
 
 
-var sessionMap map[int64]Bot
-var api Api
-
-
-// DelSession deletes the Bot instance, seen as a session, from the
-// map with all of them.
-func DelSession(chatId int64) {
-	delete(sessionMap, chatId)
+type Dispatcher struct {
+	api Api
+	sessionMap map[int64]Bot
+	newBot func(api Api, chatId int64) Bot
 }
 
 
-// AddSession allows to create a new Bot instance from within an active one.
-func AddSession(chatId int64, newBot func(api Api, chatId int64) Bot) {
-	if _, isIn := sessionMap[chatId]; !isIn {
-		sessionMap[chatId] = newBot(api, chatId)
+func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) *Dispatcher {
+	return &Dispatcher {
+		NewApi(token),
+		make(map[int64]Bot),
+		newBot,
 	}
 }
 
 
-// RunDispatcher is echotron's entry point.
+// DelSession deletes the Bot instance, seen as a session, from the
+// map with all of them.
+func (d *Dispatcher) DelSession(chatId int64) {
+	delete(d.sessionMap, chatId)
+}
+
+
+// AddSession allows to arbitrarily create a new Bot instance.
+func (d *Dispatcher) AddSession(chatId int64) {
+	if _, isIn := d.sessionMap[chatId]; !isIn {
+		d.sessionMap[chatId] = d.newBot(d.api, chatId)
+	}
+}
+
+
+// Run is echotron's entry point.
 // It uses the bot token to initialise the api used to communicate
 // with Telegram servers, and the newBot function to get an instance
 // of a user-defined struct that implements the Bot interface.
-func RunDispatcher(token string, newBot func(api Api, chatId int64) Bot) {
+func (d *Dispatcher) Run() {
 	var timeout int
 	var chatId int64
 	var response APIResponse
@@ -58,11 +70,8 @@ func RunDispatcher(token string, newBot func(api Api, chatId int64) Bot) {
 	var firstRun = true
 	var lastUpdateId = -1
 
-	sessionMap = make(map[int64]Bot)
-	api = NewApi(token)
-
 	for {
-		response = api.GetUpdates(lastUpdateId+1, timeout)
+		response = d.api.GetUpdates(lastUpdateId+1, timeout)
 		if response.Ok {
 			for _, update := range response.Result {
 				lastUpdateId = update.ID
@@ -79,12 +88,12 @@ func RunDispatcher(token string, newBot func(api Api, chatId int64) Bot) {
 					continue
 				}
 
-				if _, isIn := sessionMap[chatId]; !isIn {
-					sessionMap[chatId] = newBot(api, chatId)
+				if _, isIn := d.sessionMap[chatId]; !isIn {
+					d.sessionMap[chatId] = d.newBot(d.api, chatId)
 				}
 
 				if !firstRun {
-					go sessionMap[chatId].Update(update)
+					go d.sessionMap[chatId].Update(update)
 				}
 
 			}
