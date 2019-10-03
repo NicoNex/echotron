@@ -42,7 +42,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
-	dsp.Run()
+    dsp.Run()
 }
 ```
 

@@ -96,7 +96,6 @@ func (d *Dispatcher) Run() {
 				if !firstRun {
 					go d.sessionMap[chatId].Update(update)
 				}
-
 			}
 		}
 
