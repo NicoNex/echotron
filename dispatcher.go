@@ -18,7 +18,6 @@
 
 package echotron
 
-
 // Bot is the interface that must be implemented by your definition of
 // the struct thus it represent each open session with a user on Telegram.
 type Bot interface {
@@ -26,25 +25,22 @@ type Bot interface {
 	Update(*Update)
 }
 
-
 type Dispatcher struct {
-	api Api
+	api        Api
 	sessionMap map[int64]Bot
-	newBot func(api Api, chatId int64) Bot
+	newBot     func(api Api, chatId int64) Bot
 }
-
 
 // NewDispatcher returns a new instance of the Dispatcher object;
 // useful for polling telegram and dispatch every update to the
 // corresponding Bot instance.
 func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) *Dispatcher {
-	return &Dispatcher {
+	return &Dispatcher{
 		NewApi(token),
 		make(map[int64]Bot),
 		newBot,
 	}
 }
-
 
 // DelSession deletes the Bot instance, seen as a session, from the
 // map with all of them.
@@ -52,14 +48,12 @@ func (d *Dispatcher) DelSession(chatId int64) {
 	delete(d.sessionMap, chatId)
 }
 
-
 // AddSession allows to arbitrarily create a new Bot instance.
 func (d *Dispatcher) AddSession(chatId int64) {
 	if _, isIn := d.sessionMap[chatId]; !isIn {
 		d.sessionMap[chatId] = d.newBot(d.api, chatId)
 	}
 }
-
 
 // Run starts the polling loop and calls the function Update
 // upon receiving any update from Telegram.
