@@ -1,4 +1,4 @@
-# echotron [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron) [![Go Report Card](https://goreportcard.com/badge/gitlab.com/NicoNex/echotron)](https://goreportcard.com/report/gitlab.com/NicoNex/echotron)
+# echotron [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron)[![Go Report Card](https://goreportcard.com/badge/gitlab.com/NicoNex/echotron)](https://goreportcard.com/report/gitlab.com/NicoNex/echotron)
 
 Library for telegram bots written in pure go
 
@@ -17,25 +17,22 @@ package main
 import "gitlab.com/NicoNex/echotron"
 
 type bot struct {
-	chatId int64
-	echotron.Engine
+    chatId int64
+    echotron.Engine
 }
-
 
 func newBot(engine echotron.Engine, chatId int64) echotron.Bot {
-	return &bot{
-		chatId,
-		engine,
-	}
+    return &bot{
+        chatId,
+        engine,
+    }
 }
-
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
         b.SendMessage("Hello world", b.chatId)
     }
 }
-
 
 func main() {
     dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
@@ -56,6 +53,7 @@ type bot struct {
     echotron.Engine
 }
 
+var dsp echotron.Dispatcher
 
 func newBot(engine echotron.Engine, chatId int64) echotron.Bot {
     var bot = &bot{
@@ -66,13 +64,11 @@ func newBot(engine echotron.Engine, chatId int64) echotron.Bot {
     return bot
 }
 
-
 func (b *bot) selfDestruct() {
     b.SendMessage("goodbye", b.chatId)
     echotron.DelTimer(b.chatId, "selfDestruct")
-    echotron.DelSession(b.chatId)
+    dsp.DelSession(b.chatId)
 }
-
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
@@ -80,9 +76,8 @@ func (b *bot) Update(update *echotron.Update) {
     }
 }
 
-
 func main() {
-    dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
+    dsp = echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
     dsp.Run()
 }
 ```
