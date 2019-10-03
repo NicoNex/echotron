@@ -34,8 +34,8 @@ type Dispatcher struct {
 // NewDispatcher returns a new instance of the Dispatcher object;
 // useful for polling telegram and dispatch every update to the
 // corresponding Bot instance.
-func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) *Dispatcher {
-	return &Dispatcher{
+func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) Dispatcher {
+	return Dispatcher{
 		NewApi(token),
 		make(map[int64]Bot),
 		newBot,
