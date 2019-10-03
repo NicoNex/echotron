@@ -1,4 +1,4 @@
-# echotron
+# echotron [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron)
 
 Library for telegram bots written in pure go
 
