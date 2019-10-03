@@ -18,20 +18,18 @@
 
 package echotron
 
-
 import (
-	"io"
-	"os"
-	"log"
 	"bytes"
-	"net/http"
+	"io"
 	"io/ioutil"
-	"path/filepath"
+	"log"
 	"mime/multipart"
+	"net/http"
+	"os"
+	"path/filepath"
 )
 
-
-func SendGetRequest (url string) []byte {
+func SendGetRequest(url string) []byte {
 	response, err := http.Get(url)
 	if err != nil {
 		log.Println(err)
@@ -48,15 +46,13 @@ func SendGetRequest (url string) []byte {
 	return content
 }
 
-
-func SendPostRequest (url string, filename string, filetype string) []byte {
+func SendPostRequest(url string, filename string, filetype string) []byte {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Println(err)
 		return []byte{}
 	}
 	defer file.Close()
-
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
