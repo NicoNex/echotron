@@ -60,7 +60,7 @@ func (d *Dispatcher) AddSession(chatId int64) {
 func (d *Dispatcher) Run() {
 	var timeout int
 	var chatId int64
-	var response APIResponse
+	var response APIResponseUpdate
 
 	var firstRun = true
 	var lastUpdateId = -1

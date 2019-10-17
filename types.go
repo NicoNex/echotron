@@ -90,7 +90,8 @@ type Update struct {
 }
 
 // This object represents the incoming response from Telegram servers.
-type APIResponse struct {
+// Used by getUpdates (since it returns an array of Updates).
+type APIResponseUpdate struct {
 	Ok          bool      `json:"ok"`
 	Result      []*Update `json:"result,omitempty"`
 	ErrorCode   int       `json:"error_code,omitempty"`

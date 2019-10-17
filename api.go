@@ -43,14 +43,14 @@ func NewApi(token string) Api {
 }
 
 // GetResponse returns the incoming updates from telegram.
-func (a Api) GetUpdates(offset int, timeout int) APIResponse {
+func (a Api) GetUpdates(offset int, timeout int) APIResponseUpdate {
 	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", a.url, timeout)
 
 	if offset != 0 {
 		url = fmt.Sprintf("%s&offset=%d", url, offset)
 	}
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseUpdate
 
 	json.Unmarshal(content, &response)
 	return response
