@@ -155,6 +155,15 @@ func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte)
 	return response
 }
 
+func (a Api) DeleteMessage(chatId int64, messageId int64) APIResponse {
+	var url = fmt.Sprintf("%sdeleteMessage?chat_id=%d&message_id=%d", a.url, chatId, messageId)
+	var content []byte = SendGetRequest(url)
+	var response APIResponse
+
+	json.Unmarshal(content, &response)
+	return response
+}
+
 func (a Api) SendPhoto(filename string, chatId int64, caption string) APIResponse {
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content []byte = SendPostRequest(url, filename, "photo")
