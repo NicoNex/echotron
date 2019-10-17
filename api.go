@@ -76,16 +76,16 @@ func (a Api) GetStickerSet(name string) StickerSet {
 	return response
 }
 
-func (a Api) SendMessage(text string, chatId int64) APIResponse {
+func (a Api) SendMessage(text string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendMessageOptions(text string, chatId int64, options int) APIResponse {
+func (a Api) SendMessageOptions(text string, chatId int64, options int) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId)
 
 	if options&PARSE_MARKDOWN != 0 {
@@ -105,22 +105,22 @@ func (a Api) SendMessageOptions(text string, chatId int64, options int) APIRespo
 	}
 
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendMessageReply(text string, chatId int64, messageId int) APIResponse {
+func (a Api) SendMessageReply(text string, chatId int64, messageId int) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) APIResponse {
+func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, messageId)
 
 	if options&PARSE_MARKDOWN != 0 {
@@ -140,142 +140,142 @@ func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, o
 	}
 
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponse {
+func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s", a.url, strings.Replace(text, "\n", "%0A", -1), chatId, keyboard)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) DeleteMessage(chatId int64, messageId int64) APIResponse {
+func (a Api) DeleteMessage(chatId int64, messageId int) APIResponseMessage {
 	var url = fmt.Sprintf("%sdeleteMessage?chat_id=%d&message_id=%d", a.url, chatId, messageId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendPhoto(filename string, chatId int64, caption string) APIResponse {
+func (a Api) SendPhoto(filename string, chatId int64, caption string) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content []byte = SendPostRequest(url, filename, "photo")
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendPhotoByID(photoId string, chatId int64) APIResponse {
+func (a Api) SendPhotoByID(photoId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&photo=%s", a.url, chatId, photoId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendAudio(filename string, chatId int64, caption string) APIResponse {
+func (a Api) SendAudio(filename string, chatId int64, caption string) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "audio")
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendAudioByID(audioId string, chatId int64) APIResponse {
+func (a Api) SendAudioByID(audioId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&audio=%s", a.url, chatId, audioId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendDocument(filename string, caption string, chatId int64) APIResponse {
+func (a Api) SendDocument(filename string, caption string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "document")
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendDocumentByID(documentId string, caption string, chatId int64) APIResponse {
+func (a Api) SendDocumentByID(documentId string, caption string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&document=%s&caption=%s", a.url, chatId, documentId, caption)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendVideo(filename string, chatId int64, caption string) APIResponse {
+func (a Api) SendVideo(filename string, chatId int64, caption string) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "video")
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendVideoByID(videoId string, chatId int64) APIResponse {
+func (a Api) SendVideoByID(videoId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&video=%s", a.url, chatId, videoId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendVideoNoteByID(videoId string, chatId int64) APIResponse {
+func (a Api) SendVideoNoteByID(videoId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendVideoNote?chat_id=%d&video_note=%s", a.url, chatId, videoId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendVoice(filename string, chatId int64, caption string) APIResponse {
+func (a Api) SendVoice(filename string, chatId int64, caption string) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s", a.url, chatId, caption)
 	var content = SendPostRequest(url, filename, "voice")
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendVoiceByID(voiceId string, chatId int64) APIResponse {
+func (a Api) SendVoiceByID(voiceId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s", a.url, chatId, voiceId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendContact(phoneNumber string, firstName string, lastName string, chatId int64) APIResponse {
+func (a Api) SendContact(phoneNumber string, firstName string, lastName string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s", a.url, chatId, phoneNumber, firstName, lastName)
 	var content = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
 }
 
-func (a Api) SendStickerByID(stickerId string, chatId int64) APIResponse {
+func (a Api) SendStickerByID(stickerId string, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendSticker?chat_id=%d&sticker=%s", a.url, chatId, stickerId)
 	var content []byte = SendGetRequest(url)
-	var response APIResponse
+	var response APIResponseMessage
 
 	json.Unmarshal(content, &response)
 	return response
