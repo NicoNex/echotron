@@ -1,4 +1,4 @@
-# echotron [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron) [![Go Report Card](https://goreportcard.com/badge/gitlab.com/NicoNex/echotron)](https://goreportcard.com/report/gitlab.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://gitlab.com/NicoNex/echotron/blob/master/LICENSE)
+# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron) [![Go Report Card](https://goreportcard.com/badge/gitlab.com/NicoNex/echotron)](https://goreportcard.com/report/gitlab.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://gitlab.com/NicoNex/echotron/blob/master/LICENSE)
 
 Library for telegram bots written in pure go
 
