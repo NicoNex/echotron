@@ -101,10 +101,10 @@ type APIResponseUpdate struct {
 // This object represents the incoming response from Telegram servers.
 // Used by the methods in the api.go module (since they return a Message).
 type APIResponseMessage struct {
-	Ok          bool       `json:"ok"`
-	Result      *Message   `json:"result,omitempty"`
-	ErrorCode   int        `json:"error_code,omitempty"`
-	Description string     `json:"description,omitempty"`
+	Ok          bool     `json:"ok"`
+	Result      *Message `json:"result,omitempty"`
+	ErrorCode   int      `json:"error_code,omitempty"`
+	Description string   `json:"description,omitempty"`
 }
 
 // This object represents a phone contact.
