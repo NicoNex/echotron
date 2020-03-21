@@ -1,10 +1,10 @@
-# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![GoDoc](https://godoc.org/gitlab.com/NicoNex/echotron?status.svg)](https://godoc.org/gitlab.com/NicoNex/echotron) [![Go Report Card](https://goreportcard.com/badge/gitlab.com/NicoNex/echotron)](https://goreportcard.com/report/gitlab.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://gitlab.com/NicoNex/echotron/blob/master/LICENSE)
+# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![GoDoc](https://godoc.org/github.com/NicoNex/echotron?status.svg)](https://godoc.org/github.com/NicoNex/echotron) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE)
 
 Library for telegram bots written in pure go
 
 Fetch with
 ```bash
-go get -u gitlab.com/NicoNex/echotron
+go get -u github.com/NicoNex/echotron
 ```
 
 ### Usage
@@ -14,7 +14,7 @@ A very simple implementation:
 ```go
 package main
 
-import "gitlab.com/NicoNex/echotron"
+import "github.com/NicoNex/echotron"
 
 type bot struct {
     chatId int64
@@ -46,7 +46,7 @@ Also proof of concept with self destruction for low ram usage
 ```go
 package main
 
-import "gitlab.com/NicoNex/echotron"
+import "github.com/NicoNex/echotron"
 
 type bot struct {
     chatId int64
