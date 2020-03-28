@@ -272,3 +272,13 @@ type InlineKbdRow []InlineButton
 type InlineKeyboard struct {
 	InlineKeyboard []InlineKbdRow `json:"inline_keyboard"`
 }
+
+// Returns an inline keyboard object with the specified rows.
+func NewInlineKeyboard(rows ...InlineKbdRow) InlineKeyboard {
+	var ret InlineKeyboard
+
+	for _, r := range rows {
+		ret.InlineKeyboard = append(ret.InlineKeyboard, r)
+	}
+	return ret
+}

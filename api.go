@@ -324,6 +324,7 @@ func (a Api) KeyboardRemove(selective bool) []byte {
 	return kbdrmv
 }
 
+// Returns a new inline keyboard button with the provided data.
 func (a Api) InlineKbdBtn(text string, url string, callbackData string) InlineButton {
 	return InlineButton{
 		text,
@@ -332,6 +333,7 @@ func (a Api) InlineKbdBtn(text string, url string, callbackData string) InlineBu
 	}
 }
 
+// Returns a new inline keyboard row with the given buttons.
 func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	var inlineKbdRow InlineKbdRow
 
@@ -342,13 +344,9 @@ func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	return inlineKbdRow
 }
 
+// Returns a byte slice containing the inline keyboard json data.
 func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) []byte {
-	var inlineKeyboard InlineKeyboard
-
-	for _, row := range inlineKbdRows {
-		inlineKeyboard.InlineKeyboard = append(inlineKeyboard.InlineKeyboard, row)
-	}
-
-	kbd, _ := json.Marshal(inlineKeyboard)
-	return kbd
+	keyboard := NewInlineKeyboard(inlineKbdRows...)
+	jsn, _ := json.Marshal(keyboard)
+	return jsn
 }
