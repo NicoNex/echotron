@@ -336,17 +336,19 @@ func (a Api) InlineKbdBtn(text string, url string, callbackData string) InlineBu
 // Returns a new inline keyboard row with the given buttons.
 func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	var inlineKbdRow InlineKbdRow
+	return append(inlineKbdRow, inlineButtons...)
+}
 
-	for _, inlineButton := range inlineButtons {
-		inlineKbdRow = append(inlineKbdRow, inlineButton)
-	}
-
-	return inlineKbdRow
+// Returns an inline keyboard object with the specified rows.
+func (a Api) NewInlineKeyboard(rows ...InlineKbdRow) InlineKeyboard {
+	var ret InlineKeyboard
+	ret.InlineKeyboard = append(ret.InlineKeyboard, rows...)
+	return ret
 }
 
 // Returns a byte slice containing the inline keyboard json data.
 func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) []byte {
-	keyboard := NewInlineKeyboard(inlineKbdRows...)
+	keyboard := a.NewInlineKeyboard(inlineKbdRows...)
 	jsn, _ := json.Marshal(keyboard)
 	return jsn
 }
