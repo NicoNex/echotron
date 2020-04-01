@@ -88,7 +88,9 @@ func (d *Dispatcher) Run() {
 				}
 
 				if !firstRun {
-					go d.sessionMap[chatId].Update(update)
+					if bot, ok := d.sessionMap[chatId]; ok {
+						go bot.Update(update)
+					}
 				}
 			}
 		}
