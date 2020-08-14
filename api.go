@@ -54,22 +54,24 @@ const (
 func NewApi(token string) Api {
 	return Api{
 		url: fmt.Sprintf("https://api.telegram.org/bot%s/",
-			token),
+			token,
+		),
 	}
 }
 
 // GetResponse returns the incoming updates from telegram.
-func (a Api) GetUpdates(offset int, timeout int) (response APIResponseUpdate) {
+func (a Api) GetUpdates(offset, timeout int) (response APIResponseUpdate) {
 	var url = fmt.Sprintf("%sgetUpdates?timeout=%d",
 		a.url,
-		timeout)
+		timeout,
+	)
 
 	if offset != 0 {
 		url = fmt.Sprintf("%s&offset=%d",
 			url,
 			offset)
 	}
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -78,9 +80,10 @@ func (a Api) GetUpdates(offset int, timeout int) (response APIResponseUpdate) {
 func (a Api) GetChat(chatId int64) (response Chat) {
 	var url = fmt.Sprintf("%sgetChat?chat_id=%d",
 		a.url,
-		chatId)
+		chatId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -89,9 +92,10 @@ func (a Api) GetChat(chatId int64) (response Chat) {
 func (a Api) GetStickerSet(name string) (response StickerSet) {
 	var url = fmt.Sprintf("%sgetStickerSet?name=%s",
 		a.url,
-		name)
+		name,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 
@@ -102,9 +106,10 @@ func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
 		strings.Replace(text, "\n", "%0A", -1),
-		chatId)
+		chatId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -114,7 +119,8 @@ func (a Api) SendMessageOptions(text string, chatId int64, options int) (respons
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
 		strings.Replace(text, "\n", "%0A", -1),
-		chatId)
+		chatId,
+	)
 
 	if options&PARSE_MARKDOWN != 0 {
 		url += "&parse_mode=markdown"
@@ -132,7 +138,7 @@ func (a Api) SendMessageOptions(text string, chatId int64, options int) (respons
 		url += "&disable_notification=true"
 	}
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -143,20 +149,22 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int) (respons
 		a.url,
 		strings.Replace(text, "\n", "%0A", -1),
 		chatId,
-		messageId)
+		messageId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, options int) (response APIResponseMessage) {
+func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, options int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
 		a.url,
 		strings.Replace(text, "\n", "%0A", -1),
 		chatId,
-		messageId)
+		messageId,
+	)
 
 	if options&PARSE_MARKDOWN != 0 {
 		url += "&parse_mode=markdown"
@@ -174,7 +182,7 @@ func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId int, o
 		url += "&disable_notification=true"
 	}
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -185,9 +193,10 @@ func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte)
 		a.url,
 		strings.Replace(text, "\n", "%0A", -1),
 		chatId,
-		keyboard)
+		keyboard,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -197,21 +206,23 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (response APIResponseMes
 	var url = fmt.Sprintf("%sdeleteMessage?chat_id=%d&message_id=%d",
 		a.url,
 		chatId,
-		messageId)
+		messageId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendPhoto(filename string, chatId int64, caption string) (response APIResponseMessage) {
+func (a Api) SendPhoto(filename, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption)
+		caption,
+	)
 
-	var content = SendPostRequest(url, filename, "photo")
+	content := SendPostRequest(url, filename, "photo")
 
 	json.Unmarshal(content, &response)
 	return
@@ -221,21 +232,23 @@ func (a Api) SendPhotoByID(photoId string, chatId int64) (response APIResponseMe
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&photo=%s",
 		a.url,
 		chatId,
-		photoId)
+		photoId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendAudio(filename string, chatId int64, caption string) (response APIResponseMessage) {
+func (a Api) SendAudio(filename, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption)
+		caption,
+	)
 
-	var content = SendPostRequest(url, filename, "audio")
+	content := SendPostRequest(url, filename, "audio")
 
 	json.Unmarshal(content, &response)
 	return
@@ -245,46 +258,50 @@ func (a Api) SendAudioByID(audioId string, chatId int64) (response APIResponseMe
 	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&audio=%s",
 		a.url,
 		chatId,
-		audioId)
+		audioId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendDocument(filename string, caption string, chatId int64) (response APIResponseMessage) {
+func (a Api) SendDocument(filename, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption)
+		caption,
+	)
 
-	var content = SendPostRequest(url, filename, "document")
+	content := SendPostRequest(url, filename, "document")
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendDocumentByID(documentId string, caption string, chatId int64) (response APIResponseMessage) {
+func (a Api) SendDocumentByID(documentId, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&document=%s&caption=%s",
 		a.url,
 		chatId,
 		documentId,
-		caption)
+		caption,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendVideo(filename string, chatId int64, caption string) (response APIResponseMessage) {
+func (a Api) SendVideo(filename, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption)
+		caption,
+	)
 
-	var content = SendPostRequest(url, filename, "video")
+	content := SendPostRequest(url, filename, "video")
 
 	json.Unmarshal(content, &response)
 	return
@@ -294,9 +311,10 @@ func (a Api) SendVideoByID(videoId string, chatId int64) (response APIResponseMe
 	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&video=%s",
 		a.url,
 		chatId,
-		videoId)
+		videoId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -306,21 +324,23 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (response APIRespon
 	var url = fmt.Sprintf("%ssendVideoNote?chat_id=%d&video_note=%s",
 		a.url,
 		chatId,
-		videoId)
+		videoId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendVoice(filename string, chatId int64, caption string) (response APIResponseMessage) {
+func (a Api) SendVoice(filename, caption string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption)
+		caption,
+	)
 
-	var content = SendPostRequest(url, filename, "voice")
+	content := SendPostRequest(url, filename, "voice")
 
 	json.Unmarshal(content, &response)
 	return
@@ -330,23 +350,25 @@ func (a Api) SendVoiceByID(voiceId string, chatId int64) (response APIResponseMe
 	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s",
 		a.url,
 		chatId,
-		voiceId)
+		voiceId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) SendContact(phoneNumber string, firstName string, lastName string, chatId int64) (response APIResponseMessage) {
+func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s",
 		a.url,
 		chatId,
 		phoneNumber,
 		firstName,
-		lastName)
+		lastName,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -356,9 +378,10 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) (response APIRespon
 	var url = fmt.Sprintf("%ssendSticker?chat_id=%d&sticker=%s",
 		a.url,
 		chatId,
-		stickerId)
+		stickerId,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
@@ -368,15 +391,16 @@ func (a Api) SendChatAction(action ChatAction, chatId int64) (response APIRespon
 	var url = fmt.Sprintf("%ssendChatAction?chat_id=%d&action=%s",
 		a.url,
 		chatId,
-		action)
+		action,
+	)
 
-	var content = SendGetRequest(url)
+	content := SendGetRequest(url)
 
 	json.Unmarshal(content, &response)
 	return
 }
 
-func (a Api) KeyboardButton(text string, requestContact bool, requestLocation bool) Button {
+func (a Api) KeyboardButton(text string, requestContact, requestLocation bool) Button {
 	return Button{
 		text,
 		requestContact,
@@ -392,7 +416,7 @@ func (a Api) KeyboardRow(buttons ...Button) (kbdRow KbdRow) {
 	return
 }
 
-func (a Api) KeyboardMarkup(resizeKeyboard bool, oneTimeKeyboard bool, selective bool, keyboardRows ...KbdRow) (kbd []byte) {
+func (a Api) KeyboardMarkup(resizeKeyboard, oneTimeKeyboard, selective bool, keyboardRows ...KbdRow) (kbd []byte) {
 	keyboard := Keyboard{
 		nil,
 		resizeKeyboard,
@@ -418,7 +442,7 @@ func (a Api) KeyboardRemove(selective bool) (kbdrmv []byte) {
 }
 
 // Returns a new inline keyboard button with the provided data.
-func (a Api) InlineKbdBtn(text string, url string, callbackData string) InlineButton {
+func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
 	return InlineButton{
 		text,
 		url,
