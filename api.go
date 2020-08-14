@@ -281,6 +281,15 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) APIResponseMessage 
 	return response
 }
 
+func (a Api) SendChatAction(action string, chatId int64) APIResponseMessage {
+	var url = fmt.Sprintf("%ssendChatAction?chat_id=%d&action=%s", a.url, chatId, action)
+	var content = SendGetRequest(url)
+	var response APIResponseMessage
+
+	json.Unmarshal(content, &response)
+	return response
+}
+
 func (a Api) KeyboardButton(text string, requestContact bool, requestLocation bool) Button {
 	return Button{
 		text,
