@@ -35,6 +35,21 @@ const (
 	DISABLE_NOTIFICATION     = 1 << iota
 )
 
+type ChatAction string
+
+const (
+	TYPING            ChatAction = "typing"
+	UPLOAD_PHOTO                 = "upload_photo"
+	RECORD_VIDEO                 = "record_video"
+	UPLOAD_VIDEO                 = "upload_video"
+	RECORD_AUDIO                 = "record_audio"
+	UPLOAD_AUDIO                 = "upload_audio"
+	UPLOAD_DOCUMENT              = "upload_document"
+	FIND_LOCATION                = "find_location"
+	RECORD_VIDEO_NOTE            = "record_video_note"
+	UPLOAD_VIDEO_NOTE            = "upload_video_note"
+)
+
 // NewApi returns a new Api object.
 func NewApi(token string) Api {
 	return Api{
@@ -281,7 +296,7 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) APIResponseMessage 
 	return response
 }
 
-func (a Api) SendChatAction(action string, chatId int64) APIResponseMessage {
+func (a Api) SendChatAction(action ChatAction, chatId int64) APIResponseMessage {
 	var url = fmt.Sprintf("%ssendChatAction?chat_id=%d&action=%s", a.url, chatId, action)
 	var content = SendGetRequest(url)
 	var response APIResponseMessage
