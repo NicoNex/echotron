@@ -105,7 +105,7 @@ func (a Api) GetStickerSet(name string) (response StickerSet) {
 func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
-		strings.Replace(text, "\n", "%0A", -1),
+		strings.ReplaceAll(text, "\n", "%0A"),
 		chatId,
 	)
 
@@ -118,7 +118,7 @@ func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage
 func (a Api) SendMessageOptions(text string, chatId int64, options int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
-		strings.Replace(text, "\n", "%0A", -1),
+		strings.ReplaceAll(text, "\n", "%0A"),
 		chatId,
 	)
 
@@ -147,7 +147,7 @@ func (a Api) SendMessageOptions(text string, chatId int64, options int) (respons
 func (a Api) SendMessageReply(text string, chatId int64, messageId int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
 		a.url,
-		strings.Replace(text, "\n", "%0A", -1),
+		strings.ReplaceAll(text, "\n", "%0A"),
 		chatId,
 		messageId,
 	)
@@ -161,7 +161,7 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int) (respons
 func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, options int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
 		a.url,
-		strings.Replace(text, "\n", "%0A", -1),
+		strings.ReplaceAll(text, "\n", "%0A"),
 		chatId,
 		messageId,
 	)
@@ -191,7 +191,7 @@ func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, optio
 func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
 		a.url,
-		strings.Replace(text, "\n", "%0A", -1),
+		strings.ReplaceAll(text, "\n", "%0A"),
 		chatId,
 		keyboard,
 	)
