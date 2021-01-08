@@ -21,7 +21,7 @@ package echotron
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"net/url"
 )
 
 type Api struct {
@@ -49,6 +49,10 @@ const (
 	RECORD_VIDEO_NOTE            = "record_video_note"
 	UPLOAD_VIDEO_NOTE            = "upload_video_note"
 )
+
+func encode (s string) string {
+	return url.QueryEscape(s)
+}
 
 // NewApi returns a new Api object.
 func NewApi(token string) Api {
@@ -105,7 +109,7 @@ func (a Api) GetStickerSet(name string) (response StickerSet) {
 func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
-		strings.ReplaceAll(text, "\n", "%0A"),
+		encode(text),
 		chatId,
 	)
 
@@ -118,7 +122,7 @@ func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage
 func (a Api) SendMessageOptions(text string, chatId int64, options int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
 		a.url,
-		strings.ReplaceAll(text, "\n", "%0A"),
+		encode(text),
 		chatId,
 	)
 
@@ -147,7 +151,7 @@ func (a Api) SendMessageOptions(text string, chatId int64, options int) (respons
 func (a Api) SendMessageReply(text string, chatId int64, messageId int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
 		a.url,
-		strings.ReplaceAll(text, "\n", "%0A"),
+		encode(text),
 		chatId,
 		messageId,
 	)
@@ -161,7 +165,7 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int) (respons
 func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, options int) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
 		a.url,
-		strings.ReplaceAll(text, "\n", "%0A"),
+		encode(text),
 		chatId,
 		messageId,
 	)
@@ -191,7 +195,7 @@ func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, optio
 func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) (response APIResponseMessage) {
 	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
 		a.url,
-		strings.ReplaceAll(text, "\n", "%0A"),
+		encode(text),
 		chatId,
 		keyboard,
 	)
@@ -219,7 +223,7 @@ func (a Api) SendPhoto(filename, caption string, chatId int64) (response APIResp
 	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendPostRequest(url, filename, "photo")
@@ -245,7 +249,7 @@ func (a Api) SendAudio(filename, caption string, chatId int64) (response APIResp
 	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendPostRequest(url, filename, "audio")
@@ -271,7 +275,7 @@ func (a Api) SendDocument(filename, caption string, chatId int64) (response APIR
 	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendPostRequest(url, filename, "document")
@@ -285,7 +289,7 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64) (respons
 		a.url,
 		chatId,
 		documentId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendGetRequest(url)
@@ -298,7 +302,7 @@ func (a Api) SendVideo(filename, caption string, chatId int64) (response APIResp
 	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendPostRequest(url, filename, "video")
@@ -337,7 +341,7 @@ func (a Api) SendVoice(filename, caption string, chatId int64) (response APIResp
 	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s",
 		a.url,
 		chatId,
-		caption,
+		encode(caption),
 	)
 
 	content := SendPostRequest(url, filename, "voice")
@@ -444,7 +448,7 @@ func (a Api) KeyboardRemove(selective bool) (kbdrmv []byte) {
 // Returns a new inline keyboard button with the provided data.
 func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
 	return InlineButton{
-		text,
+		encode(text),
 		url,
 		callbackData,
 	}
