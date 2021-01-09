@@ -19,6 +19,7 @@
 package echotron
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -28,11 +29,13 @@ type Api struct {
 	url string
 }
 
+type Option int
+
 const (
-	PARSE_MARKDOWN           = 1 << iota
-	PARSE_HTML               = 1 << iota
-	DISABLE_WEB_PAGE_PREVIEW = 1 << iota
-	DISABLE_NOTIFICATION     = 1 << iota
+	PARSE_MARKDOWN Option = iota
+	PARSE_HTML
+	DISABLE_WEB_PAGE_PREVIEW
+	DISABLE_NOTIFICATION
 )
 
 type ChatAction string
@@ -52,6 +55,27 @@ const (
 
 func encode(s string) string {
 	return url.QueryEscape(s)
+}
+
+func parseOpts(opts ...Option) string {
+	var buf bytes.Buffer
+
+	for _, o := range opts {
+		switch o {
+		case PARSE_MARKDOWN:
+			buf.WriteString("&parse_mode=markdown")
+
+		case PARSE_HTML:
+			buf.WriteString("&parse_mode=html")
+
+		case DISABLE_WEB_PAGE_PREVIEW:
+			buf.WriteString("&disable_web_page_preview=true")
+
+		case DISABLE_NOTIFICATION:
+			buf.WriteString("&disable_notification=true")
+		}
+	}
+	return buf.String()
 }
 
 // NewApi returns a new Api object.
@@ -90,86 +114,30 @@ func (a Api) GetStickerSet(name string) (response StickerSet) {
 	return
 }
 
-func (a Api) SendMessage(text string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
+func (a Api) SendMessage(text string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendMessage?text=%s&chat_id=%d%s",
 		a.url,
 		encode(text),
 		chatId,
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
-}
-
-func (a Api) SendMessageOptions(text string, chatId int64, options int) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d",
-		a.url,
-		encode(text),
-		chatId,
-	)
-
-	if options&PARSE_MARKDOWN != 0 {
-		url += "&parse_mode=markdown"
-	}
-
-	if options&PARSE_HTML != 0 {
-		url += "&parse_mode=html"
-	}
-
-	if options&DISABLE_WEB_PAGE_PREVIEW != 0 {
-		url += "&disable_web_page_preview=true"
-	}
-
-	if options&DISABLE_NOTIFICATION != 0 {
-		url += "&disable_notification=true"
-	}
-
-	content := SendGetRequest(url)
-
 	json.Unmarshal(content, &response)
 	return
 }
 
 // Sends a message as a reply to a previously received one.
-func (a Api) SendMessageReply(text string, chatId int64, messageId int) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
+func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d%s",
 		a.url,
 		encode(text),
 		chatId,
 		messageId,
+		parseOpts(opts...),
 	)
-
-	content := SendGetRequest(url)
-
-	json.Unmarshal(content, &response)
-	return
-}
-
-// Like SendMessageReply but additionally allows you to specify some options.
-func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, options int) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d",
-		a.url,
-		encode(text),
-		chatId,
-		messageId,
-	)
-
-	if options&PARSE_MARKDOWN != 0 {
-		url += "&parse_mode=markdown"
-	}
-
-	if options&PARSE_HTML != 0 {
-		url += "&parse_mode=html"
-	}
-
-	if options&DISABLE_WEB_PAGE_PREVIEW != 0 {
-		url += "&disable_web_page_preview=true"
-	}
-
-	if options&DISABLE_NOTIFICATION != 0 {
-		url += "&disable_notification=true"
-	}
 
 	content := SendGetRequest(url)
 	json.Unmarshal(content, &response)
@@ -177,7 +145,8 @@ func (a Api) SendMessageReplyOptions(text string, chatId int64, messageId, optio
 }
 
 func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
+	var url = fmt.Sprintf(
+		"%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
 		a.url,
 		encode(text),
 		chatId,
@@ -190,7 +159,8 @@ func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte)
 }
 
 func (a Api) DeleteMessage(chatId int64, messageId int) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%sdeleteMessage?chat_id=%d&message_id=%d",
+	var url = fmt.Sprintf(
+		"%sdeleteMessage?chat_id=%d&message_id=%d",
 		a.url,
 		chatId,
 		messageId,
@@ -201,11 +171,13 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (response APIResponseMes
 	return
 }
 
-func (a Api) SendPhoto(filename, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&caption=%s",
+func (a Api) SendPhoto(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendPhoto?chat_id=%d&caption=%s%s",
 		a.url,
 		chatId,
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendPostRequest(url, filename, "photo")
@@ -213,11 +185,14 @@ func (a Api) SendPhoto(filename, caption string, chatId int64) (response APIResp
 	return
 }
 
-func (a Api) SendPhotoByID(photoId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendPhoto?chat_id=%d&photo=%s",
+func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendPhoto?chat_id=%d&photo=%s&caption=%s%s",
 		a.url,
 		chatId,
 		encode(photoId),
+		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -225,11 +200,13 @@ func (a Api) SendPhotoByID(photoId string, chatId int64) (response APIResponseMe
 	return
 }
 
-func (a Api) SendAudio(filename, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&caption=%s",
+func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendAudio?chat_id=%d&caption=%s%s",
 		a.url,
 		chatId,
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendPostRequest(url, filename, "audio")
@@ -237,11 +214,14 @@ func (a Api) SendAudio(filename, caption string, chatId int64) (response APIResp
 	return
 }
 
-func (a Api) SendAudioByID(audioId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendAudio?chat_id=%d&audio=%s",
+func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendAudio?chat_id=%d&audio=%s&caption=%s%s",
 		a.url,
 		chatId,
 		encode(audioId),
+		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -249,11 +229,13 @@ func (a Api) SendAudioByID(audioId string, chatId int64) (response APIResponseMe
 	return
 }
 
-func (a Api) SendDocument(filename, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&caption=%s",
+func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendDocument?chat_id=%d&caption=%s%s",
 		a.url,
 		chatId,
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendPostRequest(url, filename, "document")
@@ -261,12 +243,14 @@ func (a Api) SendDocument(filename, caption string, chatId int64) (response APIR
 	return
 }
 
-func (a Api) SendDocumentByID(documentId, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendDocument?chat_id=%d&document=%s&caption=%s",
+func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendDocument?chat_id=%d&document=%s&caption=%s%s",
 		a.url,
 		chatId,
 		encode(documentId),
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -274,11 +258,13 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64) (respons
 	return
 }
 
-func (a Api) SendVideo(filename, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&caption=%s",
+func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendVideo?chat_id=%d&caption=%s%s",
 		a.url,
 		chatId,
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendPostRequest(url, filename, "video")
@@ -286,11 +272,14 @@ func (a Api) SendVideo(filename, caption string, chatId int64) (response APIResp
 	return
 }
 
-func (a Api) SendVideoByID(videoId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVideo?chat_id=%d&video=%s",
+func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendVideo?chat_id=%d&video=%s&caption=%s%s",
 		a.url,
 		chatId,
 		encode(videoId),
+		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -310,11 +299,12 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (response APIRespon
 	return
 }
 
-func (a Api) SendVoice(filename, caption string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s",
+func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s%s",
 		a.url,
 		chatId,
 		encode(caption),
+		parseOpts(opts...),
 	)
 
 	content := SendPostRequest(url, filename, "voice")
@@ -322,11 +312,12 @@ func (a Api) SendVoice(filename, caption string, chatId int64) (response APIResp
 	return
 }
 
-func (a Api) SendVoiceByID(voiceId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s",
+func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s%s",
 		a.url,
 		chatId,
 		encode(voiceId),
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
