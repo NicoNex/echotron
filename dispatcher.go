@@ -25,16 +25,18 @@ type Bot interface {
 	Update(*Update)
 }
 
+type NewBotFn func(chatId int64) Bot
+
 type Dispatcher struct {
 	api        Api
 	sessionMap map[int64]Bot
-	newBot     func(api Api, chatId int64) Bot
+	newBot     NewBotFn
 }
 
 // NewDispatcher returns a new instance of the Dispatcher object;
 // useful for polling telegram and dispatch every update to the
 // corresponding Bot instance.
-func NewDispatcher(token string, newBot func(api Api, chatId int64) Bot) Dispatcher {
+func NewDispatcher(token string, newBot NewBotFn) Dispatcher {
 	return Dispatcher{
 		NewApi(token),
 		make(map[int64]Bot),
@@ -51,7 +53,7 @@ func (d *Dispatcher) DelSession(chatId int64) {
 // AddSession allows to arbitrarily create a new Bot instance.
 func (d *Dispatcher) AddSession(chatId int64) {
 	if _, isIn := d.sessionMap[chatId]; !isIn {
-		d.sessionMap[chatId] = d.newBot(d.api, chatId)
+		d.sessionMap[chatId] = d.newBot(chatId)
 	}
 }
 
@@ -84,7 +86,7 @@ func (d *Dispatcher) Run() {
 				}
 
 				if _, isIn := d.sessionMap[chatId]; !isIn {
-					d.sessionMap[chatId] = d.newBot(d.api, chatId)
+					d.sessionMap[chatId] = d.newBot(chatId)
 				}
 
 				if !firstRun {
