@@ -21,10 +21,12 @@ type bot struct {
     echotron.Api
 }
 
-func newBot(api echotron.Api, chatId int64) echotron.Bot {
+const TOKEN = "YOUR TELEGRAM TOKEN"
+
+func newBot(chatId int64) echotron.Bot {
     return &bot{
         chatId,
-        api,
+        echotron.NewApi(TOKEN),
     }
 }
 
@@ -35,7 +37,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-    dsp := echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
+    dsp := echotron.NewDispatcher(TOKEN, newBot)
     dsp.Run()
 }
 ```
@@ -57,14 +59,16 @@ type bot struct {
     echotron.Api
 }
 
+const TOKEN = "YOUR TELEGRAM TOKEN"
+
 var dsp echotron.Dispatcher
 
-func newBot(api echotron.Api, chatId int64) echotron.Bot {
+func newBot(chatId int64) echotron.Bot {
     var bot = &bot{
         chatId,
-        api,
+        echotron.NewApi(TOKEN),
     }
-    go selfDestruct(time.After(time.Hour))
+    go bot.selfDestruct(time.After(time.Hour))
     return bot
 }
 
@@ -83,7 +87,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-    dsp = echotron.NewDispatcher("TELEGRAM TOKEN", newBot)
+    dsp = echotron.NewDispatcher(TOKEN, newBot)
     dsp.Run()
 }
 ```
