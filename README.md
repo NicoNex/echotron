@@ -99,9 +99,7 @@ func main() {
 ```go
 package main
 
-import (
-	"github.com/NicoNex/echotron"
-)
+import "github.com/NicoNex/echotron"
 
 type bot struct {
 	chatId int64
@@ -125,6 +123,6 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
 	dsp := echotron.NewDispatcher(TOKEN, newBot)
-	dsp.RunWithWebhook("https://newworld.com:443/bot", 40987)
+	dsp.ListenWebhook("https://newworld:443/bot", 23456)
 }
 ```
