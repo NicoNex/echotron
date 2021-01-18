@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 )
 
@@ -79,6 +80,29 @@ func parseOpts(opts ...Option) string {
 // NewApi returns a new Api object.
 func NewApi(token string) Api {
 	return Api(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
+}
+
+// DeleteWebhook deletes webhook
+func (a Api) DeleteWebhook() (response APIResponseUpdate) {
+	content := SendGetRequest(string(a) + "deleteWebhook")
+
+	json.Unmarshal(content, &response)
+	return
+}
+
+// SetWebhook sets the webhook to bot on Telegram servers
+func (a Api) SetWebhook(url string) (response APIResponseUpdate) {
+	keys := make([]string, 1)
+	values := make([]string, 1)
+	keys[0] = "url"
+	values[0] = url
+	content, err := SendPostForm(string(a)+"setWebhook", keys, values)
+	if err != nil {
+		log.Println(err)
+	}
+
+	json.Unmarshal(content, &response)
+	return
 }
 
 // GetResponse returns the incoming updates from telegram.

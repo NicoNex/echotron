@@ -18,6 +18,15 @@
 
 package echotron
 
+import (
+	"compress/gzip"
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+	"strconv"
+)
+
 // Bot is the interface that must be implemented by your definition of
 // the struct thus it represent each open session with a user on Telegram.
 type Bot interface {
@@ -67,6 +76,12 @@ func (d *Dispatcher) Run() {
 	var firstRun = true
 	var lastUpdateId = -1
 
+	// deletes webhook if present to run in long polling mode
+	response = d.api.DeleteWebhook()
+	if !response.Ok {
+		log.Fatalln("Could not disable webhook, running in long polling mode is not possible.")
+	}
+
 	for {
 		response = d.api.GetUpdates(lastUpdateId+1, timeout)
 		if response.Ok {
@@ -101,5 +116,57 @@ func (d *Dispatcher) Run() {
 			firstRun = false
 			timeout = 120
 		}
+	}
+}
+
+// RunWithWebhook sets webhook and starts a server listening for incoming updates
+func (d *Dispatcher) RunWithWebhook(url string, internalPort int) {
+	var chatId int64
+	var response APIResponseUpdate
+
+	response = d.api.SetWebhook(url)
+	if response.Ok {
+		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+			var update Update
+
+			var reader io.ReadCloser
+			var err error
+			switch request.Header.Get("Content-Encoding") {
+			case "gzip":
+				reader, err = gzip.NewReader(request.Body)
+				if err != nil {
+					log.Println(err)
+				}
+				defer reader.Close()
+			default:
+				reader = request.Body
+			}
+
+			err = json.NewDecoder(reader).Decode(&update)
+			if err != nil {
+				log.Println(err)
+			}
+
+			if update.Message != nil {
+				chatId = update.Message.Chat.ID
+			} else if update.EditedMessage != nil {
+				chatId = update.EditedMessage.Chat.ID
+			} else if update.ChannelPost != nil {
+				chatId = update.ChannelPost.Chat.ID
+			} else if update.EditedChannelPost != nil {
+				chatId = update.EditedChannelPost.Chat.ID
+			}
+
+			if _, isIn := d.sessionMap[chatId]; !isIn {
+				d.sessionMap[chatId] = d.newBot(chatId)
+			}
+
+			if bot, ok := d.sessionMap[chatId]; ok {
+				go bot.Update(&update)
+			}
+
+		})
+		err := http.ListenAndServe(":"+strconv.Itoa(internalPort), nil)
+		log.Fatalln(err)
 	}
 }

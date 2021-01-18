@@ -20,13 +20,16 @@ package echotron
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func SendGetRequest(url string) []byte {
@@ -87,4 +90,36 @@ func SendPostRequest(url string, filename string, filetype string) []byte {
 	}
 
 	return content
+}
+
+func SendPostForm(destUrl string, keysArray, valuesArray []string) ([]byte, error) {
+	form := url.Values{}
+	if len(keysArray) != len(valuesArray) {
+		return nil, fmt.Errorf("%s", "Number of keys and values mismatch!")
+	}
+	for i := 0; i < len(keysArray); i++ {
+		form.Add(keysArray[i], valuesArray[i])
+	}
+
+	request, err := http.NewRequest("POST", destUrl, strings.NewReader(form.Encode()))
+	if err != nil {
+		return []byte{}, err
+	}
+	request.PostForm = form
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer response.Body.Close()
+
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return content, nil
 }
