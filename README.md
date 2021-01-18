@@ -7,7 +7,9 @@ Fetch with
 go get -u github.com/NicoNex/echotron
 ```
 
-### Usage
+## Usage
+
+### Long Polling
 
 A very simple implementation:
 
@@ -89,5 +91,40 @@ func (b *bot) Update(update *echotron.Update) {
 func main() {
     dsp = echotron.NewDispatcher(TOKEN, newBot)
     dsp.Run()
+}
+```
+
+### Webhook
+
+```go
+package main
+
+import (
+	"github.com/NicoNex/echotron"
+)
+
+type bot struct {
+	chatId int64
+	echotron.Api
+}
+
+const TOKEN = "YOUR TELEGRAM TOKEN"
+
+func newBot(chatId int64) echotron.Bot {
+	return &bot{
+		chatId,
+		echotron.NewApi(TOKEN),
+	}
+}
+
+func (b *bot) Update(update *echotron.Update) {
+	if update.Message.Text == "/start" {
+		b.SendMessage("Hello world", b.chatId)
+	}
+}
+
+func main() {
+	dsp := echotron.NewDispatcher(TOKEN, newBot)
+	dsp.RunWithWebhook("https://newworld.com:443/bot", 40987)
 }
 ```
