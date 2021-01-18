@@ -40,7 +40,7 @@ type Dispatcher struct {
 	api        Api
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
-	updates    chan []*Update
+	updates    chan *Update
 }
 
 // NewDispatcher returns a new instance of the Dispatcher object;
@@ -51,7 +51,7 @@ func NewDispatcher(token string, newBot NewBotFn) Dispatcher {
 		NewApi(token),
 		make(map[int64]Bot),
 		newBot,
-		make(chan []*Update),
+		make(chan *Update),
 	}
 	go d.listen()
 	return d
@@ -87,7 +87,9 @@ func (d *Dispatcher) Poll() {
 		response := d.api.GetUpdates(lastUpdateId+1, timeout)
 		if response.Ok {
 			if !firstRun {
-				d.updates <- response.Result
+				for _, u := range response.Result {
+					d.updates <- u
+				}
 			}
 
 			if l := len(response.Result); l > 0 {
@@ -103,29 +105,27 @@ func (d *Dispatcher) Poll() {
 }
 
 func (d *Dispatcher) listen() {
-	for uList := range d.updates {
-		for _, update := range uList {
-			var chatId int64
+	for update := range d.updates {
+		var chatId int64
 
-			if update.Message != nil {
-				chatId = update.Message.Chat.ID
-			} else if update.EditedMessage != nil {
-				chatId = update.EditedMessage.Chat.ID
-			} else if update.ChannelPost != nil {
-				chatId = update.ChannelPost.Chat.ID
-			} else if update.EditedChannelPost != nil {
-				chatId = update.EditedChannelPost.Chat.ID
-			} else {
-				continue
-			}
+		if update.Message != nil {
+			chatId = update.Message.Chat.ID
+		} else if update.EditedMessage != nil {
+			chatId = update.EditedMessage.Chat.ID
+		} else if update.ChannelPost != nil {
+			chatId = update.ChannelPost.Chat.ID
+		} else if update.EditedChannelPost != nil {
+			chatId = update.EditedChannelPost.Chat.ID
+		} else {
+			continue
+		}
 
-			if _, isIn := d.sessionMap[chatId]; !isIn {
-				d.sessionMap[chatId] = d.newBot(chatId)
-			}
+		if _, isIn := d.sessionMap[chatId]; !isIn {
+			d.sessionMap[chatId] = d.newBot(chatId)
+		}
 
-			if bot, ok := d.sessionMap[chatId]; ok {
-				go bot.Update(update)
-			}
+		if bot, ok := d.sessionMap[chatId]; ok {
+			go bot.Update(update)
 		}
 	}
 }
@@ -138,30 +138,30 @@ func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
 	if response.Ok {
 		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 			var update Update
-
 			var reader io.ReadCloser
 			var err error
+
 			switch request.Header.Get("Content-Encoding") {
 			case "gzip":
 				reader, err = gzip.NewReader(request.Body)
 				if err != nil {
 					log.Println(err)
+					return
 				}
 				defer reader.Close()
+
 			default:
 				reader = request.Body
 			}
 
-			err = json.NewDecoder(reader).Decode(&update)
-			if err != nil {
+			if err = json.NewDecoder(reader).Decode(&update); err != nil {
 				log.Println(err)
+				return
 			}
 
-			d.updates <- []*Update{&update}
-
+			d.updates <- &update
 		})
-		err := http.ListenAndServe(":"+strconv.Itoa(internalPort), nil)
-		log.Fatalln(err)
+		log.Fatalln(http.ListenAndServe(":"+strconv.Itoa(internalPort), nil))
 	} else {
 		log.Fatalln("Could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
 	}

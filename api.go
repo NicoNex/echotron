@@ -85,7 +85,6 @@ func NewApi(token string) Api {
 // DeleteWebhook deletes webhook
 func (a Api) DeleteWebhook() (response APIResponseUpdate) {
 	content := SendGetRequest(string(a) + "deleteWebhook")
-
 	json.Unmarshal(content, &response)
 	return
 }
@@ -93,12 +92,11 @@ func (a Api) DeleteWebhook() (response APIResponseUpdate) {
 // SetWebhook sets the webhook to bot on Telegram servers
 func (a Api) SetWebhook(url string) (response APIResponseUpdate) {
 	keyVal := map[string]string{"url": url}
-	content, err := SendPostForm(string(a)+"setWebhook", keyVal)
+	content, err := SendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
 	json.Unmarshal(content, &response)
 	return
 }
