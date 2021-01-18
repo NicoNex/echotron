@@ -40,17 +40,21 @@ type Dispatcher struct {
 	api        Api
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
+	updates    chan []*Update
 }
 
 // NewDispatcher returns a new instance of the Dispatcher object;
 // useful for polling telegram and dispatch every update to the
 // corresponding Bot instance.
 func NewDispatcher(token string, newBot NewBotFn) Dispatcher {
-	return Dispatcher{
+	d := Dispatcher{
 		NewApi(token),
 		make(map[int64]Bot),
 		newBot,
+		make(chan []*Update),
 	}
+	go d.listen()
+	return d
 }
 
 // DelSession deletes the Bot instance, seen as a session, from the
@@ -66,13 +70,10 @@ func (d *Dispatcher) AddSession(chatId int64) {
 	}
 }
 
-// Run starts the polling loop and calls the function Update
+// Poll starts the polling loop so that the dispatcher calls the function Update
 // upon receiving any update from Telegram.
-func (d *Dispatcher) Run() {
+func (d *Dispatcher) Poll() {
 	var timeout int
-	var chatId int64
-	var response APIResponseUpdate
-
 	var firstRun = true
 	var lastUpdateId = -1
 
@@ -83,32 +84,14 @@ func (d *Dispatcher) Run() {
 	}
 
 	for {
-		response = d.api.GetUpdates(lastUpdateId+1, timeout)
+		response := d.api.GetUpdates(lastUpdateId+1, timeout)
 		if response.Ok {
-			for _, update := range response.Result {
-				lastUpdateId = update.ID
+			if !firstRun {
+				d.updates <- response.Result
+			}
 
-				if update.Message != nil {
-					chatId = update.Message.Chat.ID
-				} else if update.EditedMessage != nil {
-					chatId = update.EditedMessage.Chat.ID
-				} else if update.ChannelPost != nil {
-					chatId = update.ChannelPost.Chat.ID
-				} else if update.EditedChannelPost != nil {
-					chatId = update.EditedChannelPost.Chat.ID
-				} else {
-					continue
-				}
-
-				if _, isIn := d.sessionMap[chatId]; !isIn {
-					d.sessionMap[chatId] = d.newBot(chatId)
-				}
-
-				if !firstRun {
-					if bot, ok := d.sessionMap[chatId]; ok {
-						go bot.Update(update)
-					}
-				}
+			if l := len(response.Result); l > 0 {
+				lastUpdateId = response.Result[l-1].ID
 			}
 		}
 
@@ -119,33 +102,11 @@ func (d *Dispatcher) Run() {
 	}
 }
 
-// RunWithWebhook sets webhook and starts a server listening for incoming updates
-func (d *Dispatcher) RunWithWebhook(url string, internalPort int) {
-	var chatId int64
-	var response APIResponseUpdate
+func (d *Dispatcher) listen() {
+	for uList := range d.updates {
+		for _, update := range uList {
+			var chatId int64
 
-	response = d.api.SetWebhook(url)
-	if response.Ok {
-		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-			var update Update
-
-			var reader io.ReadCloser
-			var err error
-			switch request.Header.Get("Content-Encoding") {
-			case "gzip":
-				reader, err = gzip.NewReader(request.Body)
-				if err != nil {
-					log.Println(err)
-				}
-				defer reader.Close()
-			default:
-				reader = request.Body
-			}
-
-			err = json.NewDecoder(reader).Decode(&update)
-			if err != nil {
-				log.Println(err)
-			}
 
 			if update.Message != nil {
 				chatId = update.Message.Chat.ID
@@ -155,6 +116,8 @@ func (d *Dispatcher) RunWithWebhook(url string, internalPort int) {
 				chatId = update.ChannelPost.Chat.ID
 			} else if update.EditedChannelPost != nil {
 				chatId = update.EditedChannelPost.Chat.ID
+			} else {
+				continue
 			}
 
 			if _, isIn := d.sessionMap[chatId]; !isIn {
@@ -162,11 +125,8 @@ func (d *Dispatcher) RunWithWebhook(url string, internalPort int) {
 			}
 
 			if bot, ok := d.sessionMap[chatId]; ok {
-				go bot.Update(&update)
+				go bot.Update(update)
 			}
-
-		})
-		err := http.ListenAndServe(":"+strconv.Itoa(internalPort), nil)
-		log.Fatalln(err)
+		}
 	}
 }
