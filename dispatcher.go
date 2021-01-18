@@ -78,7 +78,7 @@ func (d *Dispatcher) Poll() {
 	var lastUpdateId = -1
 
 	// deletes webhook if present to run in long polling mode
-	response = d.api.DeleteWebhook()
+	response := d.api.DeleteWebhook()
 	if !response.Ok {
 		log.Fatalln("Could not disable webhook, running in long polling mode is not possible.")
 	}
@@ -107,7 +107,6 @@ func (d *Dispatcher) listen() {
 		for _, update := range uList {
 			var chatId int64
 
-
 			if update.Message != nil {
 				chatId = update.Message.Chat.ID
 			} else if update.EditedMessage != nil {
@@ -128,5 +127,42 @@ func (d *Dispatcher) listen() {
 				go bot.Update(update)
 			}
 		}
+	}
+}
+
+// ListenWebhook sets a webhook and listens for incoming updates
+func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
+	var response APIResponseUpdate
+
+	response = d.api.SetWebhook(url)
+	if response.Ok {
+		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+			var update Update
+
+			var reader io.ReadCloser
+			var err error
+			switch request.Header.Get("Content-Encoding") {
+			case "gzip":
+				reader, err = gzip.NewReader(request.Body)
+				if err != nil {
+					log.Println(err)
+				}
+				defer reader.Close()
+			default:
+				reader = request.Body
+			}
+
+			err = json.NewDecoder(reader).Decode(&update)
+			if err != nil {
+				log.Println(err)
+			}
+
+			d.updates <- []*Update{&update}
+
+		})
+		err := http.ListenAndServe(":"+strconv.Itoa(internalPort), nil)
+		log.Fatalln(err)
+	} else {
+		log.Fatalln("Could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
 	}
 }
