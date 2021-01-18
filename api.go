@@ -92,13 +92,11 @@ func (a Api) DeleteWebhook() (response APIResponseUpdate) {
 
 // SetWebhook sets the webhook to bot on Telegram servers
 func (a Api) SetWebhook(url string) (response APIResponseUpdate) {
-	keys := make([]string, 1)
-	values := make([]string, 1)
-	keys[0] = "url"
-	values[0] = url
-	content, err := SendPostForm(string(a)+"setWebhook", keys, values)
+	keyVal:=map[string]string{"url": url}
+	content, err := SendPostForm(string(a)+"setWebhook", keyVal)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	json.Unmarshal(content, &response)

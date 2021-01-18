@@ -20,7 +20,6 @@ package echotron
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -92,13 +91,11 @@ func SendPostRequest(url string, filename string, filetype string) []byte {
 	return content
 }
 
-func SendPostForm(destUrl string, keysArray, valuesArray []string) ([]byte, error) {
+func SendPostForm(destUrl string, keyVals map[string]string) ([]byte, error) {
 	form := url.Values{}
-	if len(keysArray) != len(valuesArray) {
-		return nil, fmt.Errorf("%s", "Number of keys and values mismatch!")
-	}
-	for i := 0; i < len(keysArray); i++ {
-		form.Add(keysArray[i], valuesArray[i])
+
+	for k, v := range keyVals {
+		form.Add(k, v)
 	}
 
 	request, err := http.NewRequest("POST", destUrl, strings.NewReader(form.Encode()))
