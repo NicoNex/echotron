@@ -160,13 +160,14 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...
 	return
 }
 
-func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) (response APIResponseMessage) {
+func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte, opts ...Option) (response APIResponseMessage) {
 	var url = fmt.Sprintf(
-		"%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
+		"%ssendMessage?text=%s&chat_id=%d&reply_markup=%s%s",
 		string(a),
 		encode(text),
 		chatId,
 		keyboard,
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
