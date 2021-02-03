@@ -144,10 +144,10 @@ type ChosenInlineResult struct {
 // the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
 // the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
 type CallbackQuery struct {
-	ID              string `json:"id"`
-	User            *User  `json:"user"`
-	Message         string `json:"message,omitempty"`
-	InlineMessageId string `json:"inline_message_id,omitempty"`
+	ID              string   `json:"id"`
+	User            *User    `json:"user"`
+	Message         *Message `json:"message,omitempty"`
+	InlineMessageId string   `json:"inline_message_id,omitempty"`
 }
 
 // This object represents an audio file to be treated as music by the Telegram clients.
