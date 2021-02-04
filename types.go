@@ -148,6 +148,7 @@ type CallbackQuery struct {
 	User            *User    `json:"user"`
 	Message         *Message `json:"message,omitempty"`
 	InlineMessageId string   `json:"inline_message_id,omitempty"`
+	Data            string   `json:"data,omitempty"`
 }
 
 // This object represents an audio file to be treated as music by the Telegram clients.

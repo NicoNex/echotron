@@ -116,6 +116,8 @@ func (d *Dispatcher) listen() {
 			chatId = update.ChannelPost.Chat.ID
 		} else if update.EditedChannelPost != nil {
 			chatId = update.EditedChannelPost.Chat.ID
+		} else if update.CallbackQuery != nil {
+			chatId = update.CallbackQuery.Message.Chat.ID
 		} else {
 			continue
 		}
