@@ -19,22 +19,22 @@
 package echotron
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 )
 
 type Api string
 
-type Option int
+type Option string
 
 const (
-	PARSE_MARKDOWN Option = iota
-	PARSE_HTML
-	DISABLE_WEB_PAGE_PREVIEW
-	DISABLE_NOTIFICATION
+	PARSE_MARKDOWN           Option = "&parse_mode=markdown"
+	PARSE_HTML                      = "&parse_mode=html"
+	DISABLE_WEB_PAGE_PREVIEW        = "&disable_web_page_preview=true"
+	DISABLE_NOTIFICATION            = "&disable_notification=true"
 )
 
 type ChatAction string
@@ -57,24 +57,16 @@ func encode(s string) string {
 }
 
 func parseOpts(opts ...Option) string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 
 	for _, o := range opts {
-		switch o {
-		case PARSE_MARKDOWN:
-			buf.WriteString("&parse_mode=markdown")
-
-		case PARSE_HTML:
-			buf.WriteString("&parse_mode=html")
-
-		case DISABLE_WEB_PAGE_PREVIEW:
-			buf.WriteString("&disable_web_page_preview=true")
-
-		case DISABLE_NOTIFICATION:
-			buf.WriteString("&disable_notification=true")
-		}
+		buf.WriteString(string(o))
 	}
 	return buf.String()
+}
+
+func makeInlineKeyboard(rows ...InlineKbdRow) InlineKeyboard {
+	return InlineKeyboard{rows}
 }
 
 // NewApi returns a new Api object.
@@ -160,13 +152,14 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...
 	return
 }
 
-func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte) (response APIResponseMessage) {
+func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte, opts ...Option) (response APIResponseMessage) {
 	var url = fmt.Sprintf(
-		"%ssendMessage?text=%s&chat_id=%d&parse_mode=markdown&reply_markup=%s",
+		"%ssendMessage?text=%s&chat_id=%d&reply_markup=%s%s",
 		string(a),
 		encode(text),
 		chatId,
 		keyboard,
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -304,7 +297,8 @@ func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendVideoNoteByID(videoId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVideoNote?chat_id=%d&video_note=%s",
+	var url = fmt.Sprintf(
+		"%ssendVideoNote?chat_id=%d&video_note=%s",
 		string(a),
 		chatId,
 		encode(videoId),
@@ -316,7 +310,8 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (response APIRespon
 }
 
 func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&caption=%s%s",
+	var url = fmt.Sprintf(
+		"%ssendVoice?chat_id=%d&caption=%s%s",
 		string(a),
 		chatId,
 		encode(caption),
@@ -329,7 +324,8 @@ func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (
 }
 
 func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendVoice?chat_id=%d&voice=%s%s",
+	var url = fmt.Sprintf(
+		"%ssendVoice?chat_id=%d&voice=%s%s",
 		string(a),
 		chatId,
 		encode(voiceId),
@@ -342,7 +338,8 @@ func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s",
+	var url = fmt.Sprintf(
+		"%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s",
 		string(a),
 		chatId,
 		encode(phoneNumber),
@@ -356,7 +353,8 @@ func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) 
 }
 
 func (a Api) SendStickerByID(stickerId string, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendSticker?chat_id=%d&sticker=%s",
+	var url = fmt.Sprintf(
+		"%ssendSticker?chat_id=%d&sticker=%s",
 		string(a),
 		chatId,
 		encode(stickerId),
@@ -368,7 +366,8 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) (response APIRespon
 }
 
 func (a Api) SendChatAction(action ChatAction, chatId int64) (response APIResponseMessage) {
-	var url = fmt.Sprintf("%ssendChatAction?chat_id=%d&action=%s",
+	var url = fmt.Sprintf(
+		"%ssendChatAction?chat_id=%d&action=%s",
 		string(a),
 		chatId,
 		action,
@@ -392,18 +391,12 @@ func (a Api) KeyboardRow(buttons ...Button) (kbdRow KbdRow) {
 }
 
 func (a Api) KeyboardMarkup(resizeKeyboard, oneTimeKeyboard, selective bool, keyboardRows ...KbdRow) (kbd []byte) {
-	keyboard := Keyboard{
-		nil,
+	kbd, _ = json.Marshal(Keyboard{
+		keyboardRows,
 		resizeKeyboard,
 		oneTimeKeyboard,
 		selective,
-	}
-
-	for _, row := range keyboardRows {
-		keyboard.Keyboard = append(keyboard.Keyboard, row)
-	}
-
-	kbd, _ = json.Marshal(keyboard)
+	})
 	return
 }
 
@@ -422,19 +415,12 @@ func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
 }
 
 // Returns a new inline keyboard row with the given buttons.
-func (a Api) InlineKbdRow(inlineButtons ...InlineButton) (inlineKbdRow InlineKbdRow) {
-	return append(inlineKbdRow, inlineButtons...)
-}
-
-// Returns an inline keyboard object with the specified rows.
-func (a Api) NewInlineKeyboard(rows ...InlineKbdRow) (ret InlineKeyboard) {
-	ret.InlineKeyboard = append(ret.InlineKeyboard, rows...)
-	return
+func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
+	return inlineButtons
 }
 
 // Returns a byte slice containing the inline keyboard json data.
 func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) (jsn []byte) {
-	keyboard := a.NewInlineKeyboard(inlineKbdRows...)
-	jsn, _ = json.Marshal(keyboard)
+	jsn, _ = json.Marshal(makeInlineKeyboard(inlineKbdRows...))
 	return
 }
