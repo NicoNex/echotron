@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -205,6 +206,21 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 	)
 
 	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) SendPhotoWithKeyboard(filename, caption string, chatId int64, keyboard []byte, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendPhoto?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatId,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content := SendPostRequest(url, filename, "photo")
 	json.Unmarshal(content, &response)
 	return
 }
@@ -422,5 +438,64 @@ func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 // Returns a byte slice containing the inline keyboard json data.
 func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) (jsn []byte) {
 	jsn, _ = json.Marshal(makeInlineKeyboard(inlineKbdRows...))
+	return
+}
+
+func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%seditMessageReplyMarkup?chat_id=%d&message_id=%d&reply_markup=%s",
+		string(a),
+		chatId,
+		messageId,
+		keyboard,
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%seditMessageText?chat_id=%d&message_id=%d&text=%s%s",
+		string(a),
+		chatId,
+		messageId,
+		encode(text),
+		parseOpts(opts...),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%seditMessageText?chat_id=%d&message_id=%d&text=%s&reply_markup=%s%s",
+		string(a),
+		chatId,
+		messageId,
+		encode(text),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
+		string(a),
+		id,
+		text,
+		strconv.FormatBool(showAlert),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
 	return
 }
