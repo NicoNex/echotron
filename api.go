@@ -155,12 +155,12 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...
 
 func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte, opts ...Option) (response APIResponseMessage) {
 	var url = fmt.Sprintf(
-		"%ssendMessage?text=%s&chat_id=%d%s&reply_markup=%s",
+		"%ssendMessage?text=%s&chat_id=%d&reply_markup=%s%s",
 		string(a),
 		encode(text),
 		chatId,
-		parseOpts(opts...),
 		keyboard,
+		parseOpts(opts...),
 	)
 
 	content := SendGetRequest(url)
@@ -455,7 +455,22 @@ func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte
 	return
 }
 
-func (a Api) EditMessageText(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (response APIResponseMessage) {
+func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%seditMessageText?chat_id=%d&message_id=%d&text=%s%s",
+		string(a),
+		chatId,
+		messageId,
+		encode(text),
+		parseOpts(opts...),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (response APIResponseMessage) {
 	var url = fmt.Sprintf(
 		"%seditMessageText?chat_id=%d&message_id=%d&text=%s&reply_markup=%s%s",
 		string(a),
@@ -472,13 +487,12 @@ func (a Api) EditMessageText(chatId int64, messageId int, text string, keyboard 
 }
 
 func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (response APIResponseMessage) {
-	showAlertText := strconv.FormatBool(showAlert)
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
 		string(a),
 		id,
 		text,
-		showAlertText,
+		strconv.FormatBool(showAlert),
 	)
 
 	content := SendGetRequest(url)

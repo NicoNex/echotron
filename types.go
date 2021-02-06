@@ -145,7 +145,7 @@ type ChosenInlineResult struct {
 // the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
 type CallbackQuery struct {
 	ID              string   `json:"id"`
-	User            *User    `json:"user"`
+	User            *User    `json:"from"`
 	Message         *Message `json:"message,omitempty"`
 	InlineMessageId string   `json:"inline_message_id,omitempty"`
 	Data            string   `json:"data,omitempty"`
