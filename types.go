@@ -89,29 +89,29 @@ type Update struct {
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
 }
 
+type APIResponseBase struct {
+	Ok          bool   `json:"ok"`
+	ErrorCode   int    `json:"error_code,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
 // This object represents the incoming response from Telegram servers.
 // Used by getUpdates (since it returns an array of Updates).
 type APIResponseUpdate struct {
-	Ok          bool      `json:"ok"`
-	Result      []*Update `json:"result,omitempty"`
-	ErrorCode   int       `json:"error_code,omitempty"`
-	Description string    `json:"description,omitempty"`
+	APIResponseBase
+	Result []*Update `json:"result,omitempty"`
 }
 
 // This object represents the incoming response from Telegram servers.
 // Used by the methods in the api.go module (since they return a Message).
 type APIResponseMessage struct {
-	Ok          bool     `json:"ok"`
-	Result      *Message `json:"result,omitempty"`
-	ErrorCode   int      `json:"error_code,omitempty"`
-	Description string   `json:"description,omitempty"`
+	APIResponseBase
+	Result *Message `json:"result,omitempty"`
 }
 
 type APIResponseCommands struct {
-	Ok          bool         `json:"ok"`
-	Result      []BotCommand `json:"result,omitempty"`
-	ErrorCode   int          `json:"error_code,omitempty"`
-	Description string       `json:"description,omitempty"`
+	APIResponseBase
+	Result []BotCommand `json:"result,omitempty"`
 }
 
 // This object represents a phone contact.
