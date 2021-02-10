@@ -430,6 +430,16 @@ func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
 	}
 }
 
+// Same as InlineKbdBtn, but only with url.
+func (a Api) InlineKbdBtnUrl(text, url string) InlineButton {
+	return a.InlineKbdBtn(text, url, "")
+}
+
+// Same as InlineKbdBtn, but only with callbackData.
+func (a Api) InlineKbdBtnCbd(text, callbackData string) InlineButton {
+	return a.InlineKbdBtn(text, "", callbackData)
+}
+
 // Returns a new inline keyboard row with the given buttons.
 func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	return inlineButtons
