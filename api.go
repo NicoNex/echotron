@@ -509,3 +509,32 @@ func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (response APIR
 	json.Unmarshal(content, &response)
 	return
 }
+
+func (a Api) GetMyCommands() (response APIResponseCommands) {
+	var url = fmt.Sprintf(
+		"%sgetMyCommands",
+		string(a),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) SetMyCommands(commands ...BotCommand) (response APIResponseCommands) {
+	jsn, _ := json.Marshal(commands)
+
+	var url = fmt.Sprintf(
+		"%ssetMyCommands?commands=%s",
+		string(a),
+		jsn,
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) Command(command, description string) BotCommand {
+	return BotCommand{command, description}
+}

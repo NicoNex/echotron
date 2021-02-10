@@ -107,6 +107,13 @@ type APIResponseMessage struct {
 	Description string   `json:"description,omitempty"`
 }
 
+type APIResponseCommands struct {
+	Ok          bool         `json:"ok"`
+	Result      []BotCommand `json:"result,omitempty"`
+	ErrorCode   int          `json:"error_code,omitempty"`
+	Description string       `json:"description,omitempty"`
+}
+
 // This object represents a phone contact.
 type Contact struct {
 	PhoneNumber string `json:"phone_number"`
@@ -272,4 +279,9 @@ type InlineKbdRow []InlineButton
 // This object represents an inline keyboard.
 type InlineKeyboard struct {
 	InlineKeyboard []InlineKbdRow `json:"inline_keyboard"`
+}
+
+type BotCommand struct {
+	Command     string `json:"command"`
+	Description string `json:"description"`
 }
