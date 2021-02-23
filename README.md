@@ -16,7 +16,11 @@ A very simple implementation:
 ```go
 package main
 
-import "github.com/NicoNex/echotron"
+import (
+    "log"
+
+    "github.com/NicoNex/echotron"
+)
 
 type bot struct {
     chatId int64
@@ -40,7 +44,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp := echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    log.Println(dsp.Poll())
 }
 ```
 
@@ -51,6 +55,7 @@ Also proof of concept with self destruction for low ram usage
 package main
 
 import (
+    "log"
     "time"
 
     "github.com/NicoNex/echotron"
@@ -89,8 +94,8 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-    dsp = echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    dsp := echotron.NewDispatcher(TOKEN, newBot)
+    log.Println(dsp.Poll())
 }
 ```
 
