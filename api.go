@@ -538,3 +538,30 @@ func (a Api) SetMyCommands(commands ...BotCommand) (response APIResponseCommands
 func (a Api) Command(command, description string) BotCommand {
 	return BotCommand{command, description}
 }
+
+func (a Api) SendAnimation(filename, caption string, chatId int64, opts ...Option) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendAnimation?chat_id=%d&caption=%s%s",
+		string(a),
+		chatId,
+		encode(caption),
+		parseOpts(opts...),
+	)
+
+	content := SendPostRequest(url, filename, "animation")
+	json.Unmarshal(content, &response)
+	return
+}
+
+func (a Api) SendAnimationByID(animationId string, chatId int64) (response APIResponseMessage) {
+	var url = fmt.Sprintf(
+		"%ssendAnimation?chat_id=%d&animation=%s",
+		string(a),
+		chatId,
+		encode(animationId),
+	)
+
+	content := SendGetRequest(url)
+	json.Unmarshal(content, &response)
+	return
+}
