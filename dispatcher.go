@@ -21,6 +21,7 @@ package echotron
 import (
 	"compress/gzip"
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -72,20 +73,24 @@ func (d *Dispatcher) AddSession(chatId int64) {
 
 // Poll starts the polling loop so that the dispatcher calls the function Update
 // upon receiving any update from Telegram.
-func (d *Dispatcher) Poll() {
+func (d *Dispatcher) Poll() error {
 	var timeout int
 	var firstRun = true
 	var lastUpdateId = -1
 
 	// deletes webhook if present to run in long polling mode
-	response := d.api.DeleteWebhook()
-	if !response.Ok {
-		log.Fatalln("Could not disable webhook, running in long polling mode is not possible.")
+	response, err := d.api.DeleteWebhook()
+	if err != nil {
+		return err
+	} else if !response.Ok {
+		return errors.New("could not disable webhook, running in long polling mode is not possible.")
 	}
 
 	for {
-		response := d.api.GetUpdates(lastUpdateId+1, timeout)
-		if response.Ok {
+		response, err := d.api.GetUpdates(lastUpdateId+1, timeout)
+		if err != nil {
+			return err
+		} else if response.Ok {
 			if !firstRun {
 				for _, u := range response.Result {
 					d.updates <- u
@@ -102,6 +107,8 @@ func (d *Dispatcher) Poll() {
 			timeout = 120
 		}
 	}
+
+	return nil
 }
 
 func (d *Dispatcher) listen() {
@@ -133,11 +140,13 @@ func (d *Dispatcher) listen() {
 }
 
 // ListenWebhook sets a webhook and listens for incoming updates
-func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
+func (d *Dispatcher) ListenWebhook(url string, internalPort int) error {
 	var response APIResponseUpdate
 
-	response = d.api.SetWebhook(url)
-	if response.Ok {
+	response, err := d.api.SetWebhook(url)
+	if err != nil {
+		return err
+	} else if response.Ok {
 		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 			var update Update
 			var reader io.ReadCloser
@@ -165,6 +174,8 @@ func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
 		})
 		log.Fatalln(http.ListenAndServe(":"+strconv.Itoa(internalPort), nil))
 	} else {
-		log.Fatalln("Could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
+		return errors.New("could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
 	}
+
+	return nil
 }
