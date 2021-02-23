@@ -40,7 +40,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp := echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    dsp.Poll()
 }
 ```
 
@@ -90,7 +90,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp = echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    dsp.Poll()
 }
 ```
 
