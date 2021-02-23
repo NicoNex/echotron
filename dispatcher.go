@@ -22,10 +22,10 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // Bot is the interface that must be implemented by your definition of
@@ -172,9 +172,9 @@ func (d *Dispatcher) ListenWebhook(url string, internalPort int) error {
 
 			d.updates <- &update
 		})
-		log.Fatalln(http.ListenAndServe(":"+strconv.Itoa(internalPort), nil))
+		return http.ListenAndServe(fmt.Sprintf(":%d", internalPort), nil)
 	} else {
-		return errors.New("could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
+		return errors.New(fmt.Sprintf("could not set webhook: %d %s", response.ErrorCode, response.Description))
 	}
 
 	return nil
