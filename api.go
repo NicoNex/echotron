@@ -216,9 +216,11 @@ func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "photo")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "photo")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -231,9 +233,11 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendPhotoWithKeyboard(filename, caption string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
@@ -246,9 +250,11 @@ func (a Api) SendPhotoWithKeyboard(filename, caption string, chatId int64, keybo
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "photo")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "photo")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -260,9 +266,11 @@ func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "audio")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "audio")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -275,9 +283,11 @@ func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -289,9 +299,11 @@ func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "document")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "document")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -304,9 +316,11 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -318,9 +332,11 @@ func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "video")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "video")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -333,9 +349,11 @@ func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage, error) {
@@ -346,9 +364,11 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage
 		encode(videoId),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -360,9 +380,11 @@ func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content := SendPostRequest(url, filename, "voice")
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendPostRequest(url, filename, "voice")
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
@@ -374,9 +396,11 @@ func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) (APIResponseMessage, error) {
@@ -389,9 +413,11 @@ func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) 
 		encode(lastName),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage, error) {
@@ -402,9 +428,11 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage
 		encode(stickerId),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SendChatAction(action ChatAction, chatId int64) (APIResponseMessage, error) {
@@ -415,9 +443,11 @@ func (a Api) SendChatAction(action ChatAction, chatId int64) (APIResponseMessage
 		action,
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) KeyboardButton(text string, requestContact, requestLocation bool) Button {
@@ -486,9 +516,11 @@ func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte
 		keyboard,
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...Option) (APIResponseMessage, error) {
@@ -501,9 +533,11 @@ func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...O
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
@@ -517,9 +551,11 @@ func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text strin
 		parseOpts(opts...),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMessage, error) {
@@ -531,9 +567,11 @@ func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMe
 		strconv.FormatBool(showAlert),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) GetMyCommands() (APIResponseCommands, error) {
@@ -542,9 +580,11 @@ func (a Api) GetMyCommands() (APIResponseCommands, error) {
 		string(a),
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) {
@@ -556,9 +596,11 @@ func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) 
 		jsn,
 	)
 
-	content := SendGetRequest(url)
-	json.Unmarshal(content, &response)
-	return
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	return res, json.Unmarshal(content, &res)
 }
 
 func (a Api) Command(command, description string) BotCommand {
