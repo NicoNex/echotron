@@ -208,6 +208,7 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (APIResponseMessage, err
 }
 
 func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s%s",
 		string(a),
@@ -216,7 +217,7 @@ func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "photo")
+	content, err := SendPostRequest(url, "photo", data)
 	if err != nil {
 		return res, err
 	}
@@ -224,6 +225,7 @@ func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option
 }
 
 func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&photo=%s&caption=%s%s",
 		string(a),
@@ -240,7 +242,8 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 	return res, json.Unmarshal(content, &res)
 }
 
-func (a Api) SendPhotoWithKeyboard(filename, caption string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendPhotoWithKeyboard(caption string, chatId int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s&reply_markup=%s%s",
 		string(a),
@@ -250,14 +253,15 @@ func (a Api) SendPhotoWithKeyboard(filename, caption string, chatId int64, keybo
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "photo")
+	content, err := SendPostRequest(url, "photo", data)
 	if err != nil {
 		return res, err
 	}
 	return res, json.Unmarshal(content, &res)
 }
 
-func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendAudio(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&caption=%s%s",
 		string(a),
@@ -266,7 +270,7 @@ func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "audio")
+	content, err := SendPostRequest(url, "audio", data)
 	if err != nil {
 		return res, err
 	}
@@ -274,6 +278,7 @@ func (a Api) SendAudio(filename, caption string, chatId int64, opts ...Option) (
 }
 
 func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&audio=%s&caption=%s%s",
 		string(a),
@@ -290,7 +295,8 @@ func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option
 	return res, json.Unmarshal(content, &res)
 }
 
-func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendDocument(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&caption=%s%s",
 		string(a),
@@ -299,7 +305,7 @@ func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "document")
+	content, err := SendPostRequest(url, "document", data)
 	if err != nil {
 		return res, err
 	}
@@ -307,6 +313,7 @@ func (a Api) SendDocument(filename, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&document=%s&caption=%s%s",
 		string(a),
@@ -323,7 +330,8 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...
 	return res, json.Unmarshal(content, &res)
 }
 
-func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendVideo(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&caption=%s%s",
 		string(a),
@@ -332,7 +340,7 @@ func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "video")
+	content, err := SendPostRequest(url, "video", data)
 	if err != nil {
 		return res, err
 	}
@@ -340,6 +348,7 @@ func (a Api) SendVideo(filename, caption string, chatId int64, opts ...Option) (
 }
 
 func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&video=%s&caption=%s%s",
 		string(a),
@@ -357,6 +366,7 @@ func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&video_note=%s",
 		string(a),
@@ -371,7 +381,8 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage
 	return res, json.Unmarshal(content, &res)
 }
 
-func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendVoice(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&caption=%s%s",
 		string(a),
@@ -380,7 +391,7 @@ func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filename, "voice")
+	content, err := SendPostRequest(url, "voice", data)
 	if err != nil {
 		return res, err
 	}
@@ -388,6 +399,7 @@ func (a Api) SendVoice(filename, caption string, chatId int64, opts ...Option) (
 }
 
 func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&voice=%s%s",
 		string(a),
@@ -404,6 +416,7 @@ func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s",
 		string(a),
@@ -421,6 +434,7 @@ func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) 
 }
 
 func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendSticker?chat_id=%d&sticker=%s",
 		string(a),
@@ -436,6 +450,7 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage
 }
 
 func (a Api) SendChatAction(action ChatAction, chatId int64) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendChatAction?chat_id=%d&action=%s",
 		string(a),
@@ -508,6 +523,7 @@ func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) (jsn []byte) {
 }
 
 func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageReplyMarkup?chat_id=%d&message_id=%d&reply_markup=%s",
 		string(a),
@@ -524,6 +540,7 @@ func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte
 }
 
 func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?chat_id=%d&message_id=%d&text=%s%s",
 		string(a),
@@ -541,6 +558,7 @@ func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...O
 }
 
 func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?chat_id=%d&message_id=%d&text=%s&reply_markup=%s%s",
 		string(a),
@@ -559,6 +577,7 @@ func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text strin
 }
 
 func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
 		string(a),
@@ -575,6 +594,7 @@ func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMe
 }
 
 func (a Api) GetMyCommands() (APIResponseCommands, error) {
+	var res APIResponseCommands
 	var url = fmt.Sprintf(
 		"%sgetMyCommands",
 		string(a),
@@ -588,6 +608,7 @@ func (a Api) GetMyCommands() (APIResponseCommands, error) {
 }
 
 func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) {
+	var res APIResponseCommands
 	jsn, _ := json.Marshal(commands)
 
 	var url = fmt.Sprintf(
