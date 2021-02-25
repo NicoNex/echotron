@@ -24,6 +24,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strings"
 )
 
@@ -34,18 +35,24 @@ func SendGetRequest(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	content, err := io.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, err
 	}
 
-	return content, nil
+	return data, nil
 }
 
-func SendPostRequest(url, filetype string, content []byte) ([]byte, error) {
-	var buf = bytes.NewBuffer(content)
+func SendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
+	var buf = new(bytes.Buffer)
 	var w = multipart.NewWriter(buf)
-	defer w.Close()
+
+	part, err := w.CreateFormFile(ftype, filepath.Base(fname))
+	if err != nil {
+		return []byte{}, err
+	}
+	part.Write(b)
+	w.Close()
 
 	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {
@@ -53,7 +60,7 @@ func SendPostRequest(url, filetype string, content []byte) ([]byte, error) {
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
 
-	var client *http.Client
+	var client = new(http.Client)
 	res, err := client.Do(req)
 	if err != nil {
 		return []byte{}, err
