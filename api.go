@@ -218,10 +218,9 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (APIResponseMessage, err
 }
 
 func (a Api) SendPhoto(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendPhotoBytes(filepath, caption, chatId, b, opts...)
 }
@@ -264,10 +263,9 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendPhotoWithKeyboard(filepath, caption string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendPhotoWithKeyboardBytes(filepath, caption, chatId, b, keyboard, opts...)
 }
@@ -292,10 +290,9 @@ func (a Api) SendPhotoWithKeyboardBytes(filepath, caption string, chatId int64, 
 }
 
 func (a Api) SendAudio(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendAudioBytes(filepath, caption, chatId, b, opts...)
 }
@@ -338,10 +335,9 @@ func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option
 }
 
 func (a Api) SendDocument(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendDocumentBytes(filepath, caption, chatId, b, opts...)
 }
@@ -384,10 +380,9 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...
 }
 
 func (a Api) SendVideo(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendVideoBytes(filepath, caption, chatId, b, opts...)
 }
@@ -447,10 +442,9 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage
 }
 
 func (a Api) SendVoice(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
-	var res APIResponseMessage
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return res, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendVoiceBytes(filepath, caption, chatId, b, opts...)
 }
