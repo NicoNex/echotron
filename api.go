@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -216,7 +217,16 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (APIResponseMessage, err
 	return res, nil
 }
 
-func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendPhoto(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendPhotoBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendPhotoBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s%s",
@@ -226,7 +236,7 @@ func (a Api) SendPhoto(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "photo", data)
+	content, err := SendPostRequest(url, filepath, "photo", data)
 	if err != nil {
 		return res, err
 	}
@@ -253,7 +263,16 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendPhotoWithKeyboard(caption string, chatId int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendPhotoWithKeyboard(filepath, caption string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendPhotoWithKeyboardBytes(filepath, caption, chatId, b, keyboard, opts...)
+}
+
+func (a Api) SendPhotoWithKeyboardBytes(filepath, caption string, chatId int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s&reply_markup=%s%s",
@@ -264,7 +283,7 @@ func (a Api) SendPhotoWithKeyboard(caption string, chatId int64, data []byte, ke
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "photo", data)
+	content, err := SendPostRequest(url, filepath, "photo", data)
 	if err != nil {
 		return res, err
 	}
@@ -272,7 +291,16 @@ func (a Api) SendPhotoWithKeyboard(caption string, chatId int64, data []byte, ke
 	return res, nil
 }
 
-func (a Api) SendAudio(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendAudio(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendAudioBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendAudioBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&caption=%s%s",
@@ -282,7 +310,7 @@ func (a Api) SendAudio(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "audio", data)
+	content, err := SendPostRequest(url, filepath, "audio", data)
 	if err != nil {
 		return res, err
 	}
@@ -309,7 +337,16 @@ func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendDocument(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendDocument(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendDocumentBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendDocumentBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&caption=%s%s",
@@ -319,7 +356,7 @@ func (a Api) SendDocument(caption string, chatId int64, data []byte, opts ...Opt
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "document", data)
+	content, err := SendPostRequest(url, filepath, "document", data)
 	if err != nil {
 		return res, err
 	}
@@ -346,7 +383,16 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...
 	return res, nil
 }
 
-func (a Api) SendVideo(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendVideo(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendVideoBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendVideoBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&caption=%s%s",
@@ -356,7 +402,7 @@ func (a Api) SendVideo(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "video", data)
+	content, err := SendPostRequest(url, filepath, "video", data)
 	if err != nil {
 		return res, err
 	}
@@ -400,7 +446,16 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage
 	return res, nil
 }
 
-func (a Api) SendVoice(caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a Api) SendVoice(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return res, err
+	}
+	return a.SendVoiceBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendVoiceBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&caption=%s%s",
@@ -410,7 +465,7 @@ func (a Api) SendVoice(caption string, chatId int64, data []byte, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, "voice", data)
+	content, err := SendPostRequest(url, filepath, "voice", data)
 	if err != nil {
 		return res, err
 	}
