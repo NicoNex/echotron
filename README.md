@@ -4,7 +4,7 @@ Library for telegram bots written in pure go
 
 Fetch with
 ```bash
-go get -u github.com/NicoNex/echotron
+go get github.com/NicoNex/echotron/v2
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ A very simple implementation:
 ```go
 package main
 
-import "github.com/NicoNex/echotron"
+import "github.com/NicoNex/echotron/v2"
 
 type bot struct {
     chatId int64
@@ -40,7 +40,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp := echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    dsp.Poll()
 }
 ```
 
@@ -53,7 +53,7 @@ package main
 import (
     "time"
 
-    "github.com/NicoNex/echotron"
+    "github.com/NicoNex/echotron/v2"
 )
 
 type bot struct {
@@ -90,7 +90,7 @@ func (b *bot) Update(update *echotron.Update) {
 
 func main() {
     dsp = echotron.NewDispatcher(TOKEN, newBot)
-    dsp.Run()
+    dsp.Poll()
 }
 ```
 
@@ -99,7 +99,7 @@ func main() {
 ```go
 package main
 
-import "github.com/NicoNex/echotron"
+import "github.com/NicoNex/echotron/v2"
 
 type bot struct {
 	chatId int64
