@@ -3,8 +3,9 @@
 Library for telegram bots written in pure go
 
 Fetch with
+
 ```bash
-go get -u github.com/NicoNex/echotron
+go get github.com/NicoNex/echotron/v2
 ```
 
 ## Usage
@@ -19,7 +20,7 @@ package main
 import (
     "log"
 
-    "github.com/NicoNex/echotron"
+    "github.com/NicoNex/echotron/v2"
 )
 
 type bot struct {
@@ -58,7 +59,7 @@ import (
     "log"
     "time"
 
-    "github.com/NicoNex/echotron"
+    "github.com/NicoNex/echotron/v2"
 )
 
 type bot struct {
@@ -104,7 +105,7 @@ func main() {
 ```go
 package main
 
-import "github.com/NicoNex/echotron"
+import "github.com/NicoNex/echotron/v2"
 
 type bot struct {
 	chatId int64
