@@ -125,6 +125,8 @@ func (d *Dispatcher) listen() {
 			chatId = update.EditedChannelPost.Chat.ID
 		} else if update.CallbackQuery != nil {
 			chatId = update.CallbackQuery.Message.Chat.ID
+		} else if update.InlineQuery != nil {
+			chatId = update.InlineQuery.From.ID
 		} else {
 			continue
 		}
@@ -173,9 +175,7 @@ func (d *Dispatcher) ListenWebhook(url string, internalPort int) error {
 			d.updates <- &update
 		})
 		return http.ListenAndServe(fmt.Sprintf(":%d", internalPort), nil)
-	} else {
-		return errors.New(fmt.Sprintf("could not set webhook: %d %s", response.ErrorCode, response.Description))
 	}
 
-	return nil
+	return errors.New(fmt.Sprintf("could not set webhook: %d %s", response.ErrorCode, response.Description))
 }
