@@ -706,3 +706,48 @@ func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) 
 func (a Api) Command(command, description string) BotCommand {
 	return BotCommand{command, description}
 }
+
+func (a Api) SendAnimation(filepath, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseCommands{}, err
+	}
+	return a.SendAnimationBytes(filepath, caption, chatId, b, opts...)
+}
+
+func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseCommands, error) {
+	var res APIResponseCommands
+	var url = fmt.Sprintf(
+		"%ssendAnimation?chat_id=%d&caption=%s%s",
+		string(a),
+		chatId,
+		encode(caption),
+		parseOpts(opts...),
+	)
+
+	content, err := SendPostRequest(url, filepath, "animation", data)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
+	var res APIResponseCommands
+	var url = fmt.Sprintf(
+		"%ssendAnimation?chat_id=%d&animation=%s&caption=%s%s",
+		string(a),
+		chatId,
+		encode(animationId),
+		encode(caption),
+		parseOpts(opts...),
+	)
+
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
