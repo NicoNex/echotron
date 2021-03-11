@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2019  Nicolò Santamaria, Michele Dimaggio
+ * Copyright (C) 2018-2021  Nicolò Santamaria, Michele Dimaggio
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -34,7 +34,7 @@ type Chat struct {
 
 // This object represents a Telegram user or bot.
 type User struct {
-	ID           int    `json:"id"`
+	ID           int64  `json:"id"`
 	IsBot        bool   `json:"is_bot"`
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name,omitempty"`
@@ -127,23 +127,6 @@ type Contact struct {
 type Location struct {
 	Longitude float32
 	Latitude  float32
-}
-
-// This object represents an incoming inline query.
-// When the user sends an empty query, your bot could return some default or trending results.
-type InlineQuery struct {
-	ID     string `json:"id"`
-	User   *User  `json:"user"`
-	Query  string `json:"query"`
-	Offset string `json:"offset"`
-}
-
-// Represents a result of an inline query that was chosen by the user and sent to their chat partner.
-type ChosenInlineResult struct {
-	ID              string `json:"result_id"`
-	User            *User  `json:"user"`
-	InlineMessageId string `json:"inline_message_id,omitempty"`
-	Query           string `json:"query,omitempty"`
 }
 
 // This object represents an incoming callback query from a callback button in an inline keyboard.
