@@ -39,11 +39,11 @@ type Bot interface {
 // encountered before.
 type NewBotFn func(chatId int64) Bot
 
-// The Dispatcher passes the updates from the Telegram Bot Api to the Bot instance
+// The Dispatcher passes the updates from the Telegram Bot API to the Bot instance
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	api        Api
+	api        API
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
 	updates    chan *Update
@@ -55,7 +55,7 @@ type Dispatcher struct {
 // If a new chat ID is found, newBotFn will be called first.
 func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 	d := &Dispatcher{
-		api:        NewApi(token),
+		api:        NewAPI(token),
 		sessionMap: make(map[int64]Bot),
 		newBot:     newBotFn,
 		updates:    make(chan *Update),

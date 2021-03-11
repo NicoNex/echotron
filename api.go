@@ -783,12 +783,11 @@ func (a API) Command(command, description string) BotCommand {
 	return BotCommand{command, description}
 }
 
-func (a Api) SendAnimation(filepath, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
 func (a API) SendAnimation(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return APIResponseCommands{}, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendAnimationBytes(filepath, caption, chatID, b, opts...)
 }
