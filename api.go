@@ -53,6 +53,14 @@ const (
 	UPLOAD_VIDEO_NOTE            = "upload_video_note"
 )
 
+type InlineQueryOptions struct {
+	CacheTime         int
+	IsPersonal        bool
+	NextOffset        string
+	SwitchPmText      string
+	SwitchPmParameter string
+}
+
 func encode(s string) string {
 	return url.QueryEscape(s)
 }
@@ -750,4 +758,39 @@ func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts .
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
+}
+
+func (a Api) AnswerInlineQuery(inlineQueryId string, results []InlineQueryResult) (APIResponseBase, error) {
+	return a.AnswerInlineQueryOptions(inlineQueryId, results, InlineQueryOptions{CacheTime: 300})
+}
+
+func (a Api) AnswerInlineQueryOptions(inlineQueryId string, results []InlineQueryResult, opts InlineQueryOptions) (APIResponseBase, error) {
+	var res APIResponseBase
+	jsn, _ := json.Marshal(results)
+
+	var url = fmt.Sprintf(
+		"%sanswerInlineQuery?inline_query_id=%s&results=%s%s",
+		string(a),
+		inlineQueryId,
+		jsn,
+		parseInlineQueryOpts(opts),
+	)
+
+	content, err := SendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+func parseInlineQueryOpts(opts InlineQueryOptions) string {
+	return fmt.Sprintf(
+		"&cache_time=%d&is_personal=%t&next_offset=%s&switch_pm_text=%s&switch_pm_parameter=%s",
+		opts.CacheTime,
+		opts.IsPersonal,
+		opts.NextOffset,
+		opts.SwitchPmText,
+		opts.SwitchPmParameter,
+	)
 }
