@@ -1,3 +1,3 @@
-module github.com/NicoNex/echotron
+module github.com/NicoNex/echotron/v2
 
 go 1.16

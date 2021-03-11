@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2019  Nicolò Santamaria
+ * Copyright (C) 2018-2021  Nicolò Santamaria
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,10 +21,11 @@ package echotron
 import (
 	"compress/gzip"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // Bot is the interface that must be implemented by your definition of
@@ -72,20 +73,24 @@ func (d *Dispatcher) AddSession(chatId int64) {
 
 // Poll starts the polling loop so that the dispatcher calls the function Update
 // upon receiving any update from Telegram.
-func (d *Dispatcher) Poll() {
+func (d *Dispatcher) Poll() error {
 	var timeout int
 	var firstRun = true
 	var lastUpdateId = -1
 
 	// deletes webhook if present to run in long polling mode
-	response := d.api.DeleteWebhook()
-	if !response.Ok {
-		log.Fatalln("Could not disable webhook, running in long polling mode is not possible.")
+	response, err := d.api.DeleteWebhook()
+	if err != nil {
+		return err
+	} else if !response.Ok {
+		return errors.New("could not disable webhook, running in long polling mode is not possible.")
 	}
 
 	for {
-		response := d.api.GetUpdates(lastUpdateId+1, timeout)
-		if response.Ok {
+		response, err := d.api.GetUpdates(lastUpdateId+1, timeout)
+		if err != nil {
+			return err
+		} else if response.Ok {
 			if !firstRun {
 				for _, u := range response.Result {
 					d.updates <- u
@@ -102,6 +107,8 @@ func (d *Dispatcher) Poll() {
 			timeout = 120
 		}
 	}
+
+	return nil
 }
 
 func (d *Dispatcher) listen() {
@@ -118,6 +125,8 @@ func (d *Dispatcher) listen() {
 			chatId = update.EditedChannelPost.Chat.ID
 		} else if update.CallbackQuery != nil {
 			chatId = update.CallbackQuery.Message.Chat.ID
+		} else if update.InlineQuery != nil {
+			chatId = update.InlineQuery.From.ID
 		} else {
 			continue
 		}
@@ -133,11 +142,13 @@ func (d *Dispatcher) listen() {
 }
 
 // ListenWebhook sets a webhook and listens for incoming updates
-func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
+func (d *Dispatcher) ListenWebhook(url string, internalPort int) error {
 	var response APIResponseUpdate
 
-	response = d.api.SetWebhook(url)
-	if response.Ok {
+	response, err := d.api.SetWebhook(url)
+	if err != nil {
+		return err
+	} else if response.Ok {
 		http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 			var update Update
 			var reader io.ReadCloser
@@ -163,8 +174,8 @@ func (d *Dispatcher) ListenWebhook(url string, internalPort int) {
 
 			d.updates <- &update
 		})
-		log.Fatalln(http.ListenAndServe(":"+strconv.Itoa(internalPort), nil))
-	} else {
-		log.Fatalln("Could not set webhook: " + strconv.Itoa(response.ErrorCode) + " " + response.Description)
+		return http.ListenAndServe(fmt.Sprintf(":%d", internalPort), nil)
 	}
+
+	return errors.New(fmt.Sprintf("could not set webhook: %d %s", response.ErrorCode, response.Description))
 }

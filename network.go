@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2019  Nicolò Santamaria
+ * Copyright (C) 2018-2021  Nicolò Santamaria
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,91 +21,74 @@ package echotron
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strings"
 )
 
-func SendGetRequest(url string) []byte {
-	response, err := http.Get(url)
+func SendGetRequest(url string) ([]byte, error) {
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	content, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
 
-	return content
+	return data, nil
 }
 
-func SendPostRequest(url string, filename string, filetype string) []byte {
-	file, err := os.Open(filename)
+func SendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
+	var buf = new(bytes.Buffer)
+	var w = multipart.NewWriter(buf)
+
+	part, err := w.CreateFormFile(ftype, filepath.Base(fname))
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
-	defer file.Close()
+	part.Write(b)
+	w.Close()
 
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(filetype, filepath.Base(file.Name()))
+	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
+	req.Header.Add("Content-Type", w.FormDataContentType())
 
-	io.Copy(part, file)
-	writer.Close()
-	request, err := http.NewRequest("POST", url, body)
+	var client = new(http.Client)
+	res, err := client.Do(req)
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
+	defer res.Body.Close()
 
-	request.Header.Add("Content-Type", writer.FormDataContentType())
-	client := &http.Client{}
-
-	response, err := client.Do(request)
+	cnt, err := io.ReadAll(res.Body)
 	if err != nil {
-		log.Println(err)
-		return []byte{}
+		return []byte{}, err
 	}
-	defer response.Body.Close()
-
-	content, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Println(err)
-		return []byte{}
-	}
-
-	return content
+	return cnt, nil
 }
 
-func SendPostForm(destUrl string, keyVals map[string]string) ([]byte, error) {
-	form := url.Values{}
+func SendPostForm(reqUrl string, keyVals map[string]string) ([]byte, error) {
+	var form url.Values
 
 	for k, v := range keyVals {
 		form.Add(k, v)
 	}
 
-	request, err := http.NewRequest("POST", destUrl, strings.NewReader(form.Encode()))
+	request, err := http.NewRequest("POST", reqUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return []byte{}, err
 	}
 	request.PostForm = form
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{}
+	var client http.Client
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -113,7 +96,7 @@ func SendPostForm(destUrl string, keyVals map[string]string) ([]byte, error) {
 	}
 	defer response.Body.Close()
 
-	content, err := ioutil.ReadAll(response.Body)
+	content, err := io.ReadAll(response.Body)
 	if err != nil {
 		return []byte{}, err
 	}
