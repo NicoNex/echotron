@@ -18,7 +18,7 @@
 
 package echotron
 
-// This object represents a chat.
+// Chat represents a chat.
 type Chat struct {
 	ID                 int64    `json:"id"`
 	Type               string   `json:"type"`
@@ -32,7 +32,7 @@ type Chat struct {
 	PinnedMessage      *Message `json:"pinned_message,omitempty"`
 }
 
-// This object represents a Telegram user or bot.
+// User represents a Telegram user or bot.
 type User struct {
 	ID           int64  `json:"id"`
 	IsBot        bool   `json:"is_bot"`
@@ -42,17 +42,17 @@ type User struct {
 	LanguageCode string `json:"language_code,omitempty"`
 }
 
-// This object represents one special entity in a text message.
+// MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
 	Type   string `json:"type"`
 	Offset int    `json:"offset"`
 	Length int    `json:"Length"`
-	Url    string `json:"url,omitempty"`
+	URL    string `json:"url,omitempty"`
 	User   *User  `json:"user,omitempty"`
 }
 
-// WIP: this object represents a message.
+// Message represents a message.
 type Message struct {
 	ID             int              `json:"message_id"`
 	User           *User            `json:"from"`
@@ -63,7 +63,7 @@ type Message struct {
 	Audio          *Audio           `json:"audio,omitempty"`
 	Document       *Document        `json:"document,omitempty"`
 	Photo          []*PhotoSize     `json:"photo,omitempty"`
-	MediaGroupId   string           `json:"media_group_id,omitempty"`
+	MediaGroupID   string           `json:"media_group_id,omitempty"`
 	Sticker        *Sticker         `json:"sticker,omitempty"`
 	Video          *Video           `json:"video,omitempty"`
 	VideoNote      *VideoNote       `json:"video_note,omitempty"`
@@ -76,7 +76,7 @@ type Message struct {
 	PinnedMessage  *Message         `json:"pinned_message,omitempty"`
 }
 
-// This object represents an incoming update.
+// Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
 type Update struct {
 	ID                 int                 `json:"update_id"`
@@ -89,32 +89,36 @@ type Update struct {
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
 }
 
+// APIResponseBase is a base type that represents the incoming response from Telegram servers.
+// Used by APIResponse* to slim down the implementation.
 type APIResponseBase struct {
 	Ok          bool   `json:"ok"`
 	ErrorCode   int    `json:"error_code,omitempty"`
 	Description string `json:"description,omitempty"`
 }
 
-// This object represents the incoming response from Telegram servers.
+// APIResponseUpdate represents the incoming response from Telegram servers.
 // Used by getUpdates (since it returns an array of Updates).
 type APIResponseUpdate struct {
-	APIResponseBase
 	Result []*Update `json:"result,omitempty"`
+	APIResponseBase
 }
 
-// This object represents the incoming response from Telegram servers.
+// APIResponseMessage represents the incoming response from Telegram servers.
 // Used by the methods in the api.go module (since they return a Message).
 type APIResponseMessage struct {
-	APIResponseBase
 	Result *Message `json:"result,omitempty"`
-}
-
-type APIResponseCommands struct {
 	APIResponseBase
-	Result []BotCommand `json:"result,omitempty"`
 }
 
-// This object represents a phone contact.
+// APIResponseCommands represents the incoming response from Telegram servers.
+// Used by SetMyCommands and GetMyCommands (since they return an array of BotCommands).
+type APIResponseCommands struct {
+	Result []BotCommand `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Contact represents a phone contact.
 type Contact struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
@@ -123,13 +127,13 @@ type Contact struct {
 	Vcard       string `json:"vcard,omitempty"`
 }
 
-// This object represents a point on the map.
+// Location represents a point on the map.
 type Location struct {
 	Longitude float32
 	Latitude  float32
 }
 
-// This object represents an incoming callback query from a callback button in an inline keyboard.
+// CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
 // If the button that originated the query was attached to a message sent by the bot,
 // the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
 // the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
@@ -137,13 +141,13 @@ type CallbackQuery struct {
 	ID              string   `json:"id"`
 	User            *User    `json:"from"`
 	Message         *Message `json:"message,omitempty"`
-	InlineMessageId string   `json:"inline_message_id,omitempty"`
+	InlineMessageID string   `json:"inline_message_id,omitempty"`
 	Data            string   `json:"data,omitempty"`
 }
 
-// This object represents an audio file to be treated as music by the Telegram clients.
+// Audio represents an audio file to be treated as music by the Telegram clients.
 type Audio struct {
-	FileId    string     `json:"file_id"`
+	FileID    string     `json:"file_id"`
 	Duration  int        `json:"duration"`
 	Performer string     `json:"performer,omitempty"`
 	Title     string     `json:"title,omitempty"`
@@ -152,9 +156,9 @@ type Audio struct {
 	Thumb     *PhotoSize `json:"thumb,omitempty"`
 }
 
-// This object represents a video file.
+// Video represents a video file.
 type Video struct {
-	FileId   string     `json:"file_id"`
+	FileID   string     `json:"file_id"`
 	Width    int        `json:"width"`
 	Height   int        `json:"height"`
 	Duration int        `json:"duration"`
@@ -163,41 +167,41 @@ type Video struct {
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents a video message.
+// VideoNote represents a video message.
 type VideoNote struct {
-	FileId   string     `json:"file_id"`
+	FileID   string     `json:"file_id"`
 	Length   int        `json:"length"`
 	Duration int        `json:"duration"`
 	Thumb    *PhotoSize `json:"thumb,omitempty"`
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents a general file (as opposed to photos, voice messages and audio files).
+// Document represents a general file (as opposed to photos, voice messages and audio files).
 type Document struct {
-	FileId   string     `json:"file_id"`
+	FileID   string     `json:"file_id"`
 	Thumb    *PhotoSize `json:"thumb,omitempty"`
 	FileName string     `json:"file_name,omitempty"`
 	MimeType string     `json:"mime_type,omitempty"`
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents one size of a photo or a file / sticker thumbnail.
+// PhotoSize represents one size of a photo or a file/sticker thumbnail.
 type PhotoSize struct {
-	FileId   string `json:"file_id"`
+	FileID   string `json:"file_id"`
 	Width    int    `json:"width"`
 	Height   int    `json:"height"`
 	FileSize int    `json:"FileSize"`
 }
 
-// This object represents a voice note.
+// Voice represents a voice note.
 type Voice struct {
-	FileId   string `json:"file_id"`
+	FileID   string `json:"file_id"`
 	Duration int    `json:"duration"`
 	MimeType string `json:"mime_type,omitempty"`
 	FileSize int    `json:"FileSize,omitempty"`
 }
 
-// This object describes the position on faces where a mask should be placed by default.
+// MaskPosition describes the position on faces where a mask should be placed by default.
 type MaskPosition struct {
 	Point  string  `json:"point"`
 	XShift float32 `json:"x_shift"`
@@ -205,9 +209,9 @@ type MaskPosition struct {
 	Scale  float32 `json:"scale"`
 }
 
-// This object represents a sticker.
+// Sticker represents a sticker.
 type Sticker struct {
-	FileId       string       `json:"file_id"`
+	FileID       string       `json:"file_id"`
 	Width        int          `json:"width"`
 	Height       int          `json:"height"`
 	Thumb        *PhotoSize   `json:"thumb,omitempty"`
@@ -217,7 +221,7 @@ type Sticker struct {
 	MaskPosition MaskPosition `json:"mask_position"`
 }
 
-// This object represents a sticker set.
+// StickerSet represents a sticker set.
 type StickerSet struct {
 	Name          string     `json:"name"`
 	Title         string     `json:"title"`
@@ -225,17 +229,17 @@ type StickerSet struct {
 	Stickers      []*Sticker `json:"sticker"`
 }
 
-// This object represents a button in a keyboard.
+// Button represents a button in a keyboard.
 type Button struct {
 	Text            string `json:"text"`
 	RequestContact  bool   `json:"request_contact,omitempty"`
 	RequestLocation bool   `json:"request_location,omitempty"`
 }
 
-// This object represents a row of buttons in a keyboard.
+// KbdRow represents a row of buttons in a keyboard.
 type KbdRow []Button
 
-// This object represents a keyboard.
+// Keyboard represents a keyboard.
 type Keyboard struct {
 	Keyboard        []KbdRow `json:"keyboard"`
 	ResizeKeyboard  bool     `json:"resize_keyboard,omitempty"`
@@ -243,27 +247,28 @@ type Keyboard struct {
 	Selective       bool     `json:"selective,omitempty"`
 }
 
-// This object represents a keyboard removal request.
+// KeyboardRemove represents a keyboard removal request.
 type KeyboardRemove struct {
 	RemoveKeyboard bool `json:"remove_keyboard"`
 	Selective      bool `json:"selective,omitempty"`
 }
 
-// This object represents a button in an inline keyboard.
+// InlineButton represents a button in an inline keyboard.
 type InlineButton struct {
 	Text         string `json:"text"`
 	URL          string `json:"url,omitempty"`
 	CallbackData string `json:"callback_data,omitempty"`
 }
 
-// This object represents a row of buttons in an inline keyboard.
+// InlineKbdRow represents a row of buttons in an inline keyboard.
 type InlineKbdRow []InlineButton
 
-// This object represents an inline keyboard.
+// InlineKeyboard represents an inline keyboard.
 type InlineKeyboard struct {
 	InlineKeyboard []InlineKbdRow `json:"inline_keyboard"`
 }
 
+// BotCommand represents a bot command.
 type BotCommand struct {
 	Command     string `json:"command"`
 	Description string `json:"description"`

@@ -27,32 +27,38 @@ import (
 	"strings"
 )
 
-type Api string
+// API is the object that contains all the functions that wrap those of the Telegram Bot API.
+type API string
 
+// Option is a custom type for the various frequent options used by some methods of the API.
 type Option string
 
+// These are all the possible options that can be used by some methods.
 const (
-	PARSE_MARKDOWN           Option = "&parse_mode=markdown"
-	PARSE_HTML                      = "&parse_mode=html"
-	DISABLE_WEB_PAGE_PREVIEW        = "&disable_web_page_preview=true"
-	DISABLE_NOTIFICATION            = "&disable_notification=true"
+	ParseMarkdown         Option = "&parse_mode=markdown"
+	ParseHTML                    = "&parse_mode=html"
+	DisableWebPagePreview        = "&disable_web_page_preview=true"
+	DisableNotification          = "&disable_notification=true"
 )
 
+// ChatAction is a custom type for the various actions that can be sent through the SendChatAction method.
 type ChatAction string
 
+// These are all the possible actions that can be sent through the SendChatAction method.
 const (
-	TYPING            ChatAction = "typing"
-	UPLOAD_PHOTO                 = "upload_photo"
-	RECORD_VIDEO                 = "record_video"
-	UPLOAD_VIDEO                 = "upload_video"
-	RECORD_AUDIO                 = "record_audio"
-	UPLOAD_AUDIO                 = "upload_audio"
-	UPLOAD_DOCUMENT              = "upload_document"
-	FIND_LOCATION                = "find_location"
-	RECORD_VIDEO_NOTE            = "record_video_note"
-	UPLOAD_VIDEO_NOTE            = "upload_video_note"
+	Typing          ChatAction = "typing"
+	UploadPhoto                = "upload_photo"
+	RecordVideo                = "record_video"
+	UploadVideo                = "upload_video"
+	RecordAudio                = "record_audio"
+	UploadAudio                = "upload_audio"
+	UploadDocument             = "upload_document"
+	FindLocation               = "find_location"
+	RecordVideoNote            = "record_video_note"
+	UploadVideoNote            = "upload_video_note"
 )
 
+// InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQueryOptions method.
 type InlineQueryOptions struct {
 	CacheTime         int
 	IsPersonal        bool
@@ -78,16 +84,16 @@ func makeInlineKeyboard(rows ...InlineKbdRow) InlineKeyboard {
 	return InlineKeyboard{rows}
 }
 
-// NewApi returns a new Api object.
-func NewApi(token string) Api {
-	return Api(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
+// NewAPI returns a new API object.
+func NewAPI(token string) API {
+	return API(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
 }
 
-// DeleteWebhook deletes webhook
-func (a Api) DeleteWebhook() (APIResponseUpdate, error) {
+// DeleteWebhook is used to remove webhook integration if you decide to switch back to getUpdates.
+func (a API) DeleteWebhook() (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 
-	content, err := SendGetRequest(string(a) + "deleteWebhook")
+	content, err := SendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
 	if err != nil {
 		return res, err
 	}
@@ -95,8 +101,8 @@ func (a Api) DeleteWebhook() (APIResponseUpdate, error) {
 	return res, nil
 }
 
-// SetWebhook sets the webhook to bot on Telegram servers
-func (a Api) SetWebhook(url string) (APIResponseUpdate, error) {
+// SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
+func (a API) SetWebhook(url string) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 
 	keyVal := map[string]string{"url": url}
@@ -108,8 +114,8 @@ func (a Api) SetWebhook(url string) (APIResponseUpdate, error) {
 	return res, nil
 }
 
-// GetResponse returns the incoming updates from telegram.
-func (a Api) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
+// GetUpdates is used to receive incoming updates using long polling.
+func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", string(a), timeout)
 
@@ -125,10 +131,11 @@ func (a Api) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
 	return res, nil
 }
 
-// Returns the current chat in use.
-func (a Api) GetChat(chatId int64) (Chat, error) {
+// GetChat is used to get up to date information about the chat.
+// (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
+func (a API) GetChat(chatID int64) (Chat, error) {
 	var res Chat
-	var url = fmt.Sprintf("%sgetChat?chat_id=%d", string(a), chatId)
+	var url = fmt.Sprintf("%sgetChat?chat_id=%d", string(a), chatID)
 
 	content, err := SendGetRequest(url)
 	if err != nil {
@@ -138,7 +145,8 @@ func (a Api) GetChat(chatId int64) (Chat, error) {
 	return res, nil
 }
 
-func (a Api) GetStickerSet(name string) (StickerSet, error) {
+// GetStickerSet is used to get a sticker set.
+func (a API) GetStickerSet(name string) (StickerSet, error) {
 	var res StickerSet
 	var url = fmt.Sprintf("%sgetStickerSet?name=%s", string(a), encode(name))
 
@@ -150,13 +158,14 @@ func (a Api) GetStickerSet(name string) (StickerSet, error) {
 	return res, nil
 }
 
-func (a Api) SendMessage(text string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendMessage is used to send text messages.
+func (a API) SendMessage(text string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendMessage?text=%s&chat_id=%d%s",
 		string(a),
 		encode(text),
-		chatId,
+		chatID,
 		parseOpts(opts...),
 	)
 
@@ -168,15 +177,15 @@ func (a Api) SendMessage(text string, chatId int64, opts ...Option) (APIResponse
 	return res, nil
 }
 
-// Sends a message as a reply to a previously received one.
-func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...Option) (APIResponseMessage, error) {
+// SendMessageReply is used to send a message as a reply to a previously received one.
+func (a API) SendMessageReply(text string, chatID int64, messageID int, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendMessage?text=%s&chat_id=%d&reply_to_message_id=%d%s",
 		string(a),
 		encode(text),
-		chatId,
-		messageId,
+		chatID,
+		messageID,
 		parseOpts(opts...),
 	)
 
@@ -189,13 +198,14 @@ func (a Api) SendMessageReply(text string, chatId int64, messageId int, opts ...
 	return res, nil
 }
 
-func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+// SendMessageWithKeyboard is used to send a message with a keyboard.
+func (a API) SendMessageWithKeyboard(text string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendMessage?text=%s&chat_id=%d&reply_markup=%s%s",
 		string(a),
 		encode(text),
-		chatId,
+		chatID,
 		keyboard,
 		parseOpts(opts...),
 	)
@@ -208,13 +218,21 @@ func (a Api) SendMessageWithKeyboard(text string, chatId int64, keyboard []byte,
 	return res, nil
 }
 
-func (a Api) DeleteMessage(chatId int64, messageId int) (APIResponseMessage, error) {
+// DeleteMessage is used to delete a message, including service messages, with the following limitations:
+// - A message can only be deleted if it was sent less than 48 hours ago.
+// - A dice message in a private chat can only be deleted if it was sent more than 24 hours ago.
+// - Bots can delete outgoing messages in private chats, groups, and supergroups.
+// - Bots can delete incoming messages in private chats.
+// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
+// - If the bot is an administrator of a group, it can delete any message there.
+// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
+func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sdeleteMessage?chat_id=%d&message_id=%d",
 		string(a),
-		chatId,
-		messageId,
+		chatID,
+		messageID,
 	)
 
 	content, err := SendGetRequest(url)
@@ -225,20 +243,22 @@ func (a Api) DeleteMessage(chatId int64, messageId int) (APIResponseMessage, err
 	return res, nil
 }
 
-func (a Api) SendPhoto(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendPhoto is used to send photos.
+func (a API) SendPhoto(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendPhotoBytes(filepath, caption, chatId, b, opts...)
+	return a.SendPhotoBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendPhotoBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendPhotoBytes is used to send photos as a slice of bytes.
+func (a API) SendPhotoBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -251,13 +271,14 @@ func (a Api) SendPhotoBytes(filepath, caption string, chatId int64, data []byte,
 	return res, nil
 }
 
-func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendPhotoByID is used to send photos through an ID of a photo that already exists on the Telegram servers.
+func (a API) SendPhotoByID(photoID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&photo=%s&caption=%s%s",
 		string(a),
-		chatId,
-		encode(photoId),
+		chatID,
+		encode(photoID),
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -270,20 +291,22 @@ func (a Api) SendPhotoByID(photoId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendPhotoWithKeyboard(filepath, caption string, chatId int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+// SendPhotoWithKeyboard is used to send photos with a keyboard.
+func (a API) SendPhotoWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendPhotoWithKeyboardBytes(filepath, caption, chatId, b, keyboard, opts...)
+	return a.SendPhotoWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
 }
 
-func (a Api) SendPhotoWithKeyboardBytes(filepath, caption string, chatId int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+// SendPhotoWithKeyboardBytes is used to send photos as a slice of bytes with a keyboard.
+func (a API) SendPhotoWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&caption=%s&reply_markup=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		keyboard,
 		parseOpts(opts...),
@@ -297,20 +320,25 @@ func (a Api) SendPhotoWithKeyboardBytes(filepath, caption string, chatId int64, 
 	return res, nil
 }
 
-func (a Api) SendAudio(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendAudio is used to send audio files,
+// if you want Telegram clients to display them in the music player.
+// Your audio must be in the .MP3 or .M4A format.
+func (a API) SendAudio(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendAudioBytes(filepath, caption, chatId, b, opts...)
+	return a.SendAudioBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendAudioBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendAudioBytes is used to send audio files as a slice of bytes,
+// if you want Telegram clients to display them in the music player.
+func (a API) SendAudioBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -323,13 +351,15 @@ func (a Api) SendAudioBytes(filepath, caption string, chatId int64, data []byte,
 	return res, nil
 }
 
-func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendAudioByID is used to send audio files that already exist on the Telegram servers,
+// if you want Telegram clients to display them in the music player.
+func (a API) SendAudioByID(audioID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&audio=%s&caption=%s%s",
 		string(a),
-		chatId,
-		encode(audioId),
+		chatID,
+		encode(audioID),
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -342,20 +372,22 @@ func (a Api) SendAudioByID(audioId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendDocument(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendDocument is used to send general files.
+func (a API) SendDocument(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendDocumentBytes(filepath, caption, chatId, b, opts...)
+	return a.SendDocumentBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendDocumentBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendDocumentBytes is used to send general files as a slice of bytes.
+func (a API) SendDocumentBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -368,13 +400,14 @@ func (a Api) SendDocumentBytes(filepath, caption string, chatId int64, data []by
 	return res, nil
 }
 
-func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendDocumentByID is used to send general files that already exist on the Telegram servers.
+func (a API) SendDocumentByID(documentID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&document=%s&caption=%s%s",
 		string(a),
-		chatId,
-		encode(documentId),
+		chatID,
+		encode(documentID),
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -387,20 +420,23 @@ func (a Api) SendDocumentByID(documentId, caption string, chatId int64, opts ...
 	return res, nil
 }
 
-func (a Api) SendVideo(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendVideo is used to send video files.
+// Telegram clients support mp4 videos (other formats may be sent with SendDocument).
+func (a API) SendVideo(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendVideoBytes(filepath, caption, chatId, b, opts...)
+	return a.SendVideoBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendVideoBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendVideoBytes is used to send video files as a slice of bytes.
+func (a API) SendVideoBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -413,13 +449,14 @@ func (a Api) SendVideoBytes(filepath, caption string, chatId int64, data []byte,
 	return res, nil
 }
 
-func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendVideoByID is used to send video files that already exist on the Telegram servers.
+func (a API) SendVideoByID(videoID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&video=%s&caption=%s%s",
 		string(a),
-		chatId,
-		encode(videoId),
+		chatID,
+		encode(videoID),
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -432,13 +469,14 @@ func (a Api) SendVideoByID(videoId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage, error) {
+// SendVideoNote is used to send video messages.
+func (a API) SendVideoNote(videoID string, chatID int64) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&video_note=%s",
 		string(a),
-		chatId,
-		encode(videoId),
+		chatID,
+		encode(videoID),
 	)
 
 	content, err := SendGetRequest(url)
@@ -449,20 +487,24 @@ func (a Api) SendVideoNoteByID(videoId string, chatId int64) (APIResponseMessage
 	return res, nil
 }
 
-func (a Api) SendVoice(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
+// For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document).
+func (a API) SendVoice(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
 	}
-	return a.SendVoiceBytes(filepath, caption, chatId, b, opts...)
+	return a.SendVoiceBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendVoiceBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+// SendVoiceBytes is used to send audio files as a slice of bytes,
+// if you want Telegram clients to display the file as a playable voice message.
+func (a API) SendVoiceBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -475,13 +517,15 @@ func (a Api) SendVoiceBytes(filepath, caption string, chatId int64, data []byte,
 	return res, nil
 }
 
-func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+// SendVoiceByID is used to send audio files that already exists on the Telegram servers,
+// if you want Telegram clients to display the file as a playable voice message.
+func (a API) SendVoiceByID(voiceID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&voice=%s%s",
 		string(a),
-		chatId,
-		encode(voiceId),
+		chatID,
+		encode(voiceID),
 		parseOpts(opts...),
 	)
 
@@ -493,12 +537,13 @@ func (a Api) SendVoiceByID(voiceId, caption string, chatId int64, opts ...Option
 	return res, nil
 }
 
-func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) (APIResponseMessage, error) {
+// SendContact is used to send phone contacts.
+func (a API) SendContact(phoneNumber, firstName, lastName string, chatID int64) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&last_name=%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(phoneNumber),
 		encode(firstName),
 		encode(lastName),
@@ -512,13 +557,14 @@ func (a Api) SendContact(phoneNumber, firstName, lastName string, chatId int64) 
 	return res, nil
 }
 
-func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage, error) {
+// SendSticker is used to send static .WEBP or animated .TGS stickers.
+func (a API) SendSticker(stickerID string, chatID int64) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendSticker?chat_id=%d&sticker=%s",
 		string(a),
-		chatId,
-		encode(stickerId),
+		chatID,
+		encode(stickerID),
 	)
 
 	content, err := SendGetRequest(url)
@@ -529,12 +575,14 @@ func (a Api) SendStickerByID(stickerId string, chatId int64) (APIResponseMessage
 	return res, nil
 }
 
-func (a Api) SendChatAction(action ChatAction, chatId int64) (APIResponseMessage, error) {
+// SendChatAction is used to tell the user that something is happening on the bot's side.
+// The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
+func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendChatAction?chat_id=%d&action=%s",
 		string(a),
-		chatId,
+		chatID,
 		action,
 	)
 
@@ -546,11 +594,15 @@ func (a Api) SendChatAction(action ChatAction, chatId int64) (APIResponseMessage
 	return res, nil
 }
 
-func (a Api) KeyboardButton(text string, requestContact, requestLocation bool) Button {
+// KeyboardButton is a wrapper method for the Button type.
+// It's used to create a new keyboard button.
+func (a API) KeyboardButton(text string, requestContact, requestLocation bool) Button {
 	return Button{text, requestContact, requestLocation}
 }
 
-func (a Api) KeyboardRow(buttons ...Button) (kbdRow KbdRow) {
+// KeyboardRow is a wrapper method for the KbdRow type.
+// It's used to create a row of keyboard buttons.
+func (a API) KeyboardRow(buttons ...Button) (kbdRow KbdRow) {
 	for _, button := range buttons {
 		kbdRow = append(kbdRow, button)
 	}
@@ -558,7 +610,9 @@ func (a Api) KeyboardRow(buttons ...Button) (kbdRow KbdRow) {
 	return
 }
 
-func (a Api) KeyboardMarkup(resizeKeyboard, oneTimeKeyboard, selective bool, keyboardRows ...KbdRow) (kbd []byte) {
+// KeyboardMarkup represents a custom keyboard with reply options.
+// This method generates the actual JSON that will be sent to Telegram to make the desired keyboard show up in a message.
+func (a API) KeyboardMarkup(resizeKeyboard, oneTimeKeyboard, selective bool, keyboardRows ...KbdRow) (kbd []byte) {
 	kbd, _ = json.Marshal(Keyboard{
 		keyboardRows,
 		resizeKeyboard,
@@ -568,13 +622,16 @@ func (a Api) KeyboardMarkup(resizeKeyboard, oneTimeKeyboard, selective bool, key
 	return
 }
 
-func (a Api) KeyboardRemove(selective bool) (kbdrmv []byte) {
+// KeyboardRemove generates the object to send in a message to remove
+// the current custom keyboard and display the default letter-keyboard.
+func (a API) KeyboardRemove(selective bool) (kbdrmv []byte) {
 	kbdrmv, _ = json.Marshal(KeyboardRemove{true, selective})
 	return
 }
 
-// Returns a new inline keyboard button with the provided data.
-func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
+// InlineKbdBtn is a wrapper method for the InlineButton type.
+// It's used to create a new inline keyboard button.
+func (a API) InlineKbdBtn(text, url, callbackData string) InlineButton {
 	return InlineButton{
 		encode(text),
 		url,
@@ -582,34 +639,37 @@ func (a Api) InlineKbdBtn(text, url, callbackData string) InlineButton {
 	}
 }
 
-// Same as InlineKbdBtn, but only with url.
-func (a Api) InlineKbdBtnUrl(text, url string) InlineButton {
+// InlineKbdBtnURL is a wrapper method for InlineKbdBtn, but only with url.
+func (a API) InlineKbdBtnURL(text, url string) InlineButton {
 	return a.InlineKbdBtn(text, url, "")
 }
 
-// Same as InlineKbdBtn, but only with callbackData.
-func (a Api) InlineKbdBtnCbd(text, callbackData string) InlineButton {
+// InlineKbdBtnCbd is a wrapper method for InlineKbdBtn, but only with callbackData.
+func (a API) InlineKbdBtnCbd(text, callbackData string) InlineButton {
 	return a.InlineKbdBtn(text, "", callbackData)
 }
 
-// Returns a new inline keyboard row with the given buttons.
-func (a Api) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
+// InlineKbdRow is a wrapper method for the InlineKbdRow type.
+// It's used to create a row of inline keyboard buttons.
+func (a API) InlineKbdRow(inlineButtons ...InlineButton) InlineKbdRow {
 	return inlineButtons
 }
 
-// Returns a byte slice containing the inline keyboard json data.
-func (a Api) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) (jsn []byte) {
+// InlineKbdMarkup represents an inline keyboard that appears right next to the message it belongs to.
+// This method generates the actual JSON that will be sent to Telegram to make the desired inline keyboard show up in a message.
+func (a API) InlineKbdMarkup(inlineKbdRows ...InlineKbdRow) (jsn []byte) {
 	jsn, _ = json.Marshal(makeInlineKeyboard(inlineKbdRows...))
 	return
 }
 
-func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte) (APIResponseMessage, error) {
+// EditMessageReplyMarkup is used to edit only the reply markup of messages.
+func (a API) EditMessageReplyMarkup(chatID int64, messageID int, keyboard []byte) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageReplyMarkup?chat_id=%d&message_id=%d&reply_markup=%s",
 		string(a),
-		chatId,
-		messageId,
+		chatID,
+		messageID,
 		keyboard,
 	)
 
@@ -621,13 +681,14 @@ func (a Api) EditMessageReplyMarkup(chatId int64, messageId int, keyboard []byte
 	return res, nil
 }
 
-func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...Option) (APIResponseMessage, error) {
+// EditMessageText is used to edit text and game messages.
+func (a API) EditMessageText(chatID int64, messageID int, text string, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?chat_id=%d&message_id=%d&text=%s%s",
 		string(a),
-		chatId,
-		messageId,
+		chatID,
+		messageID,
 		encode(text),
 		parseOpts(opts...),
 	)
@@ -640,13 +701,14 @@ func (a Api) EditMessageText(chatId int64, messageId int, text string, opts ...O
 	return res, nil
 }
 
-func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text string, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+// EditMessageTextWithKeyboard is the same as EditMessageText, but allows to send a custom keyboard.
+func (a API) EditMessageTextWithKeyboard(chatID int64, messageID int, text string, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?chat_id=%d&message_id=%d&text=%s&reply_markup=%s%s",
 		string(a),
-		chatId,
-		messageId,
+		chatID,
+		messageID,
 		encode(text),
 		keyboard,
 		parseOpts(opts...),
@@ -660,7 +722,9 @@ func (a Api) EditMessageTextWithKeyboard(chatId int64, messageId int, text strin
 	return res, nil
 }
 
-func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMessage, error) {
+// AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
+// The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
+func (a API) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
@@ -678,7 +742,8 @@ func (a Api) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMe
 	return res, nil
 }
 
-func (a Api) GetMyCommands() (APIResponseCommands, error) {
+// GetMyCommands is used to get the current list of the bot's commands.
+func (a API) GetMyCommands() (APIResponseCommands, error) {
 	var res APIResponseCommands
 	var url = fmt.Sprintf(
 		"%sgetMyCommands",
@@ -693,7 +758,8 @@ func (a Api) GetMyCommands() (APIResponseCommands, error) {
 	return res, nil
 }
 
-func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) {
+// SetMyCommands is used to change the list of the bot's commands.
+func (a API) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) {
 	var res APIResponseCommands
 	jsn, _ := json.Marshal(commands)
 
@@ -711,24 +777,29 @@ func (a Api) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) 
 	return res, nil
 }
 
-func (a Api) Command(command, description string) BotCommand {
+// Command is a wrapper method for the BotCommand type.
+// It's used to create a new command for the bot.
+func (a API) Command(command, description string) BotCommand {
 	return BotCommand{command, description}
 }
 
 func (a Api) SendAnimation(filepath, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
+// SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
+func (a API) SendAnimation(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseCommands{}, err
 	}
-	return a.SendAnimationBytes(filepath, caption, chatId, b, opts...)
+	return a.SendAnimationBytes(filepath, caption, chatID, b, opts...)
 }
 
-func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseCommands, error) {
-	var res APIResponseCommands
+// SendAnimationBytes is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound) as a slice of bytes.
+func (a API) SendAnimationBytes(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&caption=%s%s",
 		string(a),
-		chatId,
+		chatID,
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -741,13 +812,14 @@ func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []b
 	return res, nil
 }
 
-func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
-	var res APIResponseCommands
+// SendAnimationByID is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound) that already exist on the Telegram servers.
+func (a API) SendAnimationByID(animationID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&animation=%s&caption=%s%s",
 		string(a),
-		chatId,
-		encode(animationId),
+		chatID,
+		encode(animationID),
 		encode(caption),
 		parseOpts(opts...),
 	)
@@ -760,18 +832,20 @@ func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts .
 	return res, nil
 }
 
-func (a Api) AnswerInlineQuery(inlineQueryId string, results []InlineQueryResult) (APIResponseBase, error) {
-	return a.AnswerInlineQueryOptions(inlineQueryId, results, InlineQueryOptions{CacheTime: 300})
+// AnswerInlineQuery is a wrapper method for AnswerInlineQueryOptions.
+func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult) (APIResponseBase, error) {
+	return a.AnswerInlineQueryOptions(inlineQueryID, results, InlineQueryOptions{CacheTime: 300})
 }
 
-func (a Api) AnswerInlineQueryOptions(inlineQueryId string, results []InlineQueryResult, opts InlineQueryOptions) (APIResponseBase, error) {
+// AnswerInlineQueryOptions is used to send answers to an inline query.
+func (a API) AnswerInlineQueryOptions(inlineQueryID string, results []InlineQueryResult, opts InlineQueryOptions) (APIResponseBase, error) {
 	var res APIResponseBase
 	jsn, _ := json.Marshal(results)
 
 	var url = fmt.Sprintf(
 		"%sanswerInlineQuery?inline_query_id=%s&results=%s%s",
 		string(a),
-		inlineQueryId,
+		inlineQueryID,
 		jsn,
 		parseInlineQueryOpts(opts),
 	)
@@ -784,6 +858,7 @@ func (a Api) AnswerInlineQueryOptions(inlineQueryId string, results []InlineQuer
 	return res, nil
 }
 
+// parseInlineQueryOpts is an helper method to properly format InlineQueryOptions as a string to add to the request.
 func parseInlineQueryOpts(opts InlineQueryOptions) string {
 	return fmt.Sprintf(
 		"&cache_time=%d&is_personal=%t&next_offset=%s&switch_pm_text=%s&switch_pm_parameter=%s",

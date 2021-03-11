@@ -28,6 +28,7 @@ import (
 	"strings"
 )
 
+// SendGetRequest is used to send an HTTP GET request.
 func SendGetRequest(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -43,6 +44,7 @@ func SendGetRequest(url string) ([]byte, error) {
 	return data, nil
 }
 
+// SendPostRequest is used to send an HTTP POST request.
 func SendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
 	var buf = new(bytes.Buffer)
 	var w = multipart.NewWriter(buf)
@@ -74,14 +76,15 @@ func SendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
 	return cnt, nil
 }
 
-func SendPostForm(reqUrl string, keyVals map[string]string) ([]byte, error) {
+// SendPostForm is used to send an "application/x-www-form-urlencoded" through an HTTP POST request.
+func SendPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 	var form url.Values
 
 	for k, v := range keyVals {
 		form.Add(k, v)
 	}
 
-	request, err := http.NewRequest("POST", reqUrl, strings.NewReader(form.Encode()))
+	request, err := http.NewRequest("POST", reqURL, strings.NewReader(form.Encode()))
 	if err != nil {
 		return []byte{}, err
 	}
