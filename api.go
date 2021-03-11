@@ -715,16 +715,16 @@ func (a Api) Command(command, description string) BotCommand {
 	return BotCommand{command, description}
 }
 
-func (a Api) SendAnimation(filepath, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
+func (a Api) SendAnimation(filepath, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
-		return APIResponseCommands{}, err
+		return APIResponseMessage{}, err
 	}
 	return a.SendAnimationBytes(filepath, caption, chatId, b, opts...)
 }
 
-func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseCommands, error) {
-	var res APIResponseCommands
+func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&caption=%s%s",
 		string(a),
@@ -741,8 +741,8 @@ func (a Api) SendAnimationBytes(filepath, caption string, chatId int64, data []b
 	return res, nil
 }
 
-func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts ...Option) (APIResponseCommands, error) {
-	var res APIResponseCommands
+func (a Api) SendAnimationByID(animationId, caption string, chatId int64, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&animation=%s&caption=%s%s",
 		string(a),
