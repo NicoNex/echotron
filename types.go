@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2019  Nicolò Santamaria, Michele Dimaggio
+ * Copyright (C) 2018-2021  Nicolò Santamaria, Michele Dimaggio
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
