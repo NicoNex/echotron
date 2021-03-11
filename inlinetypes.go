@@ -18,8 +18,10 @@
 
 package echotron
 
+// InlineQueryType is a custom type for the various InlineQueryResult*'s Type field.
 type InlineQueryType string
 
+// These are all the possible types for the various InlineQueryResult*'s Type field.
 const (
 	ARTICLE  InlineQueryType = "article"
 	PHOTO                    = "photo"
@@ -36,54 +38,56 @@ const (
 	STICKER                  = "sticker"
 )
 
-// This object represents an incoming inline query.
+// InlineQuery represents an incoming inline query.
 // When the user sends an empty query, your bot could return some default or trending results.
 type InlineQuery struct {
-	Id       string    `json:"id"`
+	ID       string    `json:"id"`
 	From     *User     `json:"from"`
 	Location *Location `json:"location,omitempty"`
 	Query    string    `json:"query"`
 	Offset   string    `json:"offset"`
 }
 
-// Represents a result of an inline query that was chosen by the user and sent to their chat partner.
+// ChosenInlineResult represents a result of an inline query that was chosen by the user and sent to their chat partner.
 type ChosenInlineResult struct {
-	ResultId        string    `json:"result_id"`
+	ResultID        string    `json:"result_id"`
 	From            *User     `json:"from"`
 	Location        *Location `json:"location,omitempty"`
-	InlineMessageId string    `json:"inline_message_id,omitempty"`
+	InlineMessageID string    `json:"inline_message_id,omitempty"`
 	Query           string    `json:"query"`
 }
 
+// InlineQueryResult represents an interface that implements all the various InlineQueryResult* types.
 type InlineQueryResult interface {
 	ImplementsInlineQueryResult()
 }
 
-// Represents a link to an article or web page.
+// InlineQueryResultArticle represents a link to an article or web page.
 type InlineQueryResultArticle struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
+	ID                  string              `json:"id"`
 	Title               string              `json:"title"`
 	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
-	Url                 string              `json:"url,omitempty"`
-	HideUrl             bool                `json:"hide_url,omitempty"`
+	URL                 string              `json:"url,omitempty"`
+	HideURL             bool                `json:"hide_url,omitempty"`
 	Description         string              `json:"description,omitempty"`
-	ThumbUrl            string              `json:"thumb_url,omitempty"`
+	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultArticle) ImplementsInlineQueryResult() {}
 
-// Represents a link to a photo.
+// InlineQueryResultPhoto represents a link to a photo.
 // By default, this photo will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
 type InlineQueryResultPhoto struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	PhotoUrl            string              `json:"photo_url"`
-	ThumbUrl            string              `json:"thumb_url"`
+	ID                  string              `json:"id"`
+	PhotoURL            string              `json:"photo_url"`
+	ThumbURL            string              `json:"thumb_url"`
 	PhotoWidth          int                 `json:"photo_width,omitempty"`
 	PhotoHeight         int                 `json:"photo_height,omitempty"`
 	Title               string              `json:"title,omitempty"`
@@ -95,19 +99,20 @@ type InlineQueryResultPhoto struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultPhoto) ImplementsInlineQueryResult() {}
 
-// Represents a link to an animated GIF file.
+// InlineQueryResultGif represents a link to an animated GIF file.
 // By default, this animated GIF file will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultGif struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	GifUrl              string              `json:"gif_url"`
+	ID                  string              `json:"id"`
+	GifURL              string              `json:"gif_url"`
 	GifWidth            int                 `json:"gif_width,omitempty"`
 	GifHeight           int                 `json:"gif_height,omitempty"`
 	GifDuration         int                 `json:"gif_duration,omitempty"`
-	ThumbUrl            string              `json:"thumb_url"`
+	ThumbURL            string              `json:"thumb_url"`
 	ThumbMimeType       string              `json:"thumb_mime_type,omitempty"`
 	Title               string              `json:"title,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
@@ -117,19 +122,20 @@ type InlineQueryResultGif struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultGif) ImplementsInlineQueryResult() {}
 
-// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
+// InlineQueryResultMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
 // By default, this animated MPEG-4 file will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultMpeg4Gif struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	Mpeg4Url            string              `json:"mpeg4_url"`
+	ID                  string              `json:"id"`
+	Mpeg4URL            string              `json:"mpeg4_url"`
 	Mpeg4Width          int                 `json:"mpeg4_width,omitempty"`
 	Mpeg4Height         int                 `json:"mpeg4_height,omitempty"`
 	Mpeg4Duration       int                 `json:"mpeg4_duration,omitempty"`
-	ThumbUrl            string              `json:"thumb_url"`
+	ThumbURL            string              `json:"thumb_url"`
 	ThumbMimeType       string              `json:"thumb_mime_type,omitempty"`
 	Title               string              `json:"title,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
@@ -139,17 +145,18 @@ type InlineQueryResultMpeg4Gif struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultMpeg4Gif) ImplementsInlineQueryResult() {}
 
-// Represents a link to a page containing an embedded video player or a video file.
+// InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file.
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	VideoUrl            string              `json:"video_url"`
+	ID                  string              `json:"id"`
+	VideoURL            string              `json:"video_url"`
 	MimeType            string              `json:"mime_type"`
-	ThumbUrl            string              `json:"thumb_url"`
+	ThumbURL            string              `json:"thumb_url"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -162,15 +169,16 @@ type InlineQueryResultVideo struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultVideo) ImplementsInlineQueryResult() {}
 
-// Represents a link to an MP3 audio file.
+// InlineQueryResultAudio represents a link to an MP3 audio file.
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
 type InlineQueryResultAudio struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	AudioUrl            string              `json:"audio_url"`
+	ID                  string              `json:"id"`
+	AudioURL            string              `json:"audio_url"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -181,15 +189,16 @@ type InlineQueryResultAudio struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultAudio) ImplementsInlineQueryResult() {}
 
-// Represents a link to a voice recording in an .OGG container encoded with OPUS.
+// InlineQueryResultVoice represents a link to a voice recording in an .OGG container encoded with OPUS.
 // By default, this voice recording will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the the voice message.
 type InlineQueryResultVoice struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	VoiceUrl            string              `json:"voice_url"`
+	ID                  string              `json:"id"`
+	VoiceURL            string              `json:"voice_url"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -199,37 +208,39 @@ type InlineQueryResultVoice struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultVoice) ImplementsInlineQueryResult() {}
 
-// Represents a link to a file.
+// InlineQueryResultDocument represents a link to a file.
 // By default, this file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
 // Currently, only .PDF and .ZIP files can be sent using this method.
 type InlineQueryResultDocument struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
+	ID                  string              `json:"id"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	DocumentUrl         string              `json:"document_url"`
+	DocumentURL         string              `json:"document_url"`
 	MimeType            string              `json:"mime_type"`
 	Description         string              `json:"description,omitempty"`
 	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
-	ThumbUrl            string              `json:"thumb_url,omitempty"`
+	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultDocument) ImplementsInlineQueryResult() {}
 
-// Represents a location on a map.
+// InlineQueryResultLocation represents a location on a map.
 // By default, the location will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the location.
 type InlineQueryResultLocation struct {
 	Type                 InlineQueryType     `json:"type"`
-	Id                   string              `json:"id"`
+	ID                   string              `json:"id"`
 	Latitude             float64             `json:"latitude"`
 	Longitude            float64             `json:"longitude"`
 	Title                string              `json:"title"`
@@ -238,73 +249,77 @@ type InlineQueryResultLocation struct {
 	Heading              int                 `json:"heading,omitempty"`
 	ProximityAlertRadius int                 `json:"proximity_alert_radius,omitempty"`
 	ReplyMarkup          *InlineKeyboard     `json:"reply_markup,omitempty"`
-	ThumbUrl             string              `json:"thumb_url,omitempty"`
+	ThumbURL             string              `json:"thumb_url,omitempty"`
 	ThumbWidth           int                 `json:"thumb_width,omitempty"`
 	ThumbHeight          int                 `json:"thumb_height,omitempty"`
 	InputMessageContent  InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultLocation) ImplementsInlineQueryResult() {}
 
-// Represents a venue.
+// InlineQueryResultVenue represents a venue.
 // By default, the venue will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the venue.
 type InlineQueryResultVenue struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
+	ID                  string              `json:"id"`
 	Latitude            float64             `json:"latitude"`
 	Longitude           float64             `json:"longitude"`
 	Title               string              `json:"title"`
 	Address             string              `json:"address"`
-	FoursquareId        string              `json:"foursquare_id,omitempty"`
+	FoursquareID        string              `json:"foursquare_id,omitempty"`
 	FoursquareType      string              `json:"foursquare_type,omitempty"`
-	GooglePlaceId       string              `json:"google_place_id,omitempty"`
+	GooglePlaceID       string              `json:"google_place_id,omitempty"`
 	GooglePlaceType     string              `json:"google_place_type,omitempty"`
 	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
-	ThumbUrl            string              `json:"thumb_url,omitempty"`
+	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultVenue) ImplementsInlineQueryResult() {}
 
-// Represents a contact with a phone number.
+// InlineQueryResultContact represents a contact with a phone number.
 // By default, this contact will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the contact.
 type InlineQueryResultContact struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
+	ID                  string              `json:"id"`
 	PhoneNumber         string              `json:"phone_number"`
 	FirstName           string              `json:"first_name"`
 	LastName            string              `json:"last_name,omitempty"`
 	Vcard               string              `json:"vcard,omitempty"`
 	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
-	ThumbUrl            string              `json:"thumb_url,omitempty"`
+	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultContact) ImplementsInlineQueryResult() {}
 
-// Represents a Game.
+// InlineQueryResultGame represents a Game.
 type InlineQueryResultGame struct {
 	Type          InlineQueryType `json:"type"`
-	Id            string          `json:"id"`
+	ID            string          `json:"id"`
 	GameShortName string          `json:"game_short_name"`
 	ReplyMarkup   *InlineKeyboard `json:"reply_markup,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultGame) ImplementsInlineQueryResult() {}
 
-// Represents a link to a photo stored on the Telegram servers.
+// InlineQueryResultCachedPhoto represents a link to a photo stored on the Telegram servers.
 // By default, this photo will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
 type InlineQueryResultCachedPhoto struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	PhotoFileId         string              `json:"photo_file_id"`
+	ID                  string              `json:"id"`
+	PhotoFileID         string              `json:"photo_file_id"`
 	Title               string              `json:"title,omitempty"`
 	Description         string              `json:"description,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
@@ -314,15 +329,16 @@ type InlineQueryResultCachedPhoto struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedPhoto) ImplementsInlineQueryResult() {}
 
-// Represents a link to an animated GIF file stored on the Telegram servers.
+// InlineQueryResultCachedGif represents a link to an animated GIF file stored on the Telegram servers.
 // By default, this animated GIF file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with specified content instead of the animation.
 type InlineQueryResultCachedGif struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	GifFileId           string              `json:"gif_file_id"`
+	ID                  string              `json:"id"`
+	GifFileID           string              `json:"gif_file_id"`
 	Title               string              `json:"title,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -331,15 +347,16 @@ type InlineQueryResultCachedGif struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedGif) ImplementsInlineQueryResult() {}
 
-// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
+// InlineQueryResultCachedMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
 // By default, this animated MPEG-4 file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultCachedMpeg4Gif struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	Mpeg4FileId         string              `json:"mpeg4_file_id"`
+	ID                  string              `json:"id"`
+	Mpeg4FileID         string              `json:"mpeg4_file_id"`
 	Title               string              `json:"title,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -348,29 +365,31 @@ type InlineQueryResultCachedMpeg4Gif struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedMpeg4Gif) ImplementsInlineQueryResult() {}
 
-// Represents a link to a sticker stored on the Telegram servers.
+// InlineQueryResultCachedSticker represents a link to a sticker stored on the Telegram servers.
 // By default, this sticker will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the sticker.
 type InlineQueryResultCachedSticker struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	StickerFileId       string              `json:"sticker_file_id"`
+	ID                  string              `json:"id"`
+	StickerFileID       string              `json:"sticker_file_id"`
 	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedSticker) ImplementsInlineQueryResult() {}
 
-// Represents a link to a file stored on the Telegram servers.
+// InlineQueryResultCachedDocument represents a link to a file stored on the Telegram servers.
 // By default, this file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
 type InlineQueryResultCachedDocument struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
+	ID                  string              `json:"id"`
 	Title               string              `json:"title"`
-	DocumentFileId      string              `json:"document_file_id"`
+	DocumentFileID      string              `json:"document_file_id"`
 	Description         string              `json:"description,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -379,15 +398,16 @@ type InlineQueryResultCachedDocument struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedDocument) ImplementsInlineQueryResult() {}
 
-// Represents a link to a video file stored on the Telegram servers.
+// InlineQueryResultCachedVideo represents a link to a video file stored on the Telegram servers.
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
 type InlineQueryResultCachedVideo struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	VideoFileId         string              `json:"video_file_id"`
+	ID                  string              `json:"id"`
+	VideoFileID         string              `json:"video_file_id"`
 	Title               string              `json:"title"`
 	Description         string              `json:"description,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
@@ -397,15 +417,16 @@ type InlineQueryResultCachedVideo struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedVideo) ImplementsInlineQueryResult() {}
 
-// Represents a link to a voice message stored on the Telegram servers.
+// InlineQueryResultCachedVoice represents a link to a voice message stored on the Telegram servers.
 // By default, this voice message will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the voice message.
 type InlineQueryResultCachedVoice struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	VoiceFileId         string              `json:"voice_file_id"`
+	ID                  string              `json:"id"`
+	VoiceFileID         string              `json:"voice_file_id"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -414,15 +435,16 @@ type InlineQueryResultCachedVoice struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedVoice) ImplementsInlineQueryResult() {}
 
-// Represents a link to an MP3 audio file stored on the Telegram servers.
+// InlineQueryResultCachedAudio represents a link to an MP3 audio file stored on the Telegram servers.
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
 type InlineQueryResultCachedAudio struct {
 	Type                InlineQueryType     `json:"type"`
-	Id                  string              `json:"id"`
-	AudioFileId         string              `json:"audio_file_id"`
+	ID                  string              `json:"id"`
+	AudioFileID         string              `json:"audio_file_id"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
@@ -430,13 +452,15 @@ type InlineQueryResultCachedAudio struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
 func (i InlineQueryResultCachedAudio) ImplementsInlineQueryResult() {}
 
+// InputMessageContent represents an interface that implements all the various Input*MessageContent types.
 type InputMessageContent interface {
 	ImplementsInputMessageContent()
 }
 
-// Represents the content of a text message to be sent as the result of an inline query.
+// InputTextMessageContent represents the content of a text message to be sent as the result of an inline query.
 type InputTextMessageContent struct {
 	MessageText           string           `json:"message_text"`
 	ParseMode             string           `json:"parse_mode,omitempty"`
@@ -444,9 +468,10 @@ type InputTextMessageContent struct {
 	DisableWebPagePreview bool             `json:"disable_web_page_preview,omitempty"`
 }
 
+// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
 func (i InputTextMessageContent) ImplementsInputMessageContent() {}
 
-// Represents the content of a location message to be sent as the result of an inline query.
+// InputLocationMessageContent represents the content of a location message to be sent as the result of an inline query.
 type InputLocationMessageContent struct {
 	Latitude             float64 `json:"latitude"`
 	Longitude            float64 `json:"longitude"`
@@ -456,23 +481,25 @@ type InputLocationMessageContent struct {
 	ProximityAlertRadius int     `json:"proximity_alert_radius,omitempty"`
 }
 
+// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
 func (i InputLocationMessageContent) ImplementsInputMessageContent() {}
 
-// Represents the content of a venue message to be sent as the result of an inline query.
+// InputVenueMessageContent represents the content of a venue message to be sent as the result of an inline query.
 type InputVenueMessageContent struct {
 	Latitude        float64 `json:"latitude"`
 	Longitude       float64 `json:"longitude"`
 	Title           string  `json:"title"`
 	Address         string  `json:"address"`
-	FoursquareId    string  `json:"foursquare_id,omitempty"`
+	FoursquareID    string  `json:"foursquare_id,omitempty"`
 	FoursquareType  string  `json:"foursquare_type,omitempty"`
-	GooglePlaceId   string  `json:"google_place_id,omitempty"`
+	GooglePlaceID   string  `json:"google_place_id,omitempty"`
 	GooglePlaceType string  `json:"google_place_type,omitempty"`
 }
 
+// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
 func (i InputVenueMessageContent) ImplementsInputMessageContent() {}
 
-// Represents the content of a contact message to be sent as the result of an inline query.
+// InputContactMessageContent represents the content of a contact message to be sent as the result of an inline query.
 type InputContactMessageContent struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
@@ -480,4 +507,5 @@ type InputContactMessageContent struct {
 	Vcard       string `json:"vcard,omitempty"`
 }
 
+// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}

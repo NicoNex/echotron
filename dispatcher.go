@@ -21,7 +21,6 @@ package echotron
 import (
 	"compress/gzip"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -94,7 +93,7 @@ func (d *Dispatcher) Poll() error {
 	if err != nil {
 		return err
 	} else if !response.Ok {
-		return errors.New("could not disable webhook, running in long polling mode is not possible")
+		return fmt.Errorf("could not disable webhook, running in long polling mode is not possible")
 	}
 
 	for {
