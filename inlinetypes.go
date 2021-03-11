@@ -59,6 +59,7 @@ type InlineQueryResult interface {
 	ImplementsInlineQueryResult()
 }
 
+// Represents a link to an article or web page.
 type InlineQueryResultArticle struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -75,6 +76,9 @@ type InlineQueryResultArticle struct {
 
 func (i InlineQueryResultArticle) ImplementsInlineQueryResult() {}
 
+// Represents a link to a photo.
+// By default, this photo will be sent by the user with optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
 type InlineQueryResultPhoto struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -93,6 +97,9 @@ type InlineQueryResultPhoto struct {
 
 func (i InlineQueryResultPhoto) ImplementsInlineQueryResult() {}
 
+// Represents a link to an animated GIF file.
+// By default, this animated GIF file will be sent by the user with optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultGif struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -112,6 +119,9 @@ type InlineQueryResultGif struct {
 
 func (i InlineQueryResultGif) ImplementsInlineQueryResult() {}
 
+// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
+// By default, this animated MPEG-4 file will be sent by the user with optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultMpeg4Gif struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -131,6 +141,9 @@ type InlineQueryResultMpeg4Gif struct {
 
 func (i InlineQueryResultMpeg4Gif) ImplementsInlineQueryResult() {}
 
+// Represents a link to a page containing an embedded video player or a video file.
+// By default, this video file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -151,6 +164,9 @@ type InlineQueryResultVideo struct {
 
 func (i InlineQueryResultVideo) ImplementsInlineQueryResult() {}
 
+// Represents a link to an MP3 audio file.
+// By default, this audio file will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
 type InlineQueryResultAudio struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -167,6 +183,9 @@ type InlineQueryResultAudio struct {
 
 func (i InlineQueryResultAudio) ImplementsInlineQueryResult() {}
 
+// Represents a link to a voice recording in an .OGG container encoded with OPUS.
+// By default, this voice recording will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the the voice message.
 type InlineQueryResultVoice struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -182,6 +201,10 @@ type InlineQueryResultVoice struct {
 
 func (i InlineQueryResultVoice) ImplementsInlineQueryResult() {}
 
+// Represents a link to a file.
+// By default, this file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
+// Currently, only .PDF and .ZIP files can be sent using this method.
 type InlineQueryResultDocument struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -201,6 +224,9 @@ type InlineQueryResultDocument struct {
 
 func (i InlineQueryResultDocument) ImplementsInlineQueryResult() {}
 
+// Represents a location on a map.
+// By default, the location will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the location.
 type InlineQueryResultLocation struct {
 	Type                 InlineQueryType     `json:"type"`
 	Id                   string              `json:"id"`
@@ -220,6 +246,9 @@ type InlineQueryResultLocation struct {
 
 func (i InlineQueryResultLocation) ImplementsInlineQueryResult() {}
 
+// Represents a venue.
+// By default, the venue will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the venue.
 type InlineQueryResultVenue struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -240,6 +269,9 @@ type InlineQueryResultVenue struct {
 
 func (i InlineQueryResultVenue) ImplementsInlineQueryResult() {}
 
+// Represents a contact with a phone number.
+// By default, this contact will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the contact.
 type InlineQueryResultContact struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -256,6 +288,7 @@ type InlineQueryResultContact struct {
 
 func (i InlineQueryResultContact) ImplementsInlineQueryResult() {}
 
+// Represents a Game.
 type InlineQueryResultGame struct {
 	Type          InlineQueryType `json:"type"`
 	Id            string          `json:"id"`
@@ -265,6 +298,9 @@ type InlineQueryResultGame struct {
 
 func (i InlineQueryResultGame) ImplementsInlineQueryResult() {}
 
+// Represents a link to a photo stored on the Telegram servers.
+// By default, this photo will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
 type InlineQueryResultCachedPhoto struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -280,6 +316,9 @@ type InlineQueryResultCachedPhoto struct {
 
 func (i InlineQueryResultCachedPhoto) ImplementsInlineQueryResult() {}
 
+// Represents a link to an animated GIF file stored on the Telegram servers.
+// By default, this animated GIF file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with specified content instead of the animation.
 type InlineQueryResultCachedGif struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -294,6 +333,9 @@ type InlineQueryResultCachedGif struct {
 
 func (i InlineQueryResultCachedGif) ImplementsInlineQueryResult() {}
 
+// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
+// By default, this animated MPEG-4 file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
 type InlineQueryResultCachedMpeg4Gif struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -308,6 +350,9 @@ type InlineQueryResultCachedMpeg4Gif struct {
 
 func (i InlineQueryResultCachedMpeg4Gif) ImplementsInlineQueryResult() {}
 
+// Represents a link to a sticker stored on the Telegram servers.
+// By default, this sticker will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the sticker.
 type InlineQueryResultCachedSticker struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -318,6 +363,9 @@ type InlineQueryResultCachedSticker struct {
 
 func (i InlineQueryResultCachedSticker) ImplementsInlineQueryResult() {}
 
+// Represents a link to a file stored on the Telegram servers.
+// By default, this file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
 type InlineQueryResultCachedDocument struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -333,6 +381,9 @@ type InlineQueryResultCachedDocument struct {
 
 func (i InlineQueryResultCachedDocument) ImplementsInlineQueryResult() {}
 
+// Represents a link to a video file stored on the Telegram servers.
+// By default, this video file will be sent by the user with an optional caption.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
 type InlineQueryResultCachedVideo struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -348,6 +399,9 @@ type InlineQueryResultCachedVideo struct {
 
 func (i InlineQueryResultCachedVideo) ImplementsInlineQueryResult() {}
 
+// Represents a link to a voice message stored on the Telegram servers.
+// By default, this voice message will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the voice message.
 type InlineQueryResultCachedVoice struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -362,6 +416,9 @@ type InlineQueryResultCachedVoice struct {
 
 func (i InlineQueryResultCachedVoice) ImplementsInlineQueryResult() {}
 
+// Represents a link to an MP3 audio file stored on the Telegram servers.
+// By default, this audio file will be sent by the user.
+// Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
 type InlineQueryResultCachedAudio struct {
 	Type                InlineQueryType     `json:"type"`
 	Id                  string              `json:"id"`
@@ -379,6 +436,7 @@ type InputMessageContent interface {
 	ImplementsInputMessageContent()
 }
 
+// Represents the content of a text message to be sent as the result of an inline query.
 type InputTextMessageContent struct {
 	MessageText           string           `json:"message_text"`
 	ParseMode             string           `json:"parse_mode,omitempty"`
@@ -388,6 +446,7 @@ type InputTextMessageContent struct {
 
 func (i InputTextMessageContent) ImplementsInputMessageContent() {}
 
+// Represents the content of a location message to be sent as the result of an inline query.
 type InputLocationMessageContent struct {
 	Latitude             float64 `json:"latitude"`
 	Longitude            float64 `json:"longitude"`
@@ -399,6 +458,7 @@ type InputLocationMessageContent struct {
 
 func (i InputLocationMessageContent) ImplementsInputMessageContent() {}
 
+// Represents the content of a venue message to be sent as the result of an inline query.
 type InputVenueMessageContent struct {
 	Latitude        float64 `json:"latitude"`
 	Longitude       float64 `json:"longitude"`
@@ -412,6 +472,7 @@ type InputVenueMessageContent struct {
 
 func (i InputVenueMessageContent) ImplementsInputMessageContent() {}
 
+// Represents the content of a contact message to be sent as the result of an inline query.
 type InputContactMessageContent struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
