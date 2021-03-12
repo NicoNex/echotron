@@ -468,7 +468,7 @@ type InputTextMessageContent struct {
 	DisableWebPagePreview bool             `json:"disable_web_page_preview,omitempty"`
 }
 
-// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
+// ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputTextMessageContent) ImplementsInputMessageContent() {}
 
 // InputLocationMessageContent represents the content of a location message to be sent as the result of an inline query.
@@ -481,7 +481,7 @@ type InputLocationMessageContent struct {
 	ProximityAlertRadius int     `json:"proximity_alert_radius,omitempty"`
 }
 
-// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
+// ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputLocationMessageContent) ImplementsInputMessageContent() {}
 
 // InputVenueMessageContent represents the content of a venue message to be sent as the result of an inline query.
@@ -496,7 +496,7 @@ type InputVenueMessageContent struct {
 	GooglePlaceType string  `json:"google_place_type,omitempty"`
 }
 
-// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
+// ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputVenueMessageContent) ImplementsInputMessageContent() {}
 
 // InputContactMessageContent represents the content of a contact message to be sent as the result of an inline query.
@@ -507,5 +507,5 @@ type InputContactMessageContent struct {
 	Vcard       string `json:"vcard,omitempty"`
 }
 
-// ImplementsInputMessageContent is used to implement the InlineQueryResult interface.
+// ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}
