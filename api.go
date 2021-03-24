@@ -146,13 +146,13 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 }
 
 // GetStickerSet is used to get a sticker set.
-func (a API) GetStickerSet(name string) (StickerSet, error) {
-	var res StickerSet
+func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
+	var res APIResponseStickerSet
 	var url = fmt.Sprintf("%sgetStickerSet?name=%s", string(a), encode(name))
 
 	content, err := SendGetRequest(url)
 	if err != nil {
-		return res, err
+		return APIResponseStickerSet, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
