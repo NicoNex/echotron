@@ -9,9 +9,10 @@ var (
 	api        = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID     = int64(41876271)
 	photoID    = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	audioID    = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	audioID    = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
 	documentID = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
 	videoID    = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	voiceID    = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 )
 
 // func TestGetChat(t *testing.T) {
@@ -216,7 +217,7 @@ func TestSendVoice(t *testing.T) {
 }
 
 func TestSendVoiceByID(t *testing.T) {
-	resp, err := api.SendVoiceByID(audioID, "TestSendVoiceByID", chatID)
+	resp, err := api.SendVoiceByID(voiceID, "TestSendVoiceByID", chatID)
 	if err != nil {
 		t.Fatal(err)
 	}
