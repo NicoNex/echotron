@@ -470,7 +470,34 @@ func (a API) SendVideoByID(videoID, caption string, chatID int64, opts ...Option
 }
 
 // SendVideoNote is used to send video messages.
-func (a API) SendVideoNote(videoID string, chatID int64) (APIResponseMessage, error) {
+func (a API) SendVideoNote(filepath string, chatID int64, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendVideoNoteBytes(filepath, chatID, b, opts...)
+}
+
+// SendVideoNoteBytes is used to send video messages as a slice of bytes.
+func (a API) SendVideoNoteBytes(filepath string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendVideoNote?chat_id=%d%s",
+		string(a),
+		chatID,
+		parseOpts(opts...),
+	)
+
+	content, err := SendPostRequest(url, filepath, "video_note", data)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SendVideoNoteByID is used to send video messages that already exist on the Telegram servers.
+func (a API) SendVideoNoteByID(videoID string, chatID int64) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&video_note=%s",

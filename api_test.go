@@ -5,14 +5,15 @@ import (
 )
 
 var (
-	msgTmp     *Message
-	api        = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
-	chatID     = int64(41876271)
-	photoID    = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	audioID    = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	videoID    = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	voiceID    = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	msgTmp      *Message
+	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
+	chatID      = int64(41876271)
+	photoID     = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	audioID     = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID  = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	videoID     = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID     = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 )
 
 func TestGetChat(t *testing.T) {
@@ -205,16 +206,27 @@ func TestSendVideoByID(t *testing.T) {
 	}
 }
 
-// func TestSendVideoNote(t *testing.T) {
-// 	resp, err := api.SendVideoNote(videoID, chatID)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+func TestSendVideoNote(t *testing.T) {
+	resp, err := api.SendVideoNote("tests/video_note.mp4", chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if !resp.Ok {
-// 		t.Fatal(resp.ErrorCode, resp.Description)
-// 	}
-// }
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoNoteByID(t *testing.T) {
+	resp, err := api.SendVideoNoteByID(videoNoteID, chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
 
 func TestSendVoice(t *testing.T) {
 	resp, err := api.SendVoice("tests/audio.mp3", "TestSendVoice", chatID)
