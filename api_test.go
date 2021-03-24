@@ -15,18 +15,18 @@ var (
 	voiceID    = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 )
 
-// func TestGetChat(t *testing.T) {
-// 	chat, err := api.GetChat(chatID)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+func TestGetChat(t *testing.T) {
+	resp, err := api.GetChat(chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if chat.Type != "private" && chat.Type != "group" &&
-// 		chat.Type != "supergroup" && chat.Type != "channel" {
+	if resp.Result.Type != "private" && resp.Result.Type != "group" &&
+		resp.Result.Type != "supergroup" && resp.Result.Type != "channel" {
 
-// 		t.Fatalf("wrong chat type, got: %s", chat.Type)
-// 	}
-// }
+		t.Fatalf("wrong chat type, got: %s", resp.Result.Type)
+	}
+}
 
 func TestSendMessage(t *testing.T) {
 	resp, err := api.SendMessage("TestSendMessage", chatID)
