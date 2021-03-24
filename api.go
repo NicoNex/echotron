@@ -133,13 +133,13 @@ func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
 
 // GetChat is used to get up to date information about the chat.
 // (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
-func (a API) GetChat(chatID int64) (Chat, error) {
-	var res Chat
+func (a API) GetChat(chatID int64) (APIResponseChat, error) {
+	var res APIResponseChat
 	var url = fmt.Sprintf("%sgetChat?chat_id=%d", string(a), chatID)
 
 	content, err := SendGetRequest(url)
 	if err != nil {
-		return res, err
+		return APIResponseChat{}, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
