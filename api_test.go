@@ -28,6 +28,17 @@ func TestGetChat(t *testing.T) {
 	}
 }
 
+func TestGetStickerSet(t *testing.T) {
+	resp, err := api.GetStickerSet("RickAndMorty")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendMessage(t *testing.T) {
 	resp, err := api.SendMessage("TestSendMessage", chatID)
 	if err != nil {
