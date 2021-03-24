@@ -422,7 +422,7 @@ func (a API) SendDocumentByID(documentID, caption string, chatID int64, opts ...
 
 // SendVideo is used to send video files.
 // Telegram clients support mp4 videos (other formats may be sent with SendDocument).
-func (a API) SendVideo(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a API) SendVideo(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
@@ -489,7 +489,7 @@ func (a API) SendVideoNote(videoID string, chatID int64) (APIResponseMessage, er
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document).
-func (a API) SendVoice(filepath, caption string, chatID int64, data []byte, opts ...Option) (APIResponseMessage, error) {
+func (a API) SendVoice(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return APIResponseMessage{}, err
@@ -522,10 +522,11 @@ func (a API) SendVoiceBytes(filepath, caption string, chatID int64, data []byte,
 func (a API) SendVoiceByID(voiceID, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
-		"%ssendVoice?chat_id=%d&voice=%s%s",
+		"%ssendVoice?chat_id=%d&voice=%s&caption=%s%s",
 		string(a),
 		chatID,
 		encode(voiceID),
+		encode(caption),
 		parseOpts(opts...),
 	)
 
