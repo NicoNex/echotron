@@ -152,7 +152,7 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 
 	content, err := SendGetRequest(url)
 	if err != nil {
-		return APIResponseStickerSet, err
+		return APIResponseStickerSet{}, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
