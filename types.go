@@ -42,10 +42,10 @@ type Chat struct {
 
 // ChatPhoto represents a chat photo.
 type ChatPhoto struct {
-	SmallFileId       string `json:"small_file_id"`
-	SmallFileUniqueId string `json:"small_file_unique_id"`
-	BigFileId         string `json:"big_file_id"`
-	BigFileUniqueId   string `json:"big_file_unique_id"`
+	SmallFileID  string `json:"small_file_id"`
+	SmallFileUID string `json:"small_file_unique_id"`
+	BigFileID    string `json:"big_file_id"`
+	BigFileUID   string `json:"big_file_unique_id"`
 }
 
 // ChatInviteLink represents an invite link for a chat.
@@ -205,19 +205,11 @@ type APIResponseChat struct {
 	APIResponseBase
 }
 
-// Contact represents a phone contact.
-type Contact struct {
-	PhoneNumber string `json:"phone_number"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name,omitempty"`
-	UserID      int    `json:"user_id,omitempty"`
-	Vcard       string `json:"vcard,omitempty"`
-}
-
-// Location represents a point on the map.
-type Location struct {
-	Longitude float32
-	Latitude  float32
+// APIResponseStickerSet represents the incoming response from Telegram servers.
+// Used by GetStickerSet (since it returns a StickerSet).
+type APIResponseStickerSet struct {
+	Result *StickerSet `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
@@ -232,60 +224,147 @@ type CallbackQuery struct {
 	Data            string   `json:"data,omitempty"`
 }
 
-// Audio represents an audio file to be treated as music by the Telegram clients.
-type Audio struct {
-	FileID    string     `json:"file_id"`
-	Duration  int        `json:"duration"`
-	Performer string     `json:"performer,omitempty"`
-	Title     string     `json:"title,omitempty"`
-	MimeType  string     `json:"mime_type,omitempty"`
-	FileSize  int        `json:"file_size,omitempty"`
-	Thumb     *PhotoSize `json:"thumb,omitempty"`
+// This object represents one size of a photo or a file / sticker thumbnail.
+type PhotoSize struct {
+	FileID   string `json:"file_id"`
+	FileUID  string `json:"file_unique_id"`
+	Width    int    `json:"width"`
+	Height   int    `json:"height"`
+	FileSize int    `json:"file_size,omitempty"`
 }
 
-// Video represents a video file.
-type Video struct {
+// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
+type Animation struct {
 	FileID   string     `json:"file_id"`
+	FileUID  string     `json:"file_unique_id"`
 	Width    int        `json:"width"`
 	Height   int        `json:"height"`
 	Duration int        `json:"duration"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	MimeType string     `json:"mime_type,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
-}
-
-// VideoNote represents a video message.
-type VideoNote struct {
-	FileID   string     `json:"file_id"`
-	Length   int        `json:"length"`
-	Duration int        `json:"duration"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
-}
-
-// Document represents a general file (as opposed to photos, voice messages and audio files).
-type Document struct {
-	FileID   string     `json:"file_id"`
 	Thumb    *PhotoSize `json:"thumb,omitempty"`
 	FileName string     `json:"file_name,omitempty"`
 	MimeType string     `json:"mime_type,omitempty"`
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// PhotoSize represents one size of a photo or a file/sticker thumbnail.
-type PhotoSize struct {
-	FileID   string `json:"file_id"`
-	Width    int    `json:"width"`
-	Height   int    `json:"height"`
-	FileSize int    `json:"FileSize"`
+// This object represents an audio file to be treated as music by the Telegram clients.
+type Audio struct {
+	FileID    string     `json:"file_id"`
+	FileUID   string     `json:"file_unique_id"`
+	Duration  int        `json:"duration"`
+	Performer string     `json:"performer,omitempty"`
+	Title     string     `json:"title,omitempty"`
+	FileName  string     `json:"file_name,omitempty"`
+	MimeType  string     `json:"mime_type,omitempty"`
+	FileSize  int        `json:"file_size,omitempty"`
+	Thumb     *PhotoSize `json:"thumb,omitempty"`
 }
 
-// Voice represents a voice note.
+// This object represents a general file (as opposed to photos, voice messages and audio files).
+type Document struct {
+	FileID   string     `json:"file_id"`
+	FileUID  string     `json:"file_unique_id"`
+	Thumb    *PhotoSize `json:"thumb,omitempty"`
+	FileName string     `json:"file_name,omitempty"`
+	MimeType string     `json:"mime_type,omitempty"`
+	FileSize int        `json:"file_size,omitempty"`
+}
+
+// This object represents a video file.
+type Video struct {
+	FileID   string     `json:"file_id"`
+	FileUID  string     `json:"file_unique_id"`
+	Width    int        `json:"width"`
+	Height   int        `json:"height"`
+	Duration int        `json:"duration"`
+	Thumb    *PhotoSize `json:"thumb,omitempty"`
+	FileName string     `json:"file_name,omitempty"`
+	MimeType string     `json:"mime_type,omitempty"`
+	FileSize int        `json:"file_size,omitempty"`
+}
+
+// This object represents a video message (available in Telegram apps as of v.4.0).
+type VideoNote struct {
+	FileID   string     `json:"file_id"`
+	FileUID  string     `json:"file_unique_id"`
+	Length   int        `json:"length"`
+	Duration int        `json:"duration"`
+	Thumb    *PhotoSize `json:"thumb,omitempty"`
+	FileSize int        `json:"file_size,omitempty"`
+}
+
+// This object represents a voice note.
 type Voice struct {
 	FileID   string `json:"file_id"`
+	FileUID  string `json:"file_unique_id"`
 	Duration int    `json:"duration"`
 	MimeType string `json:"mime_type,omitempty"`
-	FileSize int    `json:"FileSize,omitempty"`
+	FileSize int    `json:"file_size,omitempty"`
+}
+
+// This object represents a phone contact.
+type Contact struct {
+	PhoneNumber string `json:"phone_number"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name,omitempty"`
+	UserId      int    `json:"user_id,omitempty"`
+	Vcard       string `json:"vcard,omitempty"`
+}
+
+// This object represents an animated emoji that displays a random value.
+type Dice struct {
+	Emoji string `json:"emoji"`
+	Value int    `json:"value"`
+}
+
+// This object contains information about one answer option in a poll.
+type PollOption struct {
+	Text       string `json:"text"`
+	VoterCount int    `json:"voter_count"`
+}
+
+// This object represents an answer of a user in a non-anonymous poll.
+type PollAnswer struct {
+	PollId    string `json:"poll_id"`
+	User      *User  `json:"user"`
+	OptionIds []int  `json:"option_ids"`
+}
+
+// This object contains information about a poll.
+type Poll struct {
+	Id                    string           `json:"id"`
+	Question              string           `json:"question"`
+	Options               []*PollOption    `json:"options"`
+	TotalVoterCount       int              `json:"total_voter_count"`
+	IsClosed              bool             `json:"is_closed"`
+	IsAnonymous           bool             `json:"is_anonymous"`
+	Type                  string           `json:"type"`
+	AllowsMultipleAnswers bool             `json:"allows_multiple_answers"`
+	CorrectOptionId       int              `json:"correct_option_id,omitempty"`
+	Explanation           string           `json:"explanation,omitempty"`
+	ExplanationEntities   []*MessageEntity `json:"explanation_entities,omitempty"`
+	OpenPeriod            int              `json:"open_period,omitempty"`
+	CloseDate             int              `json:"close_date,omitempty"`
+}
+
+// This object represents a point on the map.
+type Location struct {
+	Longitude            float64 `json:"longitude"`
+	Latitude             float64 `json:"latitude"`
+	HorizontalAccuracy   float64 `json:"horizontal_accuracy,omitempty"`
+	LivePeriod           int     `json:"live_period,omitempty"`
+	Heading              int     `json:"heading,omitempty"`
+	ProximityAlertRadius int     `json:"proximity_alert_radius,omitempty"`
+}
+
+// This object represents a venue.
+type Venue struct {
+	Location        *Location `json:"location"`
+	Title           string    `json:"title"`
+	Address         string    `json:"address"`
+	FoursquareId    string    `json:"foursquare_id,omitempty"`
+	FoursquareType  string    `json:"foursquare_type,omitempty"`
+	GooglePlaceId   string    `json:"google_place_id,omitempty"`
+	GooglePlaceType string    `json:"google_place_type,omitempty"`
 }
 
 // MaskPosition describes the position on faces where a mask should be placed by default.
@@ -299,21 +378,25 @@ type MaskPosition struct {
 // Sticker represents a sticker.
 type Sticker struct {
 	FileID       string       `json:"file_id"`
+	FileUID      string       `json:"file_unique_id"`
 	Width        int          `json:"width"`
 	Height       int          `json:"height"`
+	IsAnimated   bool         `json:"is_animated"`
 	Thumb        *PhotoSize   `json:"thumb,omitempty"`
 	Emoji        string       `json:"emoji,omitempty"`
 	SetName      string       `json:"set_name,omitempty"`
-	FileSize     int          `json:"file_size,omitempty"`
 	MaskPosition MaskPosition `json:"mask_position"`
+	FileSize     int          `json:"file_size,omitempty"`
 }
 
 // StickerSet represents a sticker set.
 type StickerSet struct {
 	Name          string     `json:"name"`
 	Title         string     `json:"title"`
+	IsAnimated    bool       `json:"is_animated"`
 	ContainsMasks bool       `json:"contains_masks"`
 	Stickers      []*Sticker `json:"sticker"`
+	Thumb         *PhotoSize `json:"thumb,omitempty"`
 }
 
 // Button represents a button in a keyboard.
