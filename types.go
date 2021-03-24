@@ -20,7 +20,7 @@ package echotron
 
 // Chat represents a chat.
 type Chat struct {
-	Id                    int              `json:"id"`
+	ID                    int64            `json:"id"`
 	Type                  string           `json:"type"`
 	Title                 string           `json:"title,omitempty"`
 	Username              string           `json:"username,omitempty"`
@@ -36,7 +36,7 @@ type Chat struct {
 	MessageAutoDeleteTime int              `json:"message_auto_delete_time,omitempty"`
 	StickerSetName        string           `json:"sticker_set_name,omitempty"`
 	CanSetStickerSet      bool             `json:"can_set_sticker_set,omitempty"`
-	LinkedChatId          int64            `json:"linked_chat_id,omitempty"`
+	LinkedChatID          int64            `json:"linked_chat_id,omitempty"`
 	Location              *ChatLocation    `json:"location,omitempty"`
 }
 
@@ -306,7 +306,7 @@ type Contact struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name,omitempty"`
-	UserId      int    `json:"user_id,omitempty"`
+	UserID      int    `json:"user_id,omitempty"`
 	Vcard       string `json:"vcard,omitempty"`
 }
 
@@ -324,14 +324,14 @@ type PollOption struct {
 
 // This object represents an answer of a user in a non-anonymous poll.
 type PollAnswer struct {
-	PollId    string `json:"poll_id"`
+	PollID    string `json:"poll_id"`
 	User      *User  `json:"user"`
-	OptionIds []int  `json:"option_ids"`
+	OptionIDs []int  `json:"option_ids"`
 }
 
 // This object contains information about a poll.
 type Poll struct {
-	Id                    string           `json:"id"`
+	ID                    string           `json:"id"`
 	Question              string           `json:"question"`
 	Options               []*PollOption    `json:"options"`
 	TotalVoterCount       int              `json:"total_voter_count"`
@@ -339,7 +339,7 @@ type Poll struct {
 	IsAnonymous           bool             `json:"is_anonymous"`
 	Type                  string           `json:"type"`
 	AllowsMultipleAnswers bool             `json:"allows_multiple_answers"`
-	CorrectOptionId       int              `json:"correct_option_id,omitempty"`
+	CorrectOptionID       int              `json:"correct_option_id,omitempty"`
 	Explanation           string           `json:"explanation,omitempty"`
 	ExplanationEntities   []*MessageEntity `json:"explanation_entities,omitempty"`
 	OpenPeriod            int              `json:"open_period,omitempty"`
@@ -361,9 +361,9 @@ type Venue struct {
 	Location        *Location `json:"location"`
 	Title           string    `json:"title"`
 	Address         string    `json:"address"`
-	FoursquareId    string    `json:"foursquare_id,omitempty"`
+	FoursquareID    string    `json:"foursquare_id,omitempty"`
 	FoursquareType  string    `json:"foursquare_type,omitempty"`
-	GooglePlaceId   string    `json:"google_place_id,omitempty"`
+	GooglePlaceID   string    `json:"google_place_id,omitempty"`
 	GooglePlaceType string    `json:"google_place_type,omitempty"`
 }
 
