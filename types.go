@@ -20,16 +20,96 @@ package echotron
 
 // Chat represents a chat.
 type Chat struct {
-	ID                 int64    `json:"id"`
-	Type               string   `json:"type"`
-	Title              string   `json:"title,omitempty"`
-	Username           string   `json:"username,omitempty"`
-	FirstName          string   `json:"first_name,omitempty"`
-	LastName           string   `json:"last_name,omitempty"`
-	AllMembersAreAdmin bool     `json:"all_members_are_administrators,omitempty"`
-	Description        string   `json:"description,omitempty"`
-	InviteLink         string   `json:"invite_link,omitempty"`
-	PinnedMessage      *Message `json:"pinned_message,omitempty"`
+	Id                    int              `json:"id"`
+	Type                  string           `json:"type"`
+	Title                 string           `json:"title,omitempty"`
+	Username              string           `json:"username,omitempty"`
+	FirstName             string           `json:"first_name,omitempty"`
+	LastName              string           `json:"last_name,omitempty"`
+	Photo                 *ChatPhoto       `json:"photo,omitempty"`
+	Bio                   string           `json:"bio,omitempty"`
+	Description           string           `json:"description,omitempty"`
+	InviteLink            string           `json:"invite_link,omitempty"`
+	PinnedMessage         *Message         `json:"pinned_message,omitempty"`
+	Permissions           *ChatPermissions `json:"permissions,omitempty"`
+	SlowModeDelay         int              `json:"slow_mode_delay,omitempty"`
+	MessageAutoDeleteTime int              `json:"message_auto_delete_time,omitempty"`
+	StickerSetName        string           `json:"sticker_set_name,omitempty"`
+	CanSetStickerSet      bool             `json:"can_set_sticker_set,omitempty"`
+	LinkedChatId          int64            `json:"linked_chat_id,omitempty"`
+	Location              *ChatLocation    `json:"location,omitempty"`
+}
+
+// ChatPhoto represents a chat photo.
+type ChatPhoto struct {
+	SmallFileId       string `json:"small_file_id"`
+	SmallFileUniqueId string `json:"small_file_unique_id"`
+	BigFileId         string `json:"big_file_id"`
+	BigFileUniqueId   string `json:"big_file_unique_id"`
+}
+
+// ChatInviteLink represents an invite link for a chat.
+type ChatInviteLink struct {
+	InviteLink  string `json:"invite_link"`
+	Creator     *User  `json:"creator"`
+	IsPrimary   bool   `json:"is_primary"`
+	IsRevoked   bool   `json:"is_revoked"`
+	ExpireDate  int    `json:"expire_date,omitempty"`
+	MemberLimit int    `json:"member_limit,omitempty"`
+}
+
+// ChatMember contains information about one member of a chat.
+type ChatMember struct {
+	User                  *User  `json:"user"`
+	Status                string `json:"status"`
+	CustomTitle           string `json:"custom_title,omitempty"`
+	IsAnonymous           bool   `json:"is_anonymous,omitempty"`
+	CanBeEdited           bool   `json:"can_be_edited,omitempty"`
+	CanManageChat         bool   `json:"can_manage_chat,omitempty"`
+	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
+	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
+	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
+	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
+	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
+	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
+	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
+	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
+	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
+	IsMember              bool   `json:"is_member,omitempty"`
+	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
+	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
+	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
+	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
+	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
+	UntilDate             int    `json:"until_date,omitempty"`
+}
+
+// ChatMemberUpdated represents changes in the status of a chat member.
+type ChatMemberUpdated struct {
+	Chat          *Chat           `json:"chat"`
+	From          *User           `json:"from"`
+	Date          int             `json:"date"`
+	OldChatMember *ChatMember     `json:"old_chat_member"`
+	NewChatMember *ChatMember     `json:"new_chat_member"`
+	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
+}
+
+// ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
+type ChatPermissions struct {
+	CanSendMessages       bool `json:"can_send_messages,omitempty"`
+	CanSendMediaMessages  bool `json:"can_send_media_messages,omitempty"`
+	CanSendPolls          bool `json:"can_send_polls,omitempty"`
+	CanSendOtherMessages  bool `json:"can_send_other_messages,omitempty"`
+	CanAddWebPagePreviews bool `json:"can_add_web_page_previews,omitempty"`
+	CanChangeInfo         bool `json:"can_change_info,omitempty"`
+	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
+	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
+}
+
+// ChatLocation represents a location to which a chat is connected.
+type ChatLocation struct {
+	Location *Location `json:"location"`
+	Address  string    `json:"address"`
 }
 
 // User represents a Telegram user or bot.
@@ -115,6 +195,13 @@ type APIResponseMessage struct {
 // Used by SetMyCommands and GetMyCommands (since they return an array of BotCommands).
 type APIResponseCommands struct {
 	Result []BotCommand `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseChat represents the incoming response from Telegram servers.
+// Used by GetChat (since it returns a Chat).
+type APIResponseChat struct {
+	Result *Chat `json:"result,omitempty"`
 	APIResponseBase
 }
 
