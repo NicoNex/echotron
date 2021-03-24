@@ -224,7 +224,7 @@ type CallbackQuery struct {
 	Data            string   `json:"data,omitempty"`
 }
 
-// This object represents one size of a photo or a file / sticker thumbnail.
+// PhotoSize represents one size of a photo or a file / sticker thumbnail.
 type PhotoSize struct {
 	FileID   string `json:"file_id"`
 	FileUID  string `json:"file_unique_id"`
@@ -233,7 +233,7 @@ type PhotoSize struct {
 	FileSize int    `json:"file_size,omitempty"`
 }
 
-// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
+// Animation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
 type Animation struct {
 	FileID   string     `json:"file_id"`
 	FileUID  string     `json:"file_unique_id"`
@@ -246,7 +246,7 @@ type Animation struct {
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents an audio file to be treated as music by the Telegram clients.
+// Audio represents an audio file to be treated as music by the Telegram clients.
 type Audio struct {
 	FileID    string     `json:"file_id"`
 	FileUID   string     `json:"file_unique_id"`
@@ -259,7 +259,7 @@ type Audio struct {
 	Thumb     *PhotoSize `json:"thumb,omitempty"`
 }
 
-// This object represents a general file (as opposed to photos, voice messages and audio files).
+// Document represents a general file (as opposed to photos, voice messages and audio files).
 type Document struct {
 	FileID   string     `json:"file_id"`
 	FileUID  string     `json:"file_unique_id"`
@@ -269,7 +269,7 @@ type Document struct {
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents a video file.
+// Video represents a video file.
 type Video struct {
 	FileID   string     `json:"file_id"`
 	FileUID  string     `json:"file_unique_id"`
@@ -282,7 +282,7 @@ type Video struct {
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents a video message (available in Telegram apps as of v.4.0).
+// VideoNote represents a video message (available in Telegram apps as of v.4.0).
 type VideoNote struct {
 	FileID   string     `json:"file_id"`
 	FileUID  string     `json:"file_unique_id"`
@@ -292,7 +292,7 @@ type VideoNote struct {
 	FileSize int        `json:"file_size,omitempty"`
 }
 
-// This object represents a voice note.
+// Voice represents a voice note.
 type Voice struct {
 	FileID   string `json:"file_id"`
 	FileUID  string `json:"file_unique_id"`
@@ -301,7 +301,7 @@ type Voice struct {
 	FileSize int    `json:"file_size,omitempty"`
 }
 
-// This object represents a phone contact.
+// Contact represents a phone contact.
 type Contact struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
@@ -310,26 +310,26 @@ type Contact struct {
 	Vcard       string `json:"vcard,omitempty"`
 }
 
-// This object represents an animated emoji that displays a random value.
+// Dice represents an animated emoji that displays a random value.
 type Dice struct {
 	Emoji string `json:"emoji"`
 	Value int    `json:"value"`
 }
 
-// This object contains information about one answer option in a poll.
+// PollOption contains information about one answer option in a poll.
 type PollOption struct {
 	Text       string `json:"text"`
 	VoterCount int    `json:"voter_count"`
 }
 
-// This object represents an answer of a user in a non-anonymous poll.
+// PollAnswer represents an answer of a user in a non-anonymous poll.
 type PollAnswer struct {
 	PollID    string `json:"poll_id"`
 	User      *User  `json:"user"`
 	OptionIDs []int  `json:"option_ids"`
 }
 
-// This object contains information about a poll.
+// Poll contains information about a poll.
 type Poll struct {
 	ID                    string           `json:"id"`
 	Question              string           `json:"question"`
@@ -346,7 +346,7 @@ type Poll struct {
 	CloseDate             int              `json:"close_date,omitempty"`
 }
 
-// This object represents a point on the map.
+// Location represents a point on the map.
 type Location struct {
 	Longitude            float64 `json:"longitude"`
 	Latitude             float64 `json:"latitude"`
@@ -356,7 +356,7 @@ type Location struct {
 	ProximityAlertRadius int     `json:"proximity_alert_radius,omitempty"`
 }
 
-// This object represents a venue.
+// Venue represents a venue.
 type Venue struct {
 	Location        *Location `json:"location"`
 	Title           string    `json:"title"`
