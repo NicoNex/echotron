@@ -25,7 +25,7 @@ import (
 
 type bot struct {
     chatId int64
-    echotron.Api
+    echotron.API
 }
 
 const TOKEN = "YOUR TELEGRAM TOKEN"
@@ -33,7 +33,7 @@ const TOKEN = "YOUR TELEGRAM TOKEN"
 func newBot(chatId int64) echotron.Bot {
     return &bot{
         chatId,
-        echotron.NewApi(TOKEN),
+        echotron.NewAPI(TOKEN),
     }
 }
 
@@ -64,7 +64,7 @@ import (
 
 type bot struct {
     chatId int64
-    echotron.Api
+    echotron.API
 }
 
 const TOKEN = "YOUR TELEGRAM TOKEN"
@@ -74,7 +74,7 @@ var dsp echotron.Dispatcher
 func newBot(chatId int64) echotron.Bot {
     var bot = &bot{
         chatId,
-        echotron.NewApi(TOKEN),
+        echotron.NewAPI(TOKEN),
     }
     go bot.selfDestruct(time.After(time.Hour))
     return bot
@@ -109,7 +109,7 @@ import "github.com/NicoNex/echotron/v2"
 
 type bot struct {
 	chatId int64
-	echotron.Api
+	echotron.API
 }
 
 const TOKEN = "YOUR TELEGRAM TOKEN"
@@ -117,7 +117,7 @@ const TOKEN = "YOUR TELEGRAM TOKEN"
 func newBot(chatId int64) echotron.Bot {
 	return &bot{
 		chatId,
-		echotron.NewApi(TOKEN),
+		echotron.NewAPI(TOKEN),
 	}
 }
 
