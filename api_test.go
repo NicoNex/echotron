@@ -19,9 +19,9 @@ var (
 	voiceID     = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 
 	commands = []BotCommand{
-		BotCommand{Command: "test1", Description: "Test command 1"},
-		BotCommand{Command: "test2", Description: "Test command 2"},
-		BotCommand{Command: "test3", Description: "Test command 3"},
+		{Command: "test1", Description: "Test command 1"},
+		{Command: "test2", Description: "Test command 2"},
+		{Command: "test3", Description: "Test command 3"},
 	}
 )
 
