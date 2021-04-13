@@ -78,7 +78,7 @@ func sendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
 
 // sendPostForm is used to send an "application/x-www-form-urlencoded" through an HTTP POST request.
 func sendPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
-	var form url.Values
+	var form = make(url.Values)
 
 	for k, v := range keyVals {
 		form.Add(k, v)
