@@ -93,7 +93,7 @@ func NewAPI(token string) API {
 func (a API) DeleteWebhook() (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 
-	content, err := SendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
+	content, err := sendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
 	if err != nil {
 		return res, err
 	}
@@ -106,7 +106,7 @@ func (a API) SetWebhook(url string) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 
 	keyVal := map[string]string{"url": url}
-	content, err := SendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
+	content, err := sendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
 	if err != nil {
 		return res, err
 	}
@@ -123,7 +123,7 @@ func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
 		url = fmt.Sprintf("%s&offset=%d", url, offset)
 	}
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -137,7 +137,7 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 	var res APIResponseChat
 	var url = fmt.Sprintf("%sgetChat?chat_id=%d", string(a), chatID)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return APIResponseChat{}, err
 	}
@@ -150,7 +150,7 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 	var res APIResponseStickerSet
 	var url = fmt.Sprintf("%sgetStickerSet?name=%s", string(a), encode(name))
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return APIResponseStickerSet{}, err
 	}
@@ -169,7 +169,7 @@ func (a API) SendMessage(text string, chatID int64, opts ...Option) (APIResponse
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -189,7 +189,7 @@ func (a API) SendMessageReply(text string, chatID int64, messageID int, opts ...
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -210,7 +210,7 @@ func (a API) SendMessageWithKeyboard(text string, chatID int64, keyboard []byte,
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -235,7 +235,7 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, err
 		messageID,
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -263,7 +263,7 @@ func (a API) SendPhotoBytes(filepath, caption string, chatID int64, data []byte,
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "photo", data)
+	content, err := sendPostRequest(url, filepath, "photo", data)
 	if err != nil {
 		return res, err
 	}
@@ -283,7 +283,7 @@ func (a API) SendPhotoByID(photoID, caption string, chatID int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -312,7 +312,7 @@ func (a API) SendPhotoWithKeyboardBytes(filepath, caption string, chatID int64, 
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "photo", data)
+	content, err := sendPostRequest(url, filepath, "photo", data)
 	if err != nil {
 		return res, err
 	}
@@ -343,7 +343,7 @@ func (a API) SendAudioBytes(filepath, caption string, chatID int64, data []byte,
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "audio", data)
+	content, err := sendPostRequest(url, filepath, "audio", data)
 	if err != nil {
 		return res, err
 	}
@@ -364,7 +364,7 @@ func (a API) SendAudioByID(audioID, caption string, chatID int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -392,7 +392,7 @@ func (a API) SendDocumentBytes(filepath, caption string, chatID int64, data []by
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "document", data)
+	content, err := sendPostRequest(url, filepath, "document", data)
 	if err != nil {
 		return res, err
 	}
@@ -412,7 +412,7 @@ func (a API) SendDocumentByID(documentID, caption string, chatID int64, opts ...
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -441,7 +441,7 @@ func (a API) SendVideoBytes(filepath, caption string, chatID int64, data []byte,
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "video", data)
+	content, err := sendPostRequest(url, filepath, "video", data)
 	if err != nil {
 		return res, err
 	}
@@ -461,7 +461,7 @@ func (a API) SendVideoByID(videoID, caption string, chatID int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -488,7 +488,7 @@ func (a API) SendVideoNoteBytes(filepath string, chatID int64, data []byte, opts
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "video_note", data)
+	content, err := sendPostRequest(url, filepath, "video_note", data)
 	if err != nil {
 		return res, err
 	}
@@ -506,7 +506,7 @@ func (a API) SendVideoNoteByID(videoID string, chatID int64) (APIResponseMessage
 		encode(videoID),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -536,7 +536,7 @@ func (a API) SendVoiceBytes(filepath, caption string, chatID int64, data []byte,
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "voice", data)
+	content, err := sendPostRequest(url, filepath, "voice", data)
 	if err != nil {
 		return res, err
 	}
@@ -557,7 +557,7 @@ func (a API) SendVoiceByID(voiceID, caption string, chatID int64, opts ...Option
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -577,7 +577,7 @@ func (a API) SendContact(phoneNumber, firstName, lastName string, chatID int64) 
 		encode(lastName),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -595,7 +595,7 @@ func (a API) SendSticker(stickerID string, chatID int64) (APIResponseMessage, er
 		encode(stickerID),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -614,7 +614,7 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage
 		action,
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -701,7 +701,7 @@ func (a API) EditMessageReplyMarkup(chatID int64, messageID int, keyboard []byte
 		keyboard,
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -721,7 +721,7 @@ func (a API) EditMessageText(chatID int64, messageID int, text string, opts ...O
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -742,7 +742,7 @@ func (a API) EditMessageTextWithKeyboard(chatID int64, messageID int, text strin
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -762,7 +762,7 @@ func (a API) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMe
 		strconv.FormatBool(showAlert),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -778,7 +778,7 @@ func (a API) GetMyCommands() (APIResponseCommands, error) {
 		string(a),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -797,7 +797,7 @@ func (a API) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) 
 		jsn,
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -831,7 +831,7 @@ func (a API) SendAnimationBytes(filepath, caption string, chatID int64, data []b
 		parseOpts(opts...),
 	)
 
-	content, err := SendPostRequest(url, filepath, "animation", data)
+	content, err := sendPostRequest(url, filepath, "animation", data)
 	if err != nil {
 		return res, err
 	}
@@ -851,7 +851,7 @@ func (a API) SendAnimationByID(animationID, caption string, chatID int64, opts .
 		parseOpts(opts...),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
@@ -877,7 +877,7 @@ func (a API) AnswerInlineQueryOptions(inlineQueryID string, results []InlineQuer
 		parseInlineQueryOpts(opts),
 	)
 
-	content, err := SendGetRequest(url)
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
