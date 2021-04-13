@@ -152,16 +152,22 @@ func (d *Dispatcher) listen() {
 	}
 }
 
-// ListenWebhook sets a webhook and listens for incoming updates
-func (d *Dispatcher) ListenWebhook(listenURL string) error {
+// ListenWebhook sets a webhook and listens for incoming updates.
+// The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
+// eg: 'https://example.com:443/bot_token'.
+// ListenWebhook will then proceed to set communicate the webhook url '<hostname>/<path>' to Telegram
+// and run a webserver that listens to ':<port>' and handles the path.
+func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 	var response APIResponseUpdate
 
-	u, err := url.Parse(listenURL)
+	u, err := url.Parse(webhookURL)
 	if err != nil {
 		return err
 	}
 
-	response, err = d.api.SetWebhook(listenURL)
+	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
+	log.Printf("setting webhook for %s\n", whURL)
+	response, err = d.api.SetWebhook(whURL)
 	if err != nil {
 		return err
 	} else if response.Ok {
@@ -198,7 +204,8 @@ func (d *Dispatcher) ListenWebhook(listenURL string) error {
 
 			d.updates <- &update
 		})
-		return http.ListenAndServe(fmt.Sprintf("%s:%s", u.Hostname(), u.Port()), nil)
+		log.Printf("listening on :%s\n", u.Port())
+		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
 	}
 
 	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
