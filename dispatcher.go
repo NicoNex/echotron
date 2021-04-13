@@ -25,6 +25,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"sync"
 )
 
@@ -152,14 +153,19 @@ func (d *Dispatcher) listen() {
 }
 
 // ListenWebhook sets a webhook and listens for incoming updates
-func (d *Dispatcher) ListenWebhook(webhookURL, listenURL string, internalPort int) error {
+func (d *Dispatcher) ListenWebhook(listenURL string) error {
 	var response APIResponseUpdate
 
-	response, err := d.api.SetWebhook(webhookURL)
+	u, err := url.Parse(listenURL)
+	if err != nil {
+		return err
+	}
+
+	response, err = d.api.SetWebhook(listenURL)
 	if err != nil {
 		return err
 	} else if response.Ok {
-		http.HandleFunc(listenURL, func(w http.ResponseWriter, r *http.Request) {
+		http.HandleFunc(u.EscapedPath(), func(w http.ResponseWriter, r *http.Request) {
 			var jsn []byte
 
 			switch r.Header.Get("Content-Encoding") {
@@ -192,7 +198,7 @@ func (d *Dispatcher) ListenWebhook(webhookURL, listenURL string, internalPort in
 
 			d.updates <- &update
 		})
-		return http.ListenAndServe(fmt.Sprintf("%s:%d", listenURL, internalPort), nil)
+		return http.ListenAndServe(fmt.Sprintf("%s:%s", u.Hostname(), u.Port()), nil)
 	}
 
 	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
