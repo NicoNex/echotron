@@ -28,12 +28,12 @@ type bot struct {
     echotron.API
 }
 
-const TOKEN = "YOUR TELEGRAM TOKEN"
+const token = "YOUR TELEGRAM TOKEN"
 
 func newBot(chatId int64) echotron.Bot {
     return &bot{
         chatId,
-        echotron.NewAPI(TOKEN),
+        echotron.NewAPI(token),
     }
 }
 
@@ -44,7 +44,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-    dsp := echotron.NewDispatcher(TOKEN, newBot)
+    dsp := echotron.NewDispatcher(token, newBot)
     log.Println(dsp.Poll())
 }
 ```
@@ -67,14 +67,14 @@ type bot struct {
     echotron.API
 }
 
-const TOKEN = "YOUR TELEGRAM TOKEN"
+const token = "YOUR TELEGRAM TOKEN"
 
 var dsp echotron.Dispatcher
 
 func newBot(chatId int64) echotron.Bot {
     var bot = &bot{
         chatId,
-        echotron.NewAPI(TOKEN),
+        echotron.NewAPI(token),
     }
     go bot.selfDestruct(time.After(time.Hour))
     return bot
@@ -95,7 +95,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-    dsp := echotron.NewDispatcher(TOKEN, newBot)
+    dsp := echotron.NewDispatcher(token, newBot)
     log.Println(dsp.Poll())
 }
 ```
@@ -112,12 +112,12 @@ type bot struct {
 	echotron.API
 }
 
-const TOKEN = "YOUR TELEGRAM TOKEN"
+const token = "YOUR TELEGRAM TOKEN"
 
 func newBot(chatId int64) echotron.Bot {
 	return &bot{
 		chatId,
-		echotron.NewAPI(TOKEN),
+		echotron.NewAPI(token),
 	}
 }
 
@@ -128,7 +128,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-	dsp := echotron.NewDispatcher(TOKEN, newBot)
-	dsp.ListenWebhook("https://newworld:443/bot", 23456)
+	dsp := echotron.NewDispatcher(token, newBot)
+	dsp.ListenWebhook("https://example.com:443/my_bot_token")
 }
 ```
