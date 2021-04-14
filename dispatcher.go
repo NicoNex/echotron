@@ -155,7 +155,7 @@ func (d *Dispatcher) listen() {
 // ListenWebhook sets a webhook and listens for incoming updates.
 // The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
 // eg: 'https://example.com:443/bot_token'.
-// ListenWebhook will then proceed to set communicate the webhook url '<hostname>/<path>' to Telegram
+// ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
 func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 	var response APIResponseUpdate
