@@ -1,6 +1,9 @@
 package echotron
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 type test struct{}
 
@@ -28,4 +31,14 @@ func TestDelSession(t *testing.T) {
 	if len(dsp.sessionMap) != 0 {
 		t.Fatal("could not delete session")
 	}
+}
+
+func TestListenWebhook(_ *testing.T) {
+	go dsp.ListenWebhook("example.com")
+	time.Sleep(3 * time.Second)
+}
+
+func TestPoll(_ *testing.T) {
+	go dsp.Poll()
+	time.Sleep(3 * time.Second)
 }
