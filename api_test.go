@@ -44,6 +44,17 @@ var (
 			{Text: "test3", CallbackData: "test3"},
 		},
 	}
+
+	inlineKeyboardEdit = []InlineKbdRow{
+		[]InlineButton{
+			{Text: "test1", CallbackData: "test1"},
+			{Text: "test2", CallbackData: "test2"},
+		},
+		[]InlineButton{
+			{Text: "test3", CallbackData: "test3"},
+			{Text: "edit", CallbackData: "edit"},
+		},
+	}
 )
 
 func TestSetWebhook(t *testing.T) {
@@ -128,6 +139,17 @@ func TestEditMessageText(t *testing.T) {
 
 func TestEditMessageTextWithKeyboard(t *testing.T) {
 	resp, err := api.EditMessageTextWithKeyboard(chatID, msgTmp.ID, "edited message with keyboard", api.InlineKbdMarkup(inlineKeyboard...))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageReplyMarkup(t *testing.T) {
+	resp, err := api.EditMessageReplyMarkup(chatID, msgTmp.ID, api.InlineKbdMarkup(inlineKeyboardEdit...))
 	if err != nil {
 		t.Fatal(err)
 	}
