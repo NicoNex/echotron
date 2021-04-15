@@ -23,7 +23,61 @@ var (
 		{Command: "test2", Description: "Test command 2"},
 		{Command: "test3", Description: "Test command 3"},
 	}
+
+	keyboard = api.KeyboardMarkup(false, true, false,
+		api.KeyboardRow(
+			api.KeyboardButton("test 1", false, false),
+			api.KeyboardButton("test 2", false, false),
+		),
+		api.KeyboardRow(
+			api.KeyboardButton("test 3", false, false),
+			api.KeyboardButton("test 4", false, false),
+		),
+	)
+
+	inlineKeyboard = []InlineKbdRow{
+		[]InlineButton{
+			{Text: "test1", CallbackData: "test1"},
+			{Text: "test2", CallbackData: "test2"},
+		},
+		[]InlineButton{
+			{Text: "test3", CallbackData: "test3"},
+		},
+	}
 )
+
+func TestSetWebhook(t *testing.T) {
+	resp, err := api.SetWebhook("example.com")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestDeleteWebhook(t *testing.T) {
+	resp, err := api.DeleteWebhook()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetUpdates(t *testing.T) {
+	resp, err := api.GetUpdates(0, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
 
 func TestGetChat(t *testing.T) {
 	resp, err := api.GetChat(chatID)
@@ -50,7 +104,7 @@ func TestGetStickerSet(t *testing.T) {
 }
 
 func TestSendMessage(t *testing.T) {
-	resp, err := api.SendMessage("TestSendMessage", chatID)
+	resp, err := api.SendMessage("TestSendMessage *bold* _italic_ `monospace`", chatID, ParseMarkdownV2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,6 +113,28 @@ func TestSendMessage(t *testing.T) {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 	msgTmp = resp.Result
+}
+
+func TestEditMessageText(t *testing.T) {
+	resp, err := api.EditMessageText(chatID, msgTmp.ID, "edited message")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageTextWithKeyboard(t *testing.T) {
+	resp, err := api.EditMessageTextWithKeyboard(chatID, msgTmp.ID, "edited message with keyboard", api.InlineKbdMarkup(inlineKeyboard...))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
 }
 
 func TestSendMessageReply(t *testing.T) {
@@ -73,18 +149,7 @@ func TestSendMessageReply(t *testing.T) {
 }
 
 func TestSendMessageWithKeyboard(t *testing.T) {
-	kbd := api.KeyboardMarkup(false, true, false,
-		api.KeyboardRow(
-			api.KeyboardButton("test 1", false, false),
-			api.KeyboardButton("test 2", false, false),
-		),
-		api.KeyboardRow(
-			api.KeyboardButton("test 3", false, false),
-			api.KeyboardButton("test 4", false, false),
-		),
-	)
-
-	resp, err := api.SendMessageWithKeyboard("TestSendMessageWithKeyboard", chatID, kbd)
+	resp, err := api.SendMessageWithKeyboard("TestSendMessageWithKeyboard", chatID, keyboard)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,18 +193,7 @@ func TestSendPhotoByID(t *testing.T) {
 }
 
 func TestSendPhotoWithKeyboard(t *testing.T) {
-	kbd := api.KeyboardMarkup(false, true, false,
-		api.KeyboardRow(
-			api.KeyboardButton("test 1", false, false),
-			api.KeyboardButton("test 2", false, false),
-		),
-		api.KeyboardRow(
-			api.KeyboardButton("test 3", false, false),
-			api.KeyboardButton("test 4", false, false),
-		),
-	)
-
-	resp, err := api.SendPhotoWithKeyboard("tests/echotron_test.png", "TestSendPhotoWithKeyboard", chatID, kbd)
+	resp, err := api.SendPhotoWithKeyboard("tests/echotron_test.png", "TestSendPhotoWithKeyboard", chatID, keyboard)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -339,5 +393,16 @@ func TestSendAnimationByID(t *testing.T) {
 
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestCommand(t *testing.T) {
+	expected := BotCommand{"test", "test command"}
+	received := api.Command("test", "test command")
+
+	if !reflect.DeepEqual(expected, received) {
+		t.Logf("expected commands: %v", expected)
+		t.Logf("commands from api.Command(): %v", received)
+		t.Fatal("error: commands mismatch")
 	}
 }
