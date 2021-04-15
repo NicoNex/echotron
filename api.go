@@ -36,6 +36,7 @@ type Option string
 // These are all the possible options that can be used by some methods.
 const (
 	ParseMarkdown         Option = "&parse_mode=markdown"
+	ParseMarkdownV2              = "&parse_mode=markdownv2"
 	ParseHTML                    = "&parse_mode=html"
 	DisableWebPagePreview        = "&disable_web_page_preview=true"
 	DisableNotification          = "&disable_notification=true"
@@ -752,12 +753,12 @@ func (a API) EditMessageTextWithKeyboard(chatID int64, messageID int, text strin
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
-func (a API) AnswerCallbackQuery(id, text string, showAlert bool) (APIResponseMessage, error) {
+func (a API) AnswerCallbackQuery(callbackID, text string, showAlert bool) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
 		string(a),
-		id,
+		callbackID,
 		text,
 		strconv.FormatBool(showAlert),
 	)
