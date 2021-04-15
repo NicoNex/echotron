@@ -40,5 +40,6 @@ func TestListenWebhook(_ *testing.T) {
 
 func TestPoll(_ *testing.T) {
 	go dsp.Poll()
+	dsp.updates <- &Update{}
 	time.Sleep(3 * time.Second)
 }

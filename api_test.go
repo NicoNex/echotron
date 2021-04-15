@@ -428,3 +428,18 @@ func TestCommand(t *testing.T) {
 		t.Fatal("error: commands mismatch")
 	}
 }
+
+func TestParseInlineQueryOpts(t *testing.T) {
+	expected := "&cache_time=0&is_personal=false&next_offset=test&switch_pm_text=test&switch_pm_parameter=test"
+	got := parseInlineQueryOpts(InlineQueryOptions{
+		CacheTime: 0,
+		IsPersonal: false,
+		NextOffset: "test",
+		SwitchPmText: "test",
+		SwitchPmParameter: "test",
+	})
+
+	if expected != got {
+		t.Fatalf("expected %s, got %s", expected, got)
+	}
+}
