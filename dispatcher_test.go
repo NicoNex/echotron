@@ -34,12 +34,13 @@ func TestDelSession(t *testing.T) {
 }
 
 func TestListenWebhook(_ *testing.T) {
-	go dsp.ListenWebhook("example.com")
-	time.Sleep(3 * time.Second)
+	go dsp.ListenWebhook("http://example.com:8443/test")
+	time.Sleep(time.Second)
 }
 
 func TestPoll(_ *testing.T) {
 	go dsp.Poll()
 	dsp.updates <- &Update{}
-	time.Sleep(3 * time.Second)
+	dsp.updates <- &Update{Message: &Message{Chat: &Chat{ID: 0}}}
+	time.Sleep(time.Second)
 }
