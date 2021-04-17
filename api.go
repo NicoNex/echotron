@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -756,11 +755,11 @@ func (a API) EditMessageTextWithKeyboard(chatID int64, messageID int, text strin
 func (a API) AnswerCallbackQuery(callbackID, text string, showAlert bool) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
-		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%s",
+		"%sanswerCallbackQuery?callback_query_id=%s&text=%s&show_alert=%t",
 		string(a),
 		callbackID,
 		text,
-		strconv.FormatBool(showAlert),
+		showAlert,
 	)
 
 	content, err := sendGetRequest(url)
