@@ -432,14 +432,61 @@ func TestCommand(t *testing.T) {
 func TestParseInlineQueryOpts(t *testing.T) {
 	expected := "&cache_time=0&is_personal=false&next_offset=test&switch_pm_text=test&switch_pm_parameter=test"
 	got := parseInlineQueryOpts(InlineQueryOptions{
-		CacheTime: 0,
-		IsPersonal: false,
-		NextOffset: "test",
-		SwitchPmText: "test",
+		CacheTime:         0,
+		IsPersonal:        false,
+		NextOffset:        "test",
+		SwitchPmText:      "test",
 		SwitchPmParameter: "test",
 	})
 
 	if expected != got {
 		t.Fatalf("expected %s, got %s", expected, got)
+	}
+}
+
+func TestParseInlineKbdBtn(t *testing.T) {
+	exp := InlineButton{"test", "test", "test"}
+	got := api.InlineKbdBtn("test", "test", "test")
+
+	if !reflect.DeepEqual(exp, got) {
+		t.Logf("expected commands: %v", exp)
+		t.Logf("commands from api.Command(): %v", got)
+		t.Fatal("error: commands mismatch")
+	}
+}
+
+func TestParseInlineKbdBtnURL(t *testing.T) {
+	exp := InlineButton{"test", "test", ""}
+	got := api.InlineKbdBtnURL("test", "test")
+
+	if !reflect.DeepEqual(exp, got) {
+		t.Logf("expected commands: %v", exp)
+		t.Logf("commands from api.Command(): %v", got)
+		t.Fatal("error: commands mismatch")
+	}
+}
+
+func TestParseInlineKbdBtnCbd(t *testing.T) {
+	exp := InlineButton{"test", "", "test"}
+	got := api.InlineKbdBtnCbd("test", "test")
+
+	if !reflect.DeepEqual(exp, got) {
+		t.Logf("expected commands: %v", exp)
+		t.Logf("commands from api.Command(): %v", got)
+		t.Fatal("error: commands mismatch")
+	}
+}
+
+func (a API) TestAnswerCallbackQuery(t *testing.T) {
+	_, err := api.AnswerCallbackQuery("test", "test", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAnswerInlineQuery(t *testing.T) {
+	_, err := api.AnswerInlineQuery("test", []InlineQueryResult{})
+	if err != nil {
+		t.Fatal(err)
 	}
 }
