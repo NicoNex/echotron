@@ -477,7 +477,7 @@ func TestParseInlineKbdBtnCbd(t *testing.T) {
 	}
 }
 
-func (a API) TestAnswerCallbackQuery(t *testing.T) {
+func TestAnswerCallbackQuery(t *testing.T) {
 	_, err := api.AnswerCallbackQuery("test", "test", false)
 	if err != nil {
 		t.Fatal(err)
