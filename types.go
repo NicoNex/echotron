@@ -87,7 +87,7 @@ type ChatMember struct {
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
 	Chat          *Chat           `json:"chat"`
-	From          *User           `json:"from"`
+	User          *User           `json:"from"`
 	Date          int             `json:"date"`
 	OldChatMember *ChatMember     `json:"old_chat_member"`
 	NewChatMember *ChatMember     `json:"new_chat_member"`
@@ -135,7 +135,7 @@ type MessageEntity struct {
 // Message represents a message.
 type Message struct {
 	ID                            int                            `json:"message_id"`
-	From                          *User                          `json:"from,omitempty"`
+	User                          *User                          `json:"from,omitempty"`
 	SenderChat                    *Chat                          `json:"sender_chat,omitempty"`
 	Date                          int                            `json:"date"`
 	Chat                          *Chat                          `json:"chat"`
