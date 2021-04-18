@@ -9,6 +9,7 @@ var (
 	msgTmp      *Message
 	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID      = int64(41876271)
+	groupID     = int64(-1001241973131)
 	photoID     = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
 	animationID = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
 	audioID     = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
@@ -409,6 +410,17 @@ func TestSendAnimation(t *testing.T) {
 
 func TestSendAnimationByID(t *testing.T) {
 	resp, err := api.SendAnimationByID(animationID, "TestSendAnimationByID", chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetChatAdministrators(t *testing.T) {
+	resp, err := api.GetChatAdministrators(groupID)
 	if err != nil {
 		t.Fatal(err)
 	}

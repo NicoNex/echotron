@@ -859,6 +859,23 @@ func (a API) SendAnimationByID(animationID, caption string, chatID int64, opts .
 	return res, nil
 }
 
+// GetChatAdministrators is used to get a list of administrators in a chat.
+func (a API) GetChatAdministrators(chatID int64) (APIResponseAdmins, error) {
+	var res APIResponseAdmins
+	var url = fmt.Sprintf(
+		"%sgetChatAdministrators?chat_id=%d",
+		string(a),
+		chatID,
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
 // AnswerInlineQuery is a wrapper method for AnswerInlineQueryOptions.
 func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult) (APIResponseBase, error) {
 	return a.AnswerInlineQueryOptions(inlineQueryID, results, InlineQueryOptions{CacheTime: 300})

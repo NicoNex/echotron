@@ -244,6 +244,13 @@ type APIResponseStickerSet struct {
 	APIResponseBase
 }
 
+// APIResponseAdmins represents the incoming response from Telegram servers.
+// Used by GetChatAdministrator (since it returns an array of ChatMembers).
+type APIResponseAdmins struct {
+	Result []ChatMember `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
 // If the button that originated the query was attached to a message sent by the bot,
 // the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
