@@ -248,6 +248,17 @@ func TestSendAudioByID(t *testing.T) {
 	}
 }
 
+func TestSendAudioWithKeyboard(t *testing.T) {
+	resp, err := api.SendAudioWithKeyboard("tests/audio.mp3", "TestSendAudioWithKeyboard", chatID, keyboard)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendDocument(t *testing.T) {
 	resp, err := api.SendDocument("tests/document.pdf", "TestSendDocument", chatID)
 	if err != nil {
@@ -261,6 +272,17 @@ func TestSendDocument(t *testing.T) {
 
 func TestSendDocumentByID(t *testing.T) {
 	resp, err := api.SendDocumentByID(documentID, "TestSendDocumentByID", chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDocumentWithKeyboard(t *testing.T) {
+	resp, err := api.SendDocumentWithKeyboard("tests/document.pdf", "TestSendDocumentWithKeyboard", chatID, keyboard)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -292,6 +314,17 @@ func TestSendVideoByID(t *testing.T) {
 	}
 }
 
+func TestSendVideoWithKeyboard(t *testing.T) {
+	resp, err := api.SendVideoWithKeyboard("tests/video.webm", "TestSendVideoWithKeyboard", chatID, keyboard)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVideoNote(t *testing.T) {
 	resp, err := api.SendVideoNote("tests/video_note.mp4", chatID)
 	if err != nil {
@@ -314,6 +347,17 @@ func TestSendVideoNoteByID(t *testing.T) {
 	}
 }
 
+func TestSendVideoNoteWithKeyboard(t *testing.T) {
+	resp, err := api.SendVideoNoteWithKeyboard("tests/video_note.mp4", chatID, keyboard)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVoice(t *testing.T) {
 	resp, err := api.SendVoice("tests/audio.mp3", "TestSendVoice", chatID)
 	if err != nil {
@@ -327,6 +371,17 @@ func TestSendVoice(t *testing.T) {
 
 func TestSendVoiceByID(t *testing.T) {
 	resp, err := api.SendVoiceByID(voiceID, "TestSendVoiceByID", chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVoiceWithKeyboard(t *testing.T) {
+	resp, err := api.SendVoiceWithKeyboard("tests/audio.mp3", "TestSendVoiceWithKeyboard", chatID, keyboard)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -410,6 +465,17 @@ func TestSendAnimation(t *testing.T) {
 
 func TestSendAnimationByID(t *testing.T) {
 	resp, err := api.SendAnimationByID(animationID, "TestSendAnimationByID", chatID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAnimationWithKeyboard(t *testing.T) {
+	resp, err := api.SendAnimationWithKeyboard("tests/animation.mp4", "TestSendAnimationWithKeyboard", chatID, keyboard)
 	if err != nil {
 		t.Fatal(err)
 	}

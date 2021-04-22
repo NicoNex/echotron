@@ -372,6 +372,38 @@ func (a API) SendAudioByID(audioID, caption string, chatID int64, opts ...Option
 	return res, nil
 }
 
+// SendAudioWithKeyboard is used to send audio files with a keyboard,
+// if you want Telegram clients to display them in the music player.
+// Your audio must be in the .MP3 or .M4A format.
+func (a API) SendAudioWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendAudioWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
+}
+
+// SendAudioWithKeyboardBytes is used to send audio files with a keyboard as a slice of bytes,
+// if you want Telegram clients to display them in the music player.
+func (a API) SendAudioWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendAudio?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatID,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "audio", data)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
 // SendDocument is used to send general files.
 func (a API) SendDocument(filepath, caption string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
@@ -413,6 +445,35 @@ func (a API) SendDocumentByID(documentID, caption string, chatID int64, opts ...
 	)
 
 	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SendDocumentWithKeyboard is used to send general files with a keyboard.
+func (a API) SendDocumentWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendDocumentWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
+}
+
+// SendDocumentWithKeyboardBytes is used to send general files with a keyboard as a slice of bytes.
+func (a API) SendDocumentWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendDocument?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatID,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "document", data)
 	if err != nil {
 		return res, err
 	}
@@ -469,6 +530,36 @@ func (a API) SendVideoByID(videoID, caption string, chatID int64, opts ...Option
 	return res, nil
 }
 
+// SendVideoWithKeyboard is used to send video files with a keyboard.
+// Telegram clients support mp4 videos (other formats may be sent with SendDocument).
+func (a API) SendVideoWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendVideoWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
+}
+
+// SendVideoWithKeyboardBytes is used to send video files with a keyboard as a slice of bytes.
+func (a API) SendVideoWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendVideo?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatID,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "video", data)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
 // SendVideoNote is used to send video messages.
 func (a API) SendVideoNote(filepath string, chatID int64, opts ...Option) (APIResponseMessage, error) {
 	b, err := os.ReadFile(filepath)
@@ -507,6 +598,34 @@ func (a API) SendVideoNoteByID(videoID string, chatID int64) (APIResponseMessage
 	)
 
 	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SendVideoNoteWithKeyboard is used to send video messages with a keyboard.
+func (a API) SendVideoNoteWithKeyboard(filepath string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendVideoNoteWithKeyboardBytes(filepath, chatID, b, keyboard, opts...)
+}
+
+// SendVideoNoteWithKeyboardBytes is used to send video messages with a keyboard as a slice of bytes.
+func (a API) SendVideoNoteWithKeyboardBytes(filepath string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendVideoNote?chat_id=%d&reply_markup=%s%s",
+		string(a),
+		chatID,
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "video_note", data)
 	if err != nil {
 		return res, err
 	}
@@ -558,6 +677,37 @@ func (a API) SendVoiceByID(voiceID, caption string, chatID int64, opts ...Option
 	)
 
 	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SendVoiceWithKeyboard is used to send audio files with a keyboard, if you want Telegram clients to display the file as a playable voice message.
+// For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document).
+func (a API) SendVoiceWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendVoiceWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
+}
+
+// SendVoiceWithKeyboardBytes is used to send audio files with a keyboard as a slice of bytes,
+// if you want Telegram clients to display the file as a playable voice message.
+func (a API) SendVoiceWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendVoice?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatID,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "voice", data)
 	if err != nil {
 		return res, err
 	}
@@ -852,6 +1002,35 @@ func (a API) SendAnimationByID(animationID, caption string, chatID int64, opts .
 	)
 
 	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SendAnimationWithKeyboard is used to send animation files with a keyboard (GIF or H.264/MPEG-4 AVC video without sound).
+func (a API) SendAnimationWithKeyboard(filepath, caption string, chatID int64, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	b, err := os.ReadFile(filepath)
+	if err != nil {
+		return APIResponseMessage{}, err
+	}
+	return a.SendAnimationWithKeyboardBytes(filepath, caption, chatID, b, keyboard, opts...)
+}
+
+// SendAnimationWithKeyboardBytes is used to send animation files with a keyboard (GIF or H.264/MPEG-4 AVC video without sound) as a slice of bytes.
+func (a API) SendAnimationWithKeyboardBytes(filepath, caption string, chatID int64, data []byte, keyboard []byte, opts ...Option) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendAnimation?chat_id=%d&caption=%s&reply_markup=%s%s",
+		string(a),
+		chatID,
+		encode(caption),
+		keyboard,
+		parseOpts(opts...),
+	)
+
+	content, err := sendPostRequest(url, filepath, "animation", data)
 	if err != nil {
 		return res, err
 	}
