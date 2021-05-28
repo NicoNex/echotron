@@ -70,7 +70,9 @@ func scan(i interface{}, v url.Values) url.Values {
 			continue
 
 		default:
-			v.Set(name, toString(e.Field(i)))
+			if !e.Field(i).IsZero() {
+				v.Set(name, toString(e.Field(i)))
+			}
 		}
 	}
 	return v
