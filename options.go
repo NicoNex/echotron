@@ -69,7 +69,7 @@ type MessageOptions struct {
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
-// PhotoOptions contains the optionsl parameters used in API.SendPhoto funcion.
+// PhotoOptions contains the optional parameters used in API.SendPhoto method.
 type PhotoOptions struct {
 	Caption        string `query:"caption"`
 	MessageOptions `query:"recursive"`
