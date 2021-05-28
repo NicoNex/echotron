@@ -29,44 +29,6 @@ import (
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
 type API string
 
-// Option is a custom type for the various frequent options used by some methods of the API.
-type Option string
-
-// These are all the possible options that can be used by some methods.
-const (
-	ParseMarkdown         Option = "&parse_mode=markdown"
-	ParseMarkdownV2              = "&parse_mode=markdownv2"
-	ParseHTML                    = "&parse_mode=html"
-	DisableWebPagePreview        = "&disable_web_page_preview=true"
-	DisableNotification          = "&disable_notification=true"
-)
-
-// ChatAction is a custom type for the various actions that can be sent through the SendChatAction method.
-type ChatAction string
-
-// These are all the possible actions that can be sent through the SendChatAction method.
-const (
-	Typing          ChatAction = "typing"
-	UploadPhoto                = "upload_photo"
-	RecordVideo                = "record_video"
-	UploadVideo                = "upload_video"
-	RecordAudio                = "record_audio"
-	UploadAudio                = "upload_audio"
-	UploadDocument             = "upload_document"
-	FindLocation               = "find_location"
-	RecordVideoNote            = "record_video_note"
-	UploadVideoNote            = "upload_video_note"
-)
-
-// InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQueryOptions method.
-type InlineQueryOptions struct {
-	CacheTime         int
-	IsPersonal        bool
-	NextOffset        string
-	SwitchPmText      string
-	SwitchPmParameter string
-}
-
 func encode(s string) string {
 	return url.QueryEscape(s)
 }
