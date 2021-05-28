@@ -55,6 +55,10 @@ func toString(v reflect.Value) string {
 func scan(i interface{}, v url.Values) url.Values {
 	e := reflect.ValueOf(i).Elem()
 
+	if e.Kind() == reflect.Invalid {
+		return url.Values{}
+	}
+
 	for i := 0; i < e.NumField(); i++ {
 		fTag := e.Type().Field(i).Tag
 
