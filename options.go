@@ -54,6 +54,10 @@ type InlineQueryOptions struct {
 	SwitchPmParameter string
 }
 
+type ReplyMarkup interface {
+	ImplementsReplyMarkup()
+}
+
 // MessageOptions contains the optional parameters used in some Telegram API methods.
 type MessageOptions struct {
 	ParseMode                ParseMode       `query:"parse_mode"`
