@@ -23,9 +23,9 @@ type ParseMode string
 
 // These are all the possible options that can be used by some methods.
 const (
-	Markdown   ParseMode = "markdown"
-	MarkdownV2           = "markdownv2"
-	HTML                 = "html"
+	Markdown   ParseMode = "Markdown"
+	MarkdownV2           = "MarkdownV2"
+	HTML                 = "HTML"
 )
 
 // ChatAction is a custom type for the various actions that can be sent through the SendChatAction method.
@@ -99,21 +99,19 @@ type ForceReply struct {
 
 func (f ForceReply) ImplementsReplyMarkup() {}
 
-// MessageOptions contains the optional parameters used in some Telegram API methods.
-type MessageOptions struct {
-	ParseMode                ParseMode       `query:"parse_mode"`
-	Entities                 []MessageEntity `query:"entities"`
-	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type BaseOptions struct {
+	ParseMode                ParseMode   `query:"parse_mode"`
+	DisableWebPagePreview    bool        `query:"disable_web_page_preview"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
-// PhotoOptions contains the optional parameters used in API.SendPhoto method.
-type PhotoOptions struct {
-	MessageOptions `query:"recursive"`
-	Caption        string `query:"caption"`
+// MessageOptions contains the optional parameters used in some Telegram API methods.
+type MessageOptions struct {
+	BaseOptions `query:"recursive"`
+	Entities    []MessageEntity `query:"entities"`
 }
 
 type InputFile struct {
@@ -134,14 +132,27 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 	return InputFile{path: fileName, content: content}
 }
 
+// PhotoOptions contains the optional parameters used in API.SendPhoto method.
+type PhotoOptions struct {
+	MessageOptions  `query:"recursive"`
+	Caption         string          `query:"caption"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+}
+
 // AudioOptions contains the optional parameters used in API.SendAudio method.
 type AudioOptions struct {
-	MessageOptions `query:"recursive"`
-	Caption        string    `query:"caption"`
-	Duration       int       `query:"duration"`
-	Performer      string    `query:"performer"`
-	Title          string    `query:"title"`
-	Thumb          InputFile `query:"thumb"`
+	MessageOptions           `query:"recursive"`
+	Caption                  string          `query:"caption"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	Duration                 int             `query:"duration"`
+	Performer                string          `query:"performer"`
+	Title                    string          `query:"title"`
+	Thumb                    InputFile       `query:"thumb"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // DocumentOptions contains the optional parameters used in API.SendDocument method.
