@@ -81,6 +81,13 @@ type APIResponseAdmins struct {
 	APIResponseBase
 }
 
+// APIResponseGameHighScore represents the incoming response from Telegram servers.
+// Used by GetGameHighScore (since it returns an array of GameHighScore).
+type APIResponseGameHighScore struct {
+	Result []GameHighScore `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	ID           int64  `json:"id"`
