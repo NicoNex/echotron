@@ -58,6 +58,47 @@ type ReplyMarkup interface {
 	ImplementsReplyMarkup()
 }
 
+// InlineKeyboardButton represents a button in an inline keyboard.
+type InlineKeyboardButton struct {
+	Text         string `json:"text"`
+	URL          string `json:"url,omitempty"`
+	CallbackData string `json:"callback_data,omitempty"`
+}
+
+// InlineKeyboardMarkup represents an inline keyboard.
+type InlineKeyboardMarkup struct {
+	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard" query:"inline_keyboard"`
+}
+
+func (i InlineKeyboardMarkup) ImplementsReplyMarkup() {}
+
+// ReplyKeyboardMarkup represents a custom keyboard with reply options.
+type ReplyKeyboardMarkup struct {
+	InlineKeyboardMarkup
+	ResizeKeyboard  bool `json:"resize_keyboard"`
+	OneTimeKeyboard bool `json:"one_time_keyboard"`
+	Selective       bool `json:"selective"`
+}
+
+// ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
+// By default, custom keyboards are displayed until a new keyboard is sent by a bot.
+// An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
+type ReplyKeyboardRemove struct {
+	RemoveKeyboard bool `json:"remove_keyboard"`
+	Selective      bool `json:"selective"`
+}
+
+func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
+
+// ForceReply is used to display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply').
+// This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
+type ForceReply struct {
+	ForceReply bool `json:"force_reply"`
+	Selective  bool `json:"selective"`
+}
+
+func (f ForceReply) ImplementsReplyMarkup() {}
+
 // MessageOptions contains the optional parameters used in some Telegram API methods.
 type MessageOptions struct {
 	ParseMode                ParseMode       `query:"parse_mode"`
@@ -71,6 +112,77 @@ type MessageOptions struct {
 
 // PhotoOptions contains the optional parameters used in API.SendPhoto method.
 type PhotoOptions struct {
-	Caption        string `query:"caption"`
 	MessageOptions `query:"recursive"`
+	Caption        string `query:"caption"`
+}
+
+type InputFile struct {
+	ID      string
+	Path    string
+	Content []byte
+}
+
+// AudioOptions contains the optional parameters used in API.SendAudio method.
+type AudioOptions struct {
+	MessageOptions `query:"recursive"`
+	Caption        string    `query:"caption"`
+	Duration       int       `query:"duration"`
+	Performer      string    `query:"performer"`
+	Title          string    `query:"title"`
+	Thumb          InputFile `query:"thumb"`
+}
+
+// DocumentOptions contains the optional parameters used in API.SendDocument method.
+type DocumentOptions struct {
+	MessageOptions `query:"recursive"`
+	Thumb          InputFile `query:"thumb"`
+}
+
+// VideoOptions contains the optional parameters used in API.SendVideo method.
+type VideoOptions struct {
+	MessageOptions    `query:"recursive"`
+	Duration          int       `query:"duration"`
+	Width             int       `query:"width"`
+	Height            int       `query:"height"`
+	Thumb             InputFile `query:"thumb"`
+	SupportsStreaming bool      `query:"supports_streaming"`
+}
+
+// AnimationOptions contains the optional parameters used in API.SendAnimation method.
+type AnimationOptions struct {
+	MessageOptions `query:"recursive"`
+	Duration       int       `query:"duration"`
+	Width          int       `query:"width"`
+	Height         int       `query:"height"`
+	Thumb          InputFile `query:"thumb"`
+}
+
+// VoiceOptions contains the optional parameters used in API.SendVoice method.
+type VoiceOptions MessageOptions
+
+// VideoNoteOptions contains the optional parameters used in API.SendVideoNote method.
+type VideoNoteOptions struct {
+	MessageOptions `query:"recursive"`
+	Duration       int       `query:"duration"`
+	Length         int       `query:"length"`
+	Thumb          InputFile `query:"thumb"`
+}
+
+// MediaGroupOptions contains the optional parameters used in API.SendMediaGroup method.
+type MediaGroupOptions struct {
+	DisableNotification      bool `query:"disable_notification"`
+	ReplyToMessageID         int  `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
+}
+
+// LocationOptions contains the optional parameters used in API.SendLocation method.
+type LocationOptions struct {
+	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
+	LivePeriod               int         `query:"live_period"`
+	Heading                  int         `query:"heading"`
+	ProximityAlertRadius     int         `query:"ProximityAlertRadius"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
