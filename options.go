@@ -58,6 +58,33 @@ type ReplyMarkup interface {
 	ImplementsReplyMarkup()
 }
 
+// ReplyKeyboardButton represents a button in a keyboard.
+type ReplyKeyboardButton struct {
+	Text            string `json:"text"`
+	RequestContact  bool   `json:"request_contact,omitempty"`
+	RequestLocation bool   `json:"request_location,omitempty"`
+}
+
+// ReplyKeyboardMarkup represents a keyboard.
+type ReplyKeyboardMarkup struct {
+	Keyboard        [][]ReplyKeyboardButton `json:"keyboard"`
+	ResizeKeyboard  bool     `json:"resize_keyboard,omitempty"`
+	OneTimeKeyboard bool     `json:"one_time_keyboard,omitempty"`
+	Selective       bool     `json:"selective,omitempty"`
+}
+
+func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
+
+// ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
+// By default, custom keyboards are displayed until a new keyboard is sent by a bot.
+// An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
+type ReplyKeyboardRemove struct {
+	RemoveKeyboard bool `json:"remove_keyboard"`
+	Selective      bool `json:"selective"`
+}
+
+func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
+
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
 	Text         string `json:"text"`
@@ -71,24 +98,6 @@ type InlineKeyboardMarkup struct {
 }
 
 func (i InlineKeyboardMarkup) ImplementsReplyMarkup() {}
-
-// ReplyKeyboardMarkup represents a custom keyboard with reply options.
-type ReplyKeyboardMarkup struct {
-	InlineKeyboardMarkup
-	ResizeKeyboard  bool `json:"resize_keyboard"`
-	OneTimeKeyboard bool `json:"one_time_keyboard"`
-	Selective       bool `json:"selective"`
-}
-
-// ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
-// By default, custom keyboards are displayed until a new keyboard is sent by a bot.
-// An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
-type ReplyKeyboardRemove struct {
-	RemoveKeyboard bool `json:"remove_keyboard"`
-	Selective      bool `json:"selective"`
-}
-
-func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // ForceReply is used to display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply').
 // This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
@@ -141,7 +150,6 @@ type PhotoOptions struct {
 
 // AudioOptions contains the optional parameters used in API.SendAudio method.
 type AudioOptions struct {
-	MessageOptions           `query:"recursive"`
 	Caption                  string          `query:"caption"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
