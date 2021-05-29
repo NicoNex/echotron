@@ -117,21 +117,21 @@ type PhotoOptions struct {
 }
 
 type InputFile struct {
-	ID      string
-	Path    string
-	Content []byte
+	id      string
+	path    string
+	content []byte
 }
 
 func NewInputFileID(ID string) InputFile {
-	return InputFile{ID: ID}
+	return InputFile{id: ID}
 }
 
 func NewInputFilePath(filePath string) InputFile {
-	return InputFile{Path: filePath}
+	return InputFile{path: filePath}
 }
 
-func NewInputFileBytes(filePath string, content []byte) InputFile {
-	return InputFile{Path: filePath, Content: content}
+func NewInputFileBytes(fileName string, content []byte) InputFile {
+	return InputFile{path: fileName, content: content}
 }
 
 // AudioOptions contains the optional parameters used in API.SendAudio method.
