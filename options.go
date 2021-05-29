@@ -257,18 +257,18 @@ type CallbackQueryOptions struct {
 	CacheTime int    `query:"cache_time"`
 }
 
-type MessageUpdateID struct {
+type MessageIDOptions struct {
 	chatID          string `query:"chat_id"`
 	messageID       string `query:"message_id"`
 	inlineMessageID string `query:"inline_message_id"`
 }
 
-func NewMessageID(chatID, messageID string) MessageUpdateID {
-	return MessageUpdateID{chatID: chatID, messageID: messageID}
+func NewMessageID(chatID, messageID string) MessageIDOptions {
+	return MessageIDOptions{chatID: chatID, messageID: messageID}
 }
 
-func NewInlineMessageID(ID string) MessageUpdateID {
-	return MessageUpdateID{inlineMessageID: ID}
+func NewInlineMessageID(ID string) MessageIDOptions {
+	return MessageIDOptions{inlineMessageID: ID}
 }
 
 type MessageTextOptions struct {

@@ -335,7 +335,7 @@ func (a API) GetMyCommands() (APIResponseCommands, error) {
 }
 
 // EditMessageText is used to edit text and game messages.
-func (a API) EditMessageText(text string, msg MessageUpdateID, opts *MessageTextOptions) (APIResponseMessage, error) {
+func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTextOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?text=%s&%s&%s",
@@ -354,7 +354,7 @@ func (a API) EditMessageText(text string, msg MessageUpdateID, opts *MessageText
 }
 
 // EditMessageCaption is used to edit captions of messages.
-func (a API) EditMessageCaption(msg MessageUpdateID, opts *MessageCaptionOptions) (APIResponseMessage, error) {
+func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageCaption?%s&%s",
@@ -376,7 +376,7 @@ func (a API) EditMessageCaption(msg MessageUpdateID, opts *MessageCaptionOptions
 // only to a document for document albums and to a photo or a video otherwise.
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
-func (a API) EditMessageMedia(msg MessageUpdateID, opts *MessageMediaOptions) (APIResponseMessage, error) {
+func (a API) EditMessageMedia(msg MessageIDOptions, opts *MessageMediaOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageMedia?%s&%s",
@@ -394,7 +394,7 @@ func (a API) EditMessageMedia(msg MessageUpdateID, opts *MessageMediaOptions) (A
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
-func (a API) EditMessageReplyMarkup(msg MessageUpdateID, opts *MessageReplyMarkup) (APIResponseMessage, error) {
+func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMarkup) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageReplyMarkup?%s&%s",
