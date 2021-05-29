@@ -258,12 +258,12 @@ type CallbackQueryOptions struct {
 }
 
 type MessageIDOptions struct {
-	chatID          string `query:"chat_id"`
-	messageID       string `query:"message_id"`
+	chatID          int64  `query:"chat_id"`
+	messageID       int    `query:"message_id"`
 	inlineMessageID string `query:"inline_message_id"`
 }
 
-func NewMessageID(chatID, messageID string) MessageIDOptions {
+func NewMessageID(chatID int64, messageID int) MessageIDOptions {
 	return MessageIDOptions{chatID: chatID, messageID: messageID}
 }
 
