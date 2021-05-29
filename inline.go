@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2018-2021  Michele Dimaggio
+ * Copyright (C) 2018-2021  The Echotron Devs
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,11 @@
  */
 
 package echotron
+
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // InlineQueryType is a custom type for the various InlineQueryResult*'s Type field.
 type InlineQueryType string
@@ -43,9 +48,10 @@ const (
 type InlineQuery struct {
 	ID       string    `json:"id"`
 	From     *User     `json:"from"`
-	Location *Location `json:"location,omitempty"`
 	Query    string    `json:"query"`
 	Offset   string    `json:"offset"`
+	ChatType string    `json:"chat_type,omitempty"`
+	Location *Location `json:"location,omitempty"`
 }
 
 // ChosenInlineResult represents a result of an inline query that was chosen by the user and sent to their chat partner.
@@ -291,7 +297,7 @@ type InlineQueryResultContact struct {
 	PhoneNumber         string              `json:"phone_number"`
 	FirstName           string              `json:"first_name"`
 	LastName            string              `json:"last_name,omitempty"`
-	Vcard               string              `json:"vcard,omitempty"`
+	VCard               string              `json:"vcard,omitempty"`
 	ReplyMarkup         *ReplyMarkup        `json:"reply_markup,omitempty"`
 	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
@@ -504,8 +510,38 @@ type InputContactMessageContent struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name,omitempty"`
-	Vcard       string `json:"vcard,omitempty"`
+	VCard       string `json:"vcard,omitempty"`
 }
 
 // ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}
+
+// InlineQueryOptions is a custom type which contains the various options required by the API.AnswerInlineQuery method.
+type InlineQueryOptions struct {
+	CacheTime         int    `json:"cache_time"`
+	IsPersonal        bool   `json:"is_personal"`
+	NextOffset        string `json:"next_offset"`
+	SwitchPmText      string `json:"switch_pm_text"`
+	SwitchPmParameter string `json:"switch_pm_parameter"`
+}
+
+// AnswerInlineQuery is used to send answers to an inline query.
+func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult, opts *InlineQueryOptions) (APIResponseBase, error) {
+	var res APIResponseBase
+	jsn, _ := json.Marshal(results)
+
+	var url = fmt.Sprintf(
+		"%sanswerInlineQuery?inline_query_id=%s&results=%s%s",
+		string(a),
+		inlineQueryID,
+		jsn,
+		querify(opts),
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}

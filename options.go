@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2018-2021  Nicolò Santamaria, Michele Dimaggio
+ * Copyright (C) 2018-2021  The Echotron Devs
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,6 +28,14 @@ const (
 	HTML                 = "HTML"
 )
 
+type PollType string
+
+const (
+	Quiz    PollType = "quiz"
+	Regular          = "regular"
+	Any              = ""
+)
+
 // ChatAction is a custom type for the various actions that can be sent through the SendChatAction method.
 type ChatAction string
 
@@ -45,32 +53,29 @@ const (
 	UploadVideoNote            = "upload_video_note"
 )
 
-// InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQueryOptions method.
-type InlineQueryOptions struct {
-	CacheTime         int
-	IsPersonal        bool
-	NextOffset        string
-	SwitchPmText      string
-	SwitchPmParameter string
-}
-
 type ReplyMarkup interface {
 	ImplementsReplyMarkup()
 }
 
-// ReplyKeyboardButton represents a button in a keyboard.
-type ReplyKeyboardButton struct {
-	Text            string `json:"text"`
-	RequestContact  bool   `json:"request_contact,omitempty"`
-	RequestLocation bool   `json:"request_location,omitempty"`
+// KeyboardButton represents a button in a keyboard.
+type KeyboardButton struct {
+	Text            string   `json:"text"`
+	RequestContact  bool     `json:"request_contact,omitempty"`
+	RequestLocation bool     `json:"request_location,omitempty"`
+	RequestPoll     PollType `json:"request_poll,omitempty"`
 }
 
-// ReplyKeyboardMarkup represents a keyboard.
+// KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
+type KeyboardButtonPollType struct {
+	Type PollType `json:"type"`
+}
+
+// ReplyKeyboardMarkup represents a custom keyboard with reply options.
 type ReplyKeyboardMarkup struct {
-	Keyboard        [][]ReplyKeyboardButton `json:"keyboard"`
-	ResizeKeyboard  bool                    `json:"resize_keyboard,omitempty"`
-	OneTimeKeyboard bool                    `json:"one_time_keyboard,omitempty"`
-	Selective       bool                    `json:"selective,omitempty"`
+	Keyboard        [][]KeyboardButton `json:"keyboard"`
+	ResizeKeyboard  bool               `json:"resize_keyboard,omitempty"`
+	OneTimeKeyboard bool               `json:"one_time_keyboard,omitempty"`
+	Selective       bool               `json:"selective,omitempty"`
 }
 
 func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
@@ -87,9 +92,14 @@ func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
-	Text         string `json:"text"`
-	URL          string `json:"url,omitempty"`
-	CallbackData string `json:"callback_data,omitempty"`
+	Text string `json:"text"`
+	URL  string `json:"url,omitempty"`
+	LoginURL                     LoginURL     `json:"login_url,omitempty"`
+	CallbackData                 string `json:"callback_data,omitempty"`
+	SwitchInlineQuery            string `json:"switch_inline_query,omitempty"`
+	SwitchInlineQueryCurrentChat string `json:"switch_inline_query_current_chat,omitempty"`
+	// CallbackGame                 CallbackGame `json:"callback_game,omitempty"`
+	Pay bool `json:"pay,omitempty"`
 }
 
 // InlineKeyboardMarkup represents an inline keyboard.
@@ -245,4 +255,41 @@ type CallbackQueryOptions struct {
 	ShowAlert bool   `query:"show_alert"`
 	URL       string `query:"url"`
 	CacheTime int    `query:"cache_time"`
+}
+
+type MessageUpdateID struct {
+	chatID          string `query:"chat_id"`
+	messageID       string `query:"message_id"`
+	inlineMessageID string `query:"inline_message_id"`
+}
+
+func NewMessageID(chatID, messageID string) MessageUpdateID {
+	return MessageUpdateID{chatID: chatID, messageID: messageID}
+}
+
+func NewInlineMessageID(ID string) MessageUpdateID {
+	return MessageUpdateID{inlineMessageID: ID}
+}
+
+type MessageTextOptions struct {
+	ParseMode             string               `query:"parse_mode"`
+	Entities              []MessageEntity      `query:"entities"`
+	DisableWebPagePreview bool                 `query:"disable_web_page_preview"`
+	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+type MessageCaptionOptions struct {
+	Caption         string               `query:"caption"`
+	ParseMode       string               `query:"parse_mode"`
+	CaptionEntities []MessageEntity      `query:"caption_entities"`
+	ReplyMarkup     InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+type MessageMediaOptions struct {
+	Media       InputMedia           `query:"media"`
+	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+type MessageReplyMarkup struct {
+	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`	
 }
