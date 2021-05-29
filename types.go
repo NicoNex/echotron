@@ -185,7 +185,7 @@ type Message struct {
 	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
 	VoiceChatEnded                *VoiceChatEnded                `json:"voice_chat_ended,omitempty"`
 	VoiceChatParticipantsInvited  *VoiceChatParticipantsInvited  `json:"voice_chat_participants_invited,omitempty"`
-	ReplyMarkup                   *InlineKeyboard                `json:"reply_markup,omitempty"`
+	ReplyMarkup                   *ReplyMarkup                   `json:"reply_markup,omitempty"`
 }
 
 // Update represents an incoming update.
@@ -471,45 +471,6 @@ type VoiceChatEnded struct {
 // VoiceChatParticipantsInvited represents a service message about new members invited to a voice chat.
 type VoiceChatParticipantsInvited struct {
 	Users []*User `json:"users,omitempty"`
-}
-
-// Button represents a button in a keyboard.
-type Button struct {
-	Text            string `json:"text"`
-	RequestContact  bool   `json:"request_contact,omitempty"`
-	RequestLocation bool   `json:"request_location,omitempty"`
-}
-
-// KbdRow represents a row of buttons in a keyboard.
-type KbdRow []Button
-
-// Keyboard represents a keyboard.
-type Keyboard struct {
-	Keyboard        []KbdRow `json:"keyboard"`
-	ResizeKeyboard  bool     `json:"resize_keyboard,omitempty"`
-	OneTimeKeyboard bool     `json:"one_time_keyboard,omitempty"`
-	Selective       bool     `json:"selective,omitempty"`
-}
-
-// KeyboardRemove represents a keyboard removal request.
-type KeyboardRemove struct {
-	RemoveKeyboard bool `json:"remove_keyboard"`
-	Selective      bool `json:"selective,omitempty"`
-}
-
-// InlineButton represents a button in an inline keyboard.
-type InlineButton struct {
-	Text         string `json:"text"`
-	URL          string `json:"url,omitempty"`
-	CallbackData string `json:"callback_data,omitempty"`
-}
-
-// InlineKbdRow represents a row of buttons in an inline keyboard.
-type InlineKbdRow []InlineButton
-
-// InlineKeyboard represents an inline keyboard.
-type InlineKeyboard struct {
-	InlineKeyboard []InlineKbdRow `json:"inline_keyboard"`
 }
 
 // BotCommand represents a bot command.
