@@ -25,41 +25,61 @@ var (
 		{Command: "test3", Description: "Test command 3"},
 	}
 
-	keyboard = api.KeyboardMarkup(false, true, false,
-		api.KeyboardRow(
-			api.KeyboardButton("test 1", false, false),
-			api.KeyboardButton("test 2", false, false),
-		),
-		api.KeyboardRow(
-			api.KeyboardButton("test 3", false, false),
-			api.KeyboardButton("test 4", false, false),
-		),
-	)
-
-	inlineKeyboard = []InlineKbdRow{
-		[]InlineButton{
-			{Text: "test1", CallbackData: "test1"},
-			{Text: "test2", CallbackData: "test2"},
+	keyboard = ReplyKeyboardMarkup{
+		Keyboard: [][]KeyboardButton{
+			{
+				{Text: "test 1"},
+				{Text: "test 2"},
+			},
+			{
+				{Text: "test 3"},
+				{Text: "test 4"},
+			},
 		},
-		[]InlineButton{
-			{Text: "test3", CallbackData: "test3"},
+		ResizeKeyboard: true,
+	}
+
+	inlineKeyboard = InlineKeyboardMarkup{
+		InlineKeyboard: [][]InlineKeyboardButton{
+			{
+				{Text: "test1", CallbackData: "test1"},
+				{Text: "test2", CallbackData: "test2"},
+			},
+			{
+				{Text: "test3", CallbackData: "test3"},
+			},
 		},
 	}
 
-	inlineKeyboardEdit = []InlineKbdRow{
-		[]InlineButton{
-			{Text: "test1", CallbackData: "test1"},
-			{Text: "test2", CallbackData: "test2"},
-		},
-		[]InlineButton{
-			{Text: "test3", CallbackData: "test3"},
-			{Text: "edit", CallbackData: "edit"},
+	inlineKeyboardEdit = InlineKeyboardMarkup{
+		InlineKeyboard: [][]InlineKeyboardButton{
+			{
+				{Text: "test1", CallbackData: "test1"},
+				{Text: "test2", CallbackData: "test2"},
+			},
+			{
+				{Text: "test3", CallbackData: "test3"},
+				{Text: "edit", CallbackData: "edit"},
+			},
 		},
 	}
 )
 
+func TestGetUpdates(t *testing.T) {
+	resp, err := api.GetUpdates(0, 1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSetWebhook(t *testing.T) {
 	resp, err := api.SetWebhook("example.com")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,6 +91,7 @@ func TestSetWebhook(t *testing.T) {
 
 func TestDeleteWebhook(t *testing.T) {
 	resp, err := api.DeleteWebhook()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,14 +101,488 @@ func TestDeleteWebhook(t *testing.T) {
 	}
 }
 
-func TestGetUpdates(t *testing.T) {
-	resp, err := api.GetUpdates(0, 1)
+func TestSendMessage(t *testing.T) {
+	resp, err := api.SendMessage(
+		"TestSendMessage *bold* _italic_ `monospace`",
+		chatID,
+		&MessageOptions{
+			ParseMode: MarkdownV2,
+		},
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	msgTmp = resp.Result
+}
+
+func TestSendMessageReply(t *testing.T) {
+	resp, err := api.SendMessage(
+		"TestSendMessageReply",
+		chatID,
+		&MessageOptions{
+			BaseOptions: BaseOptions{
+				ReplyToMessageID: msgTmp.ID,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendMessageWithKeyboard(t *testing.T) {
+	resp, err := api.SendMessage(
+		"TestSendMessageWithKeyboard",
+		chatID,
+		&MessageOptions{
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendPhoto(t *testing.T) {
+	resp, err := api.SendPhoto(
+		NewInputFilePath("tests/echotron_test.png"),
+		chatID,
+		&PhotoOptions{
+			Caption: "TestSendPhoto",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendPhotoByID(t *testing.T) {
+	resp, err := api.SendPhoto(
+		NewInputFileID(photoID),
+		chatID,
+		&PhotoOptions{
+			Caption: "TestSendPhotoByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendPhotoWithKeyboard(t *testing.T) {
+	resp, err := api.SendPhoto(
+		NewInputFilePath("tests/echotron_test.png"),
+		chatID,
+		&PhotoOptions{
+			Caption: "TestSendPhotoWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAudio(t *testing.T) {
+	resp, err := api.SendAudio(
+		NewInputFilePath("tests/audio.mp3"),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudio",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAudioByID(t *testing.T) {
+	resp, err := api.SendAudio(
+		NewInputFileID(audioID),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudioByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAudioWithKeyboard(t *testing.T) {
+	resp, err := api.SendAudio(
+		NewInputFilePath("tests/audio.mp3"),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudioWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDocument(t *testing.T) {
+	resp, err := api.SendDocument(
+		NewInputFilePath("tests/document.pdf"),
+		chatID,
+		&DocumentOptions{
+			Caption: "TestSendDocument",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDocumentByID(t *testing.T) {
+	resp, err := api.SendDocument(
+		NewInputFileID(documentID),
+		chatID,
+		&DocumentOptions{
+			Caption: "TestSendDocumentByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDocumentWithKeyboard(t *testing.T) {
+	resp, err := api.SendDocument(
+		NewInputFilePath("tests/document.pdf"),
+		chatID,
+		&DocumentOptions{
+			Caption: "TestSendDocumentWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideo(t *testing.T) {
+	resp, err := api.SendVideo(
+		NewInputFilePath("tests/video.webm"),
+		chatID,
+		&VideoOptions{
+			Caption: "TestSendVideo",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoByID(t *testing.T) {
+	resp, err := api.SendVideo(
+		NewInputFileID(videoID),
+		chatID,
+		&VideoOptions{
+			Caption: "TestSendVideoByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoWithKeyboard(t *testing.T) {
+	resp, err := api.SendVideo(
+		NewInputFilePath("tests/video.webm"),
+		chatID,
+		&VideoOptions{
+			Caption: "TestSendVideoWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAnimation(t *testing.T) {
+	resp, err := api.SendAnimation(
+		NewInputFilePath("tests/animation.mp4"),
+		chatID,
+		&AnimationOptions{
+			Caption: "TestSendAnimation",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAnimationByID(t *testing.T) {
+	resp, err := api.SendAnimation(
+		NewInputFileID(animationID),
+		chatID,
+		&AnimationOptions{
+			Caption: "TestSendAnimationByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAnimationWithKeyboard(t *testing.T) {
+	resp, err := api.SendAnimation(
+		NewInputFilePath("tests/animation.mp4"),
+		chatID,
+		&AnimationOptions{
+			Caption: "TestSendAnimationWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVoice(t *testing.T) {
+	resp, err := api.SendVoice(
+		NewInputFilePath("tests/audio.mp3"),
+		chatID,
+		&VoiceOptions{
+			Caption: "TestSendVoice",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVoiceByID(t *testing.T) {
+	resp, err := api.SendVoice(
+		NewInputFileID(voiceID),
+		chatID,
+		&VoiceOptions{
+			Caption: "TestSendVoiceByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVoiceWithKeyboard(t *testing.T) {
+	resp, err := api.SendVoice(
+		NewInputFilePath("tests/audio.mp3"),
+		chatID,
+		&VoiceOptions{
+			Caption: "TestSendVoiceWithKeyboard",
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoNote(t *testing.T) {
+	resp, err := api.SendVideoNote(
+		NewInputFilePath("tests/video_note.mp4"),
+		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoNoteByID(t *testing.T) {
+	resp, err := api.SendVideoNote(
+		NewInputFileID(videoNoteID),
+		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoNoteWithKeyboard(t *testing.T) {
+	resp, err := api.SendVideoNote(
+		NewInputFilePath("tests/video_note.mp4"),
+		chatID,
+		&VideoNoteOptions{
+			BaseOptions: BaseOptions{
+				ReplyMarkup: keyboard,
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendContact(t *testing.T) {
+	resp, err := api.SendContact(
+		"1234567890",
+		"Name",
+		chatID,
+		&ContactOptions{
+			LastName: "Surname",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendChatAction(t *testing.T) {
+	resp, err := api.SendChatAction(Typing, chatID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -104,8 +599,8 @@ func TestGetChat(t *testing.T) {
 	}
 }
 
-func TestGetStickerSet(t *testing.T) {
-	resp, err := api.GetStickerSet("RickAndMorty")
+func TestGetChatAdministrators(t *testing.T) {
+	resp, err := api.GetChatAdministrators(groupID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,312 +610,16 @@ func TestGetStickerSet(t *testing.T) {
 	}
 }
 
-func TestSendMessage(t *testing.T) {
-	resp, err := api.SendMessage("TestSendMessage *bold* _italic_ `monospace`", chatID, ParseMarkdownV2)
+func TestAnswerCallbackQuery(t *testing.T) {
+	_, err := api.AnswerCallbackQuery(
+		"test",
+		&CallbackQueryOptions{
+			Text: "test",
+		},
+	)
+
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-	msgTmp = resp.Result
-}
-
-func TestEditMessageText(t *testing.T) {
-	resp, err := api.EditMessageText(chatID, msgTmp.ID, "edited message")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestEditMessageTextWithKeyboard(t *testing.T) {
-	resp, err := api.EditMessageTextWithKeyboard(chatID, msgTmp.ID, "edited message with keyboard", api.InlineKbdMarkup(inlineKeyboard...))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestEditMessageReplyMarkup(t *testing.T) {
-	resp, err := api.EditMessageReplyMarkup(chatID, msgTmp.ID, api.InlineKbdMarkup(inlineKeyboardEdit...))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendMessageReply(t *testing.T) {
-	resp, err := api.SendMessageReply("TestSendMessageReply", chatID, msgTmp.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendMessageWithKeyboard(t *testing.T) {
-	resp, err := api.SendMessageWithKeyboard("TestSendMessageWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestDeleteMessage(t *testing.T) {
-	resp, err := api.DeleteMessage(chatID, msgTmp.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendPhoto(t *testing.T) {
-	resp, err := api.SendPhoto("tests/echotron_test.png", "TestSendPhoto", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendPhotoByID(t *testing.T) {
-	resp, err := api.SendPhotoByID(photoID, "TestSendPhotoByID", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendPhotoWithKeyboard(t *testing.T) {
-	resp, err := api.SendPhotoWithKeyboard("tests/echotron_test.png", "TestSendPhotoWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendAudio(t *testing.T) {
-	resp, err := api.SendAudio("tests/audio.mp3", "TestSendAudio", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendAudioByID(t *testing.T) {
-	resp, err := api.SendAudioByID(audioID, "TestSendAudioByID", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendAudioWithKeyboard(t *testing.T) {
-	resp, err := api.SendAudioWithKeyboard("tests/audio.mp3", "TestSendAudioWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendDocument(t *testing.T) {
-	resp, err := api.SendDocument("tests/document.pdf", "TestSendDocument", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendDocumentByID(t *testing.T) {
-	resp, err := api.SendDocumentByID(documentID, "TestSendDocumentByID", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendDocumentWithKeyboard(t *testing.T) {
-	resp, err := api.SendDocumentWithKeyboard("tests/document.pdf", "TestSendDocumentWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideo(t *testing.T) {
-	resp, err := api.SendVideo("tests/video.webm", "TestSendVideo", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideoByID(t *testing.T) {
-	resp, err := api.SendVideoByID(videoID, "TestSendVideoByID", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideoWithKeyboard(t *testing.T) {
-	resp, err := api.SendVideoWithKeyboard("tests/video.webm", "TestSendVideoWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideoNote(t *testing.T) {
-	resp, err := api.SendVideoNote("tests/video_note.mp4", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideoNoteByID(t *testing.T) {
-	resp, err := api.SendVideoNoteByID(videoNoteID, chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVideoNoteWithKeyboard(t *testing.T) {
-	resp, err := api.SendVideoNoteWithKeyboard("tests/video_note.mp4", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVoice(t *testing.T) {
-	resp, err := api.SendVoice("tests/audio.mp3", "TestSendVoice", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVoiceByID(t *testing.T) {
-	resp, err := api.SendVoiceByID(voiceID, "TestSendVoiceByID", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVoiceWithKeyboard(t *testing.T) {
-	resp, err := api.SendVoiceWithKeyboard("tests/audio.mp3", "TestSendVoiceWithKeyboard", chatID, keyboard)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendContact(t *testing.T) {
-	resp, err := api.SendContact("1234567890", "Name", "Surname", chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendSticker(t *testing.T) {
-	resp, err := api.SendSticker(stickerID, chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendChatAction(t *testing.T) {
-	resp, err := api.SendChatAction(Typing, chatID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -452,8 +651,13 @@ func TestGetMyCommands(t *testing.T) {
 	}
 }
 
-func TestSendAnimation(t *testing.T) {
-	resp, err := api.SendAnimation("tests/animation.mp4", "TestSendAnimation", chatID)
+func TestEditMessageText(t *testing.T) {
+	resp, err := api.EditMessageText(
+		"edited message",
+		NewMessageID(chatID, msgTmp.ID),
+		nil,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -463,8 +667,15 @@ func TestSendAnimation(t *testing.T) {
 	}
 }
 
-func TestSendAnimationByID(t *testing.T) {
-	resp, err := api.SendAnimationByID(animationID, "TestSendAnimationByID", chatID)
+func TestEditMessageTextWithKeyboard(t *testing.T) {
+	resp, err := api.EditMessageText(
+		"edited message with keyboard",
+		NewMessageID(chatID, msgTmp.ID),
+		&MessageTextOptions{
+			ReplyMarkup: inlineKeyboard,
+		},
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -474,8 +685,14 @@ func TestSendAnimationByID(t *testing.T) {
 	}
 }
 
-func TestSendAnimationWithKeyboard(t *testing.T) {
-	resp, err := api.SendAnimationWithKeyboard("tests/animation.mp4", "TestSendAnimationWithKeyboard", chatID, keyboard)
+func TestEditMessageReplyMarkup(t *testing.T) {
+	resp, err := api.EditMessageReplyMarkup(
+		NewMessageID(chatID, msgTmp.ID),
+		&MessageReplyMarkup{
+			ReplyMarkup: inlineKeyboardEdit,
+		},
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -485,86 +702,13 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 	}
 }
 
-func TestGetChatAdministrators(t *testing.T) {
-	resp, err := api.GetChatAdministrators(groupID)
+func TestDeleteMessage(t *testing.T) {
+	resp, err := api.DeleteMessage(chatID, msgTmp.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestCommand(t *testing.T) {
-	expected := BotCommand{"test", "test command"}
-	received := api.Command("test", "test command")
-
-	if !reflect.DeepEqual(expected, received) {
-		t.Logf("expected commands: %v", expected)
-		t.Logf("commands from api.Command(): %v", received)
-		t.Fatal("error: commands mismatch")
-	}
-}
-
-func TestParseInlineQueryOpts(t *testing.T) {
-	expected := "&cache_time=0&is_personal=false&next_offset=test&switch_pm_text=test&switch_pm_parameter=test"
-	got := parseInlineQueryOpts(InlineQueryOptions{
-		CacheTime:         0,
-		IsPersonal:        false,
-		NextOffset:        "test",
-		SwitchPmText:      "test",
-		SwitchPmParameter: "test",
-	})
-
-	if expected != got {
-		t.Fatalf("expected %s, got %s", expected, got)
-	}
-}
-
-func TestParseInlineKbdBtn(t *testing.T) {
-	exp := InlineButton{"test", "test", "test"}
-	got := api.InlineKbdBtn("test", "test", "test")
-
-	if !reflect.DeepEqual(exp, got) {
-		t.Logf("expected commands: %v", exp)
-		t.Logf("commands from api.Command(): %v", got)
-		t.Fatal("error: commands mismatch")
-	}
-}
-
-func TestParseInlineKbdBtnURL(t *testing.T) {
-	exp := InlineButton{"test", "test", ""}
-	got := api.InlineKbdBtnURL("test", "test")
-
-	if !reflect.DeepEqual(exp, got) {
-		t.Logf("expected commands: %v", exp)
-		t.Logf("commands from api.Command(): %v", got)
-		t.Fatal("error: commands mismatch")
-	}
-}
-
-func TestParseInlineKbdBtnCbd(t *testing.T) {
-	exp := InlineButton{"test", "", "test"}
-	got := api.InlineKbdBtnCbd("test", "test")
-
-	if !reflect.DeepEqual(exp, got) {
-		t.Logf("expected commands: %v", exp)
-		t.Logf("commands from api.Command(): %v", got)
-		t.Fatal("error: commands mismatch")
-	}
-}
-
-func TestAnswerCallbackQuery(t *testing.T) {
-	_, err := api.AnswerCallbackQuery("test", "test", false)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAnswerInlineQuery(t *testing.T) {
-	_, err := api.AnswerInlineQuery("test", []InlineQueryResult{})
-	if err != nil {
-		t.Fatal(err)
 	}
 }
