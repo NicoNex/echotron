@@ -62,17 +62,10 @@ func scan(i interface{}, v url.Values) url.Values {
 	for i := 0; i < e.NumField(); i++ {
 		fTag := e.Type().Field(i).Tag
 
-		switch name := fTag.Get("query"); name {
-		case "recursive":
+		if name := fTag.Get("query"); name == "recursive" {
 			scan(e.Field(i).Interface(), v)
-
-		case "":
-			continue
-
-		default:
-			if !e.Field(i).IsZero() {
-				v.Set(name, toString(e.Field(i)))
-			}
+		} else if name != "" && !e.Field(i).IsZero() {
+			v.Set(name, toString(e.Field(i)))
 		}
 	}
 	return v
