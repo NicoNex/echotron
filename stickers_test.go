@@ -21,28 +21,28 @@ package echotron
 import "testing"
 
 func TestSendSticker(t *testing.T) {
-    resp, err := api.SendSticker(
-        stickerID,
-        chatID,
-        nil,
-    )
+	resp, err := api.SendSticker(
+		stickerID,
+		chatID,
+		nil,
+	)
 
-    if err != nil {
-        t.Fatal(err)
-    }
+	if err != nil {
+		t.Fatal(err)
+	}
 
-    if !resp.Ok {
-        t.Fatal(resp.ErrorCode, resp.Description)
-    }
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
 }
 
 func TestGetStickerSet(t *testing.T) {
-    resp, err := api.GetStickerSet("RickAndMorty")
-    if err != nil {
-        t.Fatal(err)
-    }
+	resp, err := api.GetStickerSet("RickAndMorty")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-    if !resp.Ok {
-        t.Fatal(resp.ErrorCode, resp.Description)
-    }
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
 }
