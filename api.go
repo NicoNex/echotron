@@ -63,44 +63,44 @@ func NewAPI(token string) API {
 
 // GetUpdates is used to receive incoming updates using long polling.
 func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
-    var res APIResponseUpdate
-    var url = fmt.Sprintf("%sgetUpdates?timeout=%d", string(a), timeout)
+	var res APIResponseUpdate
+	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", string(a), timeout)
 
-    if offset != 0 {
-        url = fmt.Sprintf("%s&offset=%d", url, offset)
-    }
+	if offset != 0 {
+		url = fmt.Sprintf("%s&offset=%d", url, offset)
+	}
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
 func (a API) SetWebhook(url string) (APIResponseUpdate, error) {
-    var res APIResponseUpdate
+	var res APIResponseUpdate
 
-    keyVal := map[string]string{"url": url}
-    content, err := sendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	keyVal := map[string]string{"url": url}
+	content, err := sendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to getUpdates.
 func (a API) DeleteWebhook() (APIResponseUpdate, error) {
-    var res APIResponseUpdate
+	var res APIResponseUpdate
 
-    content, err := sendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // SendMessage is used to send text messages.
@@ -336,39 +336,39 @@ func (a API) GetMyCommands() (APIResponseCommands, error) {
 
 // EditMessageText is used to edit text and game messages.
 func (a API) EditMessageText(text string, msg MessageUpdateID, opts *MessageTextOptions) (APIResponseMessage, error) {
-    var res APIResponseMessage
-    var url = fmt.Sprintf(
-        "%seditMessageText?text=%s&%s&%s",
-        string(a),
-        encode(text),
-        querify(msg),
-        querify(opts),
-    )
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%seditMessageText?text=%s&%s&%s",
+		string(a),
+		encode(text),
+		querify(msg),
+		querify(opts),
+	)
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // EditMessageCaption is used to edit captions of messages.
 func (a API) EditMessageCaption(msg MessageUpdateID, opts *MessageCaptionOptions) (APIResponseMessage, error) {
-    var res APIResponseMessage
-    var url = fmt.Sprintf(
-        "%seditMessageCaption?%s&%s",
-        string(a),
-        querify(msg),
-        querify(opts),
-    )
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%seditMessageCaption?%s&%s",
+		string(a),
+		querify(msg),
+		querify(opts),
+	)
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // EditMessageMedia is used to edit animation, audio, document, photo or video messages.
@@ -377,38 +377,38 @@ func (a API) EditMessageCaption(msg MessageUpdateID, opts *MessageCaptionOptions
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
 func (a API) EditMessageMedia(msg MessageUpdateID, opts *MessageMediaOptions) (APIResponseMessage, error) {
-    var res APIResponseMessage
-    var url = fmt.Sprintf(
-        "%seditMessageMedia?%s&%s",
-        string(a),
-        querify(msg),
-        querify(opts),
-    )
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%seditMessageMedia?%s&%s",
+		string(a),
+		querify(msg),
+		querify(opts),
+	)
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
 func (a API) EditMessageReplyMarkup(msg MessageUpdateID, opts *MessageReplyMarkup) (APIResponseMessage, error) {
-    var res APIResponseMessage
-    var url = fmt.Sprintf(
-        "%seditMessageReplyMarkup?%s&%s",
-        string(a),
-        querify(msg),
-        querify(opts),
-    )
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%seditMessageReplyMarkup?%s&%s",
+		string(a),
+		querify(msg),
+		querify(opts),
+	)
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
 
 // DeleteMessage is used to delete a message, including service messages, with the following limitations:
@@ -420,18 +420,18 @@ func (a API) EditMessageReplyMarkup(msg MessageUpdateID, opts *MessageReplyMarku
 // - If the bot is an administrator of a group, it can delete any message there.
 // - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
 func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, error) {
-    var res APIResponseMessage
-    var url = fmt.Sprintf(
-        "%sdeleteMessage?chat_id=%d&message_id=%d",
-        string(a),
-        chatID,
-        messageID,
-    )
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%sdeleteMessage?chat_id=%d&message_id=%d",
+		string(a),
+		chatID,
+		messageID,
+	)
 
-    content, err := sendGetRequest(url)
-    if err != nil {
-        return res, err
-    }
-    json.Unmarshal(content, &res)
-    return res, nil
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
 }
