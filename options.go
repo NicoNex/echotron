@@ -122,6 +122,18 @@ type InputFile struct {
 	Content []byte
 }
 
+func NewInputFileID(ID string) InputFile {
+	return InputFile{ID: ID}
+}
+
+func NewInputFilePath(filePath string) InputFile {
+	return InputFile{Path: filePath}
+}
+
+func NewInputFileBytes(filePath string, content []byte) InputFile {
+	return InputFile{Path: filePath, Content: content}
+}
+
 // AudioOptions contains the optional parameters used in API.SendAudio method.
 type AudioOptions struct {
 	MessageOptions `query:"recursive"`
