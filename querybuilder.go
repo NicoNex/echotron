@@ -31,17 +31,13 @@ func toString(v reflect.Value) string {
 		return v.String()
 
 	case reflect.Float64:
-		return strconv.FormatFloat(v.Interface().(float64), 'f', -1, 64)
+		return strconv.FormatFloat(v.Float(), 'f', -1, 64)
 
-	case reflect.Int:
-		i := v.Interface().(int)
-		return strconv.FormatInt(int64(i), 10)
-
-	case reflect.Int64:
-		return strconv.FormatInt(v.Interface().(int64), 10)
+	case reflect.Int, reflect.Int64:
+		return strconv.FormatInt(v.Int(), 10)
 
 	case reflect.Bool:
-		return strconv.FormatBool(v.Interface().(bool))
+		return strconv.FormatBool(v.Bool())
 
 	case reflect.Struct, reflect.Interface, reflect.Slice, reflect.Array:
 		b, _ := json.Marshal(v.Interface())
