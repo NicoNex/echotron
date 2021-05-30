@@ -7,6 +7,7 @@ import (
 
 var (
 	msgTmp      *Message
+	photoTmp    *Message
 	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID      = int64(41876271)
 	groupID     = int64(-1001241973131)
@@ -177,6 +178,8 @@ func TestSendPhoto(t *testing.T) {
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
+
+	photoTmp = resp.Result
 }
 
 func TestSendPhotoByID(t *testing.T) {
@@ -673,6 +676,43 @@ func TestEditMessageTextWithKeyboard(t *testing.T) {
 		NewMessageID(chatID, msgTmp.ID),
 		&MessageTextOptions{
 			ReplyMarkup: inlineKeyboard,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageCaption(t *testing.T) {
+	resp, err := api.EditMessageCaption(
+		NewMessageID(chatID, photoTmp.ID),
+		&MessageCaptionOptions{
+			Caption: "TestEditMessageCaption",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageMedia(t *testing.T) {
+	resp, err := api.EditMessageMedia(
+		NewMessageID(chatID, photoTmp.ID),
+		&MessageMediaOptions{
+			Media: InputMediaPhoto{
+				Type: "photo",
+				Media: photoID,
+			},
 		},
 	)
 
