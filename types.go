@@ -514,6 +514,8 @@ type InputMediaVideo struct {
 	SupportsStreaming bool            `json:"supports_streaming,omitempty"`
 }
 
+func (i InputMediaVideo) ImplementsInputMedia() {}
+
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 // Type MUST BE "animation".
 type InputMediaAnimation struct {
@@ -527,6 +529,8 @@ type InputMediaAnimation struct {
 	Height          int             `json:"height,omitempty"`
 	Duration        int             `json:"duration,omitempty"`
 }
+
+func (i InputMediaAnimation) ImplementsInputMedia() {}
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 // Type MUST BE "audio".
@@ -542,6 +546,8 @@ type InputMediaAudio struct {
 	Title           string          `json:"title,omitempty"`
 }
 
+func (i InputMediaAudio) ImplementsInputMedia() {}
+
 // InputMediaDocument represents a general file to be sent.
 // Type MUST BE "document".
 type InputMediaDocument struct {
@@ -553,3 +559,5 @@ type InputMediaDocument struct {
 	CaptionEntities             []MessageEntity `json:"caption_entities,omitempty"`
 	DisableContentTypeDetection bool            `json:"disable_content_type_detection,omitempty"`
 }
+
+func (i InputMediaDocument) ImplementsInputMedia() {}

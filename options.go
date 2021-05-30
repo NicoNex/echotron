@@ -83,6 +83,7 @@ func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
 // ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
 // By default, custom keyboards are displayed until a new keyboard is sent by a bot.
 // An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
+// RemoveKeyboard MUST BE true.
 type ReplyKeyboardRemove struct {
 	RemoveKeyboard bool `json:"remove_keyboard"`
 	Selective      bool `json:"selective"`
