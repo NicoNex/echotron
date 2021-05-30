@@ -41,7 +41,10 @@ func sendFile(file InputFile, url, fileType string) (res APIResponseMessage, err
 		content, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
 
 	case file.path != "" && len(file.content) == 0:
-		file.content, _ = os.ReadFile(file.path)
+		file.content, err = os.ReadFile(file.path)
+		if err != nil {
+			return res, err
+		}
 		file.path = filepath.Base(file.path)
 		fallthrough
 
