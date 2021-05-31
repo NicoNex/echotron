@@ -531,7 +531,7 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 	jsn, _ := json.Marshal(results)
 
 	var url = fmt.Sprintf(
-		"%sanswerInlineQuery?inline_query_id=%s&results=%s%s",
+		"%sanswerInlineQuery?inline_query_id=%s&results=%s&%s",
 		string(a),
 		inlineQueryID,
 		jsn,
