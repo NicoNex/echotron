@@ -18,6 +18,11 @@
 
 package echotron
 
+import (
+	"net/url"
+	"strconv"
+)
+
 // ParseMode is a custom type for the various frequent options used by some methods of the API.
 type ParseMode string
 
@@ -270,6 +275,19 @@ func NewMessageID(chatID int64, messageID int) *MessageIDOptions {
 
 func NewInlineMessageID(ID string) *MessageIDOptions {
 	return &MessageIDOptions{inlineMessageID: ID}
+}
+
+func (m MessageIDOptions) EncodeValues(key string, v *url.Values) error {
+	if m.chatID != 0 {
+		v.Add("chat_id", strconv.FormatInt(m.chatID, 10))
+	}
+	if m.messageID != 0 {
+		v.Add("message_id", strconv.FormatInt(int64(m.messageID), 10))
+	}
+	if m.inlineMessageID != "" {
+		v.Add("inline_message_id", m.inlineMessageID)
+	}
+	return nil
 }
 
 type MessageTextOptions struct {
