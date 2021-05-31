@@ -269,12 +269,12 @@ type MessageIDOptions struct {
 	inlineMessageID string `query:"inline_message_id"`
 }
 
-func NewMessageID(chatID int64, messageID int) *MessageIDOptions {
-	return &MessageIDOptions{chatID: chatID, messageID: messageID}
+func NewMessageID(chatID int64, messageID int) MessageIDOptions {
+	return MessageIDOptions{chatID: chatID, messageID: messageID}
 }
 
-func NewInlineMessageID(ID string) *MessageIDOptions {
-	return &MessageIDOptions{inlineMessageID: ID}
+func NewInlineMessageID(ID string) MessageIDOptions {
+	return MessageIDOptions{inlineMessageID: ID}
 }
 
 func (m MessageIDOptions) EncodeValues(key string, v *url.Values) error {
