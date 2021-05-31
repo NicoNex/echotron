@@ -49,7 +49,11 @@ func toString(v reflect.Value) string {
 }
 
 func scan(i interface{}, v url.Values) url.Values {
-	e := reflect.ValueOf(i).Elem()
+	e := reflect.ValueOf(i)
+
+	if e.Kind() == reflect.Ptr {
+		e = e.Elem()
+	}
 
 	if e.Kind() == reflect.Invalid {
 		return url.Values{}
