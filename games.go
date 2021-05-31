@@ -82,7 +82,7 @@ func (a API) SetGameScore(userID, score int, opts *BaseOptions) (APIResponseMess
 }
 
 // GetGameHighScores is used to get data for high score tables.
-func (a API) GetGameHighScores(userID int, opts *MessageIDOptions) (APIResponseGameHighScore, error) {
+func (a API) GetGameHighScores(userID int, opts MessageIDOptions) (APIResponseGameHighScore, error) {
 	var res APIResponseGameHighScore
 	var url = fmt.Sprintf(
 		"%sgetGameHighScores?user_id=%d&%s",
