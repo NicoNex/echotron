@@ -710,7 +710,7 @@ func TestEditMessageMedia(t *testing.T) {
 		NewMessageID(chatID, photoTmp.ID),
 		&MessageMediaOptions{
 			Media: InputMediaPhoto{
-				Type: "photo",
+				Type:  "photo",
 				Media: photoID,
 			},
 		},
