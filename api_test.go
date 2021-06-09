@@ -1,6 +1,8 @@
 package echotron
 
 import (
+	"io"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -200,6 +202,36 @@ func TestSendPhotoByID(t *testing.T) {
 	}
 }
 
+func TestSendPhotoBytes(t *testing.T) {
+	file, err := os.Open("tests/echotron_test.png")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendPhoto(
+		NewInputFileBytes("echotron_test.png", data),
+		chatID,
+		&PhotoOptions{
+			Caption: "TestSendPhotoBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendPhotoWithKeyboard(t *testing.T) {
 	resp, err := api.SendPhoto(
 		NewInputFilePath("tests/echotron_test.png"),
@@ -278,6 +310,36 @@ func TestSendAudioWithKeyboard(t *testing.T) {
 	}
 }
 
+func TestSendAudioBytes(t *testing.T) {
+	file, err := os.Open("tests/audio.mp3")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendAudio(
+		NewInputFileBytes("audio.mp3", data),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudioBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendDocument(t *testing.T) {
 	resp, err := api.SendDocument(
 		NewInputFilePath("tests/document.pdf"),
@@ -323,6 +385,36 @@ func TestSendDocumentWithKeyboard(t *testing.T) {
 			BaseOptions: BaseOptions{
 				ReplyMarkup: keyboard,
 			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDocumentBytes(t *testing.T) {
+	file, err := os.Open("tests/document.pdf")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendDocument(
+		NewInputFileBytes("document.pdf", data),
+		chatID,
+		&DocumentOptions{
+			Caption: "TestSendDocumentBytes",
 		},
 	)
 
@@ -392,6 +484,36 @@ func TestSendVideoWithKeyboard(t *testing.T) {
 	}
 }
 
+func TestSendVideoBytes(t *testing.T) {
+	file, err := os.Open("tests/video.webm")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendVideo(
+		NewInputFileBytes("video.webm", data),
+		chatID,
+		&VideoOptions{
+			Caption: "TestSendVideoBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendAnimation(t *testing.T) {
 	resp, err := api.SendAnimation(
 		NewInputFilePath("tests/animation.mp4"),
@@ -437,6 +559,36 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 			BaseOptions: BaseOptions{
 				ReplyMarkup: keyboard,
 			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendAnimationBytes(t *testing.T) {
+	file, err := os.Open("tests/animation.mp4")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendAnimation(
+		NewInputFileBytes("animation.mp4", data),
+		chatID,
+		&AnimationOptions{
+			Caption: "TestSendAnimationBytes",
 		},
 	)
 
@@ -506,6 +658,36 @@ func TestSendVoiceWithKeyboard(t *testing.T) {
 	}
 }
 
+func TestSendVoiceBytes(t *testing.T) {
+	file, err := os.Open("tests/audio.mp3")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendVoice(
+		NewInputFileBytes("audio.mp3", data),
+		chatID,
+		&VoiceOptions{
+			Caption: "TestSendVoiceBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVideoNote(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFilePath("tests/video_note.mp4"),
@@ -547,6 +729,34 @@ func TestSendVideoNoteWithKeyboard(t *testing.T) {
 				ReplyMarkup: keyboard,
 			},
 		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVideoNoteBytes(t *testing.T) {
+	file, err := os.Open("tests/video_note.mp4")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := io.ReadAll(file)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := api.SendVideoNote(
+		NewInputFileBytes("video_note.mp4", data),
+		chatID,
+		nil,
 	)
 
 	if err != nil {
