@@ -74,6 +74,13 @@ type APIResponseStickerSet struct {
 	APIResponseBase
 }
 
+// APIResponseFile represents the incoming response from Telegram servers.
+// Used by UploadStickerFile (since it returns a File).
+type APIResponseFile struct {
+	Result *File `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseAdmins represents the incoming response from Telegram servers.
 // Used by GetChatAdministrator (since it returns an array of ChatMembers).
 type APIResponseAdmins struct {

@@ -25,16 +25,16 @@ import (
 
 // Sticker represents a sticker.
 type Sticker struct {
-	FileID       string       `json:"file_id"`
-	FileUniqueID string       `json:"file_unique_id"`
-	Width        int          `json:"width"`
-	Height       int          `json:"height"`
-	IsAnimated   bool         `json:"is_animated"`
-	Thumb        *PhotoSize   `json:"thumb,omitempty"`
-	Emoji        string       `json:"emoji,omitempty"`
-	SetName      string       `json:"set_name,omitempty"`
-	MaskPosition MaskPosition `json:"mask_position"`
-	FileSize     int          `json:"file_size,omitempty"`
+	FileID       string        `json:"file_id"`
+	FileUniqueID string        `json:"file_unique_id"`
+	Width        int           `json:"width"`
+	Height       int           `json:"height"`
+	IsAnimated   bool          `json:"is_animated"`
+	Thumb        *PhotoSize    `json:"thumb,omitempty"`
+	Emoji        string        `json:"emoji,omitempty"`
+	SetName      string        `json:"set_name,omitempty"`
+	MaskPosition *MaskPosition `json:"mask_position,omitempty"`
+	FileSize     int           `json:"file_size,omitempty"`
 }
 
 // StickerSet represents a sticker set.
@@ -43,7 +43,7 @@ type StickerSet struct {
 	Title         string     `json:"title"`
 	IsAnimated    bool       `json:"is_animated"`
 	ContainsMasks bool       `json:"contains_masks"`
-	Stickers      []*Sticker `json:"sticker"`
+	Stickers      []Sticker  `json:"stickers"`
 	Thumb         *PhotoSize `json:"thumb,omitempty"`
 }
 
@@ -53,6 +53,24 @@ type MaskPosition struct {
 	XShift float32 `json:"x_shift"`
 	YShift float32 `json:"y_shift"`
 	Scale  float32 `json:"scale"`
+}
+
+// NewStickerSetOptions contains the optional parameters used in the API.CreateNewStickerSet method.
+type NewStickerSetOptions struct {
+	ContainsMasks bool         `query:"contains_masks"`
+	MaskPosition  MaskPosition `query:"mask_position"`
+}
+
+type StickerType string
+
+const (
+	PNGSticker StickerType = "png_sticker"
+	TGSSticker             = "tgs_sticker"
+)
+
+type StickerFile struct {
+	File InputFile
+	Type StickerType
 }
 
 // SendSticker is used to send static .WEBP or animated .TGS stickers.
@@ -77,12 +95,116 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (API
 // GetStickerSet is used to get a sticker set.
 func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 	var res APIResponseStickerSet
-	var url = fmt.Sprintf("%sgetStickerSet?name=%s", string(a), encode(name))
+	var url = fmt.Sprintf(
+		"%sgetStickerSet?name=%s",
+		string(a),
+		encode(name),
+	)
 
 	content, err := sendGetRequest(url)
 	if err != nil {
-		return APIResponseStickerSet{}, err
+		return res, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
+}
+
+// UploadStickerFile is used to upload a .PNG file with a sticker for later use in
+// API.CreateNewStickerSet and API.AddStickerToSet methods (can be used multiple times).
+func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFile, error) {
+	var res APIResponseFile
+	var url = fmt.Sprintf(
+		"%suploadStickerFile?user_id=%d",
+		string(a),
+		userID,
+	)
+
+	content, err := sendFile(sticker.File, url, string(sticker.Type))
+	json.Unmarshal(content, &res)
+	return res, err
+}
+
+// CreateNewStickerSet is used to create a new sticker set owned by a user.
+func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, sticker StickerFile, opts *NewStickerSetOptions) (APIResponseBase, error) {
+	var res APIResponseBase
+	var url = fmt.Sprintf(
+		"%screateNewStickerSet?user_id=%d&name=%s&title=%s&emojis=%s&%s",
+		string(a),
+		userID,
+		encode(name),
+		encode(title),
+		encode(emojis),
+		querify(opts),
+	)
+
+	content, err := sendFile(sticker.File, url, string(sticker.Type))
+	json.Unmarshal(content, &res)
+	return res, err
+}
+
+// AddStickerToSet is used to add a new sticker to a set created by the bot.
+func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerFile, opts *MaskPosition) (APIResponseBase, error) {
+	var res APIResponseBase
+	var url = fmt.Sprintf(
+		"%saddStickerToSet?user_id=%d&name=%s&emojis=%s&%s",
+		string(a),
+		userID,
+		encode(name),
+		encode(emojis),
+		querify(opts),
+	)
+
+	content, err := sendFile(sticker.File, url, string(sticker.Type))
+	json.Unmarshal(content, &res)
+	return res, err
+}
+
+// SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
+func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseBase, error) {
+	var res APIResponseBase
+	var url = fmt.Sprintf(
+		"%ssetStickerPositionInSet?sticker=%s&position=%d",
+		string(a),
+		encode(sticker),
+		position,
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
+func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
+	var res APIResponseBase
+	var url = fmt.Sprintf(
+		"%sdeleteStickerFromSet?sticker=%s",
+		string(a),
+		encode(sticker),
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// SetStickerSetThumb is used to set the thumbnail of a sticker set.
+func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (APIResponseBase, error) {
+	var res APIResponseBase
+	var url = fmt.Sprintf(
+		"%ssetStickerSetThumb?name=%s&user_id=%d",
+		string(a),
+		encode(name),
+		userID,
+	)
+
+	content, err := sendFile(thumb, url, "thumb")
+	json.Unmarshal(content, &res)
+	return res, err
 }
