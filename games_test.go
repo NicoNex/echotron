@@ -45,7 +45,9 @@ func TestSetGameScore(t *testing.T) {
 		chatID,
 		545,
 		NewMessageID(chatID, gameMsgTmp.ID),
-		nil,
+		&GameScoreOptions{
+			Force: true,
+		},
 	)
 
 	if err != nil {
