@@ -43,8 +43,14 @@ type GameHighScore struct {
 	Score    int  `json:"score"`
 }
 
+// GameScoreOptions contains the optional parameters used in API.SetGameScore method.
+type GameScoreOptions struct {
+	Force              bool `query:"force"`
+	DisableEditMessage bool `query:"disable_edit_message"`
+}
+
 // SendGame is used to send a Game.
-func (a API) SendGame(gameShortName string, chatID int, opts *BaseOptions) (APIResponseMessage, error) {
+func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendGame?game_short_name=%s&chat_id=%d&%s",
@@ -63,13 +69,14 @@ func (a API) SendGame(gameShortName string, chatID int, opts *BaseOptions) (APIR
 }
 
 // SetGameScore is used to set the score of the specified user in a game.
-func (a API) SetGameScore(userID, score int, opts *BaseOptions) (APIResponseMessage, error) {
+func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts *GameScoreOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
-		"%ssetGameScore?user_id=%d&score=%d&%s",
+		"%ssetGameScore?user_id=%d&score=%d&%s&%s",
 		string(a),
 		userID,
 		score,
+		querify(msgID),
 		querify(opts),
 	)
 
@@ -82,7 +89,7 @@ func (a API) SetGameScore(userID, score int, opts *BaseOptions) (APIResponseMess
 }
 
 // GetGameHighScores is used to get data for high score tables.
-func (a API) GetGameHighScores(userID int, opts MessageIDOptions) (APIResponseGameHighScore, error) {
+func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (APIResponseGameHighScore, error) {
 	var res APIResponseGameHighScore
 	var url = fmt.Sprintf(
 		"%sgetGameHighScores?user_id=%d&%s",
