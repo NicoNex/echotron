@@ -204,7 +204,7 @@ func TestSendPhotoByID(t *testing.T) {
 
 func TestSendPhotoBytes(t *testing.T) {
 	file, err := os.Open("tests/echotron_test.png")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -312,7 +312,7 @@ func TestSendAudioWithKeyboard(t *testing.T) {
 
 func TestSendAudioBytes(t *testing.T) {
 	file, err := os.Open("tests/audio.mp3")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -399,7 +399,7 @@ func TestSendDocumentWithKeyboard(t *testing.T) {
 
 func TestSendDocumentBytes(t *testing.T) {
 	file, err := os.Open("tests/document.pdf")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -486,7 +486,7 @@ func TestSendVideoWithKeyboard(t *testing.T) {
 
 func TestSendVideoBytes(t *testing.T) {
 	file, err := os.Open("tests/video.webm")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -573,7 +573,7 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 
 func TestSendAnimationBytes(t *testing.T) {
 	file, err := os.Open("tests/animation.mp4")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -660,7 +660,7 @@ func TestSendVoiceWithKeyboard(t *testing.T) {
 
 func TestSendVoiceBytes(t *testing.T) {
 	file, err := os.Open("tests/audio.mp3")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -742,7 +742,7 @@ func TestSendVideoNoteWithKeyboard(t *testing.T) {
 
 func TestSendVideoNoteBytes(t *testing.T) {
 	file, err := os.Open("tests/video_note.mp4")
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}
