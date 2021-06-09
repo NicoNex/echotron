@@ -20,10 +20,62 @@ package echotron
 
 import "testing"
 
-func TestSendSticker(t *testing.T) {
-	resp, err := api.SendSticker(
-		stickerID,
+var (
+	stickerFile *File
+	stickerSet  *StickerSet
+)
+
+func TestUploadStickerFile(t *testing.T) {
+	resp, err := api.UploadStickerFile(
 		chatID,
+		StickerFile{
+			NewInputFilePath("tests/echotron_test.png"),
+			PNGSticker,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	stickerFile = resp.Result
+}
+
+func TestCreateNewStickerSet(t *testing.T) {
+	resp, err := api.CreateNewStickerSet(
+		chatID,
+		"echocoverpack_by_echotron_coverage_bot",
+		"Echotron Coverage Pack",
+		"🤖",
+		StickerFile{
+			NewInputFileID(stickerFile.FileID),
+			PNGSticker,
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestAddStickerToSet(t *testing.T) {
+	resp, err := api.AddStickerToSet(
+		chatID,
+		"echocoverpack_by_echotron_coverage_bot",
+		"🤖",
+		StickerFile{
+			NewInputFilePath("tests/echotron_sticker.png"),
+			PNGSticker,
+		},
 		nil,
 	)
 
@@ -37,7 +89,71 @@ func TestSendSticker(t *testing.T) {
 }
 
 func TestGetStickerSet(t *testing.T) {
-	resp, err := api.GetStickerSet("RickAndMorty")
+	resp, err := api.GetStickerSet("echocoverpack_by_echotron_coverage_bot")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	stickerSet = resp.Result
+}
+
+func TestSetStickerPositionInSet(t *testing.T) {
+	resp, err := api.SetStickerPositionInSet(
+		stickerSet.Stickers[1].FileID,
+		0,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestDeleteStickerFromSet(t *testing.T) {
+	resp, err := api.DeleteStickerFromSet(
+		stickerSet.Stickers[0].FileID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendSticker(t *testing.T) {
+	resp, err := api.SendSticker(
+		stickerSet.Stickers[0].FileID,
+		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSetStickerSetThumb(t *testing.T) {
+	resp, err := api.SetStickerSetThumb(
+		"echocoverpack_by_echotron_coverage_bot",
+		chatID,
+		NewInputFilePath("tests/echotron_thumb.png"),
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
