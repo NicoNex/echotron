@@ -20,7 +20,10 @@ package echotron
 
 import "testing"
 
-var gameMsgTmp *Message
+var (
+	gameMsgTmp *Message
+	highScores []GameHighScore
+)
 
 func TestSendGame(t *testing.T) {
 	resp, err := api.SendGame(
@@ -40,14 +43,10 @@ func TestSendGame(t *testing.T) {
 	gameMsgTmp = resp.Result
 }
 
-func TestSetGameScore(t *testing.T) {
-	resp, err := api.SetGameScore(
+func TestGameHighScores(t *testing.T) {
+	resp, err := api.GetGameHighScores(
 		chatID,
-		545,
 		NewMessageID(chatID, gameMsgTmp.ID),
-		&GameScoreOptions{
-			Force: true,
-		},
 	)
 
 	if err != nil {
@@ -57,12 +56,24 @@ func TestSetGameScore(t *testing.T) {
 	if !resp.Ok {
 		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
 	}
+
+	highScores = resp.Result
 }
 
-func TestGameHighScores(t *testing.T) {
-	resp, err := api.GetGameHighScores(
+func TestSetGameScore(t *testing.T) {
+	var score int
+
+	if len(highScores) > 0 {
+		score = highScores[0].Score + 1
+	}
+
+	resp, err := api.SetGameScore(
 		chatID,
+		score,
 		NewMessageID(chatID, gameMsgTmp.ID),
+		&GameScoreOptions{
+			Force: true,
+		},
 	)
 
 	if err != nil {
