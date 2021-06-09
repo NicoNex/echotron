@@ -260,7 +260,7 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 
 	content, err := sendGetRequest(url)
 	if err != nil {
-		return APIResponseChat{}, err
+		return res, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
