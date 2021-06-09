@@ -33,9 +33,7 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
-func sendFile(file InputFile, url, fileType string) (res APIResponseMessage, err error) {
-	var content []byte
-
+func sendFile(file InputFile, url, fileType string) (content []byte, err error) {
 	switch {
 	case file.id != "":
 		content, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
@@ -43,7 +41,7 @@ func sendFile(file InputFile, url, fileType string) (res APIResponseMessage, err
 	case file.path != "" && len(file.content) == 0:
 		file.content, err = os.ReadFile(file.path)
 		if err != nil {
-			return res, err
+			return content, err
 		}
 		file.path = filepath.Base(file.path)
 		fallthrough
@@ -53,10 +51,10 @@ func sendFile(file InputFile, url, fileType string) (res APIResponseMessage, err
 	}
 
 	if err != nil {
-		return res, err
+		return content, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return content, nil
 }
 
 // NewAPI returns a new API object.
@@ -127,6 +125,7 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 
 // SendPhoto is used to send photos.
 func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&%s",
 		string(a),
@@ -134,13 +133,16 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 		querify(opts),
 	)
 
-	return sendFile(file, url, "photo")
+	content, err := sendFile(file, url, "photo")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendAudio is used to send audio files,
 // if you want Telegram clients to display them in the music player.
 // Your audio must be in the .MP3 or .M4A format.
 func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&%s",
 		string(a),
@@ -148,11 +150,14 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 		querify(opts),
 	)
 
-	return sendFile(file, url, "audio")
+	content, err := sendFile(file, url, "audio")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendDocument is used to send general files.
 func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&%s",
 		string(a),
@@ -160,12 +165,15 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		querify(opts),
 	)
 
-	return sendFile(file, url, "document")
+	content, err := sendFile(file, url, "document")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendVideo is used to send video files.
 // Telegram clients support mp4 videos (other formats may be sent with SendDocument).
 func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&%s",
 		string(a),
@@ -173,11 +181,14 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 		querify(opts),
 	)
 
-	return sendFile(file, url, "video")
+	content, err := sendFile(file, url, "video")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
 func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&%s",
 		string(a),
@@ -185,12 +196,15 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		querify(opts),
 	)
 
-	return sendFile(file, url, "animation")
+	content, err := sendFile(file, url, "animation")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document).
 func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&%s",
 		string(a),
@@ -198,11 +212,14 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 		querify(opts),
 	)
 
-	return sendFile(file, url, "voice")
+	content, err := sendFile(file, url, "voice")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendVideoNote is used to send video messages.
 func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&%s",
 		string(a),
@@ -210,7 +227,9 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		querify(opts),
 	)
 
-	return sendFile(file, url, "video_note")
+	content, err := sendFile(file, url, "video_note")
+	json.Unmarshal(content, &res)
+	return res, err
 }
 
 // SendContact is used to send phone contacts.
