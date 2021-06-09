@@ -1,11 +1,11 @@
-# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v2)](https://pkg.go.dev/github.com/NicoNex/echotron/v2) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE) [![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron) [![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
+# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v3)](https://pkg.go.dev/github.com/NicoNex/echotron/v3) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE) [![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron) [![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 Library for telegram bots written in pure go
 
 Fetch with
 
 ```bash
-go get github.com/NicoNex/echotron/v2
+go get github.com/NicoNex/echotron/v3
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ package main
 import (
     "log"
 
-    "github.com/NicoNex/echotron/v2"
+    "github.com/NicoNex/echotron/v3"
 )
 
 type bot struct {
@@ -39,7 +39,11 @@ func newBot(chatId int64) echotron.Bot {
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
-        b.SendMessage("Hello world", b.chatId)
+        b.SendMessage(
+            "Hello world",
+            b.chatId,
+            nil,
+        )
     }
 }
 
@@ -59,7 +63,7 @@ import (
     "log"
     "time"
 
-    "github.com/NicoNex/echotron/v2"
+    "github.com/NicoNex/echotron/v3"
 )
 
 type bot struct {
@@ -83,14 +87,22 @@ func newBot(chatId int64) echotron.Bot {
 func (b *bot) selfDestruct(timech <- chan time.Time) {
     select {
     case <-timech:
-        b.SendMessage("goodbye", b.chatId)
+        b.SendMessage(
+            "goodbye",
+            b.chatId,
+            nil,
+        )
         dsp.DelSession(b.chatId)
     }
 }
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
-        b.SendMessage("Hello world", b.chatId)
+        b.SendMessage(
+            "Hello world",
+            b.chatId,
+            nil,
+        )
     }
 }
 
@@ -105,7 +117,7 @@ func main() {
 ```go
 package main
 
-import "github.com/NicoNex/echotron/v2"
+import "github.com/NicoNex/echotron/v3"
 
 type bot struct {
 	chatId int64
@@ -123,7 +135,11 @@ func newBot(chatId int64) echotron.Bot {
 
 func (b *bot) Update(update *echotron.Update) {
 	if update.Message.Text == "/start" {
-		b.SendMessage("Hello world", b.chatId)
+		b.SendMessage(
+            "Hello world",
+            b.chatId,
+            nil,
+        )
 	}
 }
 
