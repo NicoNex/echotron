@@ -11,7 +11,7 @@ var (
 	msgTmp      *Message
 	photoTmp    *Message
 	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
-	chatID      = int64(41876271)
+	chatID      = int64(14870908)
 	groupID     = int64(-1001241973131)
 	photoID     = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
 	animationID = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
