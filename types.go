@@ -31,6 +31,18 @@ type Update struct {
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
 }
 
+// WebhookInfo contains information about the current status of a webhook.
+type WebhookInfo struct {
+	URL                  string       `json:"url"`
+	HasCustomCertificate bool         `json:"has_custom_certificate"`
+	PendingUpdateCount   int          `json:"pending_update_count"`
+	IPAddress            string       `json:"ip_address,omitempty"`
+	LastErrorDate        int64        `json:"last_error_date,omitempty"`
+	LastErrorMessage     string       `json:"last_error_message,omitempty"`
+	MaxConnections       int          `json:"max_connections,omitempty"`
+	AllowedUpdates       []UpdateType `json:"allowed_updates,omitempty"`
+}
+
 // APIResponseBase is a base type that represents the incoming response from Telegram servers.
 // Used by APIResponse* to slim down the implementation.
 type APIResponseBase struct {
@@ -92,6 +104,13 @@ type APIResponseAdmins struct {
 // Used by GetGameHighScore (since it returns an array of GameHighScore).
 type APIResponseGameHighScore struct {
 	Result []GameHighScore `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseWebhook represents the incoming response from Telegram servers.
+// Used by GetWebhookInfo (since it returns a WebhookInfo).
+type APIResponseWebhook struct {
+	Result WebhookInfo `json:"result,omitempty"`
 	APIResponseBase
 }
 

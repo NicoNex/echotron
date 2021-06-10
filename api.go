@@ -63,13 +63,13 @@ func NewAPI(token string) API {
 }
 
 // GetUpdates is used to receive incoming updates using long polling.
-func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
+func (a API) GetUpdates(opts *UpdateOptions) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
-	var url = fmt.Sprintf("%sgetUpdates?timeout=%d", string(a), timeout)
-
-	if offset != 0 {
-		url = fmt.Sprintf("%s&offset=%d", url, offset)
-	}
+	var url = fmt.Sprintf(
+		"%sgetUpdates?%s",
+		string(a),
+		querify(opts),
+	)
 
 	content, err := sendGetRequest(url)
 	if err != nil {
@@ -80,11 +80,17 @@ func (a API) GetUpdates(offset, timeout int) (APIResponseUpdate, error) {
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
-func (a API) SetWebhook(url string) (APIResponseUpdate, error) {
+func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
+	var url = fmt.Sprintf(
+		"%ssetWebhook?drop_pending_updates=%t&%s",
+		string(a),
+		dropPendingUpdates,
+		querify(opts),
+	)
 
-	keyVal := map[string]string{"url": url}
-	content, err := sendPostForm(fmt.Sprintf("%ssetWebhook", string(a)), keyVal)
+	keyVal := map[string]string{"url": webhookURL}
+	content, err := sendPostForm(url, keyVal)
 	if err != nil {
 		return res, err
 	}
@@ -92,11 +98,32 @@ func (a API) SetWebhook(url string) (APIResponseUpdate, error) {
 	return res, nil
 }
 
-// DeleteWebhook is used to remove webhook integration if you decide to switch back to getUpdates.
-func (a API) DeleteWebhook() (APIResponseUpdate, error) {
+// DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
+func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
+	var url = fmt.Sprintf(
+		"%sdeleteWebhook?drop_pending_updates=%t",
+		string(a),
+		dropPendingUpdates,
+	)
 
-	content, err := sendGetRequest(fmt.Sprintf("%sdeleteWebhook", string(a)))
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// GetWebhookInfo is used to get current webhook status.
+func (a API) GetWebhookInfo() (APIResponseWebhook, error) {
+	var res APIResponseWebhook
+	var url = fmt.Sprintf(
+		"%sgetWebhookInfo",
+		string(a),
+	)
+
+	content, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}

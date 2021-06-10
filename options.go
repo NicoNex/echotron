@@ -53,6 +53,24 @@ const (
 	UploadVideoNote            = "upload_video_note"
 )
 
+type UpdateType string
+
+const (
+	MessageUpdate            UpdateType = "message"
+	EditedMessageUpdate                 = "edited_message"
+	ChannelPostUpdate                   = "channel_post"
+	EditedChannelPostUpdate             = "edited_channel_post"
+	InlineQueryUpdate                   = "inline_query"
+	ChosenInlineResultUpdate            = "chosen_inline_result"
+	CallbackQueryUpdate                 = "callback_query"
+	ShippingQueryUpdate                 = "shipping_query"
+	PreCheckoutQueryUpdate              = "pre_checkout_query"
+	PollUpdate                          = "poll"
+	PollAnswerUpdate                    = "poll_answer"
+	MyChatMemberUpdate                  = "my_chat_member"
+	ChatMemberUpdate                    = "chat_member"
+)
+
 type ReplyMarkup interface {
 	ImplementsReplyMarkup()
 }
@@ -118,6 +136,22 @@ type ForceReply struct {
 }
 
 func (f ForceReply) ImplementsReplyMarkup() {}
+
+// UpdateOptions contains the optional parameters used by the API.GetUpdates method.
+type UpdateOptions struct {
+	Offset         int          `query:"offset"`
+	Limit          int          `query:"limit"`
+	Timeout        int          `query:"timeout"`
+	AllowedUpdates []UpdateType `query:"allowed_updates"`
+}
+
+// WebhookOptions contains the optional parameters used by the API.SetWebhook method.
+type WebhookOptions struct {
+	Certificate    InputFile
+	IPAddress      string       `query:"ip_address"`
+	MaxConnections int          `query:"max_connections"`
+	AllowedUpdates []UpdateType `query:"allowed_updates"`
+}
 
 type BaseOptions struct {
 	DisableNotification      bool        `query:"disable_notification"`

@@ -68,7 +68,7 @@ var (
 )
 
 func TestGetUpdates(t *testing.T) {
-	resp, err := api.GetUpdates(0, 1)
+	resp, err := api.GetUpdates(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +80,11 @@ func TestGetUpdates(t *testing.T) {
 }
 
 func TestSetWebhook(t *testing.T) {
-	resp, err := api.SetWebhook("example.com")
+	resp, err := api.SetWebhook(
+		"example.com",
+		false,
+		nil,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -92,7 +96,19 @@ func TestSetWebhook(t *testing.T) {
 }
 
 func TestDeleteWebhook(t *testing.T) {
-	resp, err := api.DeleteWebhook()
+	resp, err := api.DeleteWebhook(false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetWebhookInfo(t *testing.T) {
+	resp, err := api.GetWebhookInfo()
 
 	if err != nil {
 		t.Fatal(err)
