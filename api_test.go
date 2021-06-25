@@ -887,7 +887,7 @@ func TestDeleteMyCommands(t *testing.T) {
 
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
-	}	
+	}
 }
 
 func TestEditMessageText(t *testing.T) {
