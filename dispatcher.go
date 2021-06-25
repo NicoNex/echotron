@@ -87,7 +87,7 @@ func (d *Dispatcher) Poll() error {
 	return d.PollOptions(
 		false,
 		&UpdateOptions{
-			Offset: 0,
+			Offset:  0,
 			Timeout: 120,
 		},
 	)
@@ -117,7 +117,7 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) e
 			opts.Timeout = 0
 		}
 
-		opts.Offset = lastUpdateID+1
+		opts.Offset = lastUpdateID + 1
 		response, err := d.api.GetUpdates(opts)
 
 		if err != nil {
