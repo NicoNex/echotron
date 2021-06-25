@@ -862,17 +862,6 @@ func TestSetMyCommands(t *testing.T) {
 	}
 }
 
-func TestDeleteMyCommands(t *testing.T) {
-	resp, err := api.DeleteMyCommands(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}	
-}
-
 func TestGetMyCommands(t *testing.T) {
 	resp, err := api.GetMyCommands(nil)
 	if err != nil {
@@ -888,6 +877,17 @@ func TestGetMyCommands(t *testing.T) {
 		t.Logf("commands from API: %v", resp.Result)
 		t.Fatal("error: commands mismatch")
 	}
+}
+
+func TestDeleteMyCommands(t *testing.T) {
+	resp, err := api.DeleteMyCommands(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}	
 }
 
 func TestEditMessageText(t *testing.T) {
