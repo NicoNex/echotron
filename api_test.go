@@ -852,7 +852,7 @@ func TestAnswerCallbackQuery(t *testing.T) {
 }
 
 func TestSetMyCommands(t *testing.T) {
-	resp, err := api.SetMyCommands(commands...)
+	resp, err := api.SetMyCommands(nil, commands...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -862,8 +862,19 @@ func TestSetMyCommands(t *testing.T) {
 	}
 }
 
+func TestDeleteMyCommands(t *testing.T) {
+	resp, err := api.DeleteMyCommands(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}	
+}
+
 func TestGetMyCommands(t *testing.T) {
-	resp, err := api.GetMyCommands()
+	resp, err := api.GetMyCommands(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
