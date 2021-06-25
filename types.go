@@ -451,49 +451,22 @@ type ChatInviteLink struct {
 }
 
 // ChatMember contains information about one member of a chat.
-type ChatMember interface {
-	ImplementsChatMember()
-}
-
-type ChatMemberOwner struct {
-	Status      string `json:"status"`
-	User        *User  `json:"user"`
-	CustomTitle string `json:"custom_title,omitempty"`
-	IsAnonymous bool   `json:"is_anonymous,omitempty"`
-}
-
-func (c ChatMemberOwner) ImplementsChatMember() {}
-
-type ChatMemberAdministrator struct {
-	Status              string `json:"status"`
-	User                *User  `json:"user"`
-	CustomTitle         string `json:"custom_title,omitempty"`
-	IsAnonymous         bool   `json:"is_anonymous,omitempty"`
-	CanBeEdited         bool   `json:"can_be_edited,omitempty"`
-	CanManageChat       bool   `json:"can_manage_chat,omitempty"`
-	CanPostMessages     bool   `json:"can_post_messages,omitempty"`
-	CanEditMessages     bool   `json:"can_edit_messages,omitempty"`
-	CanDeleteMessages   bool   `json:"can_delete_messages,omitempty"`
-	CanManageVoiceChats bool   `json:"can_manage_voice_chats,omitempty"`
-	CanRestrictMembers  bool   `json:"can_restrict_members,omitempty"`
-	CanPromoteMembers   bool   `json:"can_promote_members,omitempty"`
-	CanChangeInfo       bool   `json:"can_change_info,omitempty"`
-	CanInviteUsers      bool   `json:"can_invite_users,omitempty"`
-	CanPinMessages      bool   `json:"can_pin_messages,omitempty"`
-}
-
-func (c ChatMemberAdministrator) ImplementsChatMember() {}
-
-type ChatMemberMember struct {
-	Status string `json:"status"`
-	User   *User  `json:"user"`
-}
-
-func (c ChatMemberMember) ImplementsChatMember() {}
-
-type ChatMemberRestricted struct {
-	Status                string `json:"status"`
+type ChatMember struct {
 	User                  *User  `json:"user"`
+	Status                string `json:"status"`
+	CustomTitle           string `json:"custom_title,omitempty"`
+	IsAnonymous           bool   `json:"is_anonymous,omitempty"`
+	CanBeEdited           bool   `json:"can_be_edited,omitempty"`
+	CanManageChat         bool   `json:"can_manage_chat,omitempty"`
+	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
+	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
+	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
+	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
+	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
+	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
+	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
+	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
+	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
 	IsMember              bool   `json:"is_member,omitempty"`
 	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
 	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
@@ -505,23 +478,6 @@ type ChatMemberRestricted struct {
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
 	UntilDate             int    `json:"until_date,omitempty"`
 }
-
-func (c ChatMemberRestricted) ImplementsChatMember() {}
-
-type ChatMemberLeft struct {
-	Status string `json:"status"`
-	User   *User  `json:"user"`
-}
-
-func (c ChatMemberLeft) ImplementsChatMember() {}
-
-type ChatMemberBanned struct {
-	Status    string `json:"status"`
-	User      *User  `json:"user"`
-	UntilDate int    `json:"until_date,omitempty"`
-}
-
-func (c ChatMemberBanned) ImplementsChatMember() {}
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
