@@ -642,42 +642,20 @@ type InputMediaDocument struct {
 
 func (i InputMediaDocument) ImplementsInputMedia() {}
 
-type BotCommandScope interface {
-	ImplementsBotCommandScope()
-}
+type BotCommandScopeType string
 
-type botCommandScope struct {
-	Type   string `query:"type"`
-	ChatID int64  `query:"chat_id"`
-	UserID int64  `query:"user_id"`
-}
+const (
+	BCSTDefault               BotCommandScopeType = "default"
+	BCSTAllPrivateChats                           = "all_private_chats"
+	BCSTAllGroupChats                             = "all_group_chats"
+	BCSTAllChatAdministrators                     = "all_chat_administrators"
+	BCSTChat                                      = "chat"
+	BCSTChatAdministrators                        = "chat_administrators"
+	BCSTChatMember                                = "chat_member"
+)
 
-func (b botCommandScope) ImplementsBotCommandScope() {}
-
-func NewBotCommandScopeDefault() botCommandScope {
-	return botCommandScope{Type: "default"}
-}
-
-func NewBotCommandScopeAllPrivateChats() botCommandScope {
-	return botCommandScope{Type: "all_private_chats"}
-}
-
-func NewBotCommandScopeAllGroupChats() botCommandScope {
-	return botCommandScope{Type: "all_group_chats"}
-}
-
-func NewBotCommandScopeAllChatAdministrators() botCommandScope {
-	return botCommandScope{Type: "all_chat_administrators"}
-}
-
-func NewBotCommandScopeChat(chatID int64) botCommandScope {
-	return botCommandScope{Type: "chat", ChatID: chatID}
-}
-
-func NewBotCommandScopeChatAdministrators(chatID int64) botCommandScope {
-	return botCommandScope{Type: "chat_administrators", ChatID: chatID}
-}
-
-func NewBotCommandScopeChatMember(chatID, userID int64) botCommandScope {
-	return botCommandScope{Type: "chat_member", ChatID: chatID, UserID: userID}
+type BotCommandScope struct {
+	Type   BotCommandScopeType `query:"type"`
+	ChatID int64               `query:"chat_id"`
+	UserID int64               `query:"user_id"`
 }
