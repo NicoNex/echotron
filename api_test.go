@@ -838,6 +838,28 @@ func TestGetChatAdministrators(t *testing.T) {
 	}
 }
 
+func TestGetChatMemberCount(t *testing.T) {
+	resp, err := api.GetChatMemberCount(groupID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetChatMember(t *testing.T) {
+	resp, err := api.GetChatMember(chatID, groupID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestAnswerCallbackQuery(t *testing.T) {
 	_, err := api.AnswerCallbackQuery(
 		"test",

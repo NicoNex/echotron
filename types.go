@@ -107,6 +107,20 @@ type APIResponseAdministrators struct {
 	APIResponseBase
 }
 
+// APIResponseChatMember represents the incoming response from Telegram servers.
+// Used by GetChatMember (since it returns a ChatMember).
+type APIResponseChatMember struct {
+	Result ChatMember `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseMemberCount represents the incoming response from Telegram servers.
+// Used by GetChatMemberCount (since it returns and integer).
+type APIResponseMemberCount struct {
+	Result int `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
 // Used by GetGameHighScore (since it returns an array of GameHighScore).
 type APIResponseGameHighScore struct {

@@ -329,6 +329,41 @@ func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, err
 	return res, nil
 }
 
+// GetChatMemberCount is used to get the number of members in a chat.
+func (a API) GetChatMemberCount(chatID int64) (APIResponseMemberCount, error) {
+	var res APIResponseMemberCount
+	var url = fmt.Sprintf(
+		"%sgetChatMemberCount?chat_id=%d",
+		string(a),
+		chatID,
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// GetChatMember is used to get information about a member of a chat.
+func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) {
+	var res APIResponseChatMember
+	var url = fmt.Sprintf(
+		"%sgetChatMember?chat_id=%d&user_id=%d",
+		string(a),
+		chatID,
+		userID,
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
 func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (APIResponseMessage, error) {
