@@ -100,9 +100,9 @@ type APIResponseFile struct {
 	APIResponseBase
 }
 
-// APIResponseAdmins represents the incoming response from Telegram servers.
+// APIResponseAdministrators represents the incoming response from Telegram servers.
 // Used by GetChatAdministrator (since it returns an array of ChatMembers).
-type APIResponseAdmins struct {
+type APIResponseAdministrators struct {
 	Result []ChatMember `json:"result,omitempty"`
 	APIResponseBase
 }

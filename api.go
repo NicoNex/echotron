@@ -313,8 +313,8 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 }
 
 // GetChatAdministrators is used to get a list of administrators in a chat.
-func (a API) GetChatAdministrators(chatID int64) (APIResponseAdmins, error) {
-	var res APIResponseAdmins
+func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, error) {
+	var res APIResponseAdministrators
 	var url = fmt.Sprintf(
 		"%sgetChatAdministrators?chat_id=%d",
 		string(a),
