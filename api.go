@@ -372,7 +372,7 @@ func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (APIRes
 func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
-		"%sdeleteMyCommands&%s",
+		"%sdeleteMyCommands?%s",
 		string(a),
 		querify(opts),
 	)
@@ -389,7 +389,7 @@ func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
 func (a API) GetMyCommands(opts *CommandOptions) (APIResponseCommands, error) {
 	var res APIResponseCommands
 	var url = fmt.Sprintf(
-		"%sgetMyCommands&%s",
+		"%sgetMyCommands?%s",
 		string(a),
 		querify(opts),
 	)
