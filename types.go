@@ -66,9 +66,16 @@ type APIResponseMessage struct {
 }
 
 // APIResponseCommands represents the incoming response from Telegram servers.
-// Used by SetMyCommands and GetMyCommands (since they return an array of BotCommands).
+// Used by GetMyCommands (since it returns an array of BotCommands).
 type APIResponseCommands struct {
 	Result []BotCommand `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseBool represents the incoming response from Telegram servers.
+// Used by all methods that return True on success.
+type APIResponseBool struct {
+	Result bool `json:"result,omitempty"`
 	APIResponseBase
 }
 
@@ -444,23 +451,53 @@ type ChatInviteLink struct {
 }
 
 // ChatMember contains information about one member of a chat.
-type ChatMember struct {
-	User                  *User  `json:"user"`
+type ChatMember interface {
+	ImplementsChatMember()
+}
+
+type ChatMemberOwner struct {
+	Status      string `json:"status"`
+	User        *User  `json:"user"`
+	CustomTitle string `json:"custom_title,omitempty"`
+	IsAnonymous bool   `json:"is_anonymous,omitempty"`
+}
+
+func (c ChatMemberOwner) ImplementsChatMember() {}
+
+type ChatMemberAdministrator struct {
+	Status              string `json:"status"`
+	User                *User  `json:"user"`
+	CustomTitle         string `json:"custom_title,omitempty"`
+	IsAnonymous         bool   `json:"is_anonymous,omitempty"`
+	CanBeEdited         bool   `json:"can_be_edited,omitempty"`
+	CanManageChat       bool   `json:"can_manage_chat,omitempty"`
+	CanPostMessages     bool   `json:"can_post_messages,omitempty"`
+	CanEditMessages     bool   `json:"can_edit_messages,omitempty"`
+	CanDeleteMessages   bool   `json:"can_delete_messages,omitempty"`
+	CanManageVoiceChats bool   `json:"can_manage_voice_chats,omitempty"`
+	CanRestrictMembers  bool   `json:"can_restrict_members,omitempty"`
+	CanPromoteMembers   bool   `json:"can_promote_members,omitempty"`
+	CanChangeInfo       bool   `json:"can_change_info,omitempty"`
+	CanInviteUsers      bool   `json:"can_invite_users,omitempty"`
+	CanPinMessages      bool   `json:"can_pin_messages,omitempty"`
+}
+
+func (c ChatMemberAdministrator) ImplementsChatMember() {}
+
+type ChatMemberMember struct {
+	Status string `json:"status"`
+	User   *User  `json:"user"`
+}
+
+func (c ChatMemberMember) ImplementsChatMember() {}
+
+type ChatMemberRestricted struct {
 	Status                string `json:"status"`
-	CustomTitle           string `json:"custom_title,omitempty"`
-	IsAnonymous           bool   `json:"is_anonymous,omitempty"`
-	CanBeEdited           bool   `json:"can_be_edited,omitempty"`
-	CanManageChat         bool   `json:"can_manage_chat,omitempty"`
-	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
-	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
-	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
-	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
-	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
-	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
+	User                  *User  `json:"user"`
+	IsMember              bool   `json:"is_member,omitempty"`
 	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
 	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
-	IsMember              bool   `json:"is_member,omitempty"`
 	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
 	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
 	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
@@ -468,6 +505,23 @@ type ChatMember struct {
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
 	UntilDate             int    `json:"until_date,omitempty"`
 }
+
+func (c ChatMemberRestricted) ImplementsChatMember() {}
+
+type ChatMemberLeft struct {
+	Status string `json:"status"`
+	User   *User  `json:"user"`
+}
+
+func (c ChatMemberLeft) ImplementsChatMember() {}
+
+type ChatMemberBanned struct {
+	Status    string `json:"status"`
+	User      *User  `json:"user"`
+	UntilDate int    `json:"until_date,omitempty"`
+}
+
+func (c ChatMemberBanned) ImplementsChatMember() {}
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
@@ -587,3 +641,43 @@ type InputMediaDocument struct {
 }
 
 func (i InputMediaDocument) ImplementsInputMedia() {}
+
+type BotCommandScope interface {
+	ImplementsBotCommandScope()
+}
+
+type botCommandScope struct {
+	Type   string `query:"type"`
+	ChatID int64  `query:"chat_id"`
+	UserID int64  `query:"user_id"`
+}
+
+func (b botCommandScope) ImplementsBotCommandScope() {}
+
+func NewBotCommandScopeDefault() botCommandScope {
+	return botCommandScope{Type: "default"}
+}
+
+func NewBotCommandScopeAllPrivateChats() botCommandScope {
+	return botCommandScope{Type: "all_private_chats"}
+}
+
+func NewBotCommandScopeAllGroupChats() botCommandScope {
+	return botCommandScope{Type: "all_group_chats"}
+}
+
+func NewBotCommandScopeAllChatAdministrators() botCommandScope {
+	return botCommandScope{Type: "all_chat_administrators"}
+}
+
+func NewBotCommandScopeChat(chatID int64) botCommandScope {
+	return botCommandScope{Type: "chat", ChatID: chatID}
+}
+
+func NewBotCommandScopeChatAdministrators(chatID int64) botCommandScope {
+	return botCommandScope{Type: "chat_administrators", ChatID: chatID}
+}
+
+func NewBotCommandScopeChatMember(chatID, userID int64) botCommandScope {
+	return botCommandScope{Type: "chat_member", ChatID: chatID, UserID: userID}
+}

@@ -90,10 +90,11 @@ type KeyboardButtonPollType struct {
 
 // ReplyKeyboardMarkup represents a custom keyboard with reply options.
 type ReplyKeyboardMarkup struct {
-	Keyboard        [][]KeyboardButton `json:"keyboard"`
-	ResizeKeyboard  bool               `json:"resize_keyboard,omitempty"`
-	OneTimeKeyboard bool               `json:"one_time_keyboard,omitempty"`
-	Selective       bool               `json:"selective,omitempty"`
+	Keyboard              [][]KeyboardButton `json:"keyboard"`
+	ResizeKeyboard        bool               `json:"resize_keyboard,omitempty"`
+	OneTimeKeyboard       bool               `json:"one_time_keyboard,omitempty"`
+	InputFieldPlaceholder string             `json:"input_field_placeholder,omitempty"`
+	Selective             bool               `json:"selective,omitempty"`
 }
 
 func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
@@ -131,8 +132,9 @@ func (i InlineKeyboardMarkup) ImplementsReplyMarkup() {}
 // ForceReply is used to display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply').
 // This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
 type ForceReply struct {
-	ForceReply bool `json:"force_reply"`
-	Selective  bool `json:"selective"`
+	ForceReply            bool   `json:"force_reply"`
+	InputFieldPlaceholder string `json:"input_field_placeholder,omitempty"`
+	Selective             bool   `json:"selective"`
 }
 
 func (f ForceReply) ImplementsReplyMarkup() {}
@@ -327,4 +329,9 @@ type MessageMediaOptions struct {
 
 type MessageReplyMarkup struct {
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+type CommandOptions struct {
+	Scope        BotCommandScope `query:"scope"`
+	LanguageCode string          `query:"language_code"`
 }

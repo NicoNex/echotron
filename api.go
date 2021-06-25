@@ -348,15 +348,16 @@ func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) 
 	return res, nil
 }
 
-// SetMyCommands is used to change the list of the bot's commands.
-func (a API) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) {
-	var res APIResponseCommands
+// SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
+func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (APIResponseBool, error) {
+	var res APIResponseBool
 	jsn, _ := json.Marshal(commands)
 
 	var url = fmt.Sprintf(
-		"%ssetMyCommands?commands=%s",
+		"%ssetMyCommands?commands=%s&%s",
 		string(a),
 		jsn,
+		querify(opts),
 	)
 
 	content, err := sendGetRequest(url)
@@ -367,12 +368,30 @@ func (a API) SetMyCommands(commands ...BotCommand) (APIResponseCommands, error) 
 	return res, nil
 }
 
-// GetMyCommands is used to get the current list of the bot's commands.
-func (a API) GetMyCommands() (APIResponseCommands, error) {
+// DeleteMyCommands is used to delete the list of the bot's commands for the given scope and user language.
+func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sdeleteMyCommands&%s",
+		string(a),
+		querify(opts),
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}
+
+// GetMyCommands is used to get the current list of the bot's commands for the given scope and user language.
+func (a API) GetMyCommands(opts *CommandOptions) (APIResponseCommands, error) {
 	var res APIResponseCommands
 	var url = fmt.Sprintf(
-		"%sgetMyCommands",
+		"%sgetMyCommands&%s",
 		string(a),
+		querify(opts),
 	)
 
 	content, err := sendGetRequest(url)
