@@ -850,7 +850,7 @@ func TestGetChatMemberCount(t *testing.T) {
 }
 
 func TestGetChatMember(t *testing.T) {
-	resp, err := api.GetChatMember(chatID, groupID)
+	resp, err := api.GetChatMember(groupID, chatID)
 	if err != nil {
 		t.Fatal(err)
 	}
