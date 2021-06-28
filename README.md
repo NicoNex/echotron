@@ -24,26 +24,22 @@ import (
 )
 
 type bot struct {
-    chatId int64
+    chatID int64
     echotron.API
 }
 
 const token = "YOUR TELEGRAM TOKEN"
 
-func newBot(chatId int64) echotron.Bot {
+func newBot(chatID int64) echotron.Bot {
     return &bot{
-        chatId,
+        chatID,
         echotron.NewAPI(token),
     }
 }
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
-        b.SendMessage(
-            "Hello world",
-            b.chatId,
-            nil,
-        )
+        b.SendMessage("Hello world", b.chatID, nil)
     }
 }
 
@@ -67,7 +63,7 @@ import (
 )
 
 type bot struct {
-    chatId int64
+    chatID int64
     echotron.API
 }
 
@@ -75,9 +71,9 @@ const token = "YOUR TELEGRAM TOKEN"
 
 var dsp echotron.Dispatcher
 
-func newBot(chatId int64) echotron.Bot {
+func newBot(chatID int64) echotron.Bot {
     var bot = &bot{
-        chatId,
+        chatID,
         echotron.NewAPI(token),
     }
     go bot.selfDestruct(time.After(time.Hour))
@@ -87,22 +83,14 @@ func newBot(chatId int64) echotron.Bot {
 func (b *bot) selfDestruct(timech <- chan time.Time) {
     select {
     case <-timech:
-        b.SendMessage(
-            "goodbye",
-            b.chatId,
-            nil,
-        )
-        dsp.DelSession(b.chatId)
+        b.SendMessage("goodbye", b.chatID, nil)
+        dsp.DelSession(b.chatID)
     }
 }
 
 func (b *bot) Update(update *echotron.Update) {
     if update.Message.Text == "/start" {
-        b.SendMessage(
-            "Hello world",
-            b.chatId,
-            nil,
-        )
+        b.SendMessage("Hello world", b.chatId, nil)
     }
 }
 
@@ -120,26 +108,22 @@ package main
 import "github.com/NicoNex/echotron/v3"
 
 type bot struct {
-	chatId int64
+	chatID int64
 	echotron.API
 }
 
 const token = "YOUR TELEGRAM TOKEN"
 
-func newBot(chatId int64) echotron.Bot {
+func newBot(chatID int64) echotron.Bot {
 	return &bot{
-		chatId,
+		chatID,
 		echotron.NewAPI(token),
 	}
 }
 
 func (b *bot) Update(update *echotron.Update) {
 	if update.Message.Text == "/start" {
-		b.SendMessage(
-            "Hello world",
-            b.chatId,
-            nil,
-        )
+		b.SendMessage("Hello world",b.chatID,nil)
 	}
 }
 
