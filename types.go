@@ -482,9 +482,6 @@ type ChatMember struct {
 	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
 	IsMember              bool   `json:"is_member,omitempty"`
-	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
-	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
-	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
 	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
 	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
 	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
