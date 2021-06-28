@@ -84,21 +84,17 @@ func (d *Dispatcher) AddSession(chatID int64) {
 
 // Poll is a wrapper function for PollOptions.
 func (d *Dispatcher) Poll() error {
-	return d.PollOptions(
-		false,
-		&UpdateOptions{
-			Offset:  0,
-			Timeout: 120,
-		},
-	)
+	return d.PollOptions(true, &UpdateOptions{Timeout: 120})
 }
 
 // PollOptions starts the polling loop so that the dispatcher calls the function Update
 // upon receiving any update from Telegram.
 func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) error {
-	var timeout int
-	var firstRun = true
-	var lastUpdateID = -1
+	var (
+		timeout int
+		firstRun = true
+		lastUpdateID = -1
+	)
 
 	if opts != nil {
 		timeout = opts.Timeout
@@ -123,7 +119,7 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) e
 		if err != nil {
 			return err
 		} else if response.Ok {
-			if !firstRun {
+			if !dropPendingUpdates || !firstRun {
 				for _, u := range response.Result {
 					d.updates <- u
 				}
