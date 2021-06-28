@@ -123,7 +123,7 @@ func newBot(chatID int64) echotron.Bot {
 
 func (b *bot) Update(update *echotron.Update) {
 	if update.Message.Text == "/start" {
-		b.SendMessage("Hello world",b.chatID,nil)
+		b.SendMessage("Hello world", b.chatID, nil)
 	}
 }
 
