@@ -91,8 +91,8 @@ func (d *Dispatcher) Poll() error {
 // upon receiving any update from Telegram.
 func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) error {
 	var (
-		timeout int
-		firstRun = true
+		timeout      int
+		firstRun     = true
 		lastUpdateID = -1
 	)
 

@@ -220,7 +220,7 @@ type Message struct {
 	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
 	VoiceChatEnded                *VoiceChatEnded                `json:"voice_chat_ended,omitempty"`
 	VoiceChatParticipantsInvited  *VoiceChatParticipantsInvited  `json:"voice_chat_participants_invited,omitempty"`
-	ReplyMarkup                   *ReplyMarkup                   `json:"reply_markup,omitempty"`
+	ReplyMarkup                   ReplyMarkup                    `json:"reply_markup,omitempty"`
 }
 
 // MessageID represents a unique message identifier.
