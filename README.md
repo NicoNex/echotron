@@ -1,4 +1,11 @@
-# echotron [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v3)](https://pkg.go.dev/github.com/NicoNex/echotron/v3) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE) [![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron) [![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
+# echotron 
+[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v3)](https://pkg.go.dev/github.com/NicoNex/echotron/v3)
+[![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron)
+[![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE)
+[![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron)
+[![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 Library for telegram bots written in pure go
 
@@ -14,7 +21,7 @@ go get github.com/NicoNex/echotron/v3
 
 A very simple implementation:
 
-```go
+```golang
 package main
 
 import (
@@ -52,7 +59,7 @@ func main() {
 
 Also proof of concept with self destruction for low ram usage
 
-```go
+```golang
 package main
 
 import (
@@ -102,7 +109,7 @@ func main() {
 
 ### Webhook
 
-```go
+```golang
 package main
 
 import "github.com/NicoNex/echotron/v3"
