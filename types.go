@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2018-2021  Nicolò Santamaria, Michele Dimaggio
+ * Copyright (C) 2018-2021  The Echotron Devs
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,133 @@
  */
 
 package echotron
+
+// Update represents an incoming update.
+// At most one of the optional parameters can be present in any given update.
+type Update struct {
+	ID                 int                 `json:"update_id"`
+	Message            *Message            `json:"message,omitempty"`
+	EditedMessage      *Message            `json:"edited_message,omitempty"`
+	ChannelPost        *Message            `json:"channel_post,omitempty"`
+	EditedChannelPost  *Message            `json:"edited_channel_post,omitempty"`
+	InlineQuery        *InlineQuery        `json:"inline_query,omitempty"`
+	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result,omitempty"`
+	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
+}
+
+// WebhookInfo contains information about the current status of a webhook.
+type WebhookInfo struct {
+	URL                  string       `json:"url"`
+	HasCustomCertificate bool         `json:"has_custom_certificate"`
+	PendingUpdateCount   int          `json:"pending_update_count"`
+	IPAddress            string       `json:"ip_address,omitempty"`
+	LastErrorDate        int64        `json:"last_error_date,omitempty"`
+	LastErrorMessage     string       `json:"last_error_message,omitempty"`
+	MaxConnections       int          `json:"max_connections,omitempty"`
+	AllowedUpdates       []UpdateType `json:"allowed_updates,omitempty"`
+}
+
+// APIResponseBase is a base type that represents the incoming response from Telegram servers.
+// Used by APIResponse* to slim down the implementation.
+type APIResponseBase struct {
+	Ok          bool   `json:"ok"`
+	ErrorCode   int    `json:"error_code,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+// APIResponseUpdate represents the incoming response from Telegram servers.
+// Used by getUpdates (since it returns an array of Updates).
+type APIResponseUpdate struct {
+	Result []*Update `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseMessage represents the incoming response from Telegram servers.
+// Used by the methods in the api.go module (since they return a Message).
+type APIResponseMessage struct {
+	Result *Message `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseCommands represents the incoming response from Telegram servers.
+// Used by GetMyCommands (since it returns an array of BotCommands).
+type APIResponseCommands struct {
+	Result []BotCommand `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseBool represents the incoming response from Telegram servers.
+// Used by all methods that return True on success.
+type APIResponseBool struct {
+	Result bool `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseChat represents the incoming response from Telegram servers.
+// Used by GetChat (since it returns a Chat).
+type APIResponseChat struct {
+	Result *Chat `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseStickerSet represents the incoming response from Telegram servers.
+// Used by GetStickerSet (since it returns a StickerSet).
+type APIResponseStickerSet struct {
+	Result *StickerSet `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseFile represents the incoming response from Telegram servers.
+// Used by UploadStickerFile (since it returns a File).
+type APIResponseFile struct {
+	Result *File `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseAdministrators represents the incoming response from Telegram servers.
+// Used by GetChatAdministrator (since it returns an array of ChatMembers).
+type APIResponseAdministrators struct {
+	Result []ChatMember `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseChatMember represents the incoming response from Telegram servers.
+// Used by GetChatMember (since it returns a ChatMember).
+type APIResponseChatMember struct {
+	Result ChatMember `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseMemberCount represents the incoming response from Telegram servers.
+// Used by GetChatMemberCount (since it returns and integer).
+type APIResponseMemberCount struct {
+	Result int `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseGameHighScore represents the incoming response from Telegram servers.
+// Used by GetGameHighScore (since it returns an array of GameHighScore).
+type APIResponseGameHighScore struct {
+	Result []GameHighScore `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseWebhook represents the incoming response from Telegram servers.
+// Used by GetWebhookInfo (since it returns a WebhookInfo).
+type APIResponseWebhook struct {
+	Result WebhookInfo `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// User represents a Telegram user or bot.
+type User struct {
+	ID           int64  `json:"id"`
+	IsBot        bool   `json:"is_bot"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name,omitempty"`
+	Username     string `json:"username,omitempty"`
+	LanguageCode string `json:"language_code,omitempty"`
+}
 
 // Chat represents a chat.
 type Chat struct {
@@ -38,98 +165,6 @@ type Chat struct {
 	CanSetStickerSet      bool             `json:"can_set_sticker_set,omitempty"`
 	LinkedChatID          int64            `json:"linked_chat_id,omitempty"`
 	Location              *ChatLocation    `json:"location,omitempty"`
-}
-
-// ChatPhoto represents a chat photo.
-type ChatPhoto struct {
-	SmallFileID  string `json:"small_file_id"`
-	SmallFileUID string `json:"small_file_unique_id"`
-	BigFileID    string `json:"big_file_id"`
-	BigFileUID   string `json:"big_file_unique_id"`
-}
-
-// ChatInviteLink represents an invite link for a chat.
-type ChatInviteLink struct {
-	InviteLink  string `json:"invite_link"`
-	Creator     *User  `json:"creator"`
-	IsPrimary   bool   `json:"is_primary"`
-	IsRevoked   bool   `json:"is_revoked"`
-	ExpireDate  int    `json:"expire_date,omitempty"`
-	MemberLimit int    `json:"member_limit,omitempty"`
-}
-
-// ChatMember contains information about one member of a chat.
-type ChatMember struct {
-	User                  *User  `json:"user"`
-	Status                string `json:"status"`
-	CustomTitle           string `json:"custom_title,omitempty"`
-	IsAnonymous           bool   `json:"is_anonymous,omitempty"`
-	CanBeEdited           bool   `json:"can_be_edited,omitempty"`
-	CanManageChat         bool   `json:"can_manage_chat,omitempty"`
-	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
-	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
-	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
-	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
-	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
-	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
-	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
-	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
-	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
-	IsMember              bool   `json:"is_member,omitempty"`
-	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
-	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
-	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
-	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
-	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
-	UntilDate             int    `json:"until_date,omitempty"`
-}
-
-// ChatMemberUpdated represents changes in the status of a chat member.
-type ChatMemberUpdated struct {
-	Chat          *Chat           `json:"chat"`
-	User          *User           `json:"from"`
-	Date          int             `json:"date"`
-	OldChatMember *ChatMember     `json:"old_chat_member"`
-	NewChatMember *ChatMember     `json:"new_chat_member"`
-	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
-}
-
-// ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
-type ChatPermissions struct {
-	CanSendMessages       bool `json:"can_send_messages,omitempty"`
-	CanSendMediaMessages  bool `json:"can_send_media_messages,omitempty"`
-	CanSendPolls          bool `json:"can_send_polls,omitempty"`
-	CanSendOtherMessages  bool `json:"can_send_other_messages,omitempty"`
-	CanAddWebPagePreviews bool `json:"can_add_web_page_previews,omitempty"`
-	CanChangeInfo         bool `json:"can_change_info,omitempty"`
-	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
-	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
-}
-
-// ChatLocation represents a location to which a chat is connected.
-type ChatLocation struct {
-	Location *Location `json:"location"`
-	Address  string    `json:"address"`
-}
-
-// User represents a Telegram user or bot.
-type User struct {
-	ID           int64  `json:"id"`
-	IsBot        bool   `json:"is_bot"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name,omitempty"`
-	Username     string `json:"username,omitempty"`
-	LanguageCode string `json:"language_code,omitempty"`
-}
-
-// MessageEntity represents one special entity in a text message.
-// For example, hashtags, usernames, URLs, etc.
-type MessageEntity struct {
-	Type   string `json:"type"`
-	Offset int    `json:"offset"`
-	Length int    `json:"Length"`
-	URL    string `json:"url,omitempty"`
-	User   *User  `json:"user,omitempty"`
 }
 
 // Message represents a message.
@@ -185,82 +220,22 @@ type Message struct {
 	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
 	VoiceChatEnded                *VoiceChatEnded                `json:"voice_chat_ended,omitempty"`
 	VoiceChatParticipantsInvited  *VoiceChatParticipantsInvited  `json:"voice_chat_participants_invited,omitempty"`
-	ReplyMarkup                   *InlineKeyboard                `json:"reply_markup,omitempty"`
+	ReplyMarkup                   ReplyMarkup                    `json:"reply_markup,omitempty"`
 }
 
-// Update represents an incoming update.
-// At most one of the optional parameters can be present in any given update.
-type Update struct {
-	ID                 int                 `json:"update_id"`
-	Message            *Message            `json:"message,omitempty"`
-	EditedMessage      *Message            `json:"edited_message,omitempty"`
-	ChannelPost        *Message            `json:"channel_post,omitempty"`
-	EditedChannelPost  *Message            `json:"edited_channel_post,omitempty"`
-	InlineQuery        *InlineQuery        `json:"inline_query,omitempty"`
-	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result,omitempty"`
-	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
+// MessageID represents a unique message identifier.
+type MessageID struct {
+	MessageID int `json:"message_id"`
 }
 
-// APIResponseBase is a base type that represents the incoming response from Telegram servers.
-// Used by APIResponse* to slim down the implementation.
-type APIResponseBase struct {
-	Ok          bool   `json:"ok"`
-	ErrorCode   int    `json:"error_code,omitempty"`
-	Description string `json:"description,omitempty"`
-}
-
-// APIResponseUpdate represents the incoming response from Telegram servers.
-// Used by getUpdates (since it returns an array of Updates).
-type APIResponseUpdate struct {
-	Result []*Update `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// APIResponseMessage represents the incoming response from Telegram servers.
-// Used by the methods in the api.go module (since they return a Message).
-type APIResponseMessage struct {
-	Result *Message `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// APIResponseCommands represents the incoming response from Telegram servers.
-// Used by SetMyCommands and GetMyCommands (since they return an array of BotCommands).
-type APIResponseCommands struct {
-	Result []BotCommand `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// APIResponseChat represents the incoming response from Telegram servers.
-// Used by GetChat (since it returns a Chat).
-type APIResponseChat struct {
-	Result *Chat `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// APIResponseStickerSet represents the incoming response from Telegram servers.
-// Used by GetStickerSet (since it returns a StickerSet).
-type APIResponseStickerSet struct {
-	Result *StickerSet `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// APIResponseAdmins represents the incoming response from Telegram servers.
-// Used by GetChatAdministrator (since it returns an array of ChatMembers).
-type APIResponseAdmins struct {
-	Result []ChatMember `json:"result,omitempty"`
-	APIResponseBase
-}
-
-// CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
-// If the button that originated the query was attached to a message sent by the bot,
-// the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
-// the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
-type CallbackQuery struct {
-	ID              string   `json:"id"`
-	User            *User    `json:"from"`
-	Message         *Message `json:"message,omitempty"`
-	InlineMessageID string   `json:"inline_message_id,omitempty"`
-	Data            string   `json:"data,omitempty"`
+// MessageEntity represents one special entity in a text message.
+// For example, hashtags, usernames, URLs, etc.
+type MessageEntity struct {
+	Type   string `json:"type"`
+	Offset int    `json:"offset"`
+	Length int    `json:"Length"`
+	URL    string `json:"url,omitempty"`
+	User   *User  `json:"user,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
@@ -346,7 +321,7 @@ type Contact struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name,omitempty"`
 	UserID      int    `json:"user_id,omitempty"`
-	Vcard       string `json:"vcard,omitempty"`
+	VCard       string `json:"vcard,omitempty"`
 }
 
 // Dice represents an animated emoji that displays a random value.
@@ -406,46 +381,11 @@ type Venue struct {
 	GooglePlaceType string    `json:"google_place_type,omitempty"`
 }
 
-// MaskPosition describes the position on faces where a mask should be placed by default.
-type MaskPosition struct {
-	Point  string  `json:"point"`
-	XShift float32 `json:"x_shift"`
-	YShift float32 `json:"y_shift"`
-	Scale  float32 `json:"scale"`
-}
-
-// Sticker represents a sticker.
-type Sticker struct {
-	FileID       string       `json:"file_id"`
-	FileUID      string       `json:"file_unique_id"`
-	Width        int          `json:"width"`
-	Height       int          `json:"height"`
-	IsAnimated   bool         `json:"is_animated"`
-	Thumb        *PhotoSize   `json:"thumb,omitempty"`
-	Emoji        string       `json:"emoji,omitempty"`
-	SetName      string       `json:"set_name,omitempty"`
-	MaskPosition MaskPosition `json:"mask_position"`
-	FileSize     int          `json:"file_size,omitempty"`
-}
-
-// StickerSet represents a sticker set.
-type StickerSet struct {
-	Name          string     `json:"name"`
-	Title         string     `json:"title"`
-	IsAnimated    bool       `json:"is_animated"`
-	ContainsMasks bool       `json:"contains_masks"`
-	Stickers      []*Sticker `json:"sticker"`
-	Thumb         *PhotoSize `json:"thumb,omitempty"`
-}
-
-// Game represents a game.
-type Game struct {
-	Title        string          `json:"title"`
-	Description  string          `json:"description"`
-	Photo        []PhotoSize     `json:"photo"`
-	Text         string          `json:"text,omitempty"`
-	TextEntities []MessageEntity `json:"text_entities,omitempty"`
-	animation    Animation       `json:"animation,omitempty"`
+// ProximityAlertTriggered represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
+type ProximityAlertTriggered struct {
+	Traveler *User `json:"traveler"`
+	Watcher  *User `json:"watcher"`
+	Distance int   `json:"distance"`
 }
 
 // MessageAutoDeleteTimerChanged represents a service message about a change in auto-delete timer settings.
@@ -453,11 +393,9 @@ type MessageAutoDeleteTimerChanged struct {
 	MessageAutoDeleteTime int `json:"message_auto_delete_time"`
 }
 
-// ProximityAlertTriggered represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
-type ProximityAlertTriggered struct {
-	Traveler *User `json:"traveler"`
-	Watcher  *User `json:"watcher"`
-	Distance int   `json:"distance"`
+// VoiceChatScheduled represents a service message about a voice chat scheduled in the chat.
+type VoiceChatScheduled struct {
+	StartDate int `json:"start_date"`
 }
 
 // VoiceChatStarted represents a service message about a voice chat started in the chat.
@@ -473,47 +411,218 @@ type VoiceChatParticipantsInvited struct {
 	Users []*User `json:"users,omitempty"`
 }
 
-// Button represents a button in a keyboard.
-type Button struct {
-	Text            string `json:"text"`
-	RequestContact  bool   `json:"request_contact,omitempty"`
-	RequestLocation bool   `json:"request_location,omitempty"`
+// UserProfilePhotos represents a user's profile pictures.
+type UserProfilePhotos struct {
+	TotalCount int           `json:"total_count"`
+	Photos     [][]PhotoSize `json:"photos"`
 }
 
-// KbdRow represents a row of buttons in a keyboard.
-type KbdRow []Button
-
-// Keyboard represents a keyboard.
-type Keyboard struct {
-	Keyboard        []KbdRow `json:"keyboard"`
-	ResizeKeyboard  bool     `json:"resize_keyboard,omitempty"`
-	OneTimeKeyboard bool     `json:"one_time_keyboard,omitempty"`
-	Selective       bool     `json:"selective,omitempty"`
+// File represents a file ready to be downloaded.
+type File struct {
+	FileID       string `json:"file_id"`
+	FileUniqueID string `json:"file_unique_id"`
+	FileSize     int    `json:"file_path,omitempty"`
 }
 
-// KeyboardRemove represents a keyboard removal request.
-type KeyboardRemove struct {
-	RemoveKeyboard bool `json:"remove_keyboard"`
-	Selective      bool `json:"selective,omitempty"`
+// LoginURL represents a parameter of the inline keyboard button used to automatically authorize a user.
+type LoginURL struct {
+	URL                string `json:"url"`
+	ForwardText        string `json:"forward_text,omitempty"`
+	BotUsername        string `json:"bot_username,omitempty"`
+	RequestWriteAccess bool   `json:"request_write_access,omitempty"`
 }
 
-// InlineButton represents a button in an inline keyboard.
-type InlineButton struct {
-	Text         string `json:"text"`
-	URL          string `json:"url,omitempty"`
-	CallbackData string `json:"callback_data,omitempty"`
+// CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
+// If the button that originated the query was attached to a message sent by the bot,
+// the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
+// the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
+type CallbackQuery struct {
+	ID              string   `json:"id"`
+	From            *User    `json:"from"`
+	Message         *Message `json:"message,omitempty"`
+	InlineMessageID string   `json:"inline_message_id,omitempty"`
+	ChatInstance    string   `json:"chat_instance,omitempty"`
+	Data            string   `json:"data,omitempty"`
+	GameShortName   string   `json:"game_short_name,omitempty"`
 }
 
-// InlineKbdRow represents a row of buttons in an inline keyboard.
-type InlineKbdRow []InlineButton
+// ChatPhoto represents a chat photo.
+type ChatPhoto struct {
+	SmallFileID  string `json:"small_file_id"`
+	SmallFileUID string `json:"small_file_unique_id"`
+	BigFileID    string `json:"big_file_id"`
+	BigFileUID   string `json:"big_file_unique_id"`
+}
 
-// InlineKeyboard represents an inline keyboard.
-type InlineKeyboard struct {
-	InlineKeyboard []InlineKbdRow `json:"inline_keyboard"`
+// ChatInviteLink represents an invite link for a chat.
+type ChatInviteLink struct {
+	InviteLink  string `json:"invite_link"`
+	Creator     *User  `json:"creator"`
+	IsPrimary   bool   `json:"is_primary"`
+	IsRevoked   bool   `json:"is_revoked"`
+	ExpireDate  int    `json:"expire_date,omitempty"`
+	MemberLimit int    `json:"member_limit,omitempty"`
+}
+
+// ChatMember contains information about one member of a chat.
+type ChatMember struct {
+	User                  *User  `json:"user"`
+	Status                string `json:"status"`
+	CustomTitle           string `json:"custom_title,omitempty"`
+	IsAnonymous           bool   `json:"is_anonymous,omitempty"`
+	CanBeEdited           bool   `json:"can_be_edited,omitempty"`
+	CanManageChat         bool   `json:"can_manage_chat,omitempty"`
+	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
+	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
+	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
+	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
+	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
+	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
+	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
+	CanInviteUsers        bool   `json:"can_invite_users,omitempty"`
+	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
+	IsMember              bool   `json:"is_member,omitempty"`
+	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
+	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
+	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
+	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
+	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
+	UntilDate             int    `json:"until_date,omitempty"`
+}
+
+// ChatMemberUpdated represents changes in the status of a chat member.
+type ChatMemberUpdated struct {
+	Chat          *Chat           `json:"chat"`
+	User          *User           `json:"from"`
+	Date          int             `json:"date"`
+	OldChatMember *ChatMember     `json:"old_chat_member"`
+	NewChatMember *ChatMember     `json:"new_chat_member"`
+	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
+}
+
+// ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
+type ChatPermissions struct {
+	CanSendMessages       bool `json:"can_send_messages,omitempty"`
+	CanSendMediaMessages  bool `json:"can_send_media_messages,omitempty"`
+	CanSendPolls          bool `json:"can_send_polls,omitempty"`
+	CanSendOtherMessages  bool `json:"can_send_other_messages,omitempty"`
+	CanAddWebPagePreviews bool `json:"can_add_web_page_previews,omitempty"`
+	CanChangeInfo         bool `json:"can_change_info,omitempty"`
+	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
+	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
+}
+
+// ChatLocation represents a location to which a chat is connected.
+type ChatLocation struct {
+	Location *Location `json:"location"`
+	Address  string    `json:"address"`
 }
 
 // BotCommand represents a bot command.
 type BotCommand struct {
 	Command     string `json:"command"`
 	Description string `json:"description"`
+}
+
+// ResponseParameters contains information about why a request was unsuccessful.
+type ResponseParameters struct {
+	MigrateToChatID int `json:"migrate_to_chat_id,omitempty"`
+	RetryAfter      int `json:"retry_after,omitempty"`
+}
+
+type InputMedia interface {
+	ImplementsInputMedia()
+}
+
+// InputMediaPhoto represents a photo to be sent.
+// Type MUST BE "photo".
+type InputMediaPhoto struct {
+	Type            string          `json:"type"`
+	Media           string          `json:"media"`
+	Caption         string          `json:"caption,omitempty"`
+	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
+	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+}
+
+func (i InputMediaPhoto) ImplementsInputMedia() {}
+
+// InputMediaVideo represents a video to be sent.
+// Type MUST BE "video".
+type InputMediaVideo struct {
+	Type              string          `json:"type"`
+	Media             string          `json:"media"`
+	Thumb             InputFile       `json:"input_file,omitempty"`
+	Caption           string          `json:"caption,omitempty"`
+	ParseMode         ParseMode       `json:"parse_mode,omitempty"`
+	CaptionEntities   []MessageEntity `json:"caption_entities,omitempty"`
+	Width             int             `json:"width,omitempty"`
+	Height            int             `json:"height,omitempty"`
+	Duration          int             `json:"duration,omitempty"`
+	SupportsStreaming bool            `json:"supports_streaming,omitempty"`
+}
+
+func (i InputMediaVideo) ImplementsInputMedia() {}
+
+// InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
+// Type MUST BE "animation".
+type InputMediaAnimation struct {
+	Type            string          `json:"type"`
+	Media           string          `json:"media"`
+	Thumb           InputFile       `json:"input_file,omitempty"`
+	Caption         string          `json:"caption,omitempty"`
+	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
+	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+	Width           int             `json:"width,omitempty"`
+	Height          int             `json:"height,omitempty"`
+	Duration        int             `json:"duration,omitempty"`
+}
+
+func (i InputMediaAnimation) ImplementsInputMedia() {}
+
+// InputMediaAudio represents an audio file to be treated as music to be sent.
+// Type MUST BE "audio".
+type InputMediaAudio struct {
+	Type            string          `json:"type"`
+	Media           string          `json:"media"`
+	Thumb           InputFile       `json:"input_file,omitempty"`
+	Caption         string          `json:"caption,omitempty"`
+	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
+	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+	Duration        int             `json:"duration,omitempty"`
+	Performer       string          `json:"performer,omitempty"`
+	Title           string          `json:"title,omitempty"`
+}
+
+func (i InputMediaAudio) ImplementsInputMedia() {}
+
+// InputMediaDocument represents a general file to be sent.
+// Type MUST BE "document".
+type InputMediaDocument struct {
+	Type                        string          `json:"type"`
+	Media                       string          `json:"media"`
+	Thumb                       InputFile       `json:"input_file,omitempty"`
+	Caption                     string          `json:"caption,omitempty"`
+	ParseMode                   ParseMode       `json:"parse_mode,omitempty"`
+	CaptionEntities             []MessageEntity `json:"caption_entities,omitempty"`
+	DisableContentTypeDetection bool            `json:"disable_content_type_detection,omitempty"`
+}
+
+func (i InputMediaDocument) ImplementsInputMedia() {}
+
+type BotCommandScopeType string
+
+const (
+	BCSTDefault               BotCommandScopeType = "default"
+	BCSTAllPrivateChats                           = "all_private_chats"
+	BCSTAllGroupChats                             = "all_group_chats"
+	BCSTAllChatAdministrators                     = "all_chat_administrators"
+	BCSTChat                                      = "chat"
+	BCSTChatAdministrators                        = "chat_administrators"
+	BCSTChatMember                                = "chat_member"
+)
+
+type BotCommandScope struct {
+	Type   BotCommandScopeType `query:"type"`
+	ChatID int64               `query:"chat_id"`
+	UserID int64               `query:"user_id"`
 }

@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2018-2021  Michele Dimaggio
+ * Copyright (C) 2018-2021  The Echotron Devs
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,11 @@
  */
 
 package echotron
+
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // InlineQueryType is a custom type for the various InlineQueryResult*'s Type field.
 type InlineQueryType string
@@ -43,9 +48,10 @@ const (
 type InlineQuery struct {
 	ID       string    `json:"id"`
 	From     *User     `json:"from"`
-	Location *Location `json:"location,omitempty"`
 	Query    string    `json:"query"`
 	Offset   string    `json:"offset"`
+	ChatType string    `json:"chat_type,omitempty"`
+	Location *Location `json:"location,omitempty"`
 }
 
 // ChosenInlineResult represents a result of an inline query that was chosen by the user and sent to their chat partner.
@@ -67,7 +73,7 @@ type InlineQueryResultArticle struct {
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
 	Title               string              `json:"title"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	URL                 string              `json:"url,omitempty"`
 	HideURL             bool                `json:"hide_url,omitempty"`
 	Description         string              `json:"description,omitempty"`
@@ -95,7 +101,7 @@ type InlineQueryResultPhoto struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -118,7 +124,7 @@ type InlineQueryResultGif struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -141,7 +147,7 @@ type InlineQueryResultMpeg4Gif struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -165,7 +171,7 @@ type InlineQueryResultVideo struct {
 	VideoHeight         int                 `json:"video_height,omitempty"`
 	VideoDuration       int                 `json:"video_duration,omitempty"`
 	Description         string              `json:"description,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -185,7 +191,7 @@ type InlineQueryResultAudio struct {
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
 	Performer           string              `json:"performer,omitempty"`
 	AudioDuration       int                 `json:"audio_duration,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -204,7 +210,7 @@ type InlineQueryResultVoice struct {
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
 	VoiceDuration       int                 `json:"voice_duration,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -225,7 +231,7 @@ type InlineQueryResultDocument struct {
 	DocumentURL         string              `json:"document_url"`
 	MimeType            string              `json:"mime_type"`
 	Description         string              `json:"description,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
@@ -248,7 +254,7 @@ type InlineQueryResultLocation struct {
 	LivePeriod           int                 `json:"live_period,omitempty"`
 	Heading              int                 `json:"heading,omitempty"`
 	ProximityAlertRadius int                 `json:"proximity_alert_radius,omitempty"`
-	ReplyMarkup          *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup          ReplyMarkup         `json:"reply_markup,omitempty"`
 	ThumbURL             string              `json:"thumb_url,omitempty"`
 	ThumbWidth           int                 `json:"thumb_width,omitempty"`
 	ThumbHeight          int                 `json:"thumb_height,omitempty"`
@@ -272,7 +278,7 @@ type InlineQueryResultVenue struct {
 	FoursquareType      string              `json:"foursquare_type,omitempty"`
 	GooglePlaceID       string              `json:"google_place_id,omitempty"`
 	GooglePlaceType     string              `json:"google_place_type,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
@@ -291,8 +297,8 @@ type InlineQueryResultContact struct {
 	PhoneNumber         string              `json:"phone_number"`
 	FirstName           string              `json:"first_name"`
 	LastName            string              `json:"last_name,omitempty"`
-	Vcard               string              `json:"vcard,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	VCard               string              `json:"vcard,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	ThumbURL            string              `json:"thumb_url,omitempty"`
 	ThumbWidth          int                 `json:"thumb_width,omitempty"`
 	ThumbHeight         int                 `json:"thumb_height,omitempty"`
@@ -307,7 +313,7 @@ type InlineQueryResultGame struct {
 	Type          InlineQueryType `json:"type"`
 	ID            string          `json:"id"`
 	GameShortName string          `json:"game_short_name"`
-	ReplyMarkup   *InlineKeyboard `json:"reply_markup,omitempty"`
+	ReplyMarkup   ReplyMarkup     `json:"reply_markup,omitempty"`
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
@@ -325,7 +331,7 @@ type InlineQueryResultCachedPhoto struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -343,7 +349,7 @@ type InlineQueryResultCachedGif struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -361,7 +367,7 @@ type InlineQueryResultCachedMpeg4Gif struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -375,7 +381,7 @@ type InlineQueryResultCachedSticker struct {
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
 	StickerFileID       string              `json:"sticker_file_id"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -394,7 +400,7 @@ type InlineQueryResultCachedDocument struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -413,7 +419,7 @@ type InlineQueryResultCachedVideo struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -431,7 +437,7 @@ type InlineQueryResultCachedVoice struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -448,7 +454,7 @@ type InlineQueryResultCachedAudio struct {
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ReplyMarkup         *InlineKeyboard     `json:"reply_markup,omitempty"`
+	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
@@ -504,8 +510,38 @@ type InputContactMessageContent struct {
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name,omitempty"`
-	Vcard       string `json:"vcard,omitempty"`
+	VCard       string `json:"vcard,omitempty"`
 }
 
 // ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}
+
+// InlineQueryOptions is a custom type which contains the various options required by the API.AnswerInlineQuery method.
+type InlineQueryOptions struct {
+	CacheTime         int    `json:"cache_time"`
+	IsPersonal        bool   `json:"is_personal"`
+	NextOffset        string `json:"next_offset"`
+	SwitchPmText      string `json:"switch_pm_text"`
+	SwitchPmParameter string `json:"switch_pm_parameter"`
+}
+
+// AnswerInlineQuery is used to send answers to an inline query.
+func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult, opts *InlineQueryOptions) (APIResponseBase, error) {
+	var res APIResponseBase
+	jsn, _ := json.Marshal(results)
+
+	var url = fmt.Sprintf(
+		"%sanswerInlineQuery?inline_query_id=%s&results=%s&%s",
+		string(a),
+		inlineQueryID,
+		jsn,
+		querify(opts),
+	)
+
+	content, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+	json.Unmarshal(content, &res)
+	return res, nil
+}

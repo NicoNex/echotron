@@ -1,6 +1,6 @@
 /*
  * Echotron
- * Copyright (C) 2018-2021  Nicolò Santamaria
+ * Copyright (C) 2018-2021  The Echotron Devs
  *
  * Echotron is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -82,15 +82,26 @@ func (d *Dispatcher) AddSession(chatID int64) {
 	d.mu.Unlock()
 }
 
-// Poll starts the polling loop so that the dispatcher calls the function Update
-// upon receiving any update from Telegram.
+// Poll is a wrapper function for PollOptions.
 func (d *Dispatcher) Poll() error {
-	var timeout int
-	var firstRun = true
-	var lastUpdateID = -1
+	return d.PollOptions(true, &UpdateOptions{Timeout: 120})
+}
+
+// PollOptions starts the polling loop so that the dispatcher calls the function Update
+// upon receiving any update from Telegram.
+func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) error {
+	var (
+		timeout      int
+		firstRun     = true
+		lastUpdateID = -1
+	)
+
+	if opts != nil {
+		timeout = opts.Timeout
+	}
 
 	// deletes webhook if present to run in long polling mode
-	response, err := d.api.DeleteWebhook()
+	response, err := d.api.DeleteWebhook(dropPendingUpdates)
 	if err != nil {
 		return err
 	} else if !response.Ok {
@@ -98,11 +109,17 @@ func (d *Dispatcher) Poll() error {
 	}
 
 	for {
-		response, err := d.api.GetUpdates(lastUpdateID+1, timeout)
+		if firstRun && opts != nil {
+			opts.Timeout = 0
+		}
+
+		opts.Offset = lastUpdateID + 1
+		response, err := d.api.GetUpdates(opts)
+
 		if err != nil {
 			return err
 		} else if response.Ok {
-			if !firstRun {
+			if !dropPendingUpdates || !firstRun {
 				for _, u := range response.Result {
 					d.updates <- u
 				}
@@ -115,7 +132,10 @@ func (d *Dispatcher) Poll() error {
 
 		if firstRun {
 			firstRun = false
-			timeout = 120
+
+			if opts != nil {
+				opts.Timeout = timeout
+			}
 		}
 	}
 }
@@ -152,12 +172,17 @@ func (d *Dispatcher) listen() {
 	}
 }
 
-// ListenWebhook sets a webhook and listens for incoming updates.
+// ListenWebhook is a wrapper function for ListenWebhookOptions.
+func (d *Dispatcher) ListenWebhook(webhookURL string) error {
+	return d.ListenWebhookOptions(webhookURL, false, nil)
+}
+
+// ListenWebhookOptions sets a webhook and listens for incoming updates.
 // The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
 // eg: 'https://example.com:443/bot_token'.
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
-func (d *Dispatcher) ListenWebhook(webhookURL string) error {
+func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
 	var response APIResponseUpdate
 
 	u, err := url.Parse(webhookURL)
@@ -167,7 +192,7 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 
 	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
 	log.Printf("setting webhook for %s\n", whURL)
-	response, err = d.api.SetWebhook(whURL)
+	response, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts)
 	if err != nil {
 		return err
 	} else if response.Ok {
