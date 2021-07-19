@@ -421,6 +421,7 @@ type UserProfilePhotos struct {
 type File struct {
 	FileID       string `json:"file_id"`
 	FileUniqueID string `json:"file_unique_id"`
+	FilePath     string `json:"file_path,omitempty"`
 	FileSize     int    `json:"file_path,omitempty"`
 }
 

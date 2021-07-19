@@ -10,6 +10,7 @@ import (
 var (
 	msgTmp      *Message
 	photoTmp    *Message
+	filePath    string
 	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID      = int64(14870908)
 	groupID     = int64(-1001241973131)
@@ -1008,5 +1009,28 @@ func TestDeleteMessage(t *testing.T) {
 
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetFile(t *testing.T) {
+	resp, err := api.GetFile(photoID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+	filePath = resp.Result.FilePath
+}
+
+func TestDownloadFile(t *testing.T) {
+	resp, err := api.DownloadFile(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp) == 0 {
+		t.Fatal("empty file received")
 	}
 }

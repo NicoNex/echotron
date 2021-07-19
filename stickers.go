@@ -78,7 +78,7 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (API
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendSticker?chat_id=%d&sticker=%s&%s",
-		string(a),
+		a.base,
 		chatID,
 		encode(stickerID),
 		querify(opts),
@@ -97,7 +97,7 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 	var res APIResponseStickerSet
 	var url = fmt.Sprintf(
 		"%sgetStickerSet?name=%s",
-		string(a),
+		a.base,
 		encode(name),
 	)
 
@@ -115,7 +115,7 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFi
 	var res APIResponseFile
 	var url = fmt.Sprintf(
 		"%suploadStickerFile?user_id=%d",
-		string(a),
+		a.base,
 		userID,
 	)
 
@@ -129,7 +129,7 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%screateNewStickerSet?user_id=%d&name=%s&title=%s&emojis=%s&%s",
-		string(a),
+		a.base,
 		userID,
 		encode(name),
 		encode(title),
@@ -147,7 +147,7 @@ func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerF
 	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%saddStickerToSet?user_id=%d&name=%s&emojis=%s&%s",
-		string(a),
+		a.base,
 		userID,
 		encode(name),
 		encode(emojis),
@@ -164,7 +164,7 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseB
 	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%ssetStickerPositionInSet?sticker=%s&position=%d",
-		string(a),
+		a.base,
 		encode(sticker),
 		position,
 	)
@@ -182,7 +182,7 @@ func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
 	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%sdeleteStickerFromSet?sticker=%s",
-		string(a),
+		a.base,
 		encode(sticker),
 	)
 
@@ -199,7 +199,7 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (API
 	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%ssetStickerSetThumb?name=%s&user_id=%d",
-		string(a),
+		a.base,
 		encode(name),
 		userID,
 	)

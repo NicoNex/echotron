@@ -532,7 +532,7 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 
 	var url = fmt.Sprintf(
 		"%sanswerInlineQuery?inline_query_id=%s&results=%s&%s",
-		string(a),
+		a.base,
 		inlineQueryID,
 		jsn,
 		querify(opts),

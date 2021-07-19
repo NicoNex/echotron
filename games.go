@@ -54,7 +54,7 @@ func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (AP
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendGame?game_short_name=%s&chat_id=%d&%s",
-		string(a),
+		a.base,
 		encode(gameShortName),
 		chatID,
 		querify(opts),
@@ -73,7 +73,7 @@ func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts 
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssetGameScore?user_id=%d&score=%d&%s&%s",
-		string(a),
+		a.base,
 		userID,
 		score,
 		querify(msgID),
@@ -93,7 +93,7 @@ func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (APIResponse
 	var res APIResponseGameHighScore
 	var url = fmt.Sprintf(
 		"%sgetGameHighScores?user_id=%d&%s",
-		string(a),
+		a.base,
 		userID,
 		querify(opts),
 	)

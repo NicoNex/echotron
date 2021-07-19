@@ -27,7 +27,10 @@ import (
 )
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
-type API string
+type API struct {
+	token string
+	base  string
+}
 
 func encode(s string) string {
 	return url.QueryEscape(s)
@@ -59,7 +62,10 @@ func sendFile(file InputFile, url, fileType string) (content []byte, err error) 
 
 // NewAPI returns a new API object.
 func NewAPI(token string) API {
-	return API(fmt.Sprintf("https://api.telegram.org/bot%s/", token))
+	return API{
+		token: token,
+		base:  fmt.Sprintf("https://api.telegram.org/bot%s/", token),
+	}
 }
 
 // GetUpdates is used to receive incoming updates using long polling.
@@ -67,7 +73,7 @@ func (a API) GetUpdates(opts *UpdateOptions) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 	var url = fmt.Sprintf(
 		"%sgetUpdates?%s",
-		string(a),
+		a.base,
 		querify(opts),
 	)
 
@@ -84,7 +90,7 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 	var res APIResponseUpdate
 	var url = fmt.Sprintf(
 		"%ssetWebhook?drop_pending_updates=%t&%s",
-		string(a),
+		a.base,
 		dropPendingUpdates,
 		querify(opts),
 	)
@@ -103,7 +109,7 @@ func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseUpdate, error) {
 	var res APIResponseUpdate
 	var url = fmt.Sprintf(
 		"%sdeleteWebhook?drop_pending_updates=%t",
-		string(a),
+		a.base,
 		dropPendingUpdates,
 	)
 
@@ -120,7 +126,7 @@ func (a API) GetWebhookInfo() (APIResponseWebhook, error) {
 	var res APIResponseWebhook
 	var url = fmt.Sprintf(
 		"%sgetWebhookInfo",
-		string(a),
+		a.base,
 	)
 
 	content, err := sendGetRequest(url)
@@ -136,7 +142,7 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendMessage?text=%s&chat_id=%d&%s",
-		string(a),
+		a.base,
 		encode(text),
 		chatID,
 		querify(opts),
@@ -155,7 +161,7 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendPhoto?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -172,7 +178,7 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -187,7 +193,7 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -203,7 +209,7 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -218,7 +224,7 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -234,7 +240,7 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVoice?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -249,7 +255,7 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&%s",
-		string(a),
+		a.base,
 		chatID,
 		querify(opts),
 	)
@@ -264,7 +270,7 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&%s",
-		string(a),
+		a.base,
 		chatID,
 		encode(phoneNumber),
 		encode(firstName),
@@ -285,7 +291,7 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%ssendChatAction?chat_id=%d&action=%s",
-		string(a),
+		a.base,
 		chatID,
 		action,
 	)
@@ -302,7 +308,7 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage
 // (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
 func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 	var res APIResponseChat
-	var url = fmt.Sprintf("%sgetChat?chat_id=%d", string(a), chatID)
+	var url = fmt.Sprintf("%sgetChat?chat_id=%d", a.base, chatID)
 
 	content, err := sendGetRequest(url)
 	if err != nil {
@@ -317,7 +323,7 @@ func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, err
 	var res APIResponseAdministrators
 	var url = fmt.Sprintf(
 		"%sgetChatAdministrators?chat_id=%d",
-		string(a),
+		a.base,
 		chatID,
 	)
 
@@ -334,7 +340,7 @@ func (a API) GetChatMemberCount(chatID int64) (APIResponseMemberCount, error) {
 	var res APIResponseMemberCount
 	var url = fmt.Sprintf(
 		"%sgetChatMemberCount?chat_id=%d",
-		string(a),
+		a.base,
 		chatID,
 	)
 
@@ -351,7 +357,7 @@ func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) 
 	var res APIResponseChatMember
 	var url = fmt.Sprintf(
 		"%sgetChatMember?chat_id=%d&user_id=%d",
-		string(a),
+		a.base,
 		chatID,
 		userID,
 	)
@@ -370,7 +376,7 @@ func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) 
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&%s",
-		string(a),
+		a.base,
 		callbackID,
 		querify(opts),
 	)
@@ -390,7 +396,7 @@ func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (APIRes
 
 	var url = fmt.Sprintf(
 		"%ssetMyCommands?commands=%s&%s",
-		string(a),
+		a.base,
 		jsn,
 		querify(opts),
 	)
@@ -408,7 +414,7 @@ func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
 		"%sdeleteMyCommands?%s",
-		string(a),
+		a.base,
 		querify(opts),
 	)
 
@@ -425,7 +431,7 @@ func (a API) GetMyCommands(opts *CommandOptions) (APIResponseCommands, error) {
 	var res APIResponseCommands
 	var url = fmt.Sprintf(
 		"%sgetMyCommands?%s",
-		string(a),
+		a.base,
 		querify(opts),
 	)
 
@@ -442,7 +448,7 @@ func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTex
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageText?text=%s&%s&%s",
-		string(a),
+		a.base,
 		encode(text),
 		querify(msg),
 		querify(opts),
@@ -461,7 +467,7 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageCaption?%s&%s",
-		string(a),
+		a.base,
 		querify(msg),
 		querify(opts),
 	)
@@ -483,7 +489,7 @@ func (a API) EditMessageMedia(msg MessageIDOptions, opts *MessageMediaOptions) (
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageMedia?%s&%s",
-		string(a),
+		a.base,
 		querify(msg),
 		querify(opts),
 	)
@@ -501,7 +507,7 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%seditMessageReplyMarkup?%s&%s",
-		string(a),
+		a.base,
 		querify(msg),
 		querify(opts),
 	)
@@ -526,7 +532,7 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, err
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sdeleteMessage?chat_id=%d&message_id=%d",
-		string(a),
+		a.base,
 		chatID,
 		messageID,
 	)
@@ -537,4 +543,36 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, err
 	}
 	json.Unmarshal(content, &res)
 	return res, nil
+}
+
+// GetFile returns the basic info about a file and prepares it for downloading.
+// For the moment, bots can download files of up to 20MB in size.
+// The file can then be downloaded with DownloadFile where filePath is taken from the response.
+// It is guaranteed that the file will be downloadable for at least 1 hour.
+// When the download file expires, a new one can be requested by calling GetFile again.
+func (a API) GetFile(fileID string) (APIResponseFile, error) {
+	var res APIResponseFile
+
+	cnt, err := sendGetRequest(fmt.Sprintf(
+		"%sgetFile?file_id=%s",
+		a.base,
+		fileID,
+	))
+	if err != nil {
+		return res, err
+	}
+
+	json.Unmarshal(cnt, &res)
+	return res, nil
+}
+
+// DownloadFile returns the bytes of the file corresponding to the given filePath.
+// This function is callable for at least 1 hour since the call to GetFile.
+// When the download expires a new one can be requested by calling GetFile again.
+func (a API) DownloadFile(filePath string) ([]byte, error) {
+	return sendGetRequest(fmt.Sprintf(
+		"https://api.telegram.org/file/bot%s/%s",
+		a.token,
+		filePath,
+	))
 }
