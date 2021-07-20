@@ -60,12 +60,12 @@ func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (AP
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SetGameScore is used to set the score of the specified user in a game.
@@ -80,12 +80,12 @@ func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts 
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetGameHighScores is used to get data for high score tables.
@@ -98,10 +98,10 @@ func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (APIResponse
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }

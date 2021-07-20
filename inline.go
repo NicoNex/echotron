@@ -538,10 +538,10 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }

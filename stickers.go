@@ -84,12 +84,12 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (API
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetStickerSet is used to get a sticker set.
@@ -101,12 +101,12 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 		encode(name),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
@@ -119,9 +119,12 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFi
 		userID,
 	)
 
-	content, err := sendFile(sticker.File, url, string(sticker.Type))
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
@@ -137,9 +140,12 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 		querify(opts),
 	)
 
-	content, err := sendFile(sticker.File, url, string(sticker.Type))
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // AddStickerToSet is used to add a new sticker to a set created by the bot.
@@ -154,9 +160,12 @@ func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerF
 		querify(opts),
 	)
 
-	content, err := sendFile(sticker.File, url, string(sticker.Type))
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
@@ -169,12 +178,12 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseB
 		position,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
@@ -186,12 +195,12 @@ func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
 		encode(sticker),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SetStickerSetThumb is used to set the thumbnail of a sticker set.
@@ -204,7 +213,10 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (API
 		userID,
 	)
 
-	content, err := sendFile(thumb, url, "thumb")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(thumb, url, "thumb")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }

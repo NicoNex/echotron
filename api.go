@@ -36,28 +36,28 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
-func sendFile(file InputFile, url, fileType string) (content []byte, err error) {
+func sendFile(file InputFile, url, fileType string) (cnt []byte, err error) {
 	switch {
 	case file.id != "":
-		content, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
+		cnt, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
 
 	case file.path != "" && len(file.content) == 0:
 		file.content, err = os.ReadFile(file.path)
 		if err != nil {
-			return content, err
+			return cnt, err
 		}
 		file.path = filepath.Base(file.path)
 		fallthrough
 
 	case file.path != "" && len(file.content) > 0:
-		content, err = sendPostRequest(url, file.path, fileType, file.content)
+		cnt, err = sendPostRequest(url, file.path, fileType, file.content)
 	}
 
 	if err != nil {
-		return content, err
+		return cnt, err
 	}
 
-	return content, nil
+	return cnt, nil
 }
 
 // NewAPI returns a new API object.
@@ -77,12 +77,12 @@ func (a API) GetUpdates(opts *UpdateOptions) (APIResponseUpdate, error) {
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
@@ -96,12 +96,12 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 	)
 
 	keyVal := map[string]string{"url": webhookURL}
-	content, err := sendPostForm(url, keyVal)
+	cnt, err := sendPostForm(url, keyVal)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
@@ -113,12 +113,12 @@ func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseUpdate, error) {
 		dropPendingUpdates,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetWebhookInfo is used to get current webhook status.
@@ -129,12 +129,12 @@ func (a API) GetWebhookInfo() (APIResponseWebhook, error) {
 		a.base,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendMessage is used to send text messages.
@@ -148,12 +148,12 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendPhoto is used to send photos.
@@ -166,9 +166,12 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "photo")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "photo")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendAudio is used to send audio files,
@@ -183,9 +186,12 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "audio")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "audio")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendDocument is used to send general files.
@@ -198,9 +204,12 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "document")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "document")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendVideo is used to send video files.
@@ -214,9 +223,12 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "video")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "video")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
@@ -229,9 +241,12 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "animation")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "animation")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
@@ -245,9 +260,12 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "voice")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "voice")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendVideoNote is used to send video messages.
@@ -260,9 +278,12 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		querify(opts),
 	)
 
-	content, err := sendFile(file, url, "video_note")
-	json.Unmarshal(content, &res)
-	return res, err
+	cnt, err := sendFile(file, url, "video_note")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendContact is used to send phone contacts.
@@ -277,12 +298,12 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
@@ -296,12 +317,12 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage
 		action,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetChat is used to get up to date information about the chat.
@@ -310,12 +331,12 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 	var res APIResponseChat
 	var url = fmt.Sprintf("%sgetChat?chat_id=%d", a.base, chatID)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetChatAdministrators is used to get a list of administrators in a chat.
@@ -327,12 +348,12 @@ func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, err
 		chatID,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetChatMemberCount is used to get the number of members in a chat.
@@ -344,12 +365,12 @@ func (a API) GetChatMemberCount(chatID int64) (APIResponseMemberCount, error) {
 		chatID,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetChatMember is used to get information about a member of a chat.
@@ -362,12 +383,12 @@ func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) 
 		userID,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
@@ -381,12 +402,12 @@ func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) 
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
@@ -401,12 +422,12 @@ func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (APIRes
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // DeleteMyCommands is used to delete the list of the bot's commands for the given scope and user language.
@@ -418,12 +439,12 @@ func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetMyCommands is used to get the current list of the bot's commands for the given scope and user language.
@@ -435,12 +456,12 @@ func (a API) GetMyCommands(opts *CommandOptions) (APIResponseCommands, error) {
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // EditMessageText is used to edit text and game messages.
@@ -454,12 +475,12 @@ func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTex
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // EditMessageCaption is used to edit captions of messages.
@@ -472,12 +493,12 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // EditMessageMedia is used to edit animation, audio, document, photo or video messages.
@@ -494,12 +515,12 @@ func (a API) EditMessageMedia(msg MessageIDOptions, opts *MessageMediaOptions) (
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
@@ -512,12 +533,12 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 		querify(opts),
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // DeleteMessage is used to delete a message, including service messages, with the following limitations:
@@ -537,12 +558,12 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, err
 		messageID,
 	)
 
-	content, err := sendGetRequest(url)
+	cnt, err := sendGetRequest(url)
 	if err != nil {
 		return res, err
 	}
-	json.Unmarshal(content, &res)
-	return res, nil
+
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // GetFile returns the basic info about a file and prepares it for downloading.
@@ -562,8 +583,7 @@ func (a API) GetFile(fileID string) (APIResponseFile, error) {
 		return res, err
 	}
 
-	json.Unmarshal(cnt, &res)
-	return res, nil
+	return res, json.Unmarshal(cnt, &res)
 }
 
 // DownloadFile returns the bytes of the file corresponding to the given filePath.
