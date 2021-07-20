@@ -516,7 +516,7 @@ type InputContactMessageContent struct {
 // ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}
 
-// InlineQueryOptions is a custom type which contains the various options required by the API.AnswerInlineQuery method.
+// InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQuery method.
 type InlineQueryOptions struct {
 	CacheTime         int    `json:"cache_time"`
 	IsPersonal        bool   `json:"is_personal"`

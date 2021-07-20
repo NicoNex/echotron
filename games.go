@@ -43,7 +43,7 @@ type GameHighScore struct {
 	Score    int  `json:"score"`
 }
 
-// GameScoreOptions contains the optional parameters used in API.SetGameScore method.
+// GameScoreOptions contains the optional parameters used in SetGameScore method.
 type GameScoreOptions struct {
 	Force              bool `query:"force"`
 	DisableEditMessage bool `query:"disable_edit_message"`

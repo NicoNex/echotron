@@ -531,6 +531,7 @@ type ResponseParameters struct {
 	RetryAfter      int `json:"retry_after,omitempty"`
 }
 
+// InputMedia is an interface for the various media types.
 type InputMedia interface {
 	ImplementsInputMedia()
 }
@@ -545,6 +546,7 @@ type InputMediaPhoto struct {
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
 }
 
+// ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
 func (i InputMediaPhoto) ImplementsInputMedia() {}
 
 // InputMediaVideo represents a video to be sent.
@@ -562,6 +564,7 @@ type InputMediaVideo struct {
 	SupportsStreaming bool            `json:"supports_streaming,omitempty"`
 }
 
+// ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
 func (i InputMediaVideo) ImplementsInputMedia() {}
 
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
@@ -578,6 +581,7 @@ type InputMediaAnimation struct {
 	Duration        int             `json:"duration,omitempty"`
 }
 
+// ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
 func (i InputMediaAnimation) ImplementsInputMedia() {}
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
@@ -594,6 +598,7 @@ type InputMediaAudio struct {
 	Title           string          `json:"title,omitempty"`
 }
 
+// ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
 func (i InputMediaAudio) ImplementsInputMedia() {}
 
 // InputMediaDocument represents a general file to be sent.
@@ -608,10 +613,13 @@ type InputMediaDocument struct {
 	DisableContentTypeDetection bool            `json:"disable_content_type_detection,omitempty"`
 }
 
+// ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
 func (i InputMediaDocument) ImplementsInputMedia() {}
 
+// BotCommandScopeType is a custom type for the various bot command scope types.
 type BotCommandScopeType string
 
+// These are all the various bot command scope types.
 const (
 	BCSTDefault               BotCommandScopeType = "default"
 	BCSTAllPrivateChats                           = "all_private_chats"
@@ -622,6 +630,7 @@ const (
 	BCSTChatMember                                = "chat_member"
 )
 
+// BotCommandScope is an optional parameter used in the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
 type BotCommandScope struct {
 	Type   BotCommandScopeType `query:"type"`
 	ChatID int64               `query:"chat_id"`

@@ -55,19 +55,22 @@ type MaskPosition struct {
 	Scale  float32 `json:"scale"`
 }
 
-// NewStickerSetOptions contains the optional parameters used in the API.CreateNewStickerSet method.
+// NewStickerSetOptions contains the optional parameters used in the CreateNewStickerSet method.
 type NewStickerSetOptions struct {
 	ContainsMasks bool         `query:"contains_masks"`
 	MaskPosition  MaskPosition `query:"mask_position"`
 }
 
+// StickerType is a custom type for the various sticker types.
 type StickerType string
 
+// These are all the possible sticker types.
 const (
 	PNGSticker StickerType = "png_sticker"
 	TGSSticker             = "tgs_sticker"
 )
 
+// StickerFile is a struct which contains info about sticker files.
 type StickerFile struct {
 	File InputFile
 	Type StickerType
@@ -110,7 +113,7 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
-// API.CreateNewStickerSet and API.AddStickerToSet methods (can be used multiple times).
+// CreateNewStickerSet and AddStickerToSet methods (can be used multiple times).
 func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFile, error) {
 	var res APIResponseFile
 	var url = fmt.Sprintf(

@@ -28,8 +28,10 @@ const (
 	HTML                 = "HTML"
 )
 
+// PollType is a custom type for the various types of poll that can be sent.
 type PollType string
 
+// These are all the possible poll types.
 const (
 	Quiz    PollType = "quiz"
 	Regular          = "regular"
@@ -53,8 +55,10 @@ const (
 	UploadVideoNote            = "upload_video_note"
 )
 
+// UpdateType is a custom type for the various update types that a bot can be subscribed to.
 type UpdateType string
 
+// These are all the possible types that a bot can be subscribed to.
 const (
 	MessageUpdate            UpdateType = "message"
 	EditedMessageUpdate                 = "edited_message"
@@ -71,6 +75,7 @@ const (
 	ChatMemberUpdate                    = "chat_member"
 )
 
+// ReplyMarkup is an interface for the various keyboard types.
 type ReplyMarkup interface {
 	ImplementsReplyMarkup()
 }
@@ -97,6 +102,7 @@ type ReplyKeyboardMarkup struct {
 	Selective             bool               `json:"selective,omitempty"`
 }
 
+// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
 func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
 
 // ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
@@ -108,6 +114,7 @@ type ReplyKeyboardRemove struct {
 	Selective      bool `json:"selective"`
 }
 
+// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
 func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // InlineKeyboardButton represents a button in an inline keyboard.
@@ -127,6 +134,7 @@ type InlineKeyboardMarkup struct {
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard" query:"inline_keyboard"`
 }
 
+// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
 func (i InlineKeyboardMarkup) ImplementsReplyMarkup() {}
 
 // ForceReply is used to display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply').
@@ -137,9 +145,10 @@ type ForceReply struct {
 	Selective             bool   `json:"selective"`
 }
 
+// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
 func (f ForceReply) ImplementsReplyMarkup() {}
 
-// UpdateOptions contains the optional parameters used by the API.GetUpdates method.
+// UpdateOptions contains the optional parameters used by the GetUpdates method.
 type UpdateOptions struct {
 	Offset         int          `query:"offset"`
 	Limit          int          `query:"limit"`
@@ -147,7 +156,7 @@ type UpdateOptions struct {
 	AllowedUpdates []UpdateType `query:"allowed_updates"`
 }
 
-// WebhookOptions contains the optional parameters used by the API.SetWebhook method.
+// WebhookOptions contains the optional parameters used by the SetWebhook method.
 type WebhookOptions struct {
 	Certificate    InputFile
 	IPAddress      string       `query:"ip_address"`
@@ -155,6 +164,7 @@ type WebhookOptions struct {
 	AllowedUpdates []UpdateType `query:"allowed_updates"`
 }
 
+// BaseOptions contains the optional parameters used frequently in some Telegram API methods.
 type BaseOptions struct {
 	DisableNotification      bool        `query:"disable_notification"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
@@ -170,25 +180,29 @@ type MessageOptions struct {
 	DisableWebPagePreview bool            `query:"disable_web_page_preview"`
 }
 
+// InputFile is a struct which contains data about a file to be sent.
 type InputFile struct {
 	id      string
 	path    string
 	content []byte
 }
 
+// NewInputFileID is a wrapper for InputFile which only fills the id field.
 func NewInputFileID(ID string) InputFile {
 	return InputFile{id: ID}
 }
 
+// NewInputFilePath is a wrapper for InputFile which only fills the path field.
 func NewInputFilePath(filePath string) InputFile {
 	return InputFile{path: filePath}
 }
 
+// NewInputFileBytes is a wrapper for InputFile which only fills the path and content fields.
 func NewInputFileBytes(fileName string, content []byte) InputFile {
 	return InputFile{path: fileName, content: content}
 }
 
-// PhotoOptions contains the optional parameters used in API.SendPhoto method.
+// PhotoOptions contains the optional parameters used in SendPhoto method.
 type PhotoOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -196,7 +210,7 @@ type PhotoOptions struct {
 	CaptionEntities []MessageEntity `query:"caption_entities"`
 }
 
-// AudioOptions contains the optional parameters used in API.SendAudio method.
+// AudioOptions contains the optional parameters used in SendAudio method.
 type AudioOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -208,7 +222,7 @@ type AudioOptions struct {
 	Thumb           InputFile       `query:"thumb"`
 }
 
-// DocumentOptions contains the optional parameters used in API.SendDocument method.
+// DocumentOptions contains the optional parameters used in SendDocument method.
 type DocumentOptions struct {
 	BaseOptions                 `query:"recursive"`
 	ParseMode                   ParseMode       `query:"parse_mode"`
@@ -218,7 +232,7 @@ type DocumentOptions struct {
 	Thumb                       InputFile       `query:"thumb"`
 }
 
-// VideoOptions contains the optional parameters used in API.SendVideo method.
+// VideoOptions contains the optional parameters used in SendVideo method.
 type VideoOptions struct {
 	BaseOptions       `query:"recursive"`
 	ParseMode         ParseMode       `query:"parse_mode"`
@@ -231,7 +245,7 @@ type VideoOptions struct {
 	SupportsStreaming bool            `query:"supports_streaming"`
 }
 
-// AnimationOptions contains the optional parameters used in API.SendAnimation method.
+// AnimationOptions contains the optional parameters used in SendAnimation method.
 type AnimationOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -243,7 +257,7 @@ type AnimationOptions struct {
 	Thumb           InputFile       `query:"thumb"`
 }
 
-// VoiceOptions contains the optional parameters used in API.SendVoice method.
+// VoiceOptions contains the optional parameters used in SendVoice method.
 type VoiceOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -252,7 +266,7 @@ type VoiceOptions struct {
 	Duration        int             `query:"duration"`
 }
 
-// VideoNoteOptions contains the optional parameters used in API.SendVideoNote method.
+// VideoNoteOptions contains the optional parameters used in SendVideoNote method.
 type VideoNoteOptions struct {
 	BaseOptions `query:"recursive"`
 	Duration    int       `query:"duration"`
@@ -260,14 +274,14 @@ type VideoNoteOptions struct {
 	Thumb       InputFile `query:"thumb"`
 }
 
-// MediaGroupOptions contains the optional parameters used in API.SendMediaGroup method.
+// MediaGroupOptions contains the optional parameters used in SendMediaGroup method.
 type MediaGroupOptions struct {
 	DisableNotification      bool `query:"disable_notification"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
 }
 
-// LocationOptions contains the optional parameters used in API.SendLocation method.
+// LocationOptions contains the optional parameters used in SendLocation method.
 type LocationOptions struct {
 	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
 	LivePeriod               int         `query:"live_period"`
@@ -279,14 +293,14 @@ type LocationOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
-// ContactOptions contains the optional parameters used in API.SendContact method.
+// ContactOptions contains the optional parameters used in SendContact method.
 type ContactOptions struct {
 	BaseOptions `query:"recursive"`
 	LastName    string `query:"last_name"`
 	VCard       string `query:"vcard"`
 }
 
-// CallbackQueryOptions contains the optional parameters used in API.AnswerCallbackQuery method.
+// CallbackQueryOptions contains the optional parameters used in AnswerCallbackQuery method.
 type CallbackQueryOptions struct {
 	Text      string `query:"text"`
 	ShowAlert bool   `query:"show_alert"`
@@ -294,20 +308,24 @@ type CallbackQueryOptions struct {
 	CacheTime int    `query:"cache_time"`
 }
 
+// MessageIDOptions is a struct which contains data about a message to edit.
 type MessageIDOptions struct {
 	chatID          int64  `query:"chat_id"`
 	messageID       int    `query:"message_id"`
 	inlineMessageID string `query:"inline_message_id"`
 }
 
+// NewMessageID is a wrapper for MessageIDOptions which only fills the chatID and messageID fields.
 func NewMessageID(chatID int64, messageID int) MessageIDOptions {
 	return MessageIDOptions{chatID: chatID, messageID: messageID}
 }
 
+// NewInlineMessageID is a wrapper for MessageIDOptions which only fills the inlineMessageID fields.
 func NewInlineMessageID(ID string) MessageIDOptions {
 	return MessageIDOptions{inlineMessageID: ID}
 }
 
+// MessageTextOptions contains the optional parameters used in the EditMessageText method.
 type MessageTextOptions struct {
 	ParseMode             string               `query:"parse_mode"`
 	Entities              []MessageEntity      `query:"entities"`
@@ -315,6 +333,7 @@ type MessageTextOptions struct {
 	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
 }
 
+// MessageCaptionOptions contains the optional parameters used in the EditMessageCaption method.
 type MessageCaptionOptions struct {
 	Caption         string               `query:"caption"`
 	ParseMode       string               `query:"parse_mode"`
@@ -322,15 +341,18 @@ type MessageCaptionOptions struct {
 	ReplyMarkup     InlineKeyboardMarkup `query:"reply_markup"`
 }
 
+// MessageMediaOptions contains the optional parameters used in the EditMessageMedia method.
 type MessageMediaOptions struct {
 	Media       InputMedia           `query:"media"`
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }
 
+// MessageReplyMarkup contains the optional parameters used in the EditMessageReplyMarkup method.
 type MessageReplyMarkup struct {
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }
 
+// CommandOptions contains the optional parameters used in the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
 type CommandOptions struct {
 	Scope        BotCommandScope `query:"scope"`
 	LanguageCode string          `query:"language_code"`
