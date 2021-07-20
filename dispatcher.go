@@ -183,7 +183,7 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
 func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
-	var response APIResponseUpdate
+	var response APIResponseBase
 
 	u, err := url.Parse(webhookURL)
 	if err != nil {

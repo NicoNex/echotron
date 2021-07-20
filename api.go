@@ -86,8 +86,8 @@ func (a API) GetUpdates(opts *UpdateOptions) (APIResponseUpdate, error) {
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
-func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) (APIResponseUpdate, error) {
-	var res APIResponseUpdate
+func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) (APIResponseBase, error) {
+	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%ssetWebhook?drop_pending_updates=%t&%s",
 		a.base,
@@ -105,8 +105,8 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 }
 
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
-func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseUpdate, error) {
-	var res APIResponseUpdate
+func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseBase, error) {
+	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%sdeleteWebhook?drop_pending_updates=%t",
 		a.base,
@@ -308,8 +308,8 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
 // The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
-func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseBase, error) {
+	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%ssendChatAction?chat_id=%d&action=%s",
 		a.base,
@@ -549,8 +549,8 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 // - Bots granted can_post_messages permissions can delete outgoing messages in channels.
 // - If the bot is an administrator of a group, it can delete any message there.
 // - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
-func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseBase, error) {
+	var res APIResponseBase
 	var url = fmt.Sprintf(
 		"%sdeleteMessage?chat_id=%d&message_id=%d",
 		a.base,
