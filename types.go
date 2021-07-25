@@ -421,8 +421,8 @@ type UserProfilePhotos struct {
 type File struct {
 	FileID       string `json:"file_id"`
 	FileUniqueID string `json:"file_unique_id"`
+	FileSize     int    `json:"file_size,omitempty"`
 	FilePath     string `json:"file_path,omitempty"`
-	FileSize     int    `json:"file_path,omitempty"`
 }
 
 // LoginURL represents a parameter of the inline keyboard button used to automatically authorize a user.
