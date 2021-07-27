@@ -58,10 +58,24 @@ type APIResponseUpdate struct {
 	APIResponseBase
 }
 
+// APIResponseUser represents the incoming response from Telegram servers.
+// Used by getMe (since it returns a User).
+type APIResponseUser struct {
+	Result *User `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseMessage represents the incoming response from Telegram servers.
 // Used by the methods in the api.go module (since they return a Message).
 type APIResponseMessage struct {
 	Result *Message `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseMessageID represents the incoming response from Telegram servers.
+// Used by the method CopyMessage (since it returns a MessageID).
+type APIResponseMessageID struct {
+	Result *MessageID `json:"result,omitempty"`
 	APIResponseBase
 }
 

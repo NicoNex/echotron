@@ -137,6 +137,59 @@ func (a API) GetWebhookInfo() (APIResponseWebhook, error) {
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// GetMe is a simple method for testing your bot's auth token.
+func (a API) GetMe() (APIResponseUser, error) {
+	var res APIResponseUser
+	var url = fmt.Sprintf(
+		"%sgetMe",
+		a.base,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// LogOut is used to log out from the cloud Bot API server before launching the bot locally.
+// You MUST log out the bot before running it locally, otherwise there is no guarantee that the bot will receive updates.
+// After a successful call, you can immediately log in on a local server,
+// but will not be able to log in back to the cloud Bot API server for 10 minutes.
+func (a API) LogOut() (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%slogOut",
+		a.base,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// Close is used to close the bot instance before moving it from one local server to another.
+// You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart.
+// The method will return error 429 in the first 10 minutes after the bot is launched.
+func (a API) Close() (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sclose",
+		a.base,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SendMessage is used to send text messages.
 func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
@@ -145,6 +198,50 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 		a.base,
 		encode(text),
 		chatID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// ForwardMessage is used to forward messages of any kind.
+// Service messages can't be forwarded.
+func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *ForwardOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%sforwardMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",
+		a.base,
+		chatID,
+		fromChatID,
+		messageID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// CopyMessage is used to copy messages of any kind.
+// Service messages and invoice messages can't be copied.
+// The method is analogous to the method ForwardMessage,
+// but the copied message doesn't have a link to the original message.
+func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOptions) (APIResponseMessageID, error) {
+	var res APIResponseMessageID
+	var url = fmt.Sprintf(
+		"%scopyMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",
+		a.base,
+		chatID,
+		fromChatID,
+		messageID,
 		querify(opts),
 	)
 
@@ -286,6 +383,48 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// SendLocation is used to send point on the map.
+func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *LocationOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendLocation?chat_id=%d&latitude=%f&longitude=%f&%s",
+		a.base,
+		chatID,
+		latitude,
+		longitude,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SendVenue is used to send information about a venue.
+func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address string, opts *VenueOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendVenue?chat_id=%d&latitude=%f&longitude=%f&title=%s&address=%s&%s",
+		a.base,
+		chatID,
+		latitude,
+		longitude,
+		encode(title),
+		encode(address),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SendContact is used to send phone contacts.
 func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *ContactOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
@@ -295,6 +434,25 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 		chatID,
 		encode(phoneNumber),
 		encode(firstName),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SendDice is used to send an animated emoji that will display a random value.
+func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%ssendDice?chat_id=%d&emoji=%s&%s",
+		a.base,
+		chatID,
+		encode(string(emoji)),
 		querify(opts),
 	)
 

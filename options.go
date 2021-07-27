@@ -38,6 +38,19 @@ const (
 	Any              = ""
 )
 
+// DiceEmoji is a custom type for the various emojis that can be sent through the SendDice method.
+type DiceEmoji string
+
+// These are all the possible emojis that can be sent through the SendDice method.
+const (
+	Die     DiceEmoji = "🎲"
+	Darts             = "🎯"
+	Basket            = "🏀"
+	Goal              = "⚽️"
+	Bowling           = "🎳"
+	Slot              = "🎰"
+)
+
 // ChatAction is a custom type for the various actions that can be sent through the SendChatAction method.
 type ChatAction string
 
@@ -180,6 +193,19 @@ type MessageOptions struct {
 	DisableWebPagePreview bool            `query:"disable_web_page_preview"`
 }
 
+// ForwardOptions contains the optional parameters used by the ForwardMessage method.
+type ForwardOptions struct {
+	DisableNotification bool `query:"disable_notification"`
+}
+
+// CopyOptions contains the optional parameters used by the CopyMessage method.
+type CopyOptions struct {
+	BaseOptions     `query:"recursive"`
+	ParseMode       ParseMode       `query:"parse_mode"`
+	Caption         string          `query:"caption"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+}
+
 // InputFile is a struct which contains data about a file to be sent.
 type InputFile struct {
 	id      string
@@ -283,14 +309,20 @@ type MediaGroupOptions struct {
 
 // LocationOptions contains the optional parameters used in SendLocation method.
 type LocationOptions struct {
-	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
-	LivePeriod               int         `query:"live_period"`
-	Heading                  int         `query:"heading"`
-	ProximityAlertRadius     int         `query:"ProximityAlertRadius"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+	BaseOptions          `query:"recursive"`
+	HorizontalAccuracy   float64 `query:"horizontal_accuracy"`
+	LivePeriod           int     `query:"live_period"`
+	Heading              int     `query:"heading"`
+	ProximityAlertRadius int     `query:"proximity_alert_radius"`
+}
+
+// VenueOptions contains the optional parameters used in SendVenue method.
+type VenueOptions struct {
+	BaseOptions     `query:"recursive"`
+	FoursquareID    string `query:"foursquare_id"`
+	FoursquareType  string `query:"foursquare_type"`
+	GooglePlaceID   string `query:"google_place_id"`
+	GooglePlaceType string `query:"google_place_type"`
 }
 
 // ContactOptions contains the optional parameters used in SendContact method.

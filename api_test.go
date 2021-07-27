@@ -120,6 +120,18 @@ func TestGetWebhookInfo(t *testing.T) {
 	}
 }
 
+func TestGetMe(t *testing.T) {
+	resp, err := api.GetMe()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendMessage(t *testing.T) {
 	resp, err := api.SendMessage(
 		"TestSendMessage *bold* _italic_ `monospace`",
@@ -138,6 +150,40 @@ func TestSendMessage(t *testing.T) {
 	}
 
 	msgTmp = resp.Result
+}
+
+func TestForwardMessage(t *testing.T) {
+	resp, err := api.ForwardMessage(
+		chatID,
+		chatID, // fromChatID
+		msgTmp.ID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestCopyMessage(t *testing.T) {
+	resp, err := api.CopyMessage(
+		chatID,
+		chatID, // fromChatID
+		msgTmp.ID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
 }
 
 func TestSendMessageReply(t *testing.T) {
@@ -720,6 +766,42 @@ func TestSendVideoNote(t *testing.T) {
 	}
 }
 
+func TestSendLocation(t *testing.T) {
+	resp, err := api.SendLocation(
+		chatID,
+		0.0,
+		0.0,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVenue(t *testing.T) {
+	resp, err := api.SendVenue(
+		chatID,
+		0.0,
+		0.0,
+		"TestSendVenue",
+		"TestSendVenueAddress",
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVideoNoteByID(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFileID(videoNoteID),
@@ -792,6 +874,22 @@ func TestSendContact(t *testing.T) {
 		&ContactOptions{
 			LastName: "Surname",
 		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendDice(t *testing.T) {
+	resp, err := api.SendDice(
+		chatID,
+		Die,
+		nil,
 	)
 
 	if err != nil {
