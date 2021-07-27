@@ -164,11 +164,12 @@ func (d *Dispatcher) listen() {
 		if _, isIn := d.sessionMap[chatID]; !isIn {
 			d.sessionMap[chatID] = d.newBot(chatID)
 		}
+		bot, ok := d.sessionMap[chatID]
+		d.mu.Unlock()
 
-		if bot, ok := d.sessionMap[chatID]; ok {
+		if ok {
 			go bot.Update(update)
 		}
-		d.mu.Unlock()
 	}
 }
 
