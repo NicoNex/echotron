@@ -466,8 +466,8 @@ func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (APIResp
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
 // The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
-func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
 	var url = fmt.Sprintf(
 		"%ssendChatAction?chat_id=%d&action=%s",
 		a.base,
