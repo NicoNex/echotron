@@ -52,35 +52,35 @@ type APIResponseBase struct {
 }
 
 // APIResponseUpdate represents the incoming response from Telegram servers.
-// Used by getUpdates (since it returns an array of Updates).
+// Used by all methods that return an array of Update objects on success.
 type APIResponseUpdate struct {
 	Result []*Update `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseUser represents the incoming response from Telegram servers.
-// Used by getMe (since it returns a User).
+// Used by all methods that return a User object on success.
 type APIResponseUser struct {
 	Result *User `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseMessage represents the incoming response from Telegram servers.
-// Used by the methods in the api.go module (since they return a Message).
+// Used by all methods that return a Message object on success.
 type APIResponseMessage struct {
 	Result *Message `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseMessageID represents the incoming response from Telegram servers.
-// Used by the method CopyMessage (since it returns a MessageID).
+// Used by all methods that return a MessageID object on success.
 type APIResponseMessageID struct {
 	Result *MessageID `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseCommands represents the incoming response from Telegram servers.
-// Used by GetMyCommands (since it returns an array of BotCommands).
+// Used by all methods that return an array of BotCommand objects on success.
 type APIResponseCommands struct {
 	Result []BotCommand `json:"result,omitempty"`
 	APIResponseBase
@@ -94,56 +94,56 @@ type APIResponseBool struct {
 }
 
 // APIResponseChat represents the incoming response from Telegram servers.
-// Used by GetChat (since it returns a Chat).
+// Used by all methods that return a Chat object on success.
 type APIResponseChat struct {
 	Result *Chat `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseStickerSet represents the incoming response from Telegram servers.
-// Used by GetStickerSet (since it returns a StickerSet).
+// Used by all methods that return a StickerSet object on success.
 type APIResponseStickerSet struct {
 	Result *StickerSet `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseFile represents the incoming response from Telegram servers.
-// Used by UploadStickerFile (since it returns a File).
+// Used by all methods that return a File object on success.
 type APIResponseFile struct {
 	Result *File `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseAdministrators represents the incoming response from Telegram servers.
-// Used by GetChatAdministrator (since it returns an array of ChatMembers).
+// Used by all methods that return an array of ChatMember objects on success.
 type APIResponseAdministrators struct {
 	Result []ChatMember `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseChatMember represents the incoming response from Telegram servers.
-// Used by GetChatMember (since it returns a ChatMember).
+// Used by all methods that return a ChatMember object on success.
 type APIResponseChatMember struct {
 	Result ChatMember `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseMemberCount represents the incoming response from Telegram servers.
-// Used by GetChatMemberCount (since it returns and integer).
+// Used by all methods that return and integer on success.
 type APIResponseMemberCount struct {
 	Result int `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
-// Used by GetGameHighScore (since it returns an array of GameHighScore).
+// Used by all methods that return an array of GameHighScore objects on success.
 type APIResponseGameHighScore struct {
 	Result []GameHighScore `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseWebhook represents the incoming response from Telegram servers.
-// Used by GetWebhookInfo (since it returns a WebhookInfo).
+// Used by all methods that return a WebhookInfo object on success.
 type APIResponseWebhook struct {
 	Result WebhookInfo `json:"result,omitempty"`
 	APIResponseBase
