@@ -185,7 +185,7 @@ type BaseOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
-// MessageOptions contains the optional parameters used in some Telegram API methods.
+// MessageOptions contains the optional parameters used by some Telegram API methods.
 type MessageOptions struct {
 	BaseOptions           `query:"recursive"`
 	ParseMode             ParseMode       `query:"parse_mode"`
@@ -228,7 +228,7 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 	return InputFile{path: fileName, content: content}
 }
 
-// PhotoOptions contains the optional parameters used in SendPhoto method.
+// PhotoOptions contains the optional parameters used by the SendPhoto method.
 type PhotoOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -236,7 +236,7 @@ type PhotoOptions struct {
 	CaptionEntities []MessageEntity `query:"caption_entities"`
 }
 
-// AudioOptions contains the optional parameters used in SendAudio method.
+// AudioOptions contains the optional parameters used by the SendAudio method.
 type AudioOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -248,7 +248,7 @@ type AudioOptions struct {
 	Thumb           InputFile       `query:"thumb"`
 }
 
-// DocumentOptions contains the optional parameters used in SendDocument method.
+// DocumentOptions contains the optional parameters used by the SendDocument method.
 type DocumentOptions struct {
 	BaseOptions                 `query:"recursive"`
 	ParseMode                   ParseMode       `query:"parse_mode"`
@@ -258,7 +258,7 @@ type DocumentOptions struct {
 	Thumb                       InputFile       `query:"thumb"`
 }
 
-// VideoOptions contains the optional parameters used in SendVideo method.
+// VideoOptions contains the optional parameters used by the SendVideo method.
 type VideoOptions struct {
 	BaseOptions       `query:"recursive"`
 	ParseMode         ParseMode       `query:"parse_mode"`
@@ -271,7 +271,7 @@ type VideoOptions struct {
 	SupportsStreaming bool            `query:"supports_streaming"`
 }
 
-// AnimationOptions contains the optional parameters used in SendAnimation method.
+// AnimationOptions contains the optional parameters used by the SendAnimation method.
 type AnimationOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -283,7 +283,7 @@ type AnimationOptions struct {
 	Thumb           InputFile       `query:"thumb"`
 }
 
-// VoiceOptions contains the optional parameters used in SendVoice method.
+// VoiceOptions contains the optional parameters used by the SendVoice method.
 type VoiceOptions struct {
 	BaseOptions     `query:"recursive"`
 	ParseMode       ParseMode       `query:"parse_mode"`
@@ -292,7 +292,7 @@ type VoiceOptions struct {
 	Duration        int             `query:"duration"`
 }
 
-// VideoNoteOptions contains the optional parameters used in SendVideoNote method.
+// VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
 	BaseOptions `query:"recursive"`
 	Duration    int       `query:"duration"`
@@ -300,14 +300,14 @@ type VideoNoteOptions struct {
 	Thumb       InputFile `query:"thumb"`
 }
 
-// MediaGroupOptions contains the optional parameters used in SendMediaGroup method.
+// MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
 type MediaGroupOptions struct {
 	DisableNotification      bool `query:"disable_notification"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
 }
 
-// LocationOptions contains the optional parameters used in SendLocation method.
+// LocationOptions contains the optional parameters used by the SendLocation method.
 type LocationOptions struct {
 	BaseOptions          `query:"recursive"`
 	HorizontalAccuracy   float64 `query:"horizontal_accuracy"`
@@ -316,7 +316,7 @@ type LocationOptions struct {
 	ProximityAlertRadius int     `query:"proximity_alert_radius"`
 }
 
-// VenueOptions contains the optional parameters used in SendVenue method.
+// VenueOptions contains the optional parameters used by the SendVenue method.
 type VenueOptions struct {
 	BaseOptions     `query:"recursive"`
 	FoursquareID    string `query:"foursquare_id"`
@@ -325,14 +325,14 @@ type VenueOptions struct {
 	GooglePlaceType string `query:"google_place_type"`
 }
 
-// ContactOptions contains the optional parameters used in SendContact method.
+// ContactOptions contains the optional parameters used by the SendContact method.
 type ContactOptions struct {
 	BaseOptions `query:"recursive"`
 	LastName    string `query:"last_name"`
 	VCard       string `query:"vcard"`
 }
 
-// CallbackQueryOptions contains the optional parameters used in AnswerCallbackQuery method.
+// CallbackQueryOptions contains the optional parameters used by the AnswerCallbackQuery method.
 type CallbackQueryOptions struct {
 	Text      string `query:"text"`
 	ShowAlert bool   `query:"show_alert"`
@@ -357,7 +357,7 @@ func NewInlineMessageID(ID string) MessageIDOptions {
 	return MessageIDOptions{inlineMessageID: ID}
 }
 
-// MessageTextOptions contains the optional parameters used in the EditMessageText method.
+// MessageTextOptions contains the optional parameters used by the EditMessageText method.
 type MessageTextOptions struct {
 	ParseMode             string               `query:"parse_mode"`
 	Entities              []MessageEntity      `query:"entities"`
@@ -365,7 +365,7 @@ type MessageTextOptions struct {
 	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
 }
 
-// MessageCaptionOptions contains the optional parameters used in the EditMessageCaption method.
+// MessageCaptionOptions contains the optional parameters used by the EditMessageCaption method.
 type MessageCaptionOptions struct {
 	Caption         string               `query:"caption"`
 	ParseMode       string               `query:"parse_mode"`
@@ -373,18 +373,18 @@ type MessageCaptionOptions struct {
 	ReplyMarkup     InlineKeyboardMarkup `query:"reply_markup"`
 }
 
-// MessageMediaOptions contains the optional parameters used in the EditMessageMedia method.
+// MessageMediaOptions contains the optional parameters used by the EditMessageMedia method.
 type MessageMediaOptions struct {
 	Media       InputMedia           `query:"media"`
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }
 
-// MessageReplyMarkup contains the optional parameters used in the EditMessageReplyMarkup method.
+// MessageReplyMarkup contains the optional parameters used by the EditMessageReplyMarkup method.
 type MessageReplyMarkup struct {
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }
 
-// CommandOptions contains the optional parameters used in the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
+// CommandOptions contains the optional parameters used by the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
 type CommandOptions struct {
 	Scope        BotCommandScope `query:"scope"`
 	LanguageCode string          `query:"language_code"`
