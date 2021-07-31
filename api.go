@@ -445,6 +445,32 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// SendPoll is used to send a native poll.
+func (a API) SendPoll(chatID int64, question string, options []string, opts *PollOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+
+	pollOpts, err := json.Marshal(options)
+	if err != nil {
+		return res, err
+	}
+
+	var url = fmt.Sprintf(
+		"%ssendPoll?chat_id=%d&question=%s&options=%s&%s",
+		a.base,
+		chatID,
+		question,
+		encode(string(pollOpts)),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SendDice is used to send an animated emoji that will display a random value.
 func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
@@ -483,11 +509,281 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseBool, e
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// GetUserProfilePhotos is used to get a list of profile pictures for a user.
+func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (APIResponseUserProfile, error) {
+	var res APIResponseUserProfile
+	var url = fmt.Sprintf(
+		"%sgetUserProfilePhotos?user_id=%d&%s",
+		a.base,
+		userID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// GetFile returns the basic info about a file and prepares it for downloading.
+// For the moment, bots can download files of up to 20MB in size.
+// The file can then be downloaded with DownloadFile where filePath is taken from the response.
+// It is guaranteed that the file will be downloadable for at least 1 hour.
+// When the download file expires, a new one can be requested by calling GetFile again.
+func (a API) GetFile(fileID string) (APIResponseFile, error) {
+	var res APIResponseFile
+	var url = fmt.Sprintf(
+		"%sgetFile?file_id=%s",
+		a.base,
+		fileID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// DownloadFile returns the bytes of the file corresponding to the given filePath.
+// This function is callable for at least 1 hour since the call to GetFile.
+// When the download expires a new one can be requested by calling GetFile again.
+func (a API) DownloadFile(filePath string) ([]byte, error) {
+	return sendGetRequest(fmt.Sprintf(
+		"https://api.telegram.org/file/bot%s/%s",
+		a.token,
+		filePath,
+	))
+}
+
+// BanChatMember is used to ban a user in a group, a supergroup or a channel.
+// In the case of supergroups or channels, the user will not be able to return to the chat
+// on their own using invite links, etc., unless unbanned first (through the UnbanChatMember method).
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sbanChatMember?chat_id=%d&user_id=%d&%s",
+		a.base,
+		chatID,
+		userID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// UnbanChatMember is used to unban a previously banned user in a supergroup or channel.
+// The user will NOT return to the group or channel automatically, but will be able to join via link, etc.
+// The bot must be an administrator for this to work.
+// By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it.
+// So if the user is a member of the chat they will also be REMOVED from the chat.
+// If you don't want this, use the parameter `only_if_banned`.
+func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sunbanChatMember?chat_id=%d&user_id=%d&%s",
+		a.base,
+		chatID,
+		userID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// RestrictChatMember is used to restrict a user in a supergroup.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermissions, opts *RestrictOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+
+	perm, err := json.Marshal(PermissionOptions{permissions})
+	if err != nil {
+		return res, err
+	}
+
+	var url = fmt.Sprintf(
+		"%srestrictChatMember?chat_id=%d&user_id=%d&permissions=%s&%s",
+		a.base,
+		chatID,
+		userID,
+		encode(string(perm)),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// PromoteChatMember is used to promote or demote a user in a supergroup or a channel.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+func (a API) PromoteChatMember(chatID, userID int64, opts *PromoteOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%spromoteChatMember?chat_id=%d&user_id=%d&%s",
+		a.base,
+		chatID,
+		userID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SetChatAdministratorCustomTitle is used to set a custom title for an administrator in a supergroup promoted by the bot.
+func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle string) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%ssetChatAdministratorCustomTitle?chat_id=%d&user_id=%d&custom_title=%s",
+		a.base,
+		chatID,
+		userID,
+		encode(customTitle),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SetChatPermissions is used to set default chat permissions for all members.
+// The bot must be an administrator in the supergroup for this to work and must have the can_restrict_members admin rights.
+func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (APIResponseBool, error) {
+	var res APIResponseBool
+
+	perm, err := json.Marshal(PermissionOptions{permissions})
+	if err != nil {
+		return res, err
+	}
+
+	var url = fmt.Sprintf(
+		"%ssetChatPermissions?chat_id=%d&permissions=%s",
+		a.base,
+		chatID,
+		encode(string(perm)),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// ExportChatInviteLink is used to generate a new primary invite link for a chat;
+// any previously generated primary link is revoked.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+func (a API) ExportChatInviteLink(chatID int64) (APIResponseString, error) {
+	var res APIResponseString
+	var url = fmt.Sprintf(
+		"%sexportChatInviteLink?chat_id=%d",
+		a.base,
+		chatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// CreateChatInviteLink is used to create an additional invite link for a chat.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+// The link can be revoked using the method RevokeChatInviteLink.
+func (a API) CreateChatInviteLink(chatID int64, opts *InviteLinkOptions) (APIResponseInviteLink, error) {
+	var res APIResponseInviteLink
+	var url = fmt.Sprintf(
+		"%screateChatInviteLink?chat_id=%d&%s",
+		a.base,
+		chatID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// EditChatInviteLink is used to edit a non-primary invite link created by the bot.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLinkOptions) (APIResponseInviteLink, error) {
+	var res APIResponseInviteLink
+	var url = fmt.Sprintf(
+		"%seditChatInviteLink?chat_id=%d&invite_link=%s&%s",
+		a.base,
+		chatID,
+		encode(inviteLink),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// RevokeChatInviteLink is used to revoke an invite link created by the bot.
+// If the primary link is revoked, a new link is automatically generated.
+// The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (APIResponseInviteLink, error) {
+	var res APIResponseInviteLink
+	var url = fmt.Sprintf(
+		"%srevokeChatInviteLink?chat_id=%d&invite_link=%s",
+		a.base,
+		chatID,
+		encode(inviteLink),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // GetChat is used to get up to date information about the chat.
 // (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
 func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 	var res APIResponseChat
-	var url = fmt.Sprintf("%sgetChat?chat_id=%d", a.base, chatID)
+	var url = fmt.Sprintf(
+		"%sgetChat?chat_id=%d",
+		a.base,
+		chatID,
+	)
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
@@ -722,35 +1018,4 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseBase, error)
 	}
 
 	return res, json.Unmarshal(cnt, &res)
-}
-
-// GetFile returns the basic info about a file and prepares it for downloading.
-// For the moment, bots can download files of up to 20MB in size.
-// The file can then be downloaded with DownloadFile where filePath is taken from the response.
-// It is guaranteed that the file will be downloadable for at least 1 hour.
-// When the download file expires, a new one can be requested by calling GetFile again.
-func (a API) GetFile(fileID string) (APIResponseFile, error) {
-	var res APIResponseFile
-
-	cnt, err := sendGetRequest(fmt.Sprintf(
-		"%sgetFile?file_id=%s",
-		a.base,
-		fileID,
-	))
-	if err != nil {
-		return res, err
-	}
-
-	return res, json.Unmarshal(cnt, &res)
-}
-
-// DownloadFile returns the bytes of the file corresponding to the given filePath.
-// This function is callable for at least 1 hour since the call to GetFile.
-// When the download expires a new one can be requested by calling GetFile again.
-func (a API) DownloadFile(filePath string) ([]byte, error) {
-	return sendGetRequest(fmt.Sprintf(
-		"https://api.telegram.org/file/bot%s/%s",
-		a.token,
-		filePath,
-	))
 }

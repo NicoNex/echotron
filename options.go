@@ -332,6 +332,64 @@ type ContactOptions struct {
 	VCard       string `query:"vcard"`
 }
 
+// PollOptions contains the optional parameters used by the SendPoll method.
+type PollOptions struct {
+	BaseOptions
+	IsAnonymous           bool            `query:"is_anonymous"`
+	Type                  PollType        `query:"type"`
+	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
+	CorrectOptionID       int             `query:"correct_option_id"`
+	Explanation           string          `query:"explanation"`
+	ExplanationParseMode  ParseMode       `query:"explanation_parse_mode"`
+	ExplanationEntities   []MessageEntity `query:"explanation_entities"`
+	OpenPeriod            int             `query:"open_period"`
+	CloseDate             int             `query:"close_date"`
+	IsClosed              bool            `query:"is_closed"`
+}
+
+// BanOptions contains the optional parameters used by the BanChatMember method.
+type BanOptions struct {
+	UntilDate      int  `query:"until_date"`
+	RevokeMessages bool `query:"revoke_messages"`
+}
+
+// UnbanOptions contains the optional parameters used by the UnbanChatMember method.
+type UnbanOptions struct {
+	OnlyIfBanned bool `query:"only_if_banned"`
+}
+
+// RestrictOptions contains the optional parameters used by the RestrictChatMember method.
+type RestrictOptions struct {
+	UntilDate int `query:"until_date"`
+}
+
+// PromoteOptions contains the optional parameters used by the PromoteChatMember method.
+type PromoteOptions struct {
+	IsAnonymous         bool `query:"is_anonymous"`
+	CanManageChat       bool `query:"can_manage_chat"`
+	CanPostMessages     bool `query:"can_post_messages"`
+	CanEditMessages     bool `query:"can_edit_messages"`
+	CanDeleteMessages   bool `query:"can_delete_messages"`
+	CanManageVoiceChats bool `query:"can_manage_voice_chats"`
+	CanRestrictMembers  bool `query:"can_restrict_members"`
+	CanPromoteMembers   bool `query:"can_promote_members"`
+	CanChangeInfo       bool `query:"can_change_info"`
+	CanInviteUsers      bool `query:"can_invite_users"`
+	CanPinMessages      bool `query:"can_pin_messages"`
+}
+
+// UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
+type UserProfileOptions struct {
+	Offset int `query:"offset"`
+	Limit  int `query:"limit"`
+}
+
+// InviteLinkOptions contains the optional parameters used by the CreateChatInviteLink and EditChatInviteLink methods.
+type InviteLinkOptions struct {
+	ExpireDate  int64 `query:"expire_date"`
+	MemberLimit int   `query:"member_limit"`
+}
+
 // CallbackQueryOptions contains the optional parameters used by the AnswerCallbackQuery method.
 type CallbackQueryOptions struct {
 	Text      string `query:"text"`

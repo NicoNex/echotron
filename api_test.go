@@ -5,22 +5,29 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 var (
-	msgTmp      *Message
-	photoTmp    *Message
-	filePath    string
-	api         = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
-	chatID      = int64(14870908)
-	groupID     = int64(-1001241973131)
-	photoID     = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	animationID = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
-	audioID     = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID  = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	videoID     = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	videoNoteID = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
-	voiceID     = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	msgTmp       *Message
+	photoTmp     *Message
+	inviteTmp    *ChatInviteLink
+	expInviteTmp string
+	filePath     string
+	api          = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
+	chatID       = int64(14870908)
+	banUserID    = int64(41876271)
+	botID        = int64(1713461126)
+	channelID    = int64(-1001563144067)
+	groupID      = int64(-1001241973131)
+	supergroupID = int64(-1001265771214)
+	photoID      = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	animationID  = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
+	audioID      = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID   = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	videoID      = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID  = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID      = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 
 	commands = []BotCommand{
 		{Command: "test1", Description: "Test command 1"},
@@ -885,6 +892,23 @@ func TestSendContact(t *testing.T) {
 	}
 }
 
+func TestSendPoll(t *testing.T) {
+	resp, err := api.SendPoll(
+		chatID,
+		"TestSendPoll",
+		[]string{"Option 1", "Option 2", "Option 3"},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendDice(t *testing.T) {
 	resp, err := api.SendDice(
 		chatID,
@@ -903,6 +927,218 @@ func TestSendDice(t *testing.T) {
 
 func TestSendChatAction(t *testing.T) {
 	resp, err := api.SendChatAction(Typing, chatID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetUserProfilePhotos(t *testing.T) {
+	resp, err := api.GetUserProfilePhotos(chatID, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestGetFile(t *testing.T) {
+	resp, err := api.GetFile(photoID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	filePath = resp.Result.FilePath
+}
+
+func TestDownloadFile(t *testing.T) {
+	resp, err := api.DownloadFile(filePath)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp) == 0 {
+		t.Fatal("empty file received")
+	}
+}
+
+func TestBanChatMember(t *testing.T) {
+	resp, err := api.BanChatMember(
+		channelID,
+		banUserID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestUnbanChatMember(t *testing.T) {
+	resp, err := api.UnbanChatMember(
+		channelID,
+		banUserID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestRestrictChatMember(t *testing.T) {
+	resp, err := api.RestrictChatMember(
+		supergroupID,
+		banUserID,
+		ChatPermissions{},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestPromoteChatMember(t *testing.T) {
+	resp, err := api.PromoteChatMember(
+		supergroupID,
+		banUserID,
+		&PromoteOptions{
+			CanDeleteMessages:   true,
+			CanManageVoiceChats: true,
+			CanRestrictMembers:  true,
+			CanPromoteMembers:   true,
+			CanChangeInfo:       true,
+			CanInviteUsers:      true,
+			CanPinMessages:      true,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSetChatAdministratorCustomTitle(t *testing.T) {
+	resp, err := api.SetChatAdministratorCustomTitle(
+		supergroupID,
+		banUserID,
+		"TestCustomTitle",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSetChatPermissions(t *testing.T) {
+	resp, err := api.SetChatPermissions(
+		supergroupID,
+		ChatPermissions{
+			CanSendMessages:       true,
+			CanSendMediaMessages:  true,
+			CanSendPolls:          true,
+			CanSendOtherMessages:  true,
+			CanAddWebPagePreviews: true,
+			CanChangeInfo:         true,
+			CanInviteUsers:        true,
+			CanPinMessages:        true,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestExportChatInviteLink(t *testing.T) {
+	resp, err := api.ExportChatInviteLink(channelID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	expInviteTmp = resp.Result
+}
+
+func TestCreateChatInviteLink(t *testing.T) {
+	resp, err := api.CreateChatInviteLink(channelID, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	inviteTmp = resp.Result
+}
+
+func TestEditChatInviteLink(t *testing.T) {
+	resp, err := api.EditChatInviteLink(
+		channelID,
+		inviteTmp.InviteLink,
+		&InviteLinkOptions{
+			ExpireDate: time.Now().Unix(),
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestRevokeChatInviteLink(t *testing.T) {
+	resp, err := api.RevokeChatInviteLink(
+		channelID,
+		expInviteTmp,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -1107,28 +1343,5 @@ func TestDeleteMessage(t *testing.T) {
 
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestGetFile(t *testing.T) {
-	resp, err := api.GetFile(photoID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-	filePath = resp.Result.FilePath
-}
-
-func TestDownloadFile(t *testing.T) {
-	resp, err := api.DownloadFile(filePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(resp) == 0 {
-		t.Fatal("empty file received")
 	}
 }

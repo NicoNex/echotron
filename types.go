@@ -93,6 +93,13 @@ type APIResponseBool struct {
 	APIResponseBase
 }
 
+// APIResponseString represents the incoming response from Telegram servers.
+// Used by all methods that return a string on success.
+type APIResponseString struct {
+	Result string `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseChat represents the incoming response from Telegram servers.
 // Used by all methods that return a Chat object on success.
 type APIResponseChat struct {
@@ -100,10 +107,24 @@ type APIResponseChat struct {
 	APIResponseBase
 }
 
+// APIResponseInviteLink represents the incoming response from Telegram servers.
+// Used by all methods that return a ChatInviteLink object on success.
+type APIResponseInviteLink struct {
+	Result *ChatInviteLink `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseStickerSet represents the incoming response from Telegram servers.
 // Used by all methods that return a StickerSet object on success.
 type APIResponseStickerSet struct {
 	Result *StickerSet `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// APIResponseUserProfile represents the incoming response from Telegram servers.
+// Used by all methods that return a UserProfilePhotos object on success.
+type APIResponseUserProfile struct {
+	Result *UserProfilePhotos `json:"result,omitempty"`
 	APIResponseBase
 }
 
@@ -649,4 +670,9 @@ type BotCommandScope struct {
 	Type   BotCommandScopeType `query:"type"`
 	ChatID int64               `query:"chat_id"`
 	UserID int64               `query:"user_id"`
+}
+
+// PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
+type PermissionOptions struct {
+	Permissions ChatPermissions `json:"permissions"`
 }
