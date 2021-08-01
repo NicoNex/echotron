@@ -19,8 +19,7 @@ var (
 	banUserID    = int64(41876271)
 	botID        = int64(1713461126)
 	channelID    = int64(-1001563144067)
-	groupID      = int64(-1001241973131)
-	supergroupID = int64(-1001265771214)
+	groupID      = int64(-1001265771214)
 	photoID      = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
 	animationID  = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
 	audioID      = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
@@ -75,15 +74,33 @@ var (
 	}
 )
 
+func openBytes(path string) (data []byte, err error) {
+	file, err := os.Open(path)
+
+	if err != nil {
+		return
+	}
+
+	data, err = io.ReadAll(file)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func TestGetUpdates(t *testing.T) {
-	resp, err := api.GetUpdates(nil)
+	resp, err := api.GetUpdates(
+		nil,
+	)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -99,19 +116,21 @@ func TestSetWebhook(t *testing.T) {
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
 func TestDeleteWebhook(t *testing.T) {
-	resp, err := api.DeleteWebhook(false)
+	resp, err := api.DeleteWebhook(
+		false,
+	)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -123,7 +142,7 @@ func TestGetWebhookInfo(t *testing.T) {
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -135,7 +154,7 @@ func TestGetMe(t *testing.T) {
 	}
 
 	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
+		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
 
@@ -272,13 +291,7 @@ func TestSendPhotoByID(t *testing.T) {
 }
 
 func TestSendPhotoBytes(t *testing.T) {
-	file, err := os.Open("tests/echotron_test.png")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/echotron_test.png")
 
 	if err != nil {
 		t.Fatal(err)
@@ -380,13 +393,7 @@ func TestSendAudioWithKeyboard(t *testing.T) {
 }
 
 func TestSendAudioBytes(t *testing.T) {
-	file, err := os.Open("tests/audio.mp3")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/audio.mp3")
 
 	if err != nil {
 		t.Fatal(err)
@@ -554,13 +561,7 @@ func TestSendVideoWithKeyboard(t *testing.T) {
 }
 
 func TestSendVideoBytes(t *testing.T) {
-	file, err := os.Open("tests/video.webm")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/video.webm")
 
 	if err != nil {
 		t.Fatal(err)
@@ -641,13 +642,7 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 }
 
 func TestSendAnimationBytes(t *testing.T) {
-	file, err := os.Open("tests/animation.mp4")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/animation.mp4")
 
 	if err != nil {
 		t.Fatal(err)
@@ -728,13 +723,7 @@ func TestSendVoiceWithKeyboard(t *testing.T) {
 }
 
 func TestSendVoiceBytes(t *testing.T) {
-	file, err := os.Open("tests/audio.mp3")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/audio.mp3")
 
 	if err != nil {
 		t.Fatal(err)
@@ -761,42 +750,6 @@ func TestSendVideoNote(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFilePath("tests/video_note.mp4"),
 		chatID,
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendLocation(t *testing.T) {
-	resp, err := api.SendLocation(
-		chatID,
-		0.0,
-		0.0,
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-}
-
-func TestSendVenue(t *testing.T) {
-	resp, err := api.SendVenue(
-		chatID,
-		0.0,
-		0.0,
-		"TestSendVenue",
-		"TestSendVenueAddress",
 		nil,
 	)
 
@@ -846,13 +799,7 @@ func TestSendVideoNoteWithKeyboard(t *testing.T) {
 }
 
 func TestSendVideoNoteBytes(t *testing.T) {
-	file, err := os.Open("tests/video_note.mp4")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := io.ReadAll(file)
+	data, err := openBytes("tests/video_note.mp4")
 
 	if err != nil {
 		t.Fatal(err)
@@ -861,6 +808,42 @@ func TestSendVideoNoteBytes(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFileBytes("video_note.mp4", data),
 		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendLocation(t *testing.T) {
+	resp, err := api.SendLocation(
+		chatID,
+		0.0,
+		0.0,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendVenue(t *testing.T) {
+	resp, err := api.SendVenue(
+		chatID,
+		0.0,
+		0.0,
+		"TestSendVenue",
+		"TestSendVenueAddress",
 		nil,
 	)
 
@@ -926,7 +909,10 @@ func TestSendDice(t *testing.T) {
 }
 
 func TestSendChatAction(t *testing.T) {
-	resp, err := api.SendChatAction(Typing, chatID)
+	resp, err := api.SendChatAction(
+		Typing,
+		chatID,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -938,7 +924,10 @@ func TestSendChatAction(t *testing.T) {
 }
 
 func TestGetUserProfilePhotos(t *testing.T) {
-	resp, err := api.GetUserProfilePhotos(chatID, nil)
+	resp, err := api.GetUserProfilePhotos(
+		chatID,
+		nil,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -950,7 +939,9 @@ func TestGetUserProfilePhotos(t *testing.T) {
 }
 
 func TestGetFile(t *testing.T) {
-	resp, err := api.GetFile(photoID)
+	resp, err := api.GetFile(
+		photoID,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -964,7 +955,9 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestDownloadFile(t *testing.T) {
-	resp, err := api.DownloadFile(filePath)
+	resp, err := api.DownloadFile(
+		filePath,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -1009,7 +1002,7 @@ func TestUnbanChatMember(t *testing.T) {
 
 func TestRestrictChatMember(t *testing.T) {
 	resp, err := api.RestrictChatMember(
-		supergroupID,
+		groupID,
 		banUserID,
 		ChatPermissions{},
 		nil,
@@ -1026,7 +1019,7 @@ func TestRestrictChatMember(t *testing.T) {
 
 func TestPromoteChatMember(t *testing.T) {
 	resp, err := api.PromoteChatMember(
-		supergroupID,
+		groupID,
 		banUserID,
 		&PromoteOptions{
 			CanDeleteMessages:   true,
@@ -1050,7 +1043,7 @@ func TestPromoteChatMember(t *testing.T) {
 
 func TestSetChatAdministratorCustomTitle(t *testing.T) {
 	resp, err := api.SetChatAdministratorCustomTitle(
-		supergroupID,
+		groupID,
 		banUserID,
 		"TestCustomTitle",
 	)
@@ -1066,7 +1059,7 @@ func TestSetChatAdministratorCustomTitle(t *testing.T) {
 
 func TestSetChatPermissions(t *testing.T) {
 	resp, err := api.SetChatPermissions(
-		supergroupID,
+		groupID,
 		ChatPermissions{
 			CanSendMessages:       true,
 			CanSendMediaMessages:  true,
@@ -1089,7 +1082,9 @@ func TestSetChatPermissions(t *testing.T) {
 }
 
 func TestExportChatInviteLink(t *testing.T) {
-	resp, err := api.ExportChatInviteLink(channelID)
+	resp, err := api.ExportChatInviteLink(
+		channelID,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -1103,7 +1098,9 @@ func TestExportChatInviteLink(t *testing.T) {
 }
 
 func TestCreateChatInviteLink(t *testing.T) {
-	resp, err := api.CreateChatInviteLink(channelID, nil)
+	resp, err := api.CreateChatInviteLink(
+		channelID, nil,
+	)
 
 	if err != nil {
 		t.Fatal(err)
@@ -1150,7 +1147,10 @@ func TestRevokeChatInviteLink(t *testing.T) {
 }
 
 func TestGetChat(t *testing.T) {
-	resp, err := api.GetChat(chatID)
+	resp, err := api.GetChat(
+		chatID,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1158,12 +1158,15 @@ func TestGetChat(t *testing.T) {
 	if resp.Result.Type != "private" && resp.Result.Type != "group" &&
 		resp.Result.Type != "supergroup" && resp.Result.Type != "channel" {
 
-		t.Fatalf("wrong chat type, got: %s", resp.Result.Type)
+		t.Fatal("wrong chat type, got:", resp.Result.Type)
 	}
 }
 
 func TestGetChatAdministrators(t *testing.T) {
-	resp, err := api.GetChatAdministrators(groupID)
+	resp, err := api.GetChatAdministrators(
+		groupID,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1174,7 +1177,10 @@ func TestGetChatAdministrators(t *testing.T) {
 }
 
 func TestGetChatMemberCount(t *testing.T) {
-	resp, err := api.GetChatMemberCount(groupID)
+	resp, err := api.GetChatMemberCount(
+		groupID,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1185,7 +1191,11 @@ func TestGetChatMemberCount(t *testing.T) {
 }
 
 func TestGetChatMember(t *testing.T) {
-	resp, err := api.GetChatMember(groupID, chatID)
+	resp, err := api.GetChatMember(
+		groupID,
+		chatID,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1209,7 +1219,11 @@ func TestAnswerCallbackQuery(t *testing.T) {
 }
 
 func TestSetMyCommands(t *testing.T) {
-	resp, err := api.SetMyCommands(nil, commands...)
+	resp, err := api.SetMyCommands(
+		nil,
+		commands...,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1220,7 +1234,10 @@ func TestSetMyCommands(t *testing.T) {
 }
 
 func TestGetMyCommands(t *testing.T) {
-	resp, err := api.GetMyCommands(nil)
+	resp, err := api.GetMyCommands(
+		nil,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1237,7 +1254,10 @@ func TestGetMyCommands(t *testing.T) {
 }
 
 func TestDeleteMyCommands(t *testing.T) {
-	resp, err := api.DeleteMyCommands(nil)
+	resp, err := api.DeleteMyCommands(
+		nil,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1336,7 +1356,11 @@ func TestEditMessageReplyMarkup(t *testing.T) {
 }
 
 func TestDeleteMessage(t *testing.T) {
-	resp, err := api.DeleteMessage(chatID, msgTmp.ID)
+	resp, err := api.DeleteMessage(
+		chatID,
+		msgTmp.ID,
+	)
+
 	if err != nil {
 		t.Fatal(err)
 	}

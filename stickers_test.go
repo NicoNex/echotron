@@ -89,7 +89,9 @@ func TestAddStickerToSet(t *testing.T) {
 }
 
 func TestGetStickerSet(t *testing.T) {
-	resp, err := api.GetStickerSet("echocoverpack_by_echotron_coverage_bot")
+	resp, err := api.GetStickerSet(
+		"echocoverpack_by_echotron_coverage_bot",
+	)
 
 	if err != nil {
 		t.Fatal(err)
