@@ -784,6 +784,160 @@ func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (APIResponseI
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// SetChatPhoto is used to set a new profile photo for the chat.
+// Photos can't be changed for private chats.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+func (a API) SetChatPhoto(file InputFile, chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%ssetChatPhoto?chat_id=%d",
+		a.base,
+		chatID,
+	)
+
+	cnt, err := sendFile(file, url, "photo")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// DeleteChatPhoto is used to delete a chat photo.
+// Photos can't be changed for private chats.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+func (a API) DeleteChatPhoto(chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sdeleteChatPhoto?chat_id=%d",
+		a.base,
+		chatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SetChatTitle is used to change the title of a chat.
+// Titles can't be changed for private chats.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+func (a API) SetChatTitle(chatID int64, title string) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%ssetChatTitle?chat_id=%d&title=%s",
+		a.base,
+		chatID,
+		encode(title),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SetChatDescription is used to change the description of a group, a supergroup or a channel.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+func (a API) SetChatDescription(chatID int64, description string) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%ssetChatDescription?chat_id=%d&description=%s",
+		a.base,
+		chatID,
+		encode(description),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// PinChatMessage is used to add a message to the list of pinned messages in the chat.
+// If the chat is not a private chat, the bot must be an administrator in the chat for this to work
+// and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
+func (a API) PinChatMessage(chatID int64, messageID int, opts *DisableNotificationOptions) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%spinChatMessage?chat_id=%d&message_id=%d&%s",
+		a.base,
+		chatID,
+		messageID,
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// UnpinChatMessage is used to remove a message from the list of pinned messages in the chat.
+// If the chat is not a private chat, the bot must be an administrator in the chat for this to work
+// and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
+func (a API) UnpinChatMessage(chatID int64, messageID int) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sunpinChatMessage?chat_id=%d&message_id=%d",
+		a.base,
+		chatID,
+		messageID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// UnpinAllChatMessages is used to clear the list of pinned messages in a chat.
+// If the chat is not a private chat, the bot must be an administrator in the chat for this to work
+// and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
+func (a API) UnpinAllChatMessages(chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sunpinAllChatMessages?chat_id=%d",
+		a.base,
+		chatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// LeaveChat is used to make the bot leave a group, supergroup or channel.
+func (a API) LeaveChat(chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sleaveChat?chat_id=%d",
+		a.base,
+		chatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // GetChat is used to get up to date information about the chat.
 // (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
 func (a API) GetChat(chatID int64) (APIResponseChat, error) {
@@ -844,6 +998,45 @@ func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) 
 		a.base,
 		chatID,
 		userID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SetChatStickerSet is used to set a new group sticker set for a supergroup.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+// Use the field `can_set_sticker_set` optionally returned in GetChat requests to check if the bot can use this method.
+func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%ssetChatStickerSet?chat_id=%d&sticker_set_name=%s",
+		a.base,
+		chatID,
+		encode(stickerSetName),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// DeleteChatStickerSet is used to delete a group sticker set for a supergroup.
+// The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+// Use the field `can_set_sticker_set` optionally returned in GetChat requests to check if the bot can use this method.
+func (a API) DeleteChatStickerSet(chatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sdeleteChatStickerSet?chat_id=%d",
+		a.base,
+		chatID,
 	)
 
 	cnt, err := sendGetRequest(url)
@@ -993,6 +1186,25 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 		"%seditMessageReplyMarkup?%s&%s",
 		a.base,
 		querify(msg),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// StopPoll is used to stop a poll which was sent by the bot.
+func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (APIResponsePoll, error) {
+	var res APIResponsePoll
+	var url = fmt.Sprintf(
+		"%sstopPoll?chat_id=%d&message_id=%d&%s",
+		a.base,
+		chatID,
+		messageID,
 		querify(opts),
 	)
 

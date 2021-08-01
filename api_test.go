@@ -11,6 +11,7 @@ import (
 var (
 	msgTmp       *Message
 	photoTmp     *Message
+	pollTmp      *Message
 	inviteTmp    *ChatInviteLink
 	expInviteTmp string
 	filePath     string
@@ -20,6 +21,7 @@ var (
 	botID        = int64(1713461126)
 	channelID    = int64(-1001563144067)
 	groupID      = int64(-1001265771214)
+	pinMsgID     = int(11)
 	photoID      = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
 	animationID  = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
 	audioID      = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
@@ -890,6 +892,8 @@ func TestSendPoll(t *testing.T) {
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
+
+	pollTmp = resp.Result
 }
 
 func TestSendDice(t *testing.T) {
@@ -1146,6 +1150,110 @@ func TestRevokeChatInviteLink(t *testing.T) {
 	}
 }
 
+func TestSetChatPhoto(t *testing.T) {
+	resp, err := api.SetChatPhoto(
+		NewInputFilePath("tests/echotron_test.png"),
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestDeleteChatPhoto(t *testing.T) {
+	resp, err := api.DeleteChatPhoto(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSetChatTitle(t *testing.T) {
+	resp, err := api.SetChatTitle(
+		groupID,
+		"Echotron Coverage Supergroup",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSetChatDescription(t *testing.T) {
+	resp, err := api.SetChatDescription(
+		groupID,
+		"This supergroup is used to test some of the methods of the Echotron library for Telegram bots.",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestPinChatMessage(t *testing.T) {
+	resp, err := api.PinChatMessage(
+		groupID,
+		pinMsgID,
+		&DisableNotificationOptions{true},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestUnpinChatMessage(t *testing.T) {
+	resp, err := api.UnpinChatMessage(
+		groupID,
+		pinMsgID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestUnpinAllChatMessages(t *testing.T) {
+	resp, err := api.UnpinAllChatMessages(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestGetChat(t *testing.T) {
 	resp, err := api.GetChat(
 		chatID,
@@ -1344,6 +1452,22 @@ func TestEditMessageReplyMarkup(t *testing.T) {
 		&MessageReplyMarkup{
 			ReplyMarkup: inlineKeyboardEdit,
 		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestStopPoll(t *testing.T) {
+	resp, err := api.StopPoll(
+		chatID,
+		pollTmp.ID,
+		nil,
 	)
 
 	if err != nil {

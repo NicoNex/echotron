@@ -156,6 +156,13 @@ type APIResponseInteger struct {
 	APIResponseBase
 }
 
+// APIResponsePoll represents the incoming response from Telegram servers.
+// Used by all methods that return a Poll object on success.
+type APIResponsePoll struct {
+	Result *Poll `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
 // Used by all methods that return an array of GameHighScore objects on success.
 type APIResponseGameHighScore struct {
