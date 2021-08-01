@@ -1,6 +1,7 @@
 package echotron
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"reflect"
@@ -1197,7 +1198,10 @@ func TestSetChatTitle(t *testing.T) {
 func TestSetChatDescription(t *testing.T) {
 	resp, err := api.SetChatDescription(
 		groupID,
-		"This supergroup is used to test some of the methods of the Echotron library for Telegram bots.",
+		fmt.Sprintf(
+			"This supergroup is used to test some of the methods of the Echotron library for Telegram bots.\n\nLast changed: %d",
+			time.Now().Unix(),
+		),
 	)
 
 	if err != nil {
