@@ -412,6 +412,45 @@ func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *Locat
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// EditMessageLiveLocation is used to edit live location messages.
+// A location can be edited until its `LivePeriod` expires or editing is explicitly disabled by a call to `StopMessageLiveLocation`.
+func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude float64, opts *EditLocationOptions) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%seditMessageLiveLocation?latitude=%f&longitude=%f&%s&%s",
+		a.base,
+		latitude,
+		longitude,
+		querify(msg),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// StopMessageLiveLocation is used to stop updating a live location message before `LivePeriod` expires.
+func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMarkup) (APIResponseMessage, error) {
+	var res APIResponseMessage
+	var url = fmt.Sprintf(
+		"%sstopMessageLiveLocation?%s&%s",
+		a.base,
+		querify(msg),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SendVenue is used to send information about a venue.
 func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address string, opts *VenueOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage

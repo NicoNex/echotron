@@ -13,6 +13,7 @@ var (
 	msgTmp       *Message
 	photoTmp     *Message
 	pollTmp      *Message
+	locationTmp  *Message
 	inviteTmp    *ChatInviteLink
 	expInviteTmp string
 	filePath     string
@@ -828,6 +829,44 @@ func TestSendLocation(t *testing.T) {
 		chatID,
 		0.0,
 		0.0,
+		&LocationOptions{
+			LivePeriod: 60,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+
+	locationTmp = resp.Result
+}
+
+func TestEditMessageLiveLocation(t *testing.T) {
+	resp, err := api.EditMessageLiveLocation(
+		NewMessageID(chatID, locationTmp.ID),
+		0.0,
+		0.0,
+		&EditLocationOptions{
+			ReplyMarkup: inlineKeyboard,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestStopMessageLiveLocation(t *testing.T) {
+	resp, err := api.StopMessageLiveLocation(
+		NewMessageID(chatID, locationTmp.ID),
 		nil,
 	)
 

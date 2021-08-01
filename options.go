@@ -316,6 +316,14 @@ type LocationOptions struct {
 	ProximityAlertRadius int     `query:"proximity_alert_radius"`
 }
 
+// EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
+type EditLocationOptions struct {
+	HorizontalAccuracy   float64              `query:"horizontal_accuracy"`
+	Heading              int                  `query:"heading"`
+	ProximityAlertRadius int                  `query:"proximity_alert_radius"`
+	ReplyMarkup          InlineKeyboardMarkup `query:"reply_markup"`
+}
+
 // VenueOptions contains the optional parameters used by the SendVenue method.
 type VenueOptions struct {
 	BaseOptions     `query:"recursive"`
