@@ -334,7 +334,7 @@ type ContactOptions struct {
 
 // PollOptions contains the optional parameters used by the SendPoll method.
 type PollOptions struct {
-	BaseOptions
+	BaseOptions           `query:"recursive"`
 	IsAnonymous           bool            `query:"is_anonymous"`
 	Type                  PollType        `query:"type"`
 	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
