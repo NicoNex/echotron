@@ -220,7 +220,7 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 
 // ForwardMessage is used to forward messages of any kind.
 // Service messages can't be forwarded.
-func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *ForwardOptions) (APIResponseMessage, error) {
+func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *DisableNotificationOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sforwardMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",

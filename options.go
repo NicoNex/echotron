@@ -193,8 +193,8 @@ type MessageOptions struct {
 	DisableWebPagePreview bool            `query:"disable_web_page_preview"`
 }
 
-// ForwardOptions contains the optional parameters used by the ForwardMessage method.
-type ForwardOptions struct {
+// DisableNotification contains the optional parameters used by some Telegram API methods.
+type DisableNotificationOptions struct {
 	DisableNotification bool `query:"disable_notification"`
 }
 
