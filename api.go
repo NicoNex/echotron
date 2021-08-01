@@ -36,6 +36,15 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
+func serializePerms(permissions ChatPermissions) (string, error) {
+	perm, err := json.Marshal(PermissionOptions{permissions})
+	if err != nil {
+		return "", err
+	}
+
+	return string(perm), nil
+}
+
 func sendFile(file InputFile, url, fileType string) (cnt []byte, err error) {
 	switch {
 	case file.id != "":
@@ -610,7 +619,7 @@ func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (APIRespo
 func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermissions, opts *RestrictOptions) (APIResponseBool, error) {
 	var res APIResponseBool
 
-	perm, err := json.Marshal(PermissionOptions{permissions})
+	perm, err := serializePerms(permissions)
 	if err != nil {
 		return res, err
 	}
@@ -620,7 +629,7 @@ func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermission
 		a.base,
 		chatID,
 		userID,
-		encode(string(perm)),
+		encode(perm),
 		querify(opts),
 	)
 
@@ -676,7 +685,7 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (APIResponseBool, error) {
 	var res APIResponseBool
 
-	perm, err := json.Marshal(PermissionOptions{permissions})
+	perm, err := serializePerms(permissions)
 	if err != nil {
 		return res, err
 	}
@@ -685,7 +694,7 @@ func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (APIR
 		"%ssetChatPermissions?chat_id=%d&permissions=%s",
 		a.base,
 		chatID,
-		encode(string(perm)),
+		encode(perm),
 	)
 
 	cnt, err := sendGetRequest(url)
