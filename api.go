@@ -595,7 +595,7 @@ func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (APIResponseB
 // The bot must be an administrator for this to work.
 // By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it.
 // So if the user is a member of the chat they will also be REMOVED from the chat.
-// If you don't want this, use the parameter `only_if_banned`.
+// If you don't want this, use the parameter `OnlyIfBanned`.
 func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
@@ -1010,7 +1010,7 @@ func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) 
 
 // SetChatStickerSet is used to set a new group sticker set for a supergroup.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
-// Use the field `can_set_sticker_set` optionally returned in GetChat requests to check if the bot can use this method.
+// Use the field `CanSetStickerSet` optionally returned in GetChat requests to check if the bot can use this method.
 func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
@@ -1030,7 +1030,7 @@ func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (APIResponse
 
 // DeleteChatStickerSet is used to delete a group sticker set for a supergroup.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
-// Use the field `can_set_sticker_set` optionally returned in GetChat requests to check if the bot can use this method.
+// Use the field `CanSetStickerSet` optionally returned in GetChat requests to check if the bot can use this method.
 func (a API) DeleteChatStickerSet(chatID int64) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
