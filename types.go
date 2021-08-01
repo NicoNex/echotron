@@ -149,9 +149,9 @@ type APIResponseChatMember struct {
 	APIResponseBase
 }
 
-// APIResponseMemberCount represents the incoming response from Telegram servers.
-// Used by all methods that return and integer on success.
-type APIResponseMemberCount struct {
+// APIResponseInteger represents the incoming response from Telegram servers.
+// Used by all methods that return an integer on success.
+type APIResponseInteger struct {
 	Result int `json:"result,omitempty"`
 	APIResponseBase
 }

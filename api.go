@@ -820,8 +820,8 @@ func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, err
 }
 
 // GetChatMemberCount is used to get the number of members in a chat.
-func (a API) GetChatMemberCount(chatID int64) (APIResponseMemberCount, error) {
-	var res APIResponseMemberCount
+func (a API) GetChatMemberCount(chatID int64) (APIResponseInteger, error) {
+	var res APIResponseInteger
 	var url = fmt.Sprintf(
 		"%sgetChatMemberCount?chat_id=%d",
 		a.base,
