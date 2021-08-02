@@ -140,6 +140,17 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) e
 	}
 }
 
+func (d *Dispatcher) instance(chatID int64) Bot {
+	bot, ok := d.sessionMap[chatID]
+	if !ok {
+		bot = d.newBot(chatID)
+		d.mu.Lock()
+		d.sessionMap[chatID] = bot
+		d.mu.Unlock()
+	}
+	return bot
+}
+
 func (d *Dispatcher) listen() {
 	for update := range d.updates {
 		var chatID int64
@@ -160,16 +171,8 @@ func (d *Dispatcher) listen() {
 			continue
 		}
 
-		d.mu.Lock()
-		if _, isIn := d.sessionMap[chatID]; !isIn {
-			d.sessionMap[chatID] = d.newBot(chatID)
-		}
-		bot, ok := d.sessionMap[chatID]
-		d.mu.Unlock()
-
-		if ok {
-			go bot.Update(update)
-		}
+		bot := d.instance(chatID)
+		go bot.Update(update)
 	}
 }
 
