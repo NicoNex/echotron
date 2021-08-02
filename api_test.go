@@ -258,7 +258,7 @@ func TestSendMessageWithKeyboard(t *testing.T) {
 
 func TestSendPhoto(t *testing.T) {
 	resp, err := api.SendPhoto(
-		NewInputFilePath("tests/echotron_test.png"),
+		NewInputFilePath("assets/tests/echotron_test.png"),
 		chatID,
 		&PhotoOptions{
 			Caption: "TestSendPhoto",
@@ -295,7 +295,7 @@ func TestSendPhotoByID(t *testing.T) {
 }
 
 func TestSendPhotoBytes(t *testing.T) {
-	data, err := openBytes("tests/echotron_test.png")
+	data, err := openBytes("assets/tests/echotron_test.png")
 
 	if err != nil {
 		t.Fatal(err)
@@ -320,7 +320,7 @@ func TestSendPhotoBytes(t *testing.T) {
 
 func TestSendPhotoWithKeyboard(t *testing.T) {
 	resp, err := api.SendPhoto(
-		NewInputFilePath("tests/echotron_test.png"),
+		NewInputFilePath("assets/tests/echotron_test.png"),
 		chatID,
 		&PhotoOptions{
 			Caption: "TestSendPhotoWithKeyboard",
@@ -341,7 +341,7 @@ func TestSendPhotoWithKeyboard(t *testing.T) {
 
 func TestSendAudio(t *testing.T) {
 	resp, err := api.SendAudio(
-		NewInputFilePath("tests/audio.mp3"),
+		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&AudioOptions{
 			Caption: "TestSendAudio",
@@ -377,7 +377,7 @@ func TestSendAudioByID(t *testing.T) {
 
 func TestSendAudioWithKeyboard(t *testing.T) {
 	resp, err := api.SendAudio(
-		NewInputFilePath("tests/audio.mp3"),
+		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&AudioOptions{
 			Caption: "TestSendAudioWithKeyboard",
@@ -397,7 +397,7 @@ func TestSendAudioWithKeyboard(t *testing.T) {
 }
 
 func TestSendAudioBytes(t *testing.T) {
-	data, err := openBytes("tests/audio.mp3")
+	data, err := openBytes("assets/tests/audio.mp3")
 
 	if err != nil {
 		t.Fatal(err)
@@ -422,7 +422,7 @@ func TestSendAudioBytes(t *testing.T) {
 
 func TestSendDocument(t *testing.T) {
 	resp, err := api.SendDocument(
-		NewInputFilePath("tests/document.pdf"),
+		NewInputFilePath("assets/tests/document.pdf"),
 		chatID,
 		&DocumentOptions{
 			Caption: "TestSendDocument",
@@ -458,7 +458,7 @@ func TestSendDocumentByID(t *testing.T) {
 
 func TestSendDocumentWithKeyboard(t *testing.T) {
 	resp, err := api.SendDocument(
-		NewInputFilePath("tests/document.pdf"),
+		NewInputFilePath("assets/tests/document.pdf"),
 		chatID,
 		&DocumentOptions{
 			Caption: "TestSendDocumentWithKeyboard",
@@ -478,7 +478,7 @@ func TestSendDocumentWithKeyboard(t *testing.T) {
 }
 
 func TestSendDocumentBytes(t *testing.T) {
-	file, err := os.Open("tests/document.pdf")
+	file, err := os.Open("assets/tests/document.pdf")
 
 	if err != nil {
 		t.Fatal(err)
@@ -509,7 +509,7 @@ func TestSendDocumentBytes(t *testing.T) {
 
 func TestSendVideo(t *testing.T) {
 	resp, err := api.SendVideo(
-		NewInputFilePath("tests/video.webm"),
+		NewInputFilePath("assets/tests/video.webm"),
 		chatID,
 		&VideoOptions{
 			Caption: "TestSendVideo",
@@ -545,7 +545,7 @@ func TestSendVideoByID(t *testing.T) {
 
 func TestSendVideoWithKeyboard(t *testing.T) {
 	resp, err := api.SendVideo(
-		NewInputFilePath("tests/video.webm"),
+		NewInputFilePath("assets/tests/video.webm"),
 		chatID,
 		&VideoOptions{
 			Caption: "TestSendVideoWithKeyboard",
@@ -565,7 +565,7 @@ func TestSendVideoWithKeyboard(t *testing.T) {
 }
 
 func TestSendVideoBytes(t *testing.T) {
-	data, err := openBytes("tests/video.webm")
+	data, err := openBytes("assets/tests/video.webm")
 
 	if err != nil {
 		t.Fatal(err)
@@ -590,7 +590,7 @@ func TestSendVideoBytes(t *testing.T) {
 
 func TestSendAnimation(t *testing.T) {
 	resp, err := api.SendAnimation(
-		NewInputFilePath("tests/animation.mp4"),
+		NewInputFilePath("assets/tests/animation.mp4"),
 		chatID,
 		&AnimationOptions{
 			Caption: "TestSendAnimation",
@@ -626,7 +626,7 @@ func TestSendAnimationByID(t *testing.T) {
 
 func TestSendAnimationWithKeyboard(t *testing.T) {
 	resp, err := api.SendAnimation(
-		NewInputFilePath("tests/animation.mp4"),
+		NewInputFilePath("assets/tests/animation.mp4"),
 		chatID,
 		&AnimationOptions{
 			Caption: "TestSendAnimationWithKeyboard",
@@ -646,7 +646,7 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 }
 
 func TestSendAnimationBytes(t *testing.T) {
-	data, err := openBytes("tests/animation.mp4")
+	data, err := openBytes("assets/tests/animation.mp4")
 
 	if err != nil {
 		t.Fatal(err)
@@ -671,7 +671,7 @@ func TestSendAnimationBytes(t *testing.T) {
 
 func TestSendVoice(t *testing.T) {
 	resp, err := api.SendVoice(
-		NewInputFilePath("tests/audio.mp3"),
+		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&VoiceOptions{
 			Caption: "TestSendVoice",
@@ -707,7 +707,7 @@ func TestSendVoiceByID(t *testing.T) {
 
 func TestSendVoiceWithKeyboard(t *testing.T) {
 	resp, err := api.SendVoice(
-		NewInputFilePath("tests/audio.mp3"),
+		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&VoiceOptions{
 			Caption: "TestSendVoiceWithKeyboard",
@@ -727,7 +727,7 @@ func TestSendVoiceWithKeyboard(t *testing.T) {
 }
 
 func TestSendVoiceBytes(t *testing.T) {
-	data, err := openBytes("tests/audio.mp3")
+	data, err := openBytes("assets/tests/audio.mp3")
 
 	if err != nil {
 		t.Fatal(err)
@@ -752,7 +752,7 @@ func TestSendVoiceBytes(t *testing.T) {
 
 func TestSendVideoNote(t *testing.T) {
 	resp, err := api.SendVideoNote(
-		NewInputFilePath("tests/video_note.mp4"),
+		NewInputFilePath("assets/tests/video_note.mp4"),
 		chatID,
 		nil,
 	)
@@ -784,7 +784,7 @@ func TestSendVideoNoteByID(t *testing.T) {
 
 func TestSendVideoNoteWithKeyboard(t *testing.T) {
 	resp, err := api.SendVideoNote(
-		NewInputFilePath("tests/video_note.mp4"),
+		NewInputFilePath("assets/tests/video_note.mp4"),
 		chatID,
 		&VideoNoteOptions{
 			BaseOptions: BaseOptions{
@@ -803,7 +803,7 @@ func TestSendVideoNoteWithKeyboard(t *testing.T) {
 }
 
 func TestSendVideoNoteBytes(t *testing.T) {
-	data, err := openBytes("tests/video_note.mp4")
+	data, err := openBytes("assets/tests/video_note.mp4")
 
 	if err != nil {
 		t.Fatal(err)
@@ -1192,7 +1192,7 @@ func TestRevokeChatInviteLink(t *testing.T) {
 
 func TestSetChatPhoto(t *testing.T) {
 	resp, err := api.SetChatPhoto(
-		NewInputFilePath("tests/echotron_test.png"),
+		NewInputFilePath("assets/tests/echotron_test.png"),
 		groupID,
 	)
 

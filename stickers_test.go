@@ -29,7 +29,7 @@ func TestUploadStickerFile(t *testing.T) {
 	resp, err := api.UploadStickerFile(
 		chatID,
 		StickerFile{
-			NewInputFilePath("tests/echotron_test.png"),
+			NewInputFilePath("assets/tests/echotron_test.png"),
 			PNGSticker,
 		},
 	)
@@ -73,7 +73,7 @@ func TestAddStickerToSet(t *testing.T) {
 		"echocoverpack_by_echotron_coverage_bot",
 		"🤖",
 		StickerFile{
-			NewInputFilePath("tests/echotron_sticker.png"),
+			NewInputFilePath("assets/tests/echotron_sticker.png"),
 			PNGSticker,
 		},
 		nil,
@@ -153,7 +153,7 @@ func TestSetStickerSetThumb(t *testing.T) {
 	resp, err := api.SetStickerSetThumb(
 		"echocoverpack_by_echotron_coverage_bot",
 		chatID,
-		NewInputFilePath("tests/echotron_thumb.png"),
+		NewInputFilePath("assets/tests/echotron_thumb.png"),
 	)
 
 	if err != nil {
