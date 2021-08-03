@@ -193,7 +193,7 @@ type MessageOptions struct {
 	DisableWebPagePreview bool            `query:"disable_web_page_preview"`
 }
 
-// DisableNotification contains the optional parameters used by some Telegram API methods.
+// DisableNotificationOptions contains the optional parameters used by some Telegram API methods.
 type DisableNotificationOptions struct {
 	DisableNotification bool `query:"disable_notification"`
 }
