@@ -518,11 +518,11 @@ func (i InputContactMessageContent) ImplementsInputMessageContent() {}
 
 // InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQuery method.
 type InlineQueryOptions struct {
-	CacheTime         int    `json:"cache_time"`
-	IsPersonal        bool   `json:"is_personal"`
-	NextOffset        string `json:"next_offset"`
-	SwitchPmText      string `json:"switch_pm_text"`
-	SwitchPmParameter string `json:"switch_pm_parameter"`
+	CacheTime         int    `query:"cache_time"`
+	IsPersonal        bool   `query:"is_personal"`
+	NextOffset        string `query:"next_offset"`
+	SwitchPmText      string `query:"switch_pm_text"`
+	SwitchPmParameter string `query:"switch_pm_parameter"`
 }
 
 // AnswerInlineQuery is used to send answers to an inline query.
