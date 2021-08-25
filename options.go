@@ -425,7 +425,7 @@ func NewInlineMessageID(ID string) MessageIDOptions {
 
 // MessageTextOptions contains the optional parameters used by the EditMessageText method.
 type MessageTextOptions struct {
-	ParseMode             string               `query:"parse_mode"`
+	ParseMode             ParseMode            `query:"parse_mode"`
 	Entities              []MessageEntity      `query:"entities"`
 	DisableWebPagePreview bool                 `query:"disable_web_page_preview"`
 	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
@@ -434,7 +434,7 @@ type MessageTextOptions struct {
 // MessageCaptionOptions contains the optional parameters used by the EditMessageCaption method.
 type MessageCaptionOptions struct {
 	Caption         string               `query:"caption"`
-	ParseMode       string               `query:"parse_mode"`
+	ParseMode       ParseMode            `query:"parse_mode"`
 	CaptionEntities []MessageEntity      `query:"caption_entities"`
 	ReplyMarkup     InlineKeyboardMarkup `query:"reply_markup"`
 }
