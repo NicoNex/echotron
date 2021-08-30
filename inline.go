@@ -28,19 +28,19 @@ type InlineQueryType string
 
 // These are all the possible types for the various InlineQueryResult*'s Type field.
 const (
-	ARTICLE  InlineQueryType = "article"
-	PHOTO                    = "photo"
-	GIF                      = "gif"
-	MPEG4GIF                 = "mpeg4_gif"
-	VIDEO                    = "video"
-	AUDIO                    = "audio"
-	VOICE                    = "voice"
-	DOCUMENT                 = "document"
-	LOCATION                 = "location"
-	VENUE                    = "venue"
-	CONTACT                  = "contact"
-	GAME                     = "game"
-	STICKER                  = "sticker"
+	INLINE_ARTICLE  InlineQueryType = "article"
+	INLINE_PHOTO                    = "photo"
+	INLINE_GIF                      = "gif"
+	INLINE_MPEG4GIF                 = "mpeg4_gif"
+	INLINE_VIDEO                    = "video"
+	INLINE_AUDIO                    = "audio"
+	INLINE_VOICE                    = "voice"
+	INLINE_DOCUMENT                 = "document"
+	INLINE_LOCATION                 = "location"
+	INLINE_VENUE                    = "venue"
+	INLINE_CONTACT                  = "contact"
+	INLINE_GAME                     = "game"
+	INLINE_STICKER                  = "sticker"
 )
 
 // InlineQuery represents an incoming inline query.
