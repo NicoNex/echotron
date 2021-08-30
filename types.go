@@ -33,14 +33,14 @@ type Update struct {
 
 // WebhookInfo contains information about the current status of a webhook.
 type WebhookInfo struct {
-	URL                  string       `json:"url"`
-	HasCustomCertificate bool         `json:"has_custom_certificate"`
-	PendingUpdateCount   int          `json:"pending_update_count"`
-	IPAddress            string       `json:"ip_address,omitempty"`
-	LastErrorDate        int64        `json:"last_error_date,omitempty"`
-	LastErrorMessage     string       `json:"last_error_message,omitempty"`
-	MaxConnections       int          `json:"max_connections,omitempty"`
-	AllowedUpdates       []UpdateType `json:"allowed_updates,omitempty"`
+	URL                  string        `json:"url"`
+	HasCustomCertificate bool          `json:"has_custom_certificate"`
+	PendingUpdateCount   int           `json:"pending_update_count"`
+	IPAddress            string        `json:"ip_address,omitempty"`
+	LastErrorDate        int64         `json:"last_error_date,omitempty"`
+	LastErrorMessage     string        `json:"last_error_message,omitempty"`
+	MaxConnections       int           `json:"max_connections,omitempty"`
+	AllowedUpdates       []*UpdateType `json:"allowed_updates,omitempty"`
 }
 
 // APIResponseBase is a base type that represents the incoming response from Telegram servers.
@@ -82,7 +82,7 @@ type APIResponseMessageID struct {
 // APIResponseCommands represents the incoming response from Telegram servers.
 // Used by all methods that return an array of BotCommand objects on success.
 type APIResponseCommands struct {
-	Result []BotCommand `json:"result,omitempty"`
+	Result []*BotCommand `json:"result,omitempty"`
 	APIResponseBase
 }
 
@@ -138,14 +138,14 @@ type APIResponseFile struct {
 // APIResponseAdministrators represents the incoming response from Telegram servers.
 // Used by all methods that return an array of ChatMember objects on success.
 type APIResponseAdministrators struct {
-	Result []ChatMember `json:"result,omitempty"`
+	Result []*ChatMember `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseChatMember represents the incoming response from Telegram servers.
 // Used by all methods that return a ChatMember object on success.
 type APIResponseChatMember struct {
-	Result ChatMember `json:"result,omitempty"`
+	Result *ChatMember `json:"result,omitempty"`
 	APIResponseBase
 }
 
@@ -166,14 +166,14 @@ type APIResponsePoll struct {
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
 // Used by all methods that return an array of GameHighScore objects on success.
 type APIResponseGameHighScore struct {
-	Result []GameHighScore `json:"result,omitempty"`
+	Result []*GameHighScore `json:"result,omitempty"`
 	APIResponseBase
 }
 
 // APIResponseWebhook represents the incoming response from Telegram servers.
 // Used by all methods that return a WebhookInfo object on success.
 type APIResponseWebhook struct {
-	Result WebhookInfo `json:"result,omitempty"`
+	Result *WebhookInfo `json:"result,omitempty"`
 	APIResponseBase
 }
 
@@ -573,6 +573,18 @@ type ResponseParameters struct {
 	RetryAfter      int `json:"retry_after,omitempty"`
 }
 
+// InputMediaType is a custom type for the various InputMediaType*'s Type field.
+type InputMediaType string
+
+// These are all the possible types for the various InputMediaType*'s Type field.
+const (
+	PHOTO     InputMediaType = "photo"
+	VIDEO                    = "video"
+	ANIMATION                = "animation"
+	AUDIO                    = "audio"
+	DOCUMENT                 = "document"
+)
+
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	ImplementsInputMedia()
@@ -581,11 +593,11 @@ type InputMedia interface {
 // InputMediaPhoto represents a photo to be sent.
 // Type MUST BE "photo".
 type InputMediaPhoto struct {
-	Type            string          `json:"type"`
-	Media           string          `json:"media"`
-	Caption         string          `json:"caption,omitempty"`
-	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
-	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+	Type            InputMediaType   `json:"type"`
+	Media           string           `json:"media"`
+	Caption         string           `json:"caption,omitempty"`
+	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
@@ -594,16 +606,16 @@ func (i InputMediaPhoto) ImplementsInputMedia() {}
 // InputMediaVideo represents a video to be sent.
 // Type MUST BE "video".
 type InputMediaVideo struct {
-	Type              string          `json:"type"`
-	Media             string          `json:"media"`
-	Thumb             InputFile       `json:"input_file,omitempty"`
-	Caption           string          `json:"caption,omitempty"`
-	ParseMode         ParseMode       `json:"parse_mode,omitempty"`
-	CaptionEntities   []MessageEntity `json:"caption_entities,omitempty"`
-	Width             int             `json:"width,omitempty"`
-	Height            int             `json:"height,omitempty"`
-	Duration          int             `json:"duration,omitempty"`
-	SupportsStreaming bool            `json:"supports_streaming,omitempty"`
+	Type              InputMediaType   `json:"type"`
+	Media             string           `json:"media"`
+	Thumb             InputFile        `json:"input_file,omitempty"`
+	Caption           string           `json:"caption,omitempty"`
+	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
+	Width             int              `json:"width,omitempty"`
+	Height            int              `json:"height,omitempty"`
+	Duration          int              `json:"duration,omitempty"`
+	SupportsStreaming bool             `json:"supports_streaming,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
@@ -612,15 +624,15 @@ func (i InputMediaVideo) ImplementsInputMedia() {}
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 // Type MUST BE "animation".
 type InputMediaAnimation struct {
-	Type            string          `json:"type"`
-	Media           string          `json:"media"`
-	Thumb           InputFile       `json:"input_file,omitempty"`
-	Caption         string          `json:"caption,omitempty"`
-	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
-	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
-	Width           int             `json:"width,omitempty"`
-	Height          int             `json:"height,omitempty"`
-	Duration        int             `json:"duration,omitempty"`
+	Type            InputMediaType   `json:"type"`
+	Media           string           `json:"media"`
+	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Caption         string           `json:"caption,omitempty"`
+	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
+	Width           int              `json:"width,omitempty"`
+	Height          int              `json:"height,omitempty"`
+	Duration        int              `json:"duration,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
@@ -629,15 +641,15 @@ func (i InputMediaAnimation) ImplementsInputMedia() {}
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 // Type MUST BE "audio".
 type InputMediaAudio struct {
-	Type            string          `json:"type"`
-	Media           string          `json:"media"`
-	Thumb           InputFile       `json:"input_file,omitempty"`
-	Caption         string          `json:"caption,omitempty"`
-	ParseMode       ParseMode       `json:"parse_mode,omitempty"`
-	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
-	Duration        int             `json:"duration,omitempty"`
-	Performer       string          `json:"performer,omitempty"`
-	Title           string          `json:"title,omitempty"`
+	Type            InputMediaType   `json:"type"`
+	Media           string           `json:"media"`
+	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Caption         string           `json:"caption,omitempty"`
+	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
+	Duration        int              `json:"duration,omitempty"`
+	Performer       string           `json:"performer,omitempty"`
+	Title           string           `json:"title,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
@@ -646,13 +658,13 @@ func (i InputMediaAudio) ImplementsInputMedia() {}
 // InputMediaDocument represents a general file to be sent.
 // Type MUST BE "document".
 type InputMediaDocument struct {
-	Type                        string          `json:"type"`
-	Media                       string          `json:"media"`
-	Thumb                       InputFile       `json:"input_file,omitempty"`
-	Caption                     string          `json:"caption,omitempty"`
-	ParseMode                   ParseMode       `json:"parse_mode,omitempty"`
-	CaptionEntities             []MessageEntity `json:"caption_entities,omitempty"`
-	DisableContentTypeDetection bool            `json:"disable_content_type_detection,omitempty"`
+	Type                        InputMediaType   `json:"type"`
+	Media                       string           `json:"media"`
+	Thumb                       *InputFile       `json:"input_file,omitempty"`
+	Caption                     string           `json:"caption,omitempty"`
+	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities             []*MessageEntity `json:"caption_entities,omitempty"`
+	DisableContentTypeDetection bool             `json:"disable_content_type_detection,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
