@@ -1162,7 +1162,7 @@ func TestEditChatInviteLink(t *testing.T) {
 		channelID,
 		inviteTmp.InviteLink,
 		&InviteLinkOptions{
-			ExpireDate: time.Now().Unix(),
+			ExpireDate: time.Now().Unix() + 20,
 		},
 	)
 
@@ -1397,10 +1397,12 @@ func TestGetMyCommands(t *testing.T) {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 
-	if !reflect.DeepEqual(resp.Result, commands) {
-		t.Logf("expected commands: %v", commands)
-		t.Logf("commands from API: %v", resp.Result)
-		t.Fatal("error: commands mismatch")
+	for i, res := range resp.Result {
+		if !reflect.DeepEqual(*res, commands[i]) {
+			t.Logf("expected command in %d: %v", i, commands[i])
+			t.Logf("command in %d from API: %v", i, res)
+			t.Fatal("error: commands mismatch")
+		}
 	}
 }
 

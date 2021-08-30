@@ -22,7 +22,7 @@ import "testing"
 
 var (
 	gameMsgTmp *Message
-	highScores []GameHighScore
+	highScores []*GameHighScore
 )
 
 func TestSendGame(t *testing.T) {
