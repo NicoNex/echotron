@@ -95,10 +95,10 @@ type ReplyMarkup interface {
 
 // KeyboardButton represents a button in a keyboard.
 type KeyboardButton struct {
-	Text            string    `json:"text"`
-	RequestContact  bool      `json:"request_contact,omitempty"`
-	RequestLocation bool      `json:"request_location,omitempty"`
-	RequestPoll     *PollType `json:"request_poll,omitempty"`
+	Text            string                  `json:"text"`
+	RequestContact  bool                    `json:"request_contact,omitempty"`
+	RequestLocation bool                    `json:"request_location,omitempty"`
+	RequestPoll     *KeyboardButtonPollType `json:"request_poll,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
