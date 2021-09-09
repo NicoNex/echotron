@@ -28,6 +28,13 @@ import (
 	"strings"
 )
 
+// content is a struct which contains a file's name, its type and its data.
+type content struct {
+	fname string
+	ftype string
+	fdata []byte
+}
+
 // sendGetRequest is used to send an HTTP GET request.
 func sendGetRequest(url string) ([]byte, error) {
 	resp, err := http.Get(url)
@@ -45,15 +52,18 @@ func sendGetRequest(url string) ([]byte, error) {
 }
 
 // sendPostRequest is used to send an HTTP POST request.
-func sendPostRequest(url, fname, ftype string, b []byte) ([]byte, error) {
+func sendPostRequest(url string, files ...content) ([]byte, error) {
 	var buf = new(bytes.Buffer)
 	var w = multipart.NewWriter(buf)
 
-	part, err := w.CreateFormFile(ftype, filepath.Base(fname))
-	if err != nil {
-		return []byte{}, err
+	for _, f := range files {
+		part, err := w.CreateFormFile(f.ftype, filepath.Base(f.fname))
+		if err != nil {
+			return []byte{}, err
+		}
+		part.Write(f.fdata)
 	}
-	part.Write(b)
+
 	w.Close()
 
 	req, err := http.NewRequest("POST", url, buf)

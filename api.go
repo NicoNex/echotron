@@ -50,7 +50,7 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 		fallthrough
 
 	case file.path != "" && len(file.content) > 0:
-		res, err = sendPostRequest(url, file.path, fileType, file.content)
+		res, err = sendPostRequest(url, content{file.path, fileType, file.content})
 	}
 
 	if err != nil {
