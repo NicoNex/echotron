@@ -578,11 +578,11 @@ type InputMediaType string
 
 // These are all the possible types for the various InputMediaType*'s Type field.
 const (
-	PHOTO     InputMediaType = "photo"
-	VIDEO                    = "video"
-	ANIMATION                = "animation"
-	AUDIO                    = "audio"
-	DOCUMENT                 = "document"
+	InputMediaPhoto     InputMediaType = "photo"
+	InputMediaVideo                    = "video"
+	InputMediaAnimation                = "animation"
+	InputMediaAudio                    = "audio"
+	InputMediaDocument                 = "document"
 )
 
 // InputMedia is an interface for the various media types.
