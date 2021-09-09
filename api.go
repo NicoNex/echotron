@@ -1201,12 +1201,19 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // only to a document for document albums and to a photo or a video otherwise.
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
-func (a API) EditMessageMedia(msg MessageIDOptions, opts *MessageMediaOptions) (APIResponseMessage, error) {
+func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (APIResponseMessage, error) {
 	var res APIResponseMessage
+
+	m, err := json.Marshal(media)
+	if err != nil {
+		return res, err
+	}
+
 	var url = fmt.Sprintf(
-		"%seditMessageMedia?%s&%s",
+		"%seditMessageMedia?%s&media=%s&%s",
 		a.base,
 		querify(msg),
+		string(m),
 		querify(opts),
 	)
 

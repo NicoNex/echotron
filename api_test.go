@@ -1456,12 +1456,11 @@ func TestEditMessageCaption(t *testing.T) {
 func TestEditMessageMedia(t *testing.T) {
 	resp, err := api.EditMessageMedia(
 		NewMessageID(chatID, photoTmp.ID),
-		&MessageMediaOptions{
-			Media: InputMediaPhoto{
-				Type:  "photo",
-				Media: photoID,
-			},
+		InputMediaPhoto{
+			Type:  "photo",
+			Media: photoID,
 		},
+		nil,
 	)
 
 	if err != nil {

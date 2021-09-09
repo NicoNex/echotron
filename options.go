@@ -478,13 +478,7 @@ type MessageCaptionOptions struct {
 	ReplyMarkup     InlineKeyboardMarkup `query:"reply_markup"`
 }
 
-// MessageMediaOptions contains the optional parameters used by the EditMessageMedia method.
-type MessageMediaOptions struct {
-	Media       InputMedia           `query:"media"`
-	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
-}
-
-// MessageReplyMarkup contains the optional parameters used by the EditMessageReplyMarkup method.
+// MessageReplyMarkup contains the optional parameters used by the method which only require reply_markup.
 type MessageReplyMarkup struct {
 	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }
