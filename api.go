@@ -36,6 +36,30 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
+func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
+	switch {
+	case file.id != "":
+		res, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
+
+	case file.path != "" && len(file.content) == 0:
+		file.content, err = os.ReadFile(file.path)
+		if err != nil {
+			return res, err
+		}
+		file.path = filepath.Base(file.path)
+		fallthrough
+
+	case file.path != "" && len(file.content) > 0:
+		res, err = sendPostRequest(url, file.path, fileType, file.content)
+	}
+
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
 func serializePerms(permissions ChatPermissions) (string, error) {
 	perm, err := json.Marshal(PermissionOptions{permissions})
 	if err != nil {
@@ -43,30 +67,6 @@ func serializePerms(permissions ChatPermissions) (string, error) {
 	}
 
 	return string(perm), nil
-}
-
-func sendFile(file InputFile, url, fileType string) (cnt []byte, err error) {
-	switch {
-	case file.id != "":
-		cnt, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
-
-	case file.path != "" && len(file.content) == 0:
-		file.content, err = os.ReadFile(file.path)
-		if err != nil {
-			return cnt, err
-		}
-		file.path = filepath.Base(file.path)
-		fallthrough
-
-	case file.path != "" && len(file.content) > 0:
-		cnt, err = sendPostRequest(url, file.path, fileType, file.content)
-	}
-
-	if err != nil {
-		return cnt, err
-	}
-
-	return cnt, nil
 }
 
 // NewAPI returns a new API object.
