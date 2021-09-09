@@ -221,9 +221,7 @@ func TestSendMessageReply(t *testing.T) {
 		"TestSendMessageReply",
 		chatID,
 		&MessageOptions{
-			BaseOptions: BaseOptions{
-				ReplyToMessageID: msgTmp.ID,
-			},
+			ReplyToMessageID: msgTmp.ID,
 		},
 	)
 
@@ -241,9 +239,7 @@ func TestSendMessageWithKeyboard(t *testing.T) {
 		"TestSendMessageWithKeyboard",
 		chatID,
 		&MessageOptions{
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -323,10 +319,8 @@ func TestSendPhotoWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/echotron_test.png"),
 		chatID,
 		&PhotoOptions{
-			Caption: "TestSendPhotoWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendPhotoWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -380,10 +374,8 @@ func TestSendAudioWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&AudioOptions{
-			Caption: "TestSendAudioWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendAudioWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -461,10 +453,8 @@ func TestSendDocumentWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/document.pdf"),
 		chatID,
 		&DocumentOptions{
-			Caption: "TestSendDocumentWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendDocumentWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -548,10 +538,8 @@ func TestSendVideoWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/video.webm"),
 		chatID,
 		&VideoOptions{
-			Caption: "TestSendVideoWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendVideoWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -629,10 +617,8 @@ func TestSendAnimationWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/animation.mp4"),
 		chatID,
 		&AnimationOptions{
-			Caption: "TestSendAnimationWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendAnimationWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -710,10 +696,8 @@ func TestSendVoiceWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&VoiceOptions{
-			Caption: "TestSendVoiceWithKeyboard",
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			Caption:     "TestSendVoiceWithKeyboard",
+			ReplyMarkup: keyboard,
 		},
 	)
 
@@ -787,9 +771,7 @@ func TestSendVideoNoteWithKeyboard(t *testing.T) {
 		NewInputFilePath("assets/tests/video_note.mp4"),
 		chatID,
 		&VideoNoteOptions{
-			BaseOptions: BaseOptions{
-				ReplyMarkup: keyboard,
-			},
+			ReplyMarkup: keyboard,
 		},
 	)
 
