@@ -187,10 +187,13 @@ type BaseOptions struct {
 
 // MessageOptions contains the optional parameters used by some Telegram API methods.
 type MessageOptions struct {
-	BaseOptions           `query:"recursive"`
-	ParseMode             ParseMode       `query:"parse_mode"`
-	Entities              []MessageEntity `query:"entities"`
-	DisableWebPagePreview bool            `query:"disable_web_page_preview"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Entities                 []MessageEntity `query:"entities"`
+	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // DisableNotificationOptions contains the optional parameters used by some Telegram API methods.
@@ -200,16 +203,20 @@ type DisableNotificationOptions struct {
 
 // CopyOptions contains the optional parameters used by the CopyMessage method.
 type CopyOptions struct {
-	BaseOptions     `query:"recursive"`
-	ParseMode       ParseMode       `query:"parse_mode"`
-	Caption         string          `query:"caption"`
-	CaptionEntities []MessageEntity `query:"caption_entities"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // InputFile is a struct which contains data about a file to be sent.
 type InputFile struct {
 	id      string
 	path    string
+	ftype   string
 	content []byte
 }
 
@@ -230,74 +237,95 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 
 // PhotoOptions contains the optional parameters used by the SendPhoto method.
 type PhotoOptions struct {
-	BaseOptions     `query:"recursive"`
-	ParseMode       ParseMode       `query:"parse_mode"`
-	Caption         string          `query:"caption"`
-	CaptionEntities []MessageEntity `query:"caption_entities"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // AudioOptions contains the optional parameters used by the SendAudio method.
 type AudioOptions struct {
-	BaseOptions     `query:"recursive"`
-	ParseMode       ParseMode       `query:"parse_mode"`
-	Caption         string          `query:"caption"`
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Duration        int             `query:"duration"`
-	Performer       string          `query:"performer"`
-	Title           string          `query:"title"`
-	Thumb           InputFile       `query:"thumb"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	Duration                 int             `query:"duration"`
+	Performer                string          `query:"performer"`
+	Title                    string          `query:"title"`
+	Thumb                    InputFile       `query:"thumb"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
 type DocumentOptions struct {
-	BaseOptions                 `query:"recursive"`
 	ParseMode                   ParseMode       `query:"parse_mode"`
 	Caption                     string          `query:"caption"`
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
 	Thumb                       InputFile       `query:"thumb"`
+	DisableNotification         bool            `query:"disable_notification"`
+	ReplyToMessageID            int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply    bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup                 ReplyMarkup     `query:"reply_markup"`
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
 type VideoOptions struct {
-	BaseOptions       `query:"recursive"`
-	ParseMode         ParseMode       `query:"parse_mode"`
-	Caption           string          `query:"caption"`
-	CaptionEntities   []MessageEntity `query:"caption_entities"`
-	Duration          int             `query:"duration"`
-	Width             int             `query:"width"`
-	Height            int             `query:"height"`
-	Thumb             InputFile       `query:"thumb"`
-	SupportsStreaming bool            `query:"supports_streaming"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	Duration                 int             `query:"duration"`
+	Width                    int             `query:"width"`
+	Height                   int             `query:"height"`
+	Thumb                    InputFile       `query:"thumb"`
+	SupportsStreaming        bool            `query:"supports_streaming"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
 type AnimationOptions struct {
-	BaseOptions     `query:"recursive"`
-	ParseMode       ParseMode       `query:"parse_mode"`
-	Caption         string          `query:"caption"`
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Duration        int             `query:"duration"`
-	Width           int             `query:"width"`
-	Height          int             `query:"height"`
-	Thumb           InputFile       `query:"thumb"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	Duration                 int             `query:"duration"`
+	Width                    int             `query:"width"`
+	Height                   int             `query:"height"`
+	Thumb                    InputFile       `query:"thumb"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
 type VoiceOptions struct {
-	BaseOptions     `query:"recursive"`
-	ParseMode       ParseMode       `query:"parse_mode"`
-	Caption         string          `query:"caption"`
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Duration        int             `query:"duration"`
+	ParseMode                ParseMode       `query:"parse_mode"`
+	Caption                  string          `query:"caption"`
+	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	Duration                 int             `query:"duration"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
-	BaseOptions `query:"recursive"`
-	Duration    int       `query:"duration"`
-	Length      int       `query:"length"`
-	Thumb       InputFile `query:"thumb"`
+	Duration                 int         `query:"duration"`
+	Length                   int         `query:"length"`
+	Thumb                    InputFile   `query:"thumb"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
@@ -309,11 +337,14 @@ type MediaGroupOptions struct {
 
 // LocationOptions contains the optional parameters used by the SendLocation method.
 type LocationOptions struct {
-	BaseOptions          `query:"recursive"`
-	HorizontalAccuracy   float64 `query:"horizontal_accuracy"`
-	LivePeriod           int     `query:"live_period"`
-	Heading              int     `query:"heading"`
-	ProximityAlertRadius int     `query:"proximity_alert_radius"`
+	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
+	LivePeriod               int         `query:"live_period"`
+	Heading                  int         `query:"heading"`
+	ProximityAlertRadius     int         `query:"proximity_alert_radius"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
@@ -326,33 +357,42 @@ type EditLocationOptions struct {
 
 // VenueOptions contains the optional parameters used by the SendVenue method.
 type VenueOptions struct {
-	BaseOptions     `query:"recursive"`
-	FoursquareID    string `query:"foursquare_id"`
-	FoursquareType  string `query:"foursquare_type"`
-	GooglePlaceID   string `query:"google_place_id"`
-	GooglePlaceType string `query:"google_place_type"`
+	FoursquareID             string      `query:"foursquare_id"`
+	FoursquareType           string      `query:"foursquare_type"`
+	GooglePlaceID            string      `query:"google_place_id"`
+	GooglePlaceType          string      `query:"google_place_type"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // ContactOptions contains the optional parameters used by the SendContact method.
 type ContactOptions struct {
-	BaseOptions `query:"recursive"`
-	LastName    string `query:"last_name"`
-	VCard       string `query:"vcard"`
+	LastName                 string      `query:"last_name"`
+	VCard                    string      `query:"vcard"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
 type PollOptions struct {
-	BaseOptions           `query:"recursive"`
-	IsAnonymous           bool            `query:"is_anonymous"`
-	Type                  PollType        `query:"type"`
-	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
-	CorrectOptionID       int             `query:"correct_option_id"`
-	Explanation           string          `query:"explanation"`
-	ExplanationParseMode  ParseMode       `query:"explanation_parse_mode"`
-	ExplanationEntities   []MessageEntity `query:"explanation_entities"`
-	OpenPeriod            int             `query:"open_period"`
-	CloseDate             int             `query:"close_date"`
-	IsClosed              bool            `query:"is_closed"`
+	IsAnonymous              bool            `query:"is_anonymous"`
+	Type                     PollType        `query:"type"`
+	AllowsMultipleAnswers    bool            `query:"allows_multiple_answers"`
+	CorrectOptionID          int             `query:"correct_option_id"`
+	Explanation              string          `query:"explanation"`
+	ExplanationParseMode     ParseMode       `query:"explanation_parse_mode"`
+	ExplanationEntities      []MessageEntity `query:"explanation_entities"`
+	OpenPeriod               int             `query:"open_period"`
+	CloseDate                int             `query:"close_date"`
+	IsClosed                 bool            `query:"is_closed"`
+	DisableNotification      bool            `query:"disable_notification"`
+	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
 // BanOptions contains the optional parameters used by the BanChatMember method.
