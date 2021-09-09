@@ -613,7 +613,7 @@ func (i InputMediaPhoto) ImplementsInputMedia() {}
 type InputMediaVideo struct {
 	Type              InputMediaType   `json:"type"`
 	Media             string           `json:"media"`
-	Thumb             InputFile        `json:"input_file,omitempty"`
+	Thumb             *InputFile       `json:"thumb,omitempty"`
 	Caption           string           `json:"caption,omitempty"`
 	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
@@ -631,7 +631,7 @@ func (i InputMediaVideo) ImplementsInputMedia() {}
 type InputMediaAnimation struct {
 	Type            InputMediaType   `json:"type"`
 	Media           string           `json:"media"`
-	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -648,7 +648,7 @@ func (i InputMediaAnimation) ImplementsInputMedia() {}
 type InputMediaAudio struct {
 	Type            InputMediaType   `json:"type"`
 	Media           string           `json:"media"`
-	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -665,7 +665,7 @@ func (i InputMediaAudio) ImplementsInputMedia() {}
 type InputMediaDocument struct {
 	Type                        InputMediaType   `json:"type"`
 	Media                       string           `json:"media"`
-	Thumb                       *InputFile       `json:"input_file,omitempty"`
+	Thumb                       *InputFile       `json:"thumb,omitempty"`
 	Caption                     string           `json:"caption,omitempty"`
 	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities             []*MessageEntity `json:"caption_entities,omitempty"`
