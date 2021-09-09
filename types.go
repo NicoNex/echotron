@@ -578,16 +578,21 @@ type InputMediaType string
 
 // These are all the possible types for the various InputMediaType*'s Type field.
 const (
-	InputMediaPhoto     InputMediaType = "photo"
-	InputMediaVideo                    = "video"
-	InputMediaAnimation                = "animation"
-	InputMediaAudio                    = "audio"
-	InputMediaDocument                 = "document"
+	MediaTypePhoto     InputMediaType = "photo"
+	MediaTypeVideo                    = "video"
+	MediaTypeAnimation                = "animation"
+	MediaTypeAudio                    = "audio"
+	MediaTypeDocument                 = "document"
 )
 
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	ImplementsInputMedia()
+}
+
+// InputMediaGroupable is an interface for the various groupable media types.
+type InputMediaGroupable interface {
+	ImplementsInputMediaGroupable()
 }
 
 // InputMediaPhoto represents a photo to be sent.
