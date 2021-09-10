@@ -60,6 +60,51 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 	return res, nil
 }
 
+func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
+	var jsn []inputMedia
+	var cnt []content
+	var dat []byte
+
+	for _, file := range files {
+		media := file.GetMedia()
+
+		switch {
+		case media.id != "":
+			jsn = append(jsn, inputMedia{media.id, file})
+		
+		case media.path != "" && len(media.content) == 0:
+			media.content, err = os.ReadFile(media.path)
+			if err != nil {
+				return
+			}
+			media.path = filepath.Base(media.path)
+			fallthrough
+
+		case media.path != "" && len(media.content) > 0:
+			cnt = append(cnt, content{media.path, media.path, media.content})
+			jsn = append(jsn, inputMedia{fmt.Sprintf("attach://%s", media.path), file})
+		}
+	}
+
+	if len(jsn) == 1 {
+		dat, err = json.Marshal(jsn[0])
+	} else {
+		dat, err = json.Marshal(jsn)
+	}
+
+	if err != nil {
+		return
+	}
+
+	url = fmt.Sprintf("%s&media=%s", url, dat)
+
+	if len(cnt) != 0 {
+		return sendPostRequest(url, cnt...)
+	} else {
+		return sendGetRequest(url)
+	}
+}
+
 func serializePerms(permissions ChatPermissions) (string, error) {
 	perm, err := json.Marshal(PermissionOptions{permissions})
 	if err != nil {
