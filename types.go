@@ -587,11 +587,12 @@ const (
 
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
-	ImplementsInputMedia()
+	GetMedia() InputFile
 }
 
 // InputMediaGroupable is an interface for the various groupable media types.
 type InputMediaGroupable interface {
+	GetMedia() InputFile
 	ImplementsInputMediaGroupable()
 }
 
@@ -599,20 +600,24 @@ type InputMediaGroupable interface {
 // Type MUST BE "photo".
 type InputMediaPhoto struct {
 	Type            InputMediaType   `json:"type"`
-	Media           string           `json:"media"`
+	Media           InputFile        `json:"-"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
-func (i InputMediaPhoto) ImplementsInputMedia() {}
+func (i InputMediaPhoto) GetMedia() InputFile { return i.Media }
+
+// ImplementsInputMediaGroupable is a dummy method which exists to implement the interface InputMediaGroupable.
+func (i InputMediaPhoto) ImplementsInputMediaGroupable() { }
+
 
 // InputMediaVideo represents a video to be sent.
 // Type MUST BE "video".
 type InputMediaVideo struct {
 	Type              InputMediaType   `json:"type"`
-	Media             string           `json:"media"`
+	Media             InputFile        `json:"-"`
 	Thumb             *InputFile       `json:"thumb,omitempty"`
 	Caption           string           `json:"caption,omitempty"`
 	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
@@ -624,13 +629,16 @@ type InputMediaVideo struct {
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
-func (i InputMediaVideo) ImplementsInputMedia() {}
+func (i InputMediaVideo) GetMedia() InputFile { return i.Media }
+
+// ImplementsInputMediaGroupable is a dummy method which exists to implement the interface InputMediaGroupable.
+func (i InputMediaVideo) ImplementsInputMediaGroupable() { }
 
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 // Type MUST BE "animation".
 type InputMediaAnimation struct {
 	Type            InputMediaType   `json:"type"`
-	Media           string           `json:"media"`
+	Media           InputFile        `json:"-"`
 	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
@@ -641,13 +649,13 @@ type InputMediaAnimation struct {
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
-func (i InputMediaAnimation) ImplementsInputMedia() {}
+func (i InputMediaAnimation) GetMedia() InputFile { return i.Media }
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 // Type MUST BE "audio".
 type InputMediaAudio struct {
 	Type            InputMediaType   `json:"type"`
-	Media           string           `json:"media"`
+	Media           InputFile        `json:"-"`
 	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
@@ -658,13 +666,16 @@ type InputMediaAudio struct {
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
-func (i InputMediaAudio) ImplementsInputMedia() {}
+func (i InputMediaAudio) GetMedia() InputFile { return i.Media }
+
+// ImplementsInputMediaGroupable is a dummy method which exists to implement the interface InputMediaGroupable.
+func (i InputMediaAudio) ImplementsInputMediaGroupable() { }
 
 // InputMediaDocument represents a general file to be sent.
 // Type MUST BE "document".
 type InputMediaDocument struct {
 	Type                        InputMediaType   `json:"type"`
-	Media                       string           `json:"media"`
+	Media                       InputFile        `json:"-"`
 	Thumb                       *InputFile       `json:"thumb,omitempty"`
 	Caption                     string           `json:"caption,omitempty"`
 	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
@@ -673,7 +684,10 @@ type InputMediaDocument struct {
 }
 
 // ImplementsInputMedia is a dummy method which exists to implement the interface InputMedia.
-func (i InputMediaDocument) ImplementsInputMedia() {}
+func (i InputMediaDocument) GetMedia() InputFile { return i.Media }
+
+// ImplementsInputMediaGroupable is a dummy method which exists to implement the interface InputMediaGroupable.
+func (i InputMediaDocument) ImplementsInputMediaGroupable() { }
 
 // BotCommandScopeType is a custom type for the various bot command scope types.
 type BotCommandScopeType string
