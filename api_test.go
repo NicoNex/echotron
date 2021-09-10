@@ -1457,8 +1457,29 @@ func TestEditMessageMedia(t *testing.T) {
 	resp, err := api.EditMessageMedia(
 		NewMessageID(chatID, photoTmp.ID),
 		InputMediaPhoto{
-			Type:  "photo",
-			Media: photoID,
+			Type:  MediaTypePhoto,
+			Media: NewInputFileID(photoID),
+			Caption: "TestEditMessageMedia",
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageMediaBytes(t *testing.T) {
+	resp, err := api.EditMessageMedia(
+		NewMessageID(chatID, photoTmp.ID),
+		InputMediaPhoto{
+			Type:  MediaTypePhoto,
+			Media: NewInputFilePath("assets/logo.png"),
+			Caption: "TestEditMessageMediaBytes",
 		},
 		nil,
 	)
