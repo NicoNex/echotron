@@ -18,6 +18,8 @@
 
 package echotron
 
+import "encoding/json"
+
 // Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
 type Update struct {
@@ -594,6 +596,31 @@ type InputMedia interface {
 type InputMediaGroupable interface {
 	GetMedia() InputFile
 	ImplementsInputMediaGroupable()
+}
+
+// inputMedia is a generic struct for all the various structs under the InputMedia interface.
+type inputMedia struct {
+	Media string
+	InputMedia
+}
+
+// MarshalJSON is a custom marshaler for the inputMedia struct.
+func (i inputMedia) MarshalJSON() (cnt []byte, err error) {
+	var generic map[string]interface{}
+
+	im, err := json.Marshal(i.InputMedia)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(im, &generic)
+	if err != nil {
+		return
+	}
+
+	generic["media"] = i.Media
+
+	return json.Marshal(generic)
 }
 
 // InputMediaPhoto represents a photo to be sent.
