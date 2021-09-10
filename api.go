@@ -1248,21 +1248,14 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // Use a previously uploaded file via its file_id or specify a URL.
 func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (APIResponseMessage, error) {
 	var res APIResponseMessage
-
-	m, err := json.Marshal(media)
-	if err != nil {
-		return res, err
-	}
-
 	var url = fmt.Sprintf(
-		"%seditMessageMedia?%s&media=%s&%s",
+		"%seditMessageMedia?%s&%s",
 		a.base,
 		querify(msg),
-		string(m),
 		querify(opts),
 	)
 
-	cnt, err := sendGetRequest(url)
+	cnt, err := sendMediaFiles(url, media)
 	if err != nil {
 		return res, err
 	}
