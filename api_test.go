@@ -750,6 +750,33 @@ func TestSendVideoNote(t *testing.T) {
 	}
 }
 
+func TestSendMediaGroup(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]InputMediaGroupable{
+			InputMediaPhoto{
+				Type: MediaTypePhoto,
+				Media: NewInputFileID(photoID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaPhoto{
+				Type:  MediaTypePhoto,
+				Media: NewInputFilePath("assets/logo.png"),
+				Caption: "TestSendMediaGroup2",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVideoNoteByID(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFileID(videoNoteID),

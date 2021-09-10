@@ -74,6 +74,13 @@ type APIResponseMessage struct {
 	APIResponseBase
 }
 
+// APIResponseMessageArray represents the incoming response from Telegram servers.
+// Used by all methods that return an array of Message objects on success.
+type APIResponseMessageArray struct {
+	Result []*Message `json:"result,omitempty"`
+	APIResponseBase
+}
+
 // APIResponseMessageID represents the incoming response from Telegram servers.
 // Used by all methods that return a MessageID object on success.
 type APIResponseMessageID struct {
