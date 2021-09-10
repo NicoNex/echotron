@@ -36,6 +36,14 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
+func prepareInputMedia(media []InputMediaGroupable) (arr []InputMedia) {
+	for _, v := range media {
+		arr = append(arr, v)
+	}
+
+	return
+}
+
 func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 	switch {
 	case file.id != "":
