@@ -44,7 +44,7 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 	case file.path != "" && len(file.content) == 0:
 		file.content, err = os.ReadFile(file.path)
 		if err != nil {
-			return res, err
+			return
 		}
 		file.path = filepath.Base(file.path)
 		fallthrough
@@ -54,7 +54,7 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 	}
 
 	if err != nil {
-		return res, err
+		return
 	}
 
 	return res, nil
