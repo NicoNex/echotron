@@ -578,16 +578,21 @@ type InputMediaType string
 
 // These are all the possible types for the various InputMediaType*'s Type field.
 const (
-	PHOTO     InputMediaType = "photo"
-	VIDEO                    = "video"
-	ANIMATION                = "animation"
-	AUDIO                    = "audio"
-	DOCUMENT                 = "document"
+	MediaTypePhoto     InputMediaType = "photo"
+	MediaTypeVideo                    = "video"
+	MediaTypeAnimation                = "animation"
+	MediaTypeAudio                    = "audio"
+	MediaTypeDocument                 = "document"
 )
 
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	ImplementsInputMedia()
+}
+
+// InputMediaGroupable is an interface for the various groupable media types.
+type InputMediaGroupable interface {
+	ImplementsInputMediaGroupable()
 }
 
 // InputMediaPhoto represents a photo to be sent.
@@ -608,7 +613,7 @@ func (i InputMediaPhoto) ImplementsInputMedia() {}
 type InputMediaVideo struct {
 	Type              InputMediaType   `json:"type"`
 	Media             string           `json:"media"`
-	Thumb             InputFile        `json:"input_file,omitempty"`
+	Thumb             *InputFile       `json:"thumb,omitempty"`
 	Caption           string           `json:"caption,omitempty"`
 	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
@@ -626,7 +631,7 @@ func (i InputMediaVideo) ImplementsInputMedia() {}
 type InputMediaAnimation struct {
 	Type            InputMediaType   `json:"type"`
 	Media           string           `json:"media"`
-	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -643,7 +648,7 @@ func (i InputMediaAnimation) ImplementsInputMedia() {}
 type InputMediaAudio struct {
 	Type            InputMediaType   `json:"type"`
 	Media           string           `json:"media"`
-	Thumb           *InputFile       `json:"input_file,omitempty"`
+	Thumb           *InputFile       `json:"thumb,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -660,7 +665,7 @@ func (i InputMediaAudio) ImplementsInputMedia() {}
 type InputMediaDocument struct {
 	Type                        InputMediaType   `json:"type"`
 	Media                       string           `json:"media"`
-	Thumb                       *InputFile       `json:"input_file,omitempty"`
+	Thumb                       *InputFile       `json:"thumb,omitempty"`
 	Caption                     string           `json:"caption,omitempty"`
 	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities             []*MessageEntity `json:"caption_entities,omitempty"`

@@ -36,6 +36,30 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
+func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
+	switch {
+	case file.id != "":
+		res, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
+
+	case file.path != "" && len(file.content) == 0:
+		file.content, err = os.ReadFile(file.path)
+		if err != nil {
+			return
+		}
+		file.path = filepath.Base(file.path)
+		fallthrough
+
+	case file.path != "" && len(file.content) > 0:
+		res, err = sendPostRequest(url, content{file.path, fileType, file.content})
+	}
+
+	if err != nil {
+		return
+	}
+
+	return res, nil
+}
+
 func serializePerms(permissions ChatPermissions) (string, error) {
 	perm, err := json.Marshal(PermissionOptions{permissions})
 	if err != nil {
@@ -43,30 +67,6 @@ func serializePerms(permissions ChatPermissions) (string, error) {
 	}
 
 	return string(perm), nil
-}
-
-func sendFile(file InputFile, url, fileType string) (cnt []byte, err error) {
-	switch {
-	case file.id != "":
-		cnt, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
-
-	case file.path != "" && len(file.content) == 0:
-		file.content, err = os.ReadFile(file.path)
-		if err != nil {
-			return cnt, err
-		}
-		file.path = filepath.Base(file.path)
-		fallthrough
-
-	case file.path != "" && len(file.content) > 0:
-		cnt, err = sendPostRequest(url, file.path, fileType, file.content)
-	}
-
-	if err != nil {
-		return cnt, err
-	}
-
-	return cnt, nil
 }
 
 // NewAPI returns a new API object.
@@ -1201,12 +1201,19 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // only to a document for document albums and to a photo or a video otherwise.
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
-func (a API) EditMessageMedia(msg MessageIDOptions, opts *MessageMediaOptions) (APIResponseMessage, error) {
+func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (APIResponseMessage, error) {
 	var res APIResponseMessage
+
+	m, err := json.Marshal(media)
+	if err != nil {
+		return res, err
+	}
+
 	var url = fmt.Sprintf(
-		"%seditMessageMedia?%s&%s",
+		"%seditMessageMedia?%s&media=%s&%s",
 		a.base,
 		querify(msg),
+		string(m),
 		querify(opts),
 	)
 
