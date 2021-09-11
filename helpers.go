@@ -20,11 +20,14 @@ package echotron
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 )
+
+var ErrEmptyPath = errors.New("empty path in InputFile")
 
 func encode(s string) string {
 	return url.QueryEscape(s)
@@ -76,27 +79,29 @@ func readFile(im InputFile) (content []byte, path string, err error) {
 	return
 }
 
-func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
-	switch {
-	case file.id != "":
-		res, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
+func sendFile(file, thumb InputFile, url, fileType string) (res []byte, err error) {
+	var cnt []content
 
-	case file.path != "" && len(file.content) == 0:
-		file.content, file.path, err = readFile(file)
-		if err != nil {
-			return
-		}
-		fallthrough
-
-	case file.path != "" && len(file.content) > 0:
-		res, err = sendPostRequest(url, content{file.path, fileType, file.content})
+	if file.id != "" {
+		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
+	} else if c, e := toContent(fileType, file); e == nil {
+		cnt = append(cnt, c)
+	} else {
+		err = e
 	}
 
-	if err != nil {
-		return
+	if c, e := toContent("thumb", thumb); e == nil {
+		cnt = append(cnt, c)
+	} else {
+		err = e
 	}
 
-	return res, nil
+	if len(cnt) > 0 {
+		res, err = sendPostRequest(url, cnt...)
+	} else {
+		res, err = sendGetRequest(url)
+	}
+	return
 }
 
 func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []byte, err error) {
@@ -150,6 +155,17 @@ func serializePerms(permissions ChatPermissions) (string, error) {
 	}
 
 	return string(perm), nil
+}
+
+func toContent(ftype string, f InputFile) (content, error) {
+	if f.path != "" && len(f.content) == 0 {
+		var err error
+		if f.content, f.path, err = readFile(f); err != nil {
+			return content{}, err
+		}
+	}
+
+	return content{f.path, ftype, f.content}, nil
 }
 
 func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {

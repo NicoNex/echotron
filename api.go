@@ -232,7 +232,7 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "photo")
+	cnt, err := sendFile(file, InputFile{}, url, "photo")
 	if err != nil {
 		return res, err
 	}
@@ -252,7 +252,7 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "audio")
+	cnt, err := sendFile(file, opts.Thumb, url, "audio")
 	if err != nil {
 		return res, err
 	}
@@ -270,7 +270,7 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "document")
+	cnt, err := sendFile(file, opts.Thumb, url, "document")
 	if err != nil {
 		return res, err
 	}
@@ -289,7 +289,7 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "video")
+	cnt, err := sendFile(file, opts.Thumb, url, "video")
 	if err != nil {
 		return res, err
 	}
@@ -307,7 +307,7 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "animation")
+	cnt, err := sendFile(file, opts.Thumb, url, "animation")
 	if err != nil {
 		return res, err
 	}
@@ -326,7 +326,7 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "voice")
+	cnt, err := sendFile(file, InputFile{}, url, "voice")
 	if err != nil {
 		return res, err
 	}
@@ -344,7 +344,7 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "video_note")
+	cnt, err := sendFile(file, opts.Thumb, url, "video_note")
 	if err != nil {
 		return res, err
 	}
@@ -813,7 +813,7 @@ func (a API) SetChatPhoto(file InputFile, chatID int64) (APIResponseBool, error)
 		chatID,
 	)
 
-	cnt, err := sendFile(file, url, "photo")
+	cnt, err := sendFile(file, InputFile{}, url, "photo")
 	if err != nil {
 		return res, err
 	}
