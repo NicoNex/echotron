@@ -777,6 +777,35 @@ func TestSendMediaGroup(t *testing.T) {
 	}
 }
 
+func TestSendMediaGroupThumb(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio_inv.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
+				Caption: "TestSendMediaGroupThumb1",
+			},
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+				Caption: "TestSendMediaGroupThumb2",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendVideoNoteByID(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFileID(videoNoteID),
