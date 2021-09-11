@@ -412,6 +412,25 @@ func TestSendAudioBytes(t *testing.T) {
 	}
 }
 
+func TestSendAudioThumb(t *testing.T) {
+	resp, err := api.SendAudio(
+		NewInputFilePath("assets/tests/audio.mp3"),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudio",
+			Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendDocument(t *testing.T) {
 	resp, err := api.SendDocument(
 		NewInputFilePath("assets/tests/document.pdf"),
