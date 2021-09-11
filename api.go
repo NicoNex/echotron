@@ -36,14 +36,50 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
-func toInputMedia(media []GroupableInputMedia) []InputMedia {
-	var ret = make([]InputMedia, len(media))
+func parseInputMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err error) {
+	switch {
+	case media.id != "":
+		im = mediaEnvelope{media.id, "", nil}
 
-	for i, v := range media {
-		ret[i] = v
+	case media.path != "" && len(media.content) == 0:
+		media.content, media.path, err = readFile(media)
+		if err != nil {
+			return
+		}
+		fallthrough
+
+	case media.path != "" && len(media.content) > 0:
+		cnt = append(cnt, content{media.path, media.path, media.content})
+		im = mediaEnvelope{fmt.Sprintf("attach://%s", media.path), "", nil}
 	}
 
-	return ret
+	switch {
+	case thumb.id != "":
+		im.thumb = thumb.id
+
+	case thumb.path != "" && len(thumb.content) == 0:
+		thumb.content, thumb.path, err = readFile(thumb)
+		if err != nil {
+			return
+		}
+		fallthrough
+
+	case thumb.path != "" && len(thumb.content) > 0:
+		cnt = append(cnt, content{thumb.path, thumb.path, thumb.content})
+		im.thumb = fmt.Sprintf("attach://%s", thumb.path)
+	}
+
+	return
+}
+
+func readFile(im InputFile) (content []byte, path string, err error) {
+	content, err = os.ReadFile(im.path)
+	if err != nil {
+		return
+	}
+	path = filepath.Base(im.path)
+
+	return
 }
 
 func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
@@ -52,11 +88,10 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 		res, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
 
 	case file.path != "" && len(file.content) == 0:
-		file.content, err = os.ReadFile(file.path)
+		file.content, file.path, err = readFile(file)
 		if err != nil {
 			return
 		}
-		file.path = filepath.Base(file.path)
 		fallthrough
 
 	case file.path != "" && len(file.content) > 0:
@@ -78,24 +113,21 @@ func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []b
 	)
 
 	for _, file := range files {
+		var im mediaEnvelope
+		var cntArr []content
+
 		media := file.media()
+		thumb := file.thumb()
 
-		switch {
-		case media.id != "":
-			med = append(med, mediaEnvelope{media.id, file})
-
-		case media.path != "" && len(media.content) == 0:
-			media.content, err = os.ReadFile(media.path)
-			if err != nil {
-				return
-			}
-			media.path = filepath.Base(media.path)
-			fallthrough
-
-		case media.path != "" && len(media.content) > 0:
-			cnt = append(cnt, content{media.path, media.path, media.content})
-			med = append(med, mediaEnvelope{fmt.Sprintf("attach://%s", media.path), file})
+		im, cntArr, err = parseInputMedia(media, thumb)
+		if err != nil {
+			return
 		}
+
+		im.InputMedia = file
+
+		med = append(med, im)
+		cnt = append(cnt, cntArr...)
 	}
 
 	if isSingleFile {
@@ -124,6 +156,16 @@ func serializePerms(permissions ChatPermissions) (string, error) {
 	}
 
 	return string(perm), nil
+}
+
+func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {
+	ret = make([]InputMedia, len(media))
+
+	for i, v := range media {
+		ret[i] = v
+	}
+
+	return ret
 }
 
 // NewAPI returns a new API object.
