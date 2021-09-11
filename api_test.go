@@ -753,15 +753,15 @@ func TestSendVideoNote(t *testing.T) {
 func TestSendMediaGroup(t *testing.T) {
 	resp, err := api.SendMediaGroup(
 		chatID,
-		[]InputMediaGroupable{
+		[]GroupableInputMedia{
 			InputMediaPhoto{
-				Type: MediaTypePhoto,
-				Media: NewInputFileID(photoID),
+				Type:    MediaTypePhoto,
+				Media:   NewInputFileID(photoID),
 				Caption: "TestSendMediaGroup1",
 			},
 			InputMediaPhoto{
-				Type:  MediaTypePhoto,
-				Media: NewInputFilePath("assets/logo.png"),
+				Type:    MediaTypePhoto,
+				Media:   NewInputFilePath("assets/logo.png"),
 				Caption: "TestSendMediaGroup2",
 			},
 		},
@@ -1484,8 +1484,8 @@ func TestEditMessageMedia(t *testing.T) {
 	resp, err := api.EditMessageMedia(
 		NewMessageID(chatID, photoTmp.ID),
 		InputMediaPhoto{
-			Type:  MediaTypePhoto,
-			Media: NewInputFileID(photoID),
+			Type:    MediaTypePhoto,
+			Media:   NewInputFileID(photoID),
 			Caption: "TestEditMessageMedia",
 		},
 		nil,
@@ -1504,8 +1504,8 @@ func TestEditMessageMediaBytes(t *testing.T) {
 	resp, err := api.EditMessageMedia(
 		NewMessageID(chatID, photoTmp.ID),
 		InputMediaPhoto{
-			Type:  MediaTypePhoto,
-			Media: NewInputFilePath("assets/logo.png"),
+			Type:    MediaTypePhoto,
+			Media:   NewInputFilePath("assets/logo.png"),
 			Caption: "TestEditMessageMediaBytes",
 		},
 		nil,

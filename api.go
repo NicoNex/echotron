@@ -36,12 +36,14 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
-func prepareInputMedia(media []InputMediaGroupable) (arr []InputMedia) {
-	for _, v := range media {
-		arr = append(arr, v)
+func toInputMedia(media []GroupableInputMedia) []InputMedia {
+	var ret = make([]InputMedia, len(media))
+
+	for i, v := range media {
+		ret[i] = v
 	}
 
-	return
+	return ret
 }
 
 func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
@@ -69,17 +71,19 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 }
 
 func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
-	var jsn []inputMedia
-	var cnt []content
-	var dat []byte
+	var (
+		med []mediaEnvelope
+		cnt []content
+		jsn []byte
+	)
 
 	for _, file := range files {
-		media := file.getMedia()
+		media := file.media()
 
 		switch {
 		case media.id != "":
-			jsn = append(jsn, inputMedia{media.id, file})
-		
+			med = append(med, mediaEnvelope{media.id, file})
+
 		case media.path != "" && len(media.content) == 0:
 			media.content, err = os.ReadFile(media.path)
 			if err != nil {
@@ -90,23 +94,23 @@ func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
 
 		case media.path != "" && len(media.content) > 0:
 			cnt = append(cnt, content{media.path, media.path, media.content})
-			jsn = append(jsn, inputMedia{fmt.Sprintf("attach://%s", media.path), file})
+			med = append(med, mediaEnvelope{fmt.Sprintf("attach://%s", media.path), file})
 		}
 	}
 
-	if len(jsn) == 1 {
-		dat, err = json.Marshal(jsn[0])
+	if len(med) == 1 {
+		jsn, err = json.Marshal(med[0])
 	} else {
-		dat, err = json.Marshal(jsn)
+		jsn, err = json.Marshal(med)
 	}
 
 	if err != nil {
 		return
 	}
 
-	url = fmt.Sprintf("%s&media=%s", url, dat)
+	url = fmt.Sprintf("%s&media=%s", url, jsn)
 
-	if len(cnt) != 0 {
+	if len(cnt) > 0 {
 		return sendPostRequest(url, cnt...)
 	} else {
 		return sendGetRequest(url)
@@ -447,7 +451,7 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
 // Documents and audio files can be only grouped in an album with messages of the same type.
-func (a API) SendMediaGroup(chatID int64, media []InputMediaGroupable, opts *MediaGroupOptions) (APIResponseMessageArray, error) {
+func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *MediaGroupOptions) (APIResponseMessageArray, error) {
 	var res APIResponseMessageArray
 	var url = fmt.Sprintf(
 		"%ssendMediaGroup?chat_id=%d&%s",
@@ -456,7 +460,7 @@ func (a API) SendMediaGroup(chatID int64, media []InputMediaGroupable, opts *Med
 		querify(opts),
 	)
 
-	cnt, err := sendMediaFiles(url, prepareInputMedia(media)...)
+	cnt, err := sendMediaFiles(url, toInputMedia(media)...)
 	if err != nil {
 		return res, err
 	}
