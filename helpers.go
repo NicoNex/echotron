@@ -39,8 +39,7 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 		im = mediaEnvelope{media.id, "", nil}
 
 	case media.path != "" && len(media.content) == 0:
-		media.content, media.path, err = readFile(media)
-		if err != nil {
+		if media.content, media.path, err = readFile(media); err != nil {
 			return
 		}
 		fallthrough
@@ -52,8 +51,7 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 
 	switch {
 	case thumb.path != "" && len(thumb.content) == 0:
-		thumb.content, thumb.path, err = readFile(thumb)
-		if err != nil {
+		if thumb.content, thumb.path, err = readFile(thumb); err != nil {
 			return
 		}
 		fallthrough
