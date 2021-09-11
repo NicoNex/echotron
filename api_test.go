@@ -412,6 +412,25 @@ func TestSendAudioBytes(t *testing.T) {
 	}
 }
 
+func TestSendAudioThumb(t *testing.T) {
+	resp, err := api.SendAudio(
+		NewInputFilePath("assets/tests/audio.mp3"),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudio",
+			Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSendDocument(t *testing.T) {
 	resp, err := api.SendDocument(
 		NewInputFilePath("assets/tests/document.pdf"),
@@ -738,6 +757,62 @@ func TestSendVideoNote(t *testing.T) {
 	resp, err := api.SendVideoNote(
 		NewInputFilePath("assets/tests/video_note.mp4"),
 		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendMediaGroup(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaPhoto{
+				Type:    MediaTypePhoto,
+				Media:   NewInputFileID(photoID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaPhoto{
+				Type:    MediaTypePhoto,
+				Media:   NewInputFilePath("assets/logo.png"),
+				Caption: "TestSendMediaGroup2",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendMediaGroupThumb(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio_inv.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
+				Caption: "TestSendMediaGroupThumb1",
+			},
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+				Caption: "TestSendMediaGroupThumb2",
+			},
+		},
 		nil,
 	)
 
@@ -1457,8 +1532,29 @@ func TestEditMessageMedia(t *testing.T) {
 	resp, err := api.EditMessageMedia(
 		NewMessageID(chatID, photoTmp.ID),
 		InputMediaPhoto{
-			Type:  "photo",
-			Media: photoID,
+			Type:    MediaTypePhoto,
+			Media:   NewInputFileID(photoID),
+			Caption: "TestEditMessageMedia",
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestEditMessageMediaBytes(t *testing.T) {
+	resp, err := api.EditMessageMedia(
+		NewMessageID(chatID, photoTmp.ID),
+		InputMediaPhoto{
+			Type:    MediaTypePhoto,
+			Media:   NewInputFilePath("assets/logo.png"),
+			Caption: "TestEditMessageMediaBytes",
 		},
 		nil,
 	)
