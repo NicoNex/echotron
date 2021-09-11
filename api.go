@@ -68,7 +68,7 @@ func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
 	return res, nil
 }
 
-func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
+func sendMediaFiles(url string, singleFile bool, files ...InputMedia) (res []byte, err error) {
 	var jsn []inputMedia
 	var cnt []content
 	var dat []byte
@@ -94,7 +94,7 @@ func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
 		}
 	}
 
-	if len(jsn) == 1 {
+	if singleFile {
 		dat, err = json.Marshal(jsn[0])
 	} else {
 		dat, err = json.Marshal(jsn)
@@ -456,7 +456,7 @@ func (a API) SendMediaGroup(chatID int64, media []InputMediaGroupable, opts *Med
 		querify(opts),
 	)
 
-	cnt, err := sendMediaFiles(url, prepareInputMedia(media)...)
+	cnt, err := sendMediaFiles(url, false, prepareInputMedia(media)...)
 	if err != nil {
 		return res, err
 	}
@@ -1282,7 +1282,7 @@ func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *Mess
 		querify(opts),
 	)
 
-	cnt, err := sendMediaFiles(url, media)
+	cnt, err := sendMediaFiles(url, true, media)
 	if err != nil {
 		return res, err
 	}
