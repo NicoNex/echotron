@@ -597,6 +597,7 @@ const (
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	media() InputFile
+	thumb() InputFile
 }
 
 // GroupableInputMedia is an interface for the various groupable media types.
@@ -608,6 +609,7 @@ type GroupableInputMedia interface {
 // mediaEnvelope is a generic struct for all the various structs under the InputMedia interface.
 type mediaEnvelope struct {
 	media string
+	thumb string
 	InputMedia
 }
 
@@ -633,6 +635,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 		}{
 			InputMediaVideo: o,
 			Media:           i.media,
+			Thumb:           i.thumb,
 		}
 
 	case InputMediaAnimation:
@@ -643,6 +646,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 		}{
 			InputMediaAnimation: o,
 			Media:               i.media,
+			Thumb:               i.thumb,
 		}
 
 	case InputMediaAudio:
@@ -653,6 +657,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 		}{
 			InputMediaAudio: o,
 			Media:           i.media,
+			Thumb:           i.thumb,
 		}
 
 	case InputMediaDocument:
@@ -663,6 +668,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 		}{
 			InputMediaDocument: o,
 			Media:              i.media,
+			Thumb:              i.thumb,
 		}
 	}
 
@@ -682,6 +688,9 @@ type InputMediaPhoto struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaPhoto) media() InputFile { return i.Media }
 
+// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
+func (i InputMediaPhoto) thumb() InputFile { return InputFile{} }
+
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaPhoto) groupable() {}
 
@@ -690,7 +699,7 @@ func (i InputMediaPhoto) groupable() {}
 type InputMediaVideo struct {
 	Type              InputMediaType   `json:"type"`
 	Media             InputFile        `json:"-"`
-	Thumb             *InputFile       `json:"thumb,omitempty"`
+	Thumb             InputFile        `json:"-"`
 	Caption           string           `json:"caption,omitempty"`
 	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
@@ -703,6 +712,9 @@ type InputMediaVideo struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaVideo) media() InputFile { return i.Media }
 
+// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
+func (i InputMediaVideo) thumb() InputFile { return i.Thumb }
+
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaVideo) groupable() {}
 
@@ -711,7 +723,7 @@ func (i InputMediaVideo) groupable() {}
 type InputMediaAnimation struct {
 	Type            InputMediaType   `json:"type"`
 	Media           InputFile        `json:"-"`
-	Thumb           *InputFile       `json:"thumb,omitempty"`
+	Thumb           InputFile        `json:"-"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -723,12 +735,15 @@ type InputMediaAnimation struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaAnimation) media() InputFile { return i.Media }
 
+// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
+func (i InputMediaAnimation) thumb() InputFile { return i.Thumb }
+
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 // Type MUST BE "audio".
 type InputMediaAudio struct {
 	Type            InputMediaType   `json:"type"`
 	Media           InputFile        `json:"-"`
-	Thumb           *InputFile       `json:"thumb,omitempty"`
+	Thumb           InputFile        `json:"-"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -740,6 +755,9 @@ type InputMediaAudio struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaAudio) media() InputFile { return i.Media }
 
+// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
+func (i InputMediaAudio) thumb() InputFile { return i.Thumb }
+
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaAudio) groupable() {}
 
@@ -748,7 +766,7 @@ func (i InputMediaAudio) groupable() {}
 type InputMediaDocument struct {
 	Type                        InputMediaType   `json:"type"`
 	Media                       InputFile        `json:"-"`
-	Thumb                       *InputFile       `json:"thumb,omitempty"`
+	Thumb                       InputFile        `json:"-"`
 	Caption                     string           `json:"caption,omitempty"`
 	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities             []*MessageEntity `json:"caption_entities,omitempty"`
@@ -757,6 +775,9 @@ type InputMediaDocument struct {
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaDocument) media() InputFile { return i.Media }
+
+// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
+func (i InputMediaDocument) thumb() InputFile { return i.Thumb }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaDocument) groupable() {}
