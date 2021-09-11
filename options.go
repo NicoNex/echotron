@@ -253,7 +253,7 @@ type AudioOptions struct {
 	Duration                 int             `query:"duration"`
 	Performer                string          `query:"performer"`
 	Title                    string          `query:"title"`
-	Thumb                    InputFile       `query:"thumb"`
+	Thumb                    InputFile
 	DisableNotification      bool            `query:"disable_notification"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
@@ -266,7 +266,7 @@ type DocumentOptions struct {
 	Caption                     string          `query:"caption"`
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
-	Thumb                       InputFile       `query:"thumb"`
+	Thumb                       InputFile
 	DisableNotification         bool            `query:"disable_notification"`
 	ReplyToMessageID            int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply    bool            `query:"allow_sending_without_reply"`
@@ -281,7 +281,7 @@ type VideoOptions struct {
 	Duration                 int             `query:"duration"`
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
-	Thumb                    InputFile       `query:"thumb"`
+	Thumb                    InputFile
 	SupportsStreaming        bool            `query:"supports_streaming"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
@@ -297,7 +297,7 @@ type AnimationOptions struct {
 	Duration                 int             `query:"duration"`
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
-	Thumb                    InputFile       `query:"thumb"`
+	Thumb                    InputFile
 	DisableNotification      bool            `query:"disable_notification"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
@@ -320,7 +320,7 @@ type VoiceOptions struct {
 type VideoNoteOptions struct {
 	Duration                 int         `query:"duration"`
 	Length                   int         `query:"length"`
-	Thumb                    InputFile   `query:"thumb"`
+	Thumb                    InputFile
 	DisableNotification      bool        `query:"disable_notification"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
