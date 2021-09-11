@@ -51,9 +51,6 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 	}
 
 	switch {
-	case thumb.id != "":
-		im.thumb = thumb.id
-
 	case thumb.path != "" && len(thumb.content) == 0:
 		thumb.content, thumb.path, err = readFile(thumb)
 		if err != nil {
