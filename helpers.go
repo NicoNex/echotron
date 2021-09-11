@@ -33,7 +33,7 @@ func encode(s string) string {
 	return url.QueryEscape(s)
 }
 
-func parseInputMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err error) {
+func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err error) {
 	switch {
 	case media.id != "":
 		im = mediaEnvelope{media.id, "", nil}
@@ -118,7 +118,7 @@ func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []b
 		media := file.media()
 		thumb := file.thumb()
 
-		im, cntArr, err = parseInputMedia(media, thumb)
+		im, cntArr, err = processMedia(media, thumb)
 		if err != nil {
 			return
 		}
