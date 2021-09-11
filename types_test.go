@@ -4,29 +4,29 @@ import "testing"
 
 func TestInputMediaPhotoImplements(_ *testing.T) {
 	i := InputMediaPhoto{}
-	i.GetMedia()
-	i.ImplementsInputMediaGroupable()
+	i.getMedia()
+	i.groupable()
 }
 
 func TestInputMediaVideoImplements(_ *testing.T) {
 	i := InputMediaVideo{}
-	i.GetMedia()
-	i.ImplementsInputMediaGroupable()
+	i.getMedia()
+	i.groupable()
 }
 
 func TestInputMediaAnimationImplements(_ *testing.T) {
 	i := InputMediaAnimation{}
-	i.GetMedia()
+	i.getMedia()
 }
 
 func TestInputMediaAudioImplements(_ *testing.T) {
 	i := InputMediaAudio{}
-	i.GetMedia()
-	i.ImplementsInputMediaGroupable()
+	i.getMedia()
+	i.groupable()
 }
 
 func TestInputMediaDocumentImplements(_ *testing.T) {
 	i := InputMediaDocument{}
-	i.GetMedia()
-	i.ImplementsInputMediaGroupable()
+	i.getMedia()
+	i.groupable()
 }

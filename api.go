@@ -74,7 +74,7 @@ func sendMediaFiles(url string, files ...InputMedia) (res []byte, err error) {
 	var dat []byte
 
 	for _, file := range files {
-		media := file.GetMedia()
+		media := file.getMedia()
 
 		switch {
 		case media.id != "":
