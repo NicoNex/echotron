@@ -21,52 +21,12 @@ package echotron
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
-	"os"
-	"path/filepath"
 )
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
 type API struct {
 	token string
 	base  string
-}
-
-func encode(s string) string {
-	return url.QueryEscape(s)
-}
-
-func sendFile(file InputFile, url, fileType string) (res []byte, err error) {
-	switch {
-	case file.id != "":
-		res, err = sendGetRequest(fmt.Sprintf("%s&%s=%s", url, fileType, file.id))
-
-	case file.path != "" && len(file.content) == 0:
-		file.content, err = os.ReadFile(file.path)
-		if err != nil {
-			return
-		}
-		file.path = filepath.Base(file.path)
-		fallthrough
-
-	case file.path != "" && len(file.content) > 0:
-		res, err = sendPostRequest(url, content{file.path, fileType, file.content})
-	}
-
-	if err != nil {
-		return
-	}
-
-	return res, nil
-}
-
-func serializePerms(permissions ChatPermissions) (string, error) {
-	perm, err := json.Marshal(PermissionOptions{permissions})
-	if err != nil {
-		return "", err
-	}
-
-	return string(perm), nil
 }
 
 // NewAPI returns a new API object.
@@ -272,7 +232,7 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "photo")
+	cnt, err := sendFile(file, InputFile{}, url, "photo")
 	if err != nil {
 		return res, err
 	}
@@ -285,6 +245,7 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 // Your audio must be in the .MP3 or .M4A format.
 func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
+	var thumb InputFile
 	var url = fmt.Sprintf(
 		"%ssendAudio?chat_id=%d&%s",
 		a.base,
@@ -292,7 +253,11 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "audio")
+	if opts != nil {
+		thumb = opts.Thumb
+	}
+
+	cnt, err := sendFile(file, thumb, url, "audio")
 	if err != nil {
 		return res, err
 	}
@@ -303,6 +268,7 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 // SendDocument is used to send general files.
 func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
+	var thumb InputFile
 	var url = fmt.Sprintf(
 		"%ssendDocument?chat_id=%d&%s",
 		a.base,
@@ -310,7 +276,11 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "document")
+	if opts != nil {
+		thumb = opts.Thumb
+	}
+
+	cnt, err := sendFile(file, thumb, url, "document")
 	if err != nil {
 		return res, err
 	}
@@ -322,6 +292,7 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 // Telegram clients support mp4 videos (other formats may be sent with SendDocument).
 func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
+	var thumb InputFile
 	var url = fmt.Sprintf(
 		"%ssendVideo?chat_id=%d&%s",
 		a.base,
@@ -329,7 +300,11 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "video")
+	if opts != nil {
+		thumb = opts.Thumb
+	}
+
+	cnt, err := sendFile(file, thumb, url, "video")
 	if err != nil {
 		return res, err
 	}
@@ -340,6 +315,7 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
 func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
+	var thumb InputFile
 	var url = fmt.Sprintf(
 		"%ssendAnimation?chat_id=%d&%s",
 		a.base,
@@ -347,7 +323,11 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "animation")
+	if opts != nil {
+		thumb = opts.Thumb
+	}
+
+	cnt, err := sendFile(file, thumb, url, "animation")
 	if err != nil {
 		return res, err
 	}
@@ -366,7 +346,7 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "voice")
+	cnt, err := sendFile(file, InputFile{}, url, "voice")
 	if err != nil {
 		return res, err
 	}
@@ -377,6 +357,7 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 // SendVideoNote is used to send video messages.
 func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
+	var thumb InputFile
 	var url = fmt.Sprintf(
 		"%ssendVideoNote?chat_id=%d&%s",
 		a.base,
@@ -384,7 +365,30 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		querify(opts),
 	)
 
-	cnt, err := sendFile(file, url, "video_note")
+	if opts != nil {
+		thumb = opts.Thumb
+	}
+
+	cnt, err := sendFile(file, thumb, url, "video_note")
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
+// Documents and audio files can be only grouped in an album with messages of the same type.
+func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *MediaGroupOptions) (APIResponseMessageArray, error) {
+	var res APIResponseMessageArray
+	var url = fmt.Sprintf(
+		"%ssendMediaGroup?chat_id=%d&%s",
+		a.base,
+		chatID,
+		querify(opts),
+	)
+
+	cnt, err := sendMediaFiles(url, false, toInputMedia(media)...)
 	if err != nil {
 		return res, err
 	}
@@ -834,7 +838,7 @@ func (a API) SetChatPhoto(file InputFile, chatID int64) (APIResponseBool, error)
 		chatID,
 	)
 
-	cnt, err := sendFile(file, url, "photo")
+	cnt, err := sendFile(file, InputFile{}, url, "photo")
 	if err != nil {
 		return res, err
 	}
@@ -1203,21 +1207,14 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // Use a previously uploaded file via its file_id or specify a URL.
 func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (APIResponseMessage, error) {
 	var res APIResponseMessage
-
-	m, err := json.Marshal(media)
-	if err != nil {
-		return res, err
-	}
-
 	var url = fmt.Sprintf(
-		"%seditMessageMedia?%s&media=%s&%s",
+		"%seditMessageMedia?%s&%s",
 		a.base,
 		querify(msg),
-		string(m),
 		querify(opts),
 	)
 
-	cnt, err := sendGetRequest(url)
+	cnt, err := sendMediaFiles(url, true, media)
 	if err != nil {
 		return res, err
 	}

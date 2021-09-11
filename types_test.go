@@ -2,27 +2,36 @@ package echotron
 
 import "testing"
 
-func TestInputMediaPhotoImplementsInputMedia(_ *testing.T) {
+func TestInputMediaPhoto(_ *testing.T) {
 	i := InputMediaPhoto{}
-	i.ImplementsInputMedia()
+	i.media()
+	i.thumb()
+	i.groupable()
 }
 
-func TestInputMediaVideoImplementsInputMedia(_ *testing.T) {
+func TestInputMediaVideo(_ *testing.T) {
 	i := InputMediaVideo{}
-	i.ImplementsInputMedia()
+	i.media()
+	i.thumb()
+	i.groupable()
 }
 
-func TestInputMediaAnimationImplementsInputMedia(_ *testing.T) {
+func TestInputMediaAnimation(_ *testing.T) {
 	i := InputMediaAnimation{}
-	i.ImplementsInputMedia()
+	i.media()
+	i.thumb()
 }
 
-func TestInputMediaAudioImplementsInputMedia(_ *testing.T) {
+func TestInputMediaAudio(_ *testing.T) {
 	i := InputMediaAudio{}
-	i.ImplementsInputMedia()
+	i.media()
+	i.thumb()
+	i.groupable()
 }
 
-func TestInputMediaDocumentImplementsInputMedia(_ *testing.T) {
+func TestInputMediaDocument(_ *testing.T) {
 	i := InputMediaDocument{}
-	i.ImplementsInputMedia()
+	i.media()
+	i.thumb()
+	i.groupable()
 }

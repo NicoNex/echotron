@@ -122,7 +122,7 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFi
 		userID,
 	)
 
-	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
 		return res, err
 	}
@@ -143,7 +143,7 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 		querify(opts),
 	)
 
-	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
 		return res, err
 	}
@@ -163,7 +163,7 @@ func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerF
 		querify(opts),
 	)
 
-	cnt, err := sendFile(sticker.File, url, string(sticker.Type))
+	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
 		return res, err
 	}
@@ -216,7 +216,7 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (API
 		userID,
 	)
 
-	cnt, err := sendFile(thumb, url, "thumb")
+	cnt, err := sendFile(thumb, InputFile{}, url, "thumb")
 	if err != nil {
 		return res, err
 	}
