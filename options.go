@@ -255,10 +255,10 @@ type AudioOptions struct {
 	Performer                string          `query:"performer"`
 	Title                    string          `query:"title"`
 	Thumb                    InputFile
-	DisableNotification      bool            `query:"disable_notification"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
@@ -268,10 +268,10 @@ type DocumentOptions struct {
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
 	Thumb                       InputFile
-	DisableNotification         bool            `query:"disable_notification"`
-	ReplyToMessageID            int             `query:"reply_to_message_id"`
-	AllowSendingWithoutReply    bool            `query:"allow_sending_without_reply"`
-	ReplyMarkup                 ReplyMarkup     `query:"reply_markup"`
+	DisableNotification         bool        `query:"disable_notification"`
+	ReplyToMessageID            int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply    bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup                 ReplyMarkup `query:"reply_markup"`
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
@@ -283,11 +283,11 @@ type VideoOptions struct {
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
 	Thumb                    InputFile
-	SupportsStreaming        bool            `query:"supports_streaming"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+	SupportsStreaming        bool        `query:"supports_streaming"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
@@ -299,10 +299,10 @@ type AnimationOptions struct {
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
 	Thumb                    InputFile
-	DisableNotification      bool            `query:"disable_notification"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
@@ -319,8 +319,8 @@ type VoiceOptions struct {
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
-	Duration                 int         `query:"duration"`
-	Length                   int         `query:"length"`
+	Duration                 int `query:"duration"`
+	Length                   int `query:"length"`
 	Thumb                    InputFile
 	DisableNotification      bool        `query:"disable_notification"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
