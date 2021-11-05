@@ -66,6 +66,7 @@ const (
 	FindLocation               = "find_location"
 	RecordVideoNote            = "record_video_note"
 	UploadVideoNote            = "upload_video_note"
+	ChooseSticker              = "choose_sticker"
 )
 
 // UpdateType is a custom type for the various update types that a bot can be subscribed to.
@@ -434,8 +435,10 @@ type UserProfileOptions struct {
 
 // InviteLinkOptions contains the optional parameters used by the CreateChatInviteLink and EditChatInviteLink methods.
 type InviteLinkOptions struct {
-	ExpireDate  int64 `query:"expire_date"`
-	MemberLimit int   `query:"member_limit"`
+	Name               string `query:"name"`
+	ExpireDate         int64  `query:"expire_date"`
+	MemberLimit        int    `query:"member_limit"`
+	CreatesJoinRequest bool   `query:"creates_join_request"`
 }
 
 // CallbackQueryOptions contains the optional parameters used by the AnswerCallbackQuery method.

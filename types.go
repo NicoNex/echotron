@@ -31,6 +31,9 @@ type Update struct {
 	InlineQuery        *InlineQuery        `json:"inline_query,omitempty"`
 	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result,omitempty"`
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
+	MyChatMember       *ChatMemberUpdated  `json:"my_chat_member,omitempty"`
+	ChatMember         *ChatMemberUpdated  `json:"chat_member,omitempty"`
+	ChatJoinRequest    *ChatJoinRequest    `json:"chat_join_request,omitempty"`
 }
 
 // WebhookInfo contains information about the current status of a webhook.
@@ -508,12 +511,15 @@ type ChatPhoto struct {
 
 // ChatInviteLink represents an invite link for a chat.
 type ChatInviteLink struct {
-	InviteLink  string `json:"invite_link"`
-	Creator     *User  `json:"creator"`
-	IsPrimary   bool   `json:"is_primary"`
-	IsRevoked   bool   `json:"is_revoked"`
-	ExpireDate  int    `json:"expire_date,omitempty"`
-	MemberLimit int    `json:"member_limit,omitempty"`
+	InviteLink              string `json:"invite_link"`
+	Creator                 *User  `json:"creator"`
+	CreatesJoinRequest      bool   `json:"creates_join_request"`
+	IsPrimary               bool   `json:"is_primary"`
+	IsRevoked               bool   `json:"is_revoked"`
+	Name                    string `json:"name,omitempty"`
+	ExpireDate              int    `json:"expire_date,omitempty"`
+	MemberLimit             int    `json:"member_limit,omitempty"`
+	PendingJoinRequestCount int    `json:"pending_join_request_count,omitempty"`
 }
 
 // ChatMember contains information about one member of a chat.
@@ -806,4 +812,12 @@ type BotCommandScope struct {
 // PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
 type PermissionOptions struct {
 	Permissions ChatPermissions `json:"permissions"`
+}
+
+type ChatJoinRequest struct {
+	Chat       Chat            `json:"chat"`
+	From       User            `json:"user"`
+	Date       int             `json:"date"`
+	Bio        string          `json:"bio,omitempty"`
+	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
 }
