@@ -519,7 +519,7 @@ type ChatInviteLink struct {
 	Name                    string `json:"name,omitempty"`
 	ExpireDate              int    `json:"expire_date,omitempty"`
 	MemberLimit             int    `json:"member_limit,omitempty"`
-	PendingJoinRequestCount int    `json:pending_join_request_count,omitempty`
+	PendingJoinRequestCount int    `json:"pending_join_request_count,omitempty"`
 }
 
 // ChatMember contains information about one member of a chat.
