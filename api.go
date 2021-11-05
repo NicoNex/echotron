@@ -827,6 +827,44 @@ func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (APIResponseI
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// ApproveChatJoinRequest is used to approve a chat join request.
+// The bot must be an administrator in the chat for this to work and must have the CanInviteUsers administrator right.
+func (a API) ApproveChatJoinRequest(chatID, userID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sapproveChatJoinRequest?chat_id=%d&user_id=%d",
+		a.base,
+		chatID,
+		userID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// DeclineChatJoinRequest is used to decline a chat join request.
+// The bot must be an administrator in the chat for this to work and must have the CanInviteUsers administrator right.
+func (a API) DeclineChatJoinRequest(chatID, userID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sdeclineChatJoinRequest?chat_id=%d&user_id=%d",
+		a.base,
+		chatID,
+		userID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SetChatPhoto is used to set a new profile photo for the chat.
 // Photos can't be changed for private chats.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
