@@ -1130,8 +1130,8 @@ func (a API) DeleteChatStickerSet(chatID int64) (APIResponseBool, error) {
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
-func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (APIResponseBool, error) {
+	var res APIResponseBool
 	var url = fmt.Sprintf(
 		"%sanswerCallbackQuery?callback_query_id=%s&%s",
 		a.base,
