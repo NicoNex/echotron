@@ -1158,6 +1158,36 @@ func TestSetChatAdministratorCustomTitle(t *testing.T) {
 	}
 }
 
+func TestBanChatSenderChat(t *testing.T) {
+	resp, err := api.BanChatSenderChat(
+		channelID,
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestUnbanChatSenderChat(t *testing.T) {
+	resp, err := api.UnbanChatSenderChat(
+		channelID,
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
 func TestSetChatPermissions(t *testing.T) {
 	resp, err := api.SetChatPermissions(
 		groupID,
