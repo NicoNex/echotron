@@ -723,6 +723,45 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 	return res, json.Unmarshal(cnt, &res)
 }
 
+// BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.
+// The owner of the chat will not be able to send messages and join live streams on behalf of the chat, unless it is unbanned first.
+// The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights.
+func (a API) BanChatSenderChat(chatID, senderChatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sbanChatSenderChat?chat_id=%d&sender_chat_id=%d",
+		a.base,
+		chatID,
+		senderChatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
+// UnbanChatSenderChat is used to unban a previously channel chat in a supergroup or channel.
+// The bot must be an administrator for this to work and must have the appropriate administrator rights.
+func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (APIResponseBool, error) {
+	var res APIResponseBool
+	var url = fmt.Sprintf(
+		"%sunbanChatSenderChat?chat_id=%d&sender_chat_id=%d",
+		a.base,
+		chatID,
+		senderChatID,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	return res, json.Unmarshal(cnt, &res)
+}
+
 // SetChatPermissions is used to set default chat permissions for all members.
 // The bot must be an administrator in the supergroup for this to work and must have the can_restrict_members admin rights.
 func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (APIResponseBool, error) {
