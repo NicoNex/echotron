@@ -59,60 +59,13 @@ func (a APIError) Error() string {
 // - APIResponseUser
 // - APIResponseUserProfile
 // - APIResponseWebhook
-func Check(APIResponse interface{}, err error) error {
+func Check(response echotron.APIResponse, err error) error {
 	if err != nil {
 		return err
 	}
 
-	var base echotron.APIResponseBase
-	switch res := APIResponse.(type) {
-	case echotron.APIResponseAdministrators:
-		base = res.APIResponseBase
-	case echotron.APIResponseBase:
-		base = res
-	case echotron.APIResponseBool:
-		base = res.APIResponseBase
-	case echotron.APIResponseChat:
-		base = res.APIResponseBase
-	case echotron.APIResponseChatMember:
-		base = res.APIResponseBase
-	case echotron.APIResponseCommands:
-		base = res.APIResponseBase
-	case echotron.APIResponseFile:
-		base = res.APIResponseBase
-	case echotron.APIResponseGameHighScore:
-		base = res.APIResponseBase
-	case echotron.APIResponseInteger:
-		base = res.APIResponseBase
-	case echotron.APIResponseInviteLink:
-		base = res.APIResponseBase
-	case echotron.APIResponseMessage:
-		base = res.APIResponseBase
-	case echotron.APIResponseMessageArray:
-		base = res.APIResponseBase
-	case echotron.APIResponseMessageID:
-		base = res.APIResponseBase
-	case echotron.APIResponsePoll:
-		base = res.APIResponseBase
-	case echotron.APIResponseStickerSet:
-		base = res.APIResponseBase
-	case echotron.APIResponseString:
-		base = res.APIResponseBase
-	case echotron.APIResponseUpdate:
-		base = res.APIResponseBase
-	case echotron.APIResponseUser:
-		base = res.APIResponseBase
-	case echotron.APIResponseUserProfile:
-		base = res.APIResponseBase
-	case echotron.APIResponseWebhook:
-		base = res.APIResponseBase
-	default:
-		return ErrInvalidAPIResponse
+	if r := response.Base(); !r.Ok {
+		return NewAPIError(r.ErrorCode, r.Description)
 	}
-
-	if !base.Ok {
-		return NewAPIError(base.ErrorCode, base.Description)
-	}
-
 	return nil
 }
