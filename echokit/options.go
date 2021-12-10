@@ -4,9 +4,6 @@ import (
 	"github.com/NicoNex/echotron/v3"
 )
 
-// InlineButton is equivalent to echotron.InlineKeyboardButton but the name is shorter
-//type InlineButton = echotron.InlineKeyboardButton
-
 // InlineKeyboard allows to quickly cast [][]echotron.InlineKeyboardButton into echotron.ReplyMarkup
 func InlineKeyboard(kbd [][]echotron.InlineKeyboardButton) echotron.ReplyMarkup {
 	return echotron.InlineKeyboardMarkup{InlineKeyboard: kbd}
