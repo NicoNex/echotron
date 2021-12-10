@@ -1,4 +1,4 @@
-package main
+package echokit
 
 import (
 	"github.com/NicoNex/echotron/v3"
