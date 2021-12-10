@@ -48,12 +48,23 @@ type WebhookInfo struct {
 	AllowedUpdates       []*UpdateType `json:"allowed_updates,omitempty"`
 }
 
+// APIResponse is implemented by all the APIResponse* types.
+type APIResponse interface {
+	// Base returns the object of type APIResponseBase contained in each implemented type.
+	Base() APIResponseBase
+}
+
 // APIResponseBase is a base type that represents the incoming response from Telegram servers.
 // Used by APIResponse* to slim down the implementation.
 type APIResponseBase struct {
 	Ok          bool   `json:"ok"`
 	ErrorCode   int    `json:"error_code,omitempty"`
 	Description string `json:"description,omitempty"`
+}
+
+// Returns the APIResponseBase itself.
+func (a APIResponseBase) Base() APIResponseBase {
+	return a
 }
 
 // APIResponseUpdate represents the incoming response from Telegram servers.
@@ -63,11 +74,21 @@ type APIResponseUpdate struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseUpdate) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseUser represents the incoming response from Telegram servers.
 // Used by all methods that return a User object on success.
 type APIResponseUser struct {
 	Result *User `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseUser) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseMessage represents the incoming response from Telegram servers.
@@ -77,11 +98,21 @@ type APIResponseMessage struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseMessage) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseMessageArray represents the incoming response from Telegram servers.
 // Used by all methods that return an array of Message objects on success.
 type APIResponseMessageArray struct {
 	Result []*Message `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseMessageArray) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseMessageID represents the incoming response from Telegram servers.
@@ -91,11 +122,21 @@ type APIResponseMessageID struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseMessageID) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseCommands represents the incoming response from Telegram servers.
 // Used by all methods that return an array of BotCommand objects on success.
 type APIResponseCommands struct {
 	Result []*BotCommand `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseCommands) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseBool represents the incoming response from Telegram servers.
@@ -105,11 +146,21 @@ type APIResponseBool struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseBool) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseString represents the incoming response from Telegram servers.
 // Used by all methods that return a string on success.
 type APIResponseString struct {
 	Result string `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseString) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseChat represents the incoming response from Telegram servers.
@@ -119,11 +170,21 @@ type APIResponseChat struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseChat) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseInviteLink represents the incoming response from Telegram servers.
 // Used by all methods that return a ChatInviteLink object on success.
 type APIResponseInviteLink struct {
 	Result *ChatInviteLink `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseInviteLink) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseStickerSet represents the incoming response from Telegram servers.
@@ -133,11 +194,21 @@ type APIResponseStickerSet struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseStickerSet) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseUserProfile represents the incoming response from Telegram servers.
 // Used by all methods that return a UserProfilePhotos object on success.
 type APIResponseUserProfile struct {
 	Result *UserProfilePhotos `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseUserProfile) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseFile represents the incoming response from Telegram servers.
@@ -147,11 +218,21 @@ type APIResponseFile struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseFile) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseAdministrators represents the incoming response from Telegram servers.
 // Used by all methods that return an array of ChatMember objects on success.
 type APIResponseAdministrators struct {
 	Result []*ChatMember `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseAdministrators) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponseChatMember represents the incoming response from Telegram servers.
@@ -161,11 +242,21 @@ type APIResponseChatMember struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseChatMember) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseInteger represents the incoming response from Telegram servers.
 // Used by all methods that return an integer on success.
 type APIResponseInteger struct {
 	Result int `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseInteger) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // APIResponsePoll represents the incoming response from Telegram servers.
@@ -175,6 +266,11 @@ type APIResponsePoll struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponsePoll) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
 // Used by all methods that return an array of GameHighScore objects on success.
 type APIResponseGameHighScore struct {
@@ -182,11 +278,21 @@ type APIResponseGameHighScore struct {
 	APIResponseBase
 }
 
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseGameHighScore) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseWebhook represents the incoming response from Telegram servers.
 // Used by all methods that return a WebhookInfo object on success.
 type APIResponseWebhook struct {
 	Result *WebhookInfo `json:"result,omitempty"`
 	APIResponseBase
+}
+
+// Returns the contained object of type APIResponseBase.
+func (a APIResponseWebhook) Base() APIResponseBase {
+	return a.APIResponseBase
 }
 
 // User represents a Telegram user or bot.
