@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/NicoNex/echotron/v3"
 )
 
@@ -32,11 +30,11 @@ func GenInlineKeyboard(column int, fromList ...echotron.InlineKeyboardButton) ec
 			row = nil
 		}
 	}
-	if row%column != 0 {
+	if len(row) > 0 {
 		finalKbd = append(finalKbd, row)
 	}
 
-	return GenInlineKeyboard(finalKbd)
+	return InlineKeyboard(finalKbd)
 }
 
 // ForceReply allows to force the user to reply to the current message when sent

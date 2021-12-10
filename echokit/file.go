@@ -8,11 +8,11 @@ import (
 
 // DownloadFileToDisk it download a given echotron.Document at the given path + file name and returns the content
 func DownloadFileToDisk(a echotron.API, document echotron.Document, path string) (content []byte, err error) {
-	content, err = GetFileContent(a, document.FileID)
+	content, err = DownloadFile(a, document.FileID)
 	if err != nil {
 		return
 	}
-	s
+
 	err = os.WriteFile(path, content, os.ModePerm)
 
 	return

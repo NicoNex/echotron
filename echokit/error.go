@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/NicoNex/echotron/v3"
@@ -65,45 +66,45 @@ func Check(APIResponse interface{}, err error) error {
 
 	var base echotron.APIResponseBase
 	switch res := APIResponse.(type) {
-	case APIResponseAdministrators:
+	case echotron.APIResponseAdministrators:
 		base = res.APIResponseBase
-	case APIResponseBase:
+	case echotron.APIResponseBase:
+		base = res
+	case echotron.APIResponseBool:
 		base = res.APIResponseBase
-	case APIResponseBool:
+	case echotron.APIResponseChat:
 		base = res.APIResponseBase
-	case APIResponseChat:
+	case echotron.APIResponseChatMember:
 		base = res.APIResponseBase
-	case APIResponseChatMember:
+	case echotron.APIResponseCommands:
 		base = res.APIResponseBase
-	case APIResponseCommands:
+	case echotron.APIResponseFile:
 		base = res.APIResponseBase
-	case APIResponseFile:
+	case echotron.APIResponseGameHighScore:
 		base = res.APIResponseBase
-	case APIResponseGameHighScore:
+	case echotron.APIResponseInteger:
 		base = res.APIResponseBase
-	case APIResponseInteger:
+	case echotron.APIResponseInviteLink:
 		base = res.APIResponseBase
-	case APIResponseInviteLink:
+	case echotron.APIResponseMessage:
 		base = res.APIResponseBase
-	case APIResponseMessage:
+	case echotron.APIResponseMessageArray:
 		base = res.APIResponseBase
-	case APIResponseMessageArray:
+	case echotron.APIResponseMessageID:
 		base = res.APIResponseBase
-	case APIResponseMessageID:
+	case echotron.APIResponsePoll:
 		base = res.APIResponseBase
-	case APIResponsePoll:
+	case echotron.APIResponseStickerSet:
 		base = res.APIResponseBase
-	case APIResponseStickerSet:
+	case echotron.APIResponseString:
 		base = res.APIResponseBase
-	case APIResponseString:
+	case echotron.APIResponseUpdate:
 		base = res.APIResponseBase
-	case APIResponseUpdate:
+	case echotron.APIResponseUser:
 		base = res.APIResponseBase
-	case APIResponseUser:
+	case echotron.APIResponseUserProfile:
 		base = res.APIResponseBase
-	case APIResponseUserProfile:
-		base = res.APIResponseBase
-	case APIResponseWebhook:
+	case echotron.APIResponseWebhook:
 		base = res.APIResponseBase
 	default:
 		return ErrInvalidAPIResponse
