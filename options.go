@@ -69,6 +69,29 @@ const (
 	ChooseSticker              = "choose_sticker"
 )
 
+// MessageEntityType is a custom type for the various MessageEntity types used in various methods.
+type MessageEntityType string
+
+// These are all the possible types for MessageEntityType.
+const (
+	MentionEntity       MessageEntityType = "mention"
+	HashtagEntity                         = "hashtag"
+	CashtagEntity                         = "cashtag"
+	BotCommandEntity                      = "bot_command"
+	UrlEntity                             = "url"
+	EmailEntity                           = "email"
+	PhoneNumberEntity                     = "phone_number"
+	BoldEntity                            = "bold"
+	ItalicEntity                          = "italic"
+	UnderlineEntity                       = "underline"
+	StrikethroughEntity                   = "strikethrough"
+	SpoilerEntity                         = "spoiler"
+	CodeEntity                            = "code"
+	PreEntity                             = "pre"
+	TextLinkEntity                        = "text_link"
+	TextMentionEntity                     = "text_mention"
+)
+
 // UpdateType is a custom type for the various update types that a bot can be subscribed to.
 type UpdateType string
 

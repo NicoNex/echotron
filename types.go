@@ -395,11 +395,11 @@ type MessageID struct {
 // MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	Type   string `json:"type"`
-	Offset int    `json:"offset"`
-	Length int    `json:"length"`
-	URL    string `json:"url,omitempty"`
-	User   *User  `json:"user,omitempty"`
+	Type   MessageEntityType `json:"type"`
+	Offset int               `json:"offset"`
+	Length int               `json:"length"`
+	URL    string            `json:"url,omitempty"`
+	User   *User             `json:"user,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
