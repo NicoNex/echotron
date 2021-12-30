@@ -204,6 +204,7 @@ type WebhookOptions struct {
 // BaseOptions contains the optional parameters used frequently in some Telegram API methods.
 type BaseOptions struct {
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -215,14 +216,21 @@ type MessageOptions struct {
 	Entities                 []MessageEntity `query:"entities"`
 	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
 	DisableNotification      bool            `query:"disable_notification"`
+	ProtectContent           bool            `query:"protect_content"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 }
 
-// DisableNotificationOptions contains the optional parameters used by some Telegram API methods.
-type DisableNotificationOptions struct {
+// PinMessageOptions contains the optional parameters used by the PinChatMember method.
+type PinMessageOptions struct {
 	DisableNotification bool `query:"disable_notification"`
+}
+
+// ForwardOptions contains the optional parameters used by the ForwardMessage method.
+type ForwardOptions struct {
+	DisableNotification bool `query:"disable_notification"`
+	ProtectContent      bool `query:"protect_content"`
 }
 
 // CopyOptions contains the optional parameters used by the CopyMessage method.
@@ -231,6 +239,7 @@ type CopyOptions struct {
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	DisableNotification      bool            `query:"disable_notification"`
+	ProtectContent           bool            `query:"protect_content"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
@@ -265,6 +274,7 @@ type PhotoOptions struct {
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	DisableNotification      bool            `query:"disable_notification"`
+	ProtectContent           bool            `query:"protect_content"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
@@ -280,6 +290,7 @@ type AudioOptions struct {
 	Title                    string          `query:"title"`
 	Thumb                    InputFile
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -293,6 +304,7 @@ type DocumentOptions struct {
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
 	Thumb                       InputFile
 	DisableNotification         bool        `query:"disable_notification"`
+	ProtectContent              bool        `query:"protect_content"`
 	ReplyToMessageID            int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply    bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup                 ReplyMarkup `query:"reply_markup"`
@@ -309,6 +321,7 @@ type VideoOptions struct {
 	Thumb                    InputFile
 	SupportsStreaming        bool        `query:"supports_streaming"`
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -324,6 +337,7 @@ type AnimationOptions struct {
 	Height                   int             `query:"height"`
 	Thumb                    InputFile
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -336,6 +350,7 @@ type VoiceOptions struct {
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	Duration                 int             `query:"duration"`
 	DisableNotification      bool            `query:"disable_notification"`
+	ProtectContent           bool            `query:"protect_content"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
@@ -347,6 +362,7 @@ type VideoNoteOptions struct {
 	Length                   int `query:"length"`
 	Thumb                    InputFile
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -355,6 +371,7 @@ type VideoNoteOptions struct {
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
 type MediaGroupOptions struct {
 	DisableNotification      bool `query:"disable_notification"`
+	ProtectContent           bool `query:"protect_content"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
 }
@@ -366,6 +383,7 @@ type LocationOptions struct {
 	Heading                  int         `query:"heading"`
 	ProximityAlertRadius     int         `query:"proximity_alert_radius"`
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -386,6 +404,7 @@ type VenueOptions struct {
 	GooglePlaceID            string      `query:"google_place_id"`
 	GooglePlaceType          string      `query:"google_place_type"`
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -396,6 +415,7 @@ type ContactOptions struct {
 	LastName                 string      `query:"last_name"`
 	VCard                    string      `query:"vcard"`
 	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
@@ -414,6 +434,7 @@ type PollOptions struct {
 	CloseDate                int             `query:"close_date"`
 	IsClosed                 bool            `query:"is_closed"`
 	DisableNotification      bool            `query:"disable_notification"`
+	ProtectContent           bool            `query:"protect_content"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`

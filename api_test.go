@@ -1343,7 +1343,7 @@ func TestPinChatMessage(t *testing.T) {
 	resp, err := api.PinChatMessage(
 		groupID,
 		pinMsgID,
-		&DisableNotificationOptions{true},
+		&PinMessageOptions{true},
 	)
 
 	if err != nil {

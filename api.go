@@ -180,7 +180,7 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 
 // ForwardMessage is used to forward messages of any kind.
 // Service messages can't be forwarded.
-func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *DisableNotificationOptions) (APIResponseMessage, error) {
+func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *ForwardOptions) (APIResponseMessage, error) {
 	var res APIResponseMessage
 	var url = fmt.Sprintf(
 		"%sforwardMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",
@@ -984,7 +984,7 @@ func (a API) SetChatDescription(chatID int64, description string) (APIResponseBo
 // PinChatMessage is used to add a message to the list of pinned messages in the chat.
 // If the chat is not a private chat, the bot must be an administrator in the chat for this to work
 // and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
-func (a API) PinChatMessage(chatID int64, messageID int, opts *DisableNotificationOptions) (APIResponseBool, error) {
+func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions) (APIResponseBool, error) {
 	var res APIResponseBool
 	var url = fmt.Sprintf(
 		"%spinChatMessage?chat_id=%d&message_id=%d&%s",
