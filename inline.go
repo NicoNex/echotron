@@ -543,5 +543,9 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }

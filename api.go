@@ -51,7 +51,11 @@ func (a API) GetUpdates(opts *UpdateOptions) (APIResponseUpdate, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
@@ -70,7 +74,11 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
@@ -87,7 +95,11 @@ func (a API) DeleteWebhook(dropPendingUpdates bool) (APIResponseBase, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetWebhookInfo is used to get current webhook status.
@@ -103,7 +115,11 @@ func (a API) GetWebhookInfo() (APIResponseWebhook, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetMe is a simple method for testing your bot's auth token.
@@ -119,7 +135,11 @@ func (a API) GetMe() (APIResponseUser, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // LogOut is used to log out from the cloud Bot API server before launching the bot locally.
@@ -138,7 +158,11 @@ func (a API) LogOut() (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // Close is used to close the bot instance before moving it from one local server to another.
@@ -156,7 +180,11 @@ func (a API) Close() (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendMessage is used to send text messages.
@@ -175,7 +203,11 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (APIRe
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // ForwardMessage is used to forward messages of any kind.
@@ -196,7 +228,11 @@ func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *Forwa
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // CopyMessage is used to copy messages of any kind.
@@ -219,7 +255,11 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendPhoto is used to send photos.
@@ -237,7 +277,11 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendAudio is used to send audio files,
@@ -262,7 +306,11 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendDocument is used to send general files.
@@ -285,7 +333,11 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendVideo is used to send video files.
@@ -309,7 +361,11 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
@@ -332,7 +388,11 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
@@ -351,7 +411,11 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendVideoNote is used to send video messages.
@@ -374,7 +438,11 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
@@ -393,7 +461,11 @@ func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *Med
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendLocation is used to send point on the map.
@@ -413,7 +485,11 @@ func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *Locat
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditMessageLiveLocation is used to edit live location messages.
@@ -434,7 +510,11 @@ func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude f
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // StopMessageLiveLocation is used to stop updating a live location message before `LivePeriod` expires.
@@ -452,7 +532,11 @@ func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMar
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendVenue is used to send information about a venue.
@@ -474,7 +558,11 @@ func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendContact is used to send phone contacts.
@@ -494,7 +582,11 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendPoll is used to send a native poll.
@@ -520,7 +612,11 @@ func (a API) SendPoll(chatID int64, question string, options []string, opts *Pol
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendDice is used to send an animated emoji that will display a random value.
@@ -539,7 +635,11 @@ func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (APIResp
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
@@ -558,7 +658,11 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (APIResponseBool, e
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetUserProfilePhotos is used to get a list of profile pictures for a user.
@@ -576,7 +680,11 @@ func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (APIRe
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetFile returns the basic info about a file and prepares it for downloading.
@@ -597,7 +705,11 @@ func (a API) GetFile(fileID string) (APIResponseFile, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DownloadFile returns the bytes of the file corresponding to the given filePath.
@@ -630,7 +742,11 @@ func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (APIResponseB
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // UnbanChatMember is used to unban a previously banned user in a supergroup or channel.
@@ -654,7 +770,11 @@ func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (APIRespo
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // RestrictChatMember is used to restrict a user in a supergroup.
@@ -681,7 +801,11 @@ func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermission
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // PromoteChatMember is used to promote or demote a user in a supergroup or a channel.
@@ -701,7 +825,11 @@ func (a API) PromoteChatMember(chatID, userID int64, opts *PromoteOptions) (APIR
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatAdministratorCustomTitle is used to set a custom title for an administrator in a supergroup promoted by the bot.
@@ -720,7 +848,11 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.
@@ -740,7 +872,11 @@ func (a API) BanChatSenderChat(chatID, senderChatID int64) (APIResponseBool, err
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // UnbanChatSenderChat is used to unban a previously channel chat in a supergroup or channel.
@@ -759,7 +895,11 @@ func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (APIResponseBool, e
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatPermissions is used to set default chat permissions for all members.
@@ -784,7 +924,11 @@ func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (APIR
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // ExportChatInviteLink is used to generate a new primary invite link for a chat;
@@ -803,7 +947,11 @@ func (a API) ExportChatInviteLink(chatID int64) (APIResponseString, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // CreateChatInviteLink is used to create an additional invite link for a chat.
@@ -823,7 +971,11 @@ func (a API) CreateChatInviteLink(chatID int64, opts *InviteLinkOptions) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditChatInviteLink is used to edit a non-primary invite link created by the bot.
@@ -843,7 +995,11 @@ func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLin
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // RevokeChatInviteLink is used to revoke an invite link created by the bot.
@@ -863,7 +1019,11 @@ func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (APIResponseI
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // ApproveChatJoinRequest is used to approve a chat join request.
@@ -882,7 +1042,11 @@ func (a API) ApproveChatJoinRequest(chatID, userID int64) (APIResponseBool, erro
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeclineChatJoinRequest is used to decline a chat join request.
@@ -901,7 +1065,11 @@ func (a API) DeclineChatJoinRequest(chatID, userID int64) (APIResponseBool, erro
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatPhoto is used to set a new profile photo for the chat.
@@ -920,7 +1088,11 @@ func (a API) SetChatPhoto(file InputFile, chatID int64) (APIResponseBool, error)
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteChatPhoto is used to delete a chat photo.
@@ -939,7 +1111,11 @@ func (a API) DeleteChatPhoto(chatID int64) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatTitle is used to change the title of a chat.
@@ -959,7 +1135,11 @@ func (a API) SetChatTitle(chatID int64, title string) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatDescription is used to change the description of a group, a supergroup or a channel.
@@ -978,7 +1158,11 @@ func (a API) SetChatDescription(chatID int64, description string) (APIResponseBo
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // PinChatMessage is used to add a message to the list of pinned messages in the chat.
@@ -999,7 +1183,11 @@ func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // UnpinChatMessage is used to remove a message from the list of pinned messages in the chat.
@@ -1019,7 +1207,11 @@ func (a API) UnpinChatMessage(chatID int64, messageID int) (APIResponseBool, err
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // UnpinAllChatMessages is used to clear the list of pinned messages in a chat.
@@ -1038,7 +1230,11 @@ func (a API) UnpinAllChatMessages(chatID int64) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // LeaveChat is used to make the bot leave a group, supergroup or channel.
@@ -1055,7 +1251,11 @@ func (a API) LeaveChat(chatID int64) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetChat is used to get up to date information about the chat.
@@ -1073,7 +1273,11 @@ func (a API) GetChat(chatID int64) (APIResponseChat, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetChatAdministrators is used to get a list of administrators in a chat.
@@ -1090,7 +1294,11 @@ func (a API) GetChatAdministrators(chatID int64) (APIResponseAdministrators, err
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetChatMemberCount is used to get the number of members in a chat.
@@ -1107,7 +1315,11 @@ func (a API) GetChatMemberCount(chatID int64) (APIResponseInteger, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetChatMember is used to get information about a member of a chat.
@@ -1125,7 +1337,11 @@ func (a API) GetChatMember(chatID, userID int64) (APIResponseChatMember, error) 
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetChatStickerSet is used to set a new group sticker set for a supergroup.
@@ -1145,7 +1361,11 @@ func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (APIResponse
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteChatStickerSet is used to delete a group sticker set for a supergroup.
@@ -1164,7 +1384,11 @@ func (a API) DeleteChatStickerSet(chatID int64) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
@@ -1183,7 +1407,11 @@ func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) 
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
@@ -1203,7 +1431,11 @@ func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (APIRes
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteMyCommands is used to delete the list of the bot's commands for the given scope and user language.
@@ -1220,7 +1452,11 @@ func (a API) DeleteMyCommands(opts *CommandOptions) (APIResponseBool, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetMyCommands is used to get the current list of the bot's commands for the given scope and user language.
@@ -1237,7 +1473,11 @@ func (a API) GetMyCommands(opts *CommandOptions) (APIResponseCommands, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditMessageText is used to edit text and game messages.
@@ -1256,7 +1496,11 @@ func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTex
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditMessageCaption is used to edit captions of messages.
@@ -1274,7 +1518,11 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditMessageMedia is used to edit animation, audio, document, photo or video messages.
@@ -1296,7 +1544,11 @@ func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *Mess
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
@@ -1314,7 +1566,11 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // StopPoll is used to stop a poll which was sent by the bot.
@@ -1333,7 +1589,11 @@ func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (AP
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteMessage is used to delete a message, including service messages, with the following limitations:
@@ -1358,5 +1618,9 @@ func (a API) DeleteMessage(chatID int64, messageID int) (APIResponseBase, error)
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }

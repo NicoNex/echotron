@@ -92,7 +92,11 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (API
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // GetStickerSet is used to get a sticker set.
@@ -109,7 +113,11 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
@@ -127,7 +135,11 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFi
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
@@ -148,7 +160,11 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // AddStickerToSet is used to add a new sticker to a set created by the bot.
@@ -168,7 +184,11 @@ func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerF
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
@@ -186,7 +206,11 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseB
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
@@ -203,7 +227,11 @@ func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }
 
 // SetStickerSetThumb is used to set the thumbnail of a sticker set.
@@ -221,5 +249,9 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (API
 		return res, err
 	}
 
-	return res, json.Unmarshal(cnt, &res)
+	if err := json.Unmarshal(cnt, &res); err != nil {
+		return res, err
+	}
+
+	return res, check(res)
 }

@@ -29,6 +29,13 @@ import (
 
 var ErrEmptyPath = errors.New("empty path in InputFile")
 
+func check(r APIResponse) error {
+	if b := r.Base(); !b.Ok {
+		return &APIError{b.ErrorCode, b.Description}
+	}
+	return nil
+}
+
 func encode(s string) string {
 	return url.QueryEscape(s)
 }
