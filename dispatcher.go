@@ -44,12 +44,11 @@ type NewBotFn func(chatId int64) Bot
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	// This channel should be used only when implementing a custom webhook HTTP handler
-	// as a way to pass the incoming updates from Telegram to the dispatcher.
-	Updates    chan *Update
 	api        API
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
+	updates    chan *Update
+	handler    http.Handler
 	mu         sync.Mutex
 }
 
@@ -58,10 +57,11 @@ type Dispatcher struct {
 // If a new chat ID is found, newBotFn will be called first.
 func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 	d := &Dispatcher{
-		Updates:    make(chan *Update),
 		api:        NewAPI(token),
 		sessionMap: make(map[int64]Bot),
 		newBot:     newBotFn,
+		updates:    make(chan *Update),
+		handler:    nil,
 	}
 	go d.listen()
 	return d
@@ -123,7 +123,7 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) e
 		} else if response.Ok {
 			if !dropPendingUpdates || !firstRun {
 				for _, u := range response.Result {
-					d.Updates <- u
+					d.updates <- u
 				}
 			}
 
@@ -154,7 +154,7 @@ func (d *Dispatcher) instance(chatID int64) Bot {
 }
 
 func (d *Dispatcher) listen() {
-	for update := range d.Updates {
+	for update := range d.updates {
 		var chatID int64
 
 		if update.Message != nil {
@@ -180,7 +180,7 @@ func (d *Dispatcher) listen() {
 
 // ListenWebhook is a wrapper function for ListenWebhookOptions.
 func (d *Dispatcher) ListenWebhook(webhookURL string) error {
-	return d.ListenWebhookOptions(webhookURL, false, d.WebhookHandler, nil)
+	return d.ListenWebhookOptions(webhookURL, false, nil)
 }
 
 // ListenWebhookOptions sets a webhook and listens for incoming updates.
@@ -188,13 +188,7 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 // eg: 'https://example.com:443/bot_token'.
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
-// If you don't intend to use a custom HTTP handler you can pass the provided WebhookHandler.
-func (d *Dispatcher) ListenWebhookOptions(
-	webhookURL string,
-	dropPendingUpdates bool,
-	handler func(http.ResponseWriter, *http.Request),
-	opts *WebhookOptions,
-) error {
+func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
 	var response APIResponseBase
 
 	u, err := url.Parse(webhookURL)
@@ -208,46 +202,53 @@ func (d *Dispatcher) ListenWebhookOptions(
 	if err != nil {
 		return err
 	} else if response.Ok {
-		http.HandleFunc(u.EscapedPath(), d.WebhookHandler)
+		http.HandleFunc(u.EscapedPath(), d.GetWebhookHandlerFunc())
 		log.Printf("listening on :%s\n", u.Port())
-		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
+		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), d.handler)
 	}
 
 	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
 }
 
-// WebhookHandler is echotron's default HTTP webhook handler and needs to be passed
-// to ListenWebhookOptions.
-func (d *Dispatcher) WebhookHandler(w http.ResponseWriter, r *http.Request) {
-	var jsn []byte
+// SetHTTPHandler allows to set a custom http.Handler for ListenWebhookOptions.
+func (d *Dispatcher) SetHTTPHandler(h http.Handler) {
+	d.handler = h
+}
 
-	switch r.Header.Get("Content-Encoding") {
-	case "gzip":
-		reader, err := gzip.NewReader(r.Body)
-		if err != nil {
+// GetWebhookHandlerFunc returns the http.HandlerFunc for the webhook URL.
+// Useful if you've already a http server running and want to handle the request yourself.
+func (d *Dispatcher) GetWebhookHandlerFunc() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var jsn []byte
+
+		switch r.Header.Get("Content-Encoding") {
+		case "gzip":
+			reader, err := gzip.NewReader(r.Body)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			defer reader.Close()
+			if j, err := io.ReadAll(reader); err == nil {
+				jsn = j
+			} else {
+				log.Println(err)
+			}
+
+		default:
+			if j, err := io.ReadAll(r.Body); err == nil {
+				jsn = j
+			} else {
+				log.Println(err)
+			}
+		}
+
+		var update Update
+		if err := json.Unmarshal(jsn, &update); err != nil {
 			log.Println(err)
 			return
 		}
-		defer reader.Close()
-		if j, err := io.ReadAll(reader); err == nil {
-			jsn = j
-		} else {
-			log.Println(err)
-		}
 
-	default:
-		if j, err := io.ReadAll(r.Body); err == nil {
-			jsn = j
-		} else {
-			log.Println(err)
-		}
+		d.updates <- &update
 	}
-
-	var update *Update
-	if err := json.Unmarshal(jsn, update); err != nil {
-		log.Println(err)
-		return
-	}
-
-	d.Updates <- update
 }
