@@ -941,7 +941,8 @@ func TestSendLocation(t *testing.T) {
 		0.0,
 		0.0,
 		&LocationOptions{
-			LivePeriod: 60,
+			LivePeriod:         60,
+			HorizontalAccuracy: 50,
 		},
 	)
 
@@ -962,7 +963,8 @@ func TestEditMessageLiveLocation(t *testing.T) {
 		0.0,
 		0.0,
 		&EditLocationOptions{
-			ReplyMarkup: inlineKeyboard,
+			HorizontalAccuracy: 50,
+			ReplyMarkup:        inlineKeyboard,
 		},
 	)
 
