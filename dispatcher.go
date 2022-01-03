@@ -202,7 +202,7 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 	if err != nil {
 		return err
 	} else if response.Ok {
-		http.HandleFunc(u.EscapedPath(), d.GetWebhookHandlerFunc())
+		http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
 		log.Printf("listening on :%s\n", u.Port())
 		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), d.handler)
 	}
@@ -215,40 +215,38 @@ func (d *Dispatcher) SetHTTPHandler(h http.Handler) {
 	d.handler = h
 }
 
-// GetWebhookHandlerFunc returns the http.HandlerFunc for the webhook URL.
+// HandleWebhook is the http.HandlerFunc for the webhook URL.
 // Useful if you've already a http server running and want to handle the request yourself.
-func (d *Dispatcher) GetWebhookHandlerFunc() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var jsn []byte
+func (d *Dispatcher) HandleWebhook(w http.ResponseWriter, r *http.Request) {
+	var jsn []byte
 
-		switch r.Header.Get("Content-Encoding") {
-		case "gzip":
-			reader, err := gzip.NewReader(r.Body)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-			defer reader.Close()
-			if j, err := io.ReadAll(reader); err == nil {
-				jsn = j
-			} else {
-				log.Println(err)
-			}
-
-		default:
-			if j, err := io.ReadAll(r.Body); err == nil {
-				jsn = j
-			} else {
-				log.Println(err)
-			}
-		}
-
-		var update Update
-		if err := json.Unmarshal(jsn, &update); err != nil {
+	switch r.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err := gzip.NewReader(r.Body)
+		if err != nil {
 			log.Println(err)
 			return
 		}
+		defer reader.Close()
+		if j, err := io.ReadAll(reader); err == nil {
+			jsn = j
+		} else {
+			log.Println(err)
+		}
 
-		d.updates <- &update
+	default:
+		if j, err := io.ReadAll(r.Body); err == nil {
+			jsn = j
+		} else {
+			log.Println(err)
+		}
 	}
+
+	var update *Update
+	if err := json.Unmarshal(jsn, update); err != nil {
+		log.Println(err)
+		return
+	}
+
+	d.updates <- update
 }
