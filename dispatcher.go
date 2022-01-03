@@ -210,14 +210,14 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
 }
 
-// SetHTTPHandler allows to set a custom http.Handler for ListenWebhookOptions.
+// SetHTTPHandler allows to set a custom http.Handler for ListenWebhook and ListenWebhookOptions.
 func (d *Dispatcher) SetHTTPHandler(h http.Handler) {
 	d.handler = h
 }
 
 // GetWebhookHandlerFunc returns the http.HandlerFunc for the webhook URL.
 // Useful if you've already a http server running and want to handle the request yourself.
-func (d *Dispatcher) GetWebhookHandlerFunc() func(w http.ResponseWriter, r *http.Request) {
+func (d *Dispatcher) GetWebhookHandlerFunc() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var jsn []byte
 
