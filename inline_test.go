@@ -121,15 +121,3 @@ func TestInputContactMessageContentImplementsInputMessageContent(_ *testing.T) {
 	i := InputContactMessageContent{}
 	i.ImplementsInputMessageContent()
 }
-
-func TestAnswerInlineQuery(t *testing.T) {
-	_, err := api.AnswerInlineQuery(
-		"test",
-		[]InlineQueryResult{},
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}

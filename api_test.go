@@ -1497,19 +1497,6 @@ func TestGetChatMember(t *testing.T) {
 	}
 }
 
-func TestAnswerCallbackQuery(t *testing.T) {
-	_, err := api.AnswerCallbackQuery(
-		"test",
-		&CallbackQueryOptions{
-			Text: "test",
-		},
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestSetMyCommands(t *testing.T) {
 	resp, err := api.SetMyCommands(
 		nil,
