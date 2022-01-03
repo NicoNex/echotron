@@ -11,7 +11,7 @@ import (
 
 var (
 	msgTmp       *Message
-	photoTmp     *Message
+	animationTmp *Message
 	pollTmp      *Message
 	locationTmp  *Message
 	inviteTmp    *ChatInviteLink
@@ -268,8 +268,6 @@ func TestSendPhoto(t *testing.T) {
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
-
-	photoTmp = resp.Result
 }
 
 func TestSendPhotoByID(t *testing.T) {
@@ -611,6 +609,8 @@ func TestSendAnimation(t *testing.T) {
 	if !resp.Ok {
 		t.Fatal(resp.ErrorCode, resp.Description)
 	}
+
+	animationTmp = resp.Result
 }
 
 func TestSendAnimationByID(t *testing.T) {
@@ -769,7 +769,7 @@ func TestSendVideoNote(t *testing.T) {
 	}
 }
 
-func TestSendMediaGroup(t *testing.T) {
+func TestSendMediaGroupPhoto(t *testing.T) {
 	resp, err := api.SendMediaGroup(
 		chatID,
 		[]GroupableInputMedia{
@@ -781,6 +781,60 @@ func TestSendMediaGroup(t *testing.T) {
 			InputMediaPhoto{
 				Type:    MediaTypePhoto,
 				Media:   NewInputFilePath("assets/logo.png"),
+				Caption: "TestSendMediaGroup2",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendMediaGroupVideo(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaVideo{
+				Type:    MediaTypeVideo,
+				Media:   NewInputFileID(videoID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaVideo{
+				Type:    MediaTypeVideo,
+				Media:   NewInputFilePath("assets/tests/video_note.mp4"),
+				Caption: "TestSendMediaGroup2",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !resp.Ok {
+		t.Fatal(resp.ErrorCode, resp.Description)
+	}
+}
+
+func TestSendMediaGroupDocument(t *testing.T) {
+	resp, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaDocument{
+				Type:    MediaTypeDocument,
+				Media:   NewInputFileID(documentID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaDocument{
+				Type:    MediaTypeDocument,
+				Media:   NewInputFilePath("assets/tests/document.pdf"),
 				Caption: "TestSendMediaGroup2",
 			},
 		},
@@ -1543,7 +1597,7 @@ func TestEditMessageTextWithKeyboard(t *testing.T) {
 
 func TestEditMessageCaption(t *testing.T) {
 	resp, err := api.EditMessageCaption(
-		NewMessageID(chatID, photoTmp.ID),
+		NewMessageID(chatID, animationTmp.ID),
 		&MessageCaptionOptions{
 			Caption: "TestEditMessageCaption",
 		},
@@ -1560,10 +1614,10 @@ func TestEditMessageCaption(t *testing.T) {
 
 func TestEditMessageMedia(t *testing.T) {
 	resp, err := api.EditMessageMedia(
-		NewMessageID(chatID, photoTmp.ID),
+		NewMessageID(chatID, animationTmp.ID),
 		InputMediaPhoto{
-			Type:    MediaTypePhoto,
-			Media:   NewInputFileID(photoID),
+			Type:    MediaTypeAnimation,
+			Media:   NewInputFileID(animationID),
 			Caption: "TestEditMessageMedia",
 		},
 		nil,
@@ -1580,10 +1634,10 @@ func TestEditMessageMedia(t *testing.T) {
 
 func TestEditMessageMediaBytes(t *testing.T) {
 	resp, err := api.EditMessageMedia(
-		NewMessageID(chatID, photoTmp.ID),
-		InputMediaPhoto{
-			Type:    MediaTypePhoto,
-			Media:   NewInputFilePath("assets/logo.png"),
+		NewMessageID(chatID, animationTmp.ID),
+		InputMediaAnimation{
+			Type:    MediaTypeAnimation,
+			Media:   NewInputFilePath("assets/tests/animation.mp4"),
 			Caption: "TestEditMessageMediaBytes",
 		},
 		nil,
