@@ -36,10 +36,6 @@ func TestSendGame(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
-	}
-
 	gameMsgTmp = resp.Result
 }
 
@@ -53,10 +49,6 @@ func TestGameHighScores(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
-	}
-
 	highScores = resp.Result
 }
 
@@ -67,7 +59,7 @@ func TestSetGameScore(t *testing.T) {
 		score = highScores[0].Score + 1
 	}
 
-	resp, err := api.SetGameScore(
+	_, err := api.SetGameScore(
 		chatID,
 		score,
 		NewMessageID(chatID, gameMsgTmp.ID),
@@ -78,9 +70,5 @@ func TestSetGameScore(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatalf("%d %s", resp.ErrorCode, resp.Description)
 	}
 }

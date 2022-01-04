@@ -38,15 +38,11 @@ func TestUploadStickerFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-
 	stickerFile = resp.Result
 }
 
 func TestCreateNewStickerSet(t *testing.T) {
-	resp, err := api.CreateNewStickerSet(
+	_, err := api.CreateNewStickerSet(
 		chatID,
 		"echocoverpack_by_echotron_coverage_bot",
 		"Echotron Coverage Pack",
@@ -61,14 +57,10 @@ func TestCreateNewStickerSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if !resp.Ok {
-		t.Log(resp.ErrorCode, resp.Description)
-	}
 }
 
 func TestAddStickerToSet(t *testing.T) {
-	resp, err := api.AddStickerToSet(
+	_, err := api.AddStickerToSet(
 		chatID,
 		"echocoverpack_by_echotron_coverage_bot",
 		"🤖",
@@ -82,10 +74,6 @@ func TestAddStickerToSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
 }
 
 func TestGetStickerSet(t *testing.T) {
@@ -97,15 +85,11 @@ func TestGetStickerSet(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
-
 	stickerSet = resp.Result
 }
 
 func TestSetStickerPositionInSet(t *testing.T) {
-	resp, err := api.SetStickerPositionInSet(
+	_, err := api.SetStickerPositionInSet(
 		stickerSet.Stickers[1].FileID,
 		0,
 	)
@@ -113,28 +97,20 @@ func TestSetStickerPositionInSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
 }
 
 func TestDeleteStickerFromSet(t *testing.T) {
-	resp, err := api.DeleteStickerFromSet(
+	_, err := api.DeleteStickerFromSet(
 		stickerSet.Stickers[0].FileID,
 	)
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
 }
 
 func TestSendSticker(t *testing.T) {
-	resp, err := api.SendSticker(
+	_, err := api.SendSticker(
 		stickerSet.Stickers[0].FileID,
 		chatID,
 		nil,
@@ -143,14 +119,10 @@ func TestSendSticker(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
-	}
 }
 
 func TestSetStickerSetThumb(t *testing.T) {
-	resp, err := api.SetStickerSetThumb(
+	_, err := api.SetStickerSetThumb(
 		"echocoverpack_by_echotron_coverage_bot",
 		chatID,
 		NewInputFilePath("assets/tests/echotron_thumb.png"),
@@ -158,9 +130,5 @@ func TestSetStickerSetThumb(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if !resp.Ok {
-		t.Fatal(resp.ErrorCode, resp.Description)
 	}
 }
