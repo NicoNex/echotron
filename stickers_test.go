@@ -18,7 +18,10 @@
 
 package echotron
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 var (
 	stickerFile *File
@@ -54,7 +57,25 @@ func TestCreateNewStickerSet(t *testing.T) {
 		nil,
 	)
 
-	if err != nil {
+	/*
+	 * This is a workaround for a particular behaviour of Telegram's API.
+	 * If you want to know more, you can read about it here:
+	 * https://github.com/tdlib/telegram-bot-api/issues/144
+	 *
+	 * In a nutshell, since we first create the sticker pack and then
+	 * delete it to be able to test future versions of the library,
+	 * we expect to receive a 500 Internal Server Error when trying
+	 * to create a new sticker pack, because that's the response that
+	 * Telegram's API sends back when trying to create a new pack with
+	 * a name that had already been used by a previously existing
+	 * sticker pack which doesn't exist anymore (e.g. it has been
+	 * deleted); but the sticker pack still gets created successfully,
+	 * so in this test we're just going to ignore this specific error.
+	 */
+
+	var ae *APIError
+
+	if errors.As(err, &ae) && ae.ErrorCode() != 500 {
 		t.Fatal(err)
 	}
 }
