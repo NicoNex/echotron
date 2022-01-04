@@ -242,11 +242,11 @@ func (d *Dispatcher) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var update *Update
-	if err := json.Unmarshal(jsn, update); err != nil {
+	var update Update
+	if err := json.Unmarshal(jsn, &update); err != nil {
 		log.Println(err)
 		return
 	}
 
-	d.updates <- update
+	d.updates <- &update
 }
