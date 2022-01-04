@@ -526,8 +526,7 @@ type InlineQueryOptions struct {
 }
 
 // AnswerInlineQuery is used to send answers to an inline query.
-func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult, opts *InlineQueryOptions) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult, opts *InlineQueryOptions) (res APIResponseBase, err error) {
 	jsn, _ := json.Marshal(results)
 
 	var url = fmt.Sprintf(
@@ -540,12 +539,13 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }

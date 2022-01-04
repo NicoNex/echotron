@@ -77,8 +77,7 @@ type StickerFile struct {
 }
 
 // SendSticker is used to send static .WEBP or animated .TGS stickers.
-func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (res APIResponseMessage, err error) {
 	var url = fmt.Sprintf(
 		"%ssendSticker?chat_id=%d&sticker=%s&%s",
 		a.base,
@@ -89,19 +88,19 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (API
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // GetStickerSet is used to get a sticker set.
-func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
-	var res APIResponseStickerSet
+func (a API) GetStickerSet(name string) (res APIResponseStickerSet, err error) {
 	var url = fmt.Sprintf(
 		"%sgetStickerSet?name=%s",
 		a.base,
@@ -110,20 +109,20 @@ func (a API) GetStickerSet(name string) (APIResponseStickerSet, error) {
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
 // CreateNewStickerSet and AddStickerToSet methods (can be used multiple times).
-func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFile, error) {
-	var res APIResponseFile
+func (a API) UploadStickerFile(userID int64, sticker StickerFile) (res APIResponseFile, err error) {
 	var url = fmt.Sprintf(
 		"%suploadStickerFile?user_id=%d",
 		a.base,
@@ -132,19 +131,19 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (APIResponseFi
 
 	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
-func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, sticker StickerFile, opts *NewStickerSetOptions) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, sticker StickerFile, opts *NewStickerSetOptions) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%screateNewStickerSet?user_id=%d&name=%s&title=%s&emojis=%s&%s",
 		a.base,
@@ -157,19 +156,19 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 
 	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // AddStickerToSet is used to add a new sticker to a set created by the bot.
-func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerFile, opts *MaskPosition) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerFile, opts *MaskPosition) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%saddStickerToSet?user_id=%d&name=%s&emojis=%s&%s",
 		a.base,
@@ -181,19 +180,19 @@ func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerF
 
 	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
-func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) SetStickerPositionInSet(sticker string, position int) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%ssetStickerPositionInSet?sticker=%s&position=%d",
 		a.base,
@@ -203,19 +202,19 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (APIResponseB
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
-func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) DeleteStickerFromSet(sticker string) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%sdeleteStickerFromSet?sticker=%s",
 		a.base,
@@ -224,19 +223,19 @@ func (a API) DeleteStickerFromSet(sticker string) (APIResponseBase, error) {
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // SetStickerSetThumb is used to set the thumbnail of a sticker set.
-func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (APIResponseBase, error) {
-	var res APIResponseBase
+func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%ssetStickerSetThumb?name=%s&user_id=%d",
 		a.base,
@@ -246,12 +245,13 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (API
 
 	cnt, err := sendFile(thumb, InputFile{}, url, "thumb")
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }

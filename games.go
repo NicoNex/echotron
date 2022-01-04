@@ -50,8 +50,7 @@ type GameScoreOptions struct {
 }
 
 // SendGame is used to send a Game.
-func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (res APIResponseMessage, err error) {
 	var url = fmt.Sprintf(
 		"%ssendGame?game_short_name=%s&chat_id=%d&%s",
 		a.base,
@@ -62,19 +61,19 @@ func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (AP
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // SetGameScore is used to set the score of the specified user in a game.
-func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts *GameScoreOptions) (APIResponseMessage, error) {
-	var res APIResponseMessage
+func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts *GameScoreOptions) (res APIResponseMessage, err error) {
 	var url = fmt.Sprintf(
 		"%ssetGameScore?user_id=%d&score=%d&%s&%s",
 		a.base,
@@ -86,19 +85,19 @@ func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts 
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
 
 // GetGameHighScores is used to get data for high score tables.
-func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (APIResponseGameHighScore, error) {
-	var res APIResponseGameHighScore
+func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (res APIResponseGameHighScore, err error) {
 	var url = fmt.Sprintf(
 		"%sgetGameHighScores?user_id=%d&%s",
 		a.base,
@@ -108,12 +107,13 @@ func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (APIResponse
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	if err := json.Unmarshal(cnt, &res); err != nil {
-		return res, err
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
 	}
 
-	return res, check(res)
+	err = check(res)
+	return
 }
