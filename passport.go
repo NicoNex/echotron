@@ -221,7 +221,7 @@ func (a API) SetPassportDataErrors(userID int64, errors []PassportElementError) 
 	}
 
 	var url = fmt.Sprintf(
-		"%ssetPassportDataErrors?user_id=%s&errors=%s",
+		"%ssetPassportDataErrors?user_id=%d&errors=%s",
 		a.base,
 		userID,
 		encode(string(errorsArr)),
