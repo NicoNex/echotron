@@ -31,6 +31,8 @@ type Update struct {
 	InlineQuery        *InlineQuery        `json:"inline_query,omitempty"`
 	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result,omitempty"`
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
+	ShippingQuery      *ShippingQuery      `json:"shipping_query,omitempty"`
+	PreCheckoutQuery   *PreCheckoutQuery   `json:"pre_checkout_query,omitempty"`
 	MyChatMember       *ChatMemberUpdated  `json:"my_chat_member,omitempty"`
 	ChatMember         *ChatMemberUpdated  `json:"chat_member,omitempty"`
 	ChatJoinRequest    *ChatJoinRequest    `json:"chat_join_request,omitempty"`
@@ -379,6 +381,8 @@ type Message struct {
 	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
 	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
 	PinnedMessage                 *Message                       `json:"pinned_message,omitempty"`
+	Invoice                       *Invoice                       `json:"invoice,omitempty"`
+	SuccessfulPayment             *SuccessfulPayment             `json:"successful_payment,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered,omitempty"`
 	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
@@ -924,10 +928,94 @@ type PermissionOptions struct {
 	Permissions ChatPermissions `json:"permissions"`
 }
 
+// ChatJoinRequest represents a join request sent to a chat.
 type ChatJoinRequest struct {
 	Chat       Chat            `json:"chat"`
 	From       User            `json:"user"`
 	Date       int             `json:"date"`
 	Bio        string          `json:"bio,omitempty"`
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+}
+
+// LabeledPrice represents a portion of the price for goods or services.
+type LabeledPrice struct {
+	Label string `json:"label"`
+	// Price of the product in the smallest units of the currency (integer, not float/double).
+	// For example, for a price of US$ 1.45 pass amount = 145.
+	// See the exp parameter in currencies.json, it shows the number of digits
+	// past the decimal point for each currency (2 for the majority of currencies).
+	Amount int `json:"amount"`
+}
+
+// Invoice contains basic information about an invoice.
+type Invoice struct {
+	Title          string `json:"title"`
+	Description    string `json:"description"`
+	StartParameter string `json:"start_parameter"`
+	// Three-letter ISO 4217 currency code.
+	Currency string `json:"currency"`
+	// Total amount in the smallest units of the currency (integer, not float/double).
+	// For example, for a price of US$ 1.45 pass amount = 145.
+	// See the exp parameter in currencies.json, it shows the number of digits
+	// past the decimal point for each currency (2 for the majority of currencies).
+	TotalAmount int `json:"total_amount"`
+}
+
+// ShippingAddress represents a shipping address.
+type ShippingAddress struct {
+	// ISO 3166-1 alpha-2 country code.
+	CountryCode string `json:"country_code"`
+	State       string `json:"state"`
+	City        string `json:"city"`
+	StreetLine1 string `json:"street_line1"`
+	StreetLine2 string `json:"street_line2"`
+	PostCode    string `json:"post_code"`
+}
+
+// OrderInfo represents information about an order.
+type OrderInfo struct {
+	Name            string          `json:"name,omitempty"`
+	PhoneNumber     string          `json:"phone_number,omitempty"`
+	Email           string          `json:"email,omitempty"`
+	ShippingAddress ShippingAddress `json:"shipping_address,omitempty"`
+}
+
+// SuccessfulPayment contains basic information about a successful payment.
+type SuccessfulPayment struct {
+	// Three-letter ISO 4217 currency code.
+	Currency string `json:"currency"`
+	// Total amount in the smallest units of the currency (integer, not float/double).
+	// For example, for a price of US$ 1.45 pass amount = 145.
+	// See the exp parameter in currencies.json, it shows the number of digits
+	// past the decimal point for each currency (2 for the majority of currencies).
+	TotalAmount             int       `json:"total_amount"`
+	InvoicePayload          string    `json:"invoice_payload"`
+	ShippingOptionID        string    `json:"shipping_option_id"`
+	OrderInfo               OrderInfo `json:"order_info"`
+	TelegramPaymentChargeID string    `json:"telegram_payment_charge_id"`
+	ProviderPaymentChargeID string    `json:"provider_payment_charge_id"`
+}
+
+// ShippingQuery contains information about an incoming shipping query.
+type ShippingQuery struct {
+	ID              string          `json:"id"`
+	From            User            `json:"from"`
+	InvoicePayload  string          `json:"invoice_payload"`
+	ShippingAddress ShippingAddress `json:"shipping_address"`
+}
+
+// PreCheckoutQuery contains information about an incoming pre-checkout query.
+type PreCheckoutQuery struct {
+	ID   string `json:"id"`
+	From User   `json:"from"`
+	// Three-letter ISO 4217 currency code.
+	Currency string `json:"currency"`
+	// Total amount in the smallest units of the currency (integer, not float/double).
+	// For example, for a price of US$ 1.45 pass amount = 145.
+	// See the exp parameter in currencies.json, it shows the number of digits
+	// past the decimal point for each currency (2 for the majority of currencies).
+	TotalAmount      int       `json:"total_amount"`
+	InvoicePayload   string    `json:"invoice_payload"`
+	ShippingOptionID string    `json:"shipping_option_id,omitempty"`
+	OrderInfo        OrderInfo `json:"order_info,omitempty"`
 }
