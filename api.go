@@ -591,7 +591,6 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 
 // SendPoll is used to send a native poll.
 func (a API) SendPoll(chatID int64, question string, options []string, opts *PollOptions) (res APIResponseMessage, err error) {
-
 	pollOpts, err := json.Marshal(options)
 	if err != nil {
 		return
