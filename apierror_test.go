@@ -4,14 +4,14 @@ import "testing"
 
 var a APIError
 
-func TestErrorCode(_ *t.Testing) {
+func TestErrorCode(_ *testing.T) {
 	a.ErrorCode()
 }
 
-func TestDescription(_ *t.Testing) {
+func TestDescription(_ *testing.T) {
 	a.Description()
 }
 
-func TestError(_ *t.Testing) {
+func TestError(_ *testing.T) {
 	a.Error()
 }

@@ -1,46 +1,48 @@
 package echotron
 
-func TestPassportElementErrorDataField(_ *t.Testing) {
-	p := PassportElementErrorDataField
+import "testing"
+
+func TestPassportElementErrorDataField(_ *testing.T) {
+	p := PassportElementErrorDataField{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorFrontSide(_ *t.Testing) {
-	p := PassportElementErrorFrontSide
+func TestPassportElementErrorFrontSide(_ *testing.T) {
+	p := PassportElementErrorFrontSide{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorReverseSide(_ *t.Testing) {
-	p := PassportElementErrorReverseSide
+func TestPassportElementErrorReverseSide(_ *testing.T) {
+	p := PassportElementErrorReverseSide{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorSelfie(_ *t.Testing) {
-	p := PassportElementErrorSelfie
+func TestPassportElementErrorSelfie(_ *testing.T) {
+	p := PassportElementErrorSelfie{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorFile(_ *t.Testing) {
-	p := PassportElementErrorFile
+func TestPassportElementErrorFile(_ *testing.T) {
+	p := PassportElementErrorFile{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorFiles(_ *t.Testing) {
-	p := PassportElementErrorFiles
+func TestPassportElementErrorFiles(_ *testing.T) {
+	p := PassportElementErrorFiles{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorTranslationFile(_ *t.Testing) {
-	p := PassportElementErrorTranslationFile
+func TestPassportElementErrorTranslationFile(_ *testing.T) {
+	p := PassportElementErrorTranslationFile{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorTranslationFiles(_ *t.Testing) {
-	p := PassportElementErrorTranslationFiles
+func TestPassportElementErrorTranslationFiles(_ *testing.T) {
+	p := PassportElementErrorTranslationFiles{}
 	p.ImplementsPassportElementError()
 }
 
-func TestPassportElementErrorUnspecified(_ *t.Testing) {
-	p := PassportElementErrorUnspecified
+func TestPassportElementErrorUnspecified(_ *testing.T) {
+	p := PassportElementErrorUnspecified{}
 	p.ImplementsPassportElementError()
 }
