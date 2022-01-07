@@ -48,7 +48,7 @@ type Dispatcher struct {
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
 	updates    chan *Update
-	handler    http.Handler
+	httpServer *http.Server
 	mu         sync.Mutex
 }
 
@@ -61,7 +61,6 @@ func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 		sessionMap: make(map[int64]Bot),
 		newBot:     newBotFn,
 		updates:    make(chan *Update),
-		handler:    nil,
 	}
 	go d.listen()
 	return d
@@ -178,8 +177,6 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
 func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
-	var response APIResponseBase
-
 	u, err := url.Parse(webhookURL)
 	if err != nil {
 		return err
@@ -187,21 +184,25 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 
 	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
 	log.Printf("setting webhook for %s\n", whURL)
-	response, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts)
-	if err != nil {
+	if _, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts); err != nil {
 		return err
-	} else if response.Ok {
-		http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
-		log.Printf("listening on :%s\n", u.Port())
-		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), d.handler)
 	}
 
-	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
+	if d.httpServer != nil {
+		mux := http.NewServeMux()
+		mux.Handle("/", d.httpServer.Handler)
+		mux.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+		d.httpServer.Handler = mux
+		return d.httpServer.ListenAndServe()
+	}
+	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+	log.Printf("listening on :%s\n", u.Port())
+	return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
 }
 
-// SetHTTPHandler allows to set a custom http.Handler for ListenWebhook and ListenWebhookOptions.
-func (d *Dispatcher) SetHTTPHandler(h http.Handler) {
-	d.handler = h
+// SetHTTPServer allows to set a custom http.Server for ListenWebhook and ListenWebhookOptions.
+func (d *Dispatcher) SetHTTPServer(s *http.Server) {
+	d.httpServer = s
 }
 
 // HandleWebhook is the http.HandlerFunc for the webhook URL.

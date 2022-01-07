@@ -1,4 +1,4 @@
-# echotron 
+# echotron
 
 | <br/><img src="assets/logo.png" alt="logo" width="400"><br/><br/> [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v3)](https://pkg.go.dev/github.com/NicoNex/echotron/v3) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE) [![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron) [![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go) [![Telegram](https://img.shields.io/badge/Echotron%20News-blue?logo=telegram&style=flat)](https://t.me/echotronnews) |
 | :------: |
@@ -147,5 +147,76 @@ func (b *bot) Update(update *echotron.Update) {
 func main() {
 	dsp := echotron.NewDispatcher(token, newBot)
 	dsp.ListenWebhook("https://example.com:443/my_bot_token")
+}
+```
+
+
+### Webhook with a custom http.Server
+
+This is an example for a custom http.Server which handles your own specified routes
+and also the webhook route which is specified by ListenWebhook.
+
+```golang
+package main
+
+import (
+	"github.com/NicoNex/echotron/v3"
+	
+	"context"
+	"log"
+	"net/http"
+)
+
+type bot struct {
+	chatID int64
+	echotron.API
+}
+
+const token = "YOUR TELEGRAM TOKEN"
+
+func newBot(chatID int64) echotron.Bot {
+	return &bot{
+		chatID,
+		echotron.NewAPI(token),
+	}
+}
+
+func (b *bot) Update(update *echotron.Update) {
+	if update.Message.Text == "/start" {
+		b.SendMessage("Hello world", b.chatID, nil)
+	}
+}
+
+func main() {
+	termChan := make(chan os.Signal, 1) // Channel for terminating the app via os.Interrupt signal
+	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		// Handle user login
+	})
+	mux.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		// Handle user logout
+	})
+	mux.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
+		// Tell something about your awesome telegram bot
+	})
+
+	// Set custom http.Server
+	server := &http.Server{Addr: ":8080", Handler: mux}
+
+	go func() {
+		<-termChan
+		// Perform some cleanup..
+		if err := server.Shutdown(context.Background()); err != nil {
+			log.Print(err)
+		}
+	}()
+
+	// Capture the interrupt signal for app termination handling
+	dsp := echotron.NewDispatcher(token, newBot)
+	dsp.SetHTTPServer(server)
+	// Start your custom http.Server with a registered /my_bot_token handler.
+	log.Println(dsp.ListenWebhook("https://example.com/my_bot_token"))
 }
 ```
