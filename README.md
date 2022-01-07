@@ -1,4 +1,4 @@
-# echotron 
+# echotron
 
 | <br/><img src="assets/logo.png" alt="logo" width="400"><br/><br/> [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/) [![PkgGoDev](https://pkg.go.dev/badge/github.com/NicoNex/echotron/v3)](https://pkg.go.dev/github.com/NicoNex/echotron/v3) [![Go Report Card](https://goreportcard.com/badge/github.com/NicoNex/echotron)](https://goreportcard.com/report/github.com/NicoNex/echotron) [![License](http://img.shields.io/badge/license-LGPL3.0-orange.svg?style=flat)](https://github.com/NicoNex/echotron/blob/master/LICENSE) [![Build Status](https://travis-ci.com/NicoNex/echotron.svg?branch=master)](https://travis-ci.com/NicoNex/echotron) [![Coverage Status](https://coveralls.io/repos/github/NicoNex/echotron/badge.svg?branch=master)](https://coveralls.io/github/NicoNex/echotron?branch=master) [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go) [![Telegram](https://img.shields.io/badge/Echotron%20News-blue?logo=telegram&style=flat)](https://t.me/echotronnews) |
 | :------: |
@@ -216,7 +216,7 @@ func main() {
 	// Capture the interrupt signal for app termination handling
 	dsp := echotron.NewDispatcher(token, newBot)
 	dsp.SetHTTPServer(server)
-	// Start your custom http.Server with a registered /webhook handler. 
-	log.Println(dsp.ListenWebhook("https://example.com/webhook"))
+	// Start your custom http.Server with a registered /my_bot_token handler.
+	log.Println(dsp.ListenWebhook("https://example.com/my_bot_token"))
 }
 ```
