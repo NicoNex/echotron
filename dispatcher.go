@@ -200,6 +200,10 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 	}
 
 	if d.httpServer != nil {
+		mux := http.NewServeMux()
+		mux.Handle("/", d.httpServer.Handler)
+		mux.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+		d.httpServer.Handler = mux
 		return d.httpServer.ListenAndServe()
 	}
 	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
