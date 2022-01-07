@@ -536,3 +536,45 @@ type CommandOptions struct {
 	Scope        BotCommandScope `query:"scope"`
 	LanguageCode string          `query:"language_code"`
 }
+
+// InvoiceOptions contains the optional parameters used by the SendInvoice api method.
+type InvoiceOptions struct {
+	MaxTipAmount              int                  `query:"max_tip_amount"`
+	SuggestedTipAmount        []int                `query:"suggested_tip_amounts"`
+	StartParameter            string               `query:"start_parameter"`
+	ProviderData              string               `query:"provider_data"`
+	PhotoURL                  string               `query:"photo_url"`
+	PhotoSize                 int                  `query:"photo_size"`
+	PhotoWidth                int                  `query:"photo_width"`
+	PhotoHeight               int                  `query:"photo_height"`
+	NeedName                  bool                 `query:"need_name"`
+	NeedPhoneNumber           bool                 `query:"need_phone_number"`
+	NeedEmail                 bool                 `query:"need_email"`
+	NeepShippingAddress       bool                 `query:"need_shipping_address"`
+	SendPhoneNumberToProvider bool                 `query:"send_phone_number_to_provider"`
+	SendEmailToProvider       bool                 `query:"send_email_to_provider"`
+	IsFlexible                bool                 `query:"is_flexible"`
+	DisableNotification       bool                 `query:"disable_notification"`
+	ProtectContent            bool                 `query:"protect_content"`
+	ReplyToMessageID          int                  `query:"reply_to_message_id"`
+	AllowSendingWithoutReply  bool                 `query:"allow_sending_without_reply"`
+	ReplyMarkup               InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+// ShippingOption represents one shipping option.
+type ShippingOption struct {
+	ID     string         `query:"id"`
+	Title  string         `query:"title"`
+	Prices []LabeledPrice `query:"prices"`
+}
+
+// ShippingQueryOptions contains the optional parameters used by the AnswerShippingQuery api method.
+type ShippingQueryOptions struct {
+	ShippingOptions []ShippingOption `query:"shipping_options"`
+	ErrorMessage    string           `query:"error_message"`
+}
+
+// PreCheckoutOptions contains the optional parameters used by the AnswerPreCheckoutQuery api method.
+type PreCheckoutOptions struct {
+	ErrorMessage string `query:"error_message"`
+}

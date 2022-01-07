@@ -31,6 +31,8 @@ type Update struct {
 	InlineQuery        *InlineQuery        `json:"inline_query,omitempty"`
 	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result,omitempty"`
 	CallbackQuery      *CallbackQuery      `json:"callback_query,omitempty"`
+	ShippingQuery      *ShippingQuery      `json:"shipping_query,omitempty"`
+	PreCheckoutQuery   *PreCheckoutQuery   `json:"pre_checkout_query,omitempty"`
 	MyChatMember       *ChatMemberUpdated  `json:"my_chat_member,omitempty"`
 	ChatMember         *ChatMemberUpdated  `json:"chat_member,omitempty"`
 	ChatJoinRequest    *ChatJoinRequest    `json:"chat_join_request,omitempty"`
@@ -379,6 +381,8 @@ type Message struct {
 	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
 	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
 	PinnedMessage                 *Message                       `json:"pinned_message,omitempty"`
+	Invoice                       *Invoice                       `json:"invoice,omitempty"`
+	SuccessfulPayment             *SuccessfulPayment             `json:"successful_payment,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered,omitempty"`
 	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
@@ -924,6 +928,7 @@ type PermissionOptions struct {
 	Permissions ChatPermissions `json:"permissions"`
 }
 
+// ChatJoinRequest represents a join request sent to a chat.
 type ChatJoinRequest struct {
 	Chat       Chat            `json:"chat"`
 	From       User            `json:"user"`
