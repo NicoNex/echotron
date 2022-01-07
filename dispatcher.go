@@ -61,7 +61,6 @@ func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 		sessionMap: make(map[int64]Bot),
 		newBot:     newBotFn,
 		updates:    make(chan *Update),
-		httpServer: nil,
 	}
 	go d.listen()
 	return d
@@ -189,8 +188,6 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
 func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
-	var response APIResponseBase
-
 	u, err := url.Parse(webhookURL)
 	if err != nil {
 		return err
@@ -198,18 +195,16 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 
 	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
 	log.Printf("setting webhook for %s\n", whURL)
-	response, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts)
-	if err != nil {
+	if _, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts); err != nil {
 		return err
-	} else if response.Ok {
-		if d.httpServer != nil {
-			return d.httpServer.ListenAndServe()
-		}
-		http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
-		log.Printf("listening on :%s\n", u.Port())
-		return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
 	}
-	return fmt.Errorf("could not set webhook: %d %s", response.ErrorCode, response.Description)
+
+	if d.httpServer != nil {
+		return d.httpServer.ListenAndServe()
+	}
+	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+	log.Printf("listening on :%s\n", u.Port())
+	return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
 }
 
 // SetHTTPServer allows to set a custom http.Server for ListenWebhook and ListenWebhookOptions.
