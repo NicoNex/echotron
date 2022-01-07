@@ -94,7 +94,7 @@ func (d *Dispatcher) Poll() error {
 func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) error {
 	var (
 		timeout      int
-		firstRun     = true
+		isFirstRun   = true
 		lastUpdateID = -1
 	)
 
@@ -103,38 +103,33 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts *UpdateOptions) e
 	}
 
 	// deletes webhook if present to run in long polling mode
-	response, err := d.api.DeleteWebhook(dropPendingUpdates)
-	if err != nil {
+	if _, err := d.api.DeleteWebhook(dropPendingUpdates); err != nil {
 		return err
-	} else if !response.Ok {
-		return fmt.Errorf("could not disable webhook, running in long polling mode is not possible")
 	}
 
 	for {
-		if firstRun && opts != nil {
+		if isFirstRun && opts != nil {
 			opts.Timeout = 0
 		}
 
 		opts.Offset = lastUpdateID + 1
 		response, err := d.api.GetUpdates(opts)
-
 		if err != nil {
 			return err
-		} else if response.Ok {
-			if !dropPendingUpdates || !firstRun {
-				for _, u := range response.Result {
-					d.updates <- u
-				}
-			}
+		}
 
-			if l := len(response.Result); l > 0 {
-				lastUpdateID = response.Result[l-1].ID
+		if !dropPendingUpdates || !isFirstRun {
+			for _, u := range response.Result {
+				d.updates <- u
 			}
 		}
 
-		if firstRun {
-			firstRun = false
+		if l := len(response.Result); l > 0 {
+			lastUpdateID = response.Result[l-1].ID
+		}
 
+		if isFirstRun {
+			isFirstRun = false
 			if opts != nil {
 				opts.Timeout = timeout
 			}
