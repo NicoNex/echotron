@@ -664,11 +664,11 @@ type ChatMember struct {
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
-	Chat          *Chat           `json:"chat"`
-	From          *User           `json:"from"`
+	Chat          Chat            `json:"chat"`
+	From          User            `json:"from"`
 	Date          int             `json:"date"`
-	OldChatMember *ChatMember     `json:"old_chat_member"`
-	NewChatMember *ChatMember     `json:"new_chat_member"`
+	OldChatMember ChatMember      `json:"old_chat_member"`
+	NewChatMember ChatMember      `json:"new_chat_member"`
 	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
 }
 

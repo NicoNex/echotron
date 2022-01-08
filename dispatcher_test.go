@@ -40,12 +40,82 @@ func TestListenWebhook(_ *testing.T) {
 
 func TestPoll(_ *testing.T) {
 	dsp.Poll()
+
 	dsp.updates <- &Update{}
-	dsp.updates <- &Update{Message: &Message{Chat: &Chat{ID: 0}}}
-	dsp.updates <- &Update{EditedMessage: &Message{Chat: &Chat{ID: 0}}}
-	dsp.updates <- &Update{ChannelPost: &Message{Chat: &Chat{ID: 0}}}
-	dsp.updates <- &Update{EditedChannelPost: &Message{Chat: &Chat{ID: 0}}}
-	dsp.updates <- &Update{CallbackQuery: &CallbackQuery{Message: &Message{Chat: &Chat{ID: 0}}}}
-	dsp.updates <- &Update{InlineQuery: &InlineQuery{From: &User{ID: 0}}}
+
+	dsp.updates <- &Update{
+		Message: &Message{
+			Chat: &Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		EditedMessage: &Message{
+			Chat: &Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ChannelPost: &Message{
+			Chat: &Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		EditedChannelPost: &Message{
+			Chat: &Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		CallbackQuery: &CallbackQuery{
+			Message: &Message{
+				Chat: &Chat{ID: 0},
+			},
+		},
+	}
+
+	dsp.updates <- &Update{
+		InlineQuery: &InlineQuery{
+			From: &User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ChosenInlineResult: &ChosenInlineResult{
+			From: &User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ShippingQuery: &ShippingQuery{
+			From: User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		PreCheckoutQuery: &PreCheckoutQuery{
+			From: User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		MyChatMember: &ChatMemberUpdated{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ChatMember: &ChatMemberUpdated{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ChatJoinRequest: &ChatJoinRequest{
+			Chat: Chat{ID: 0},
+		},
+	}
+
 	time.Sleep(time.Second)
 }

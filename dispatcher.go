@@ -154,18 +154,22 @@ func (d *Dispatcher) listen() {
 			chatID = update.ChannelPost.Chat.ID
 		case update.EditedChannelPost != nil:
 			chatID = update.EditedChannelPost.Chat.ID
-		case update.CallbackQuery != nil:
+		case update.InlineQuery != nil:
 			chatID = update.InlineQuery.From.ID
+		case update.ChosenInlineResult != nil:
+			chatID = update.ChosenInlineResult.From.ID
+		case update.CallbackQuery != nil:
+			chatID = update.CallbackQuery.Message.Chat.ID
 		case update.ShippingQuery != nil:
 			chatID = update.ShippingQuery.From.ID
 		case update.PreCheckoutQuery != nil:
 			chatID = update.PreCheckoutQuery.From.ID
 		case update.MyChatMember != nil:
-			chatID = update.MyChatMember.From.ID
+			chatID = update.MyChatMember.Chat.ID
 		case update.ChatMember != nil:
-			chatID = update.MyChatMember.From.ID
+			chatID = update.ChatMember.Chat.ID
 		case update.ChatJoinRequest != nil:
-			chatID = update.ChatJoinRequest.From.ID
+			chatID = update.ChatJoinRequest.Chat.ID
 		default:
 			continue
 		}
