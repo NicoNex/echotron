@@ -13,5 +13,5 @@ func TestDescription(_ *testing.T) {
 }
 
 func TestError(_ *testing.T) {
-	a.Error()
+	_ = a.Error()
 }

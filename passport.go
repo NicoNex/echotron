@@ -7,8 +7,8 @@ import (
 
 // PassportData contains information about Telegram Passport data shared with the bot by the user.
 type PassportData struct {
-	data        []EncryptedPassportElement `json:"encrypted_passport_element"`
-	credentials EncryptedCredentials       `json:"encrypted_credentials"`
+	Data        []EncryptedPassportElement `json:"encrypted_passport_element"`
+	Credentials EncryptedCredentials       `json:"encrypted_credentials"`
 }
 
 // PassportFile represents a file uploaded to Telegram Passport.
