@@ -299,12 +299,15 @@ func (a APIResponseWebhook) Base() APIResponseBase {
 
 // User represents a Telegram user or bot.
 type User struct {
-	ID           int64  `json:"id"`
-	IsBot        bool   `json:"is_bot"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name,omitempty"`
-	Username     string `json:"username,omitempty"`
-	LanguageCode string `json:"language_code,omitempty"`
+	ID                      int64  `json:"id"`
+	IsBot                   bool   `json:"is_bot"`
+	FirstName               string `json:"first_name"`
+	LastName                string `json:"last_name,omitempty"`
+	Username                string `json:"username,omitempty"`
+	LanguageCode            string `json:"language_code,omitempty"`
+	CanJoinGroups           bool   `json:"can_join_groups,omitempty"`
+	CanReadAllGroupMessages bool   `json:"can_read_all_group_messages,omitempty"`
+	SupportsInlineQueries   bool   `json:"supports_inline_queries,omitempty"`
 }
 
 // Chat represents a chat.
@@ -337,7 +340,7 @@ type Message struct {
 	From                          *User                          `json:"from,omitempty"`
 	SenderChat                    *Chat                          `json:"sender_chat,omitempty"`
 	Date                          int                            `json:"date"`
-	Chat                          *Chat                          `json:"chat"`
+	Chat                          Chat                           `json:"chat"`
 	ForwardFrom                   *User                          `json:"forward_from,omitempty"`
 	ForwardFromChat               *Chat                          `json:"forward_from_chat,omitempty"`
 	ForwardFromMessageID          int                            `json:"forward_from_message_id,omitempty"`
@@ -399,88 +402,89 @@ type MessageID struct {
 // MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	Type   MessageEntityType `json:"type"`
-	Offset int               `json:"offset"`
-	Length int               `json:"length"`
-	URL    string            `json:"url,omitempty"`
-	User   *User             `json:"user,omitempty"`
+	Type     MessageEntityType `json:"type"`
+	Offset   int               `json:"offset"`
+	Length   int               `json:"length"`
+	URL      string            `json:"url,omitempty"`
+	User     *User             `json:"user,omitempty"`
+	Language string            `json:"language,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
 type PhotoSize struct {
-	FileID   string `json:"file_id"`
-	FileUID  string `json:"file_unique_id"`
-	Width    int    `json:"width"`
-	Height   int    `json:"height"`
-	FileSize int    `json:"file_size,omitempty"`
+	FileID       string `json:"file_id"`
+	FileUniqueID string `json:"file_unique_id"`
+	Width        int    `json:"width"`
+	Height       int    `json:"height"`
+	FileSize     int    `json:"file_size,omitempty"`
 }
 
 // Animation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
 type Animation struct {
-	FileID   string     `json:"file_id"`
-	FileUID  string     `json:"file_unique_id"`
-	Width    int        `json:"width"`
-	Height   int        `json:"height"`
-	Duration int        `json:"duration"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	FileName string     `json:"file_name,omitempty"`
-	MimeType string     `json:"mime_type,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
+	FileID       string     `json:"file_id"`
+	FileUniqueID string     `json:"file_unique_id"`
+	Width        int        `json:"width"`
+	Height       int        `json:"height"`
+	Duration     int        `json:"duration"`
+	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	FileName     string     `json:"file_name,omitempty"`
+	MimeType     string     `json:"mime_type,omitempty"`
+	FileSize     int        `json:"file_size,omitempty"`
 }
 
 // Audio represents an audio file to be treated as music by the Telegram clients.
 type Audio struct {
-	FileID    string     `json:"file_id"`
-	FileUID   string     `json:"file_unique_id"`
-	Duration  int        `json:"duration"`
-	Performer string     `json:"performer,omitempty"`
-	Title     string     `json:"title,omitempty"`
-	FileName  string     `json:"file_name,omitempty"`
-	MimeType  string     `json:"mime_type,omitempty"`
-	FileSize  int        `json:"file_size,omitempty"`
-	Thumb     *PhotoSize `json:"thumb,omitempty"`
+	FileID       string     `json:"file_id"`
+	FileUniqueID string     `json:"file_unique_id"`
+	Duration     int        `json:"duration"`
+	Performer    string     `json:"performer,omitempty"`
+	Title        string     `json:"title,omitempty"`
+	FileName     string     `json:"file_name,omitempty"`
+	MimeType     string     `json:"mime_type,omitempty"`
+	FileSize     int        `json:"file_size,omitempty"`
+	Thumb        *PhotoSize `json:"thumb,omitempty"`
 }
 
 // Document represents a general file (as opposed to photos, voice messages and audio files).
 type Document struct {
-	FileID   string     `json:"file_id"`
-	FileUID  string     `json:"file_unique_id"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	FileName string     `json:"file_name,omitempty"`
-	MimeType string     `json:"mime_type,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
+	FileID       string     `json:"file_id"`
+	FileUniqueID string     `json:"file_unique_id"`
+	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	FileName     string     `json:"file_name,omitempty"`
+	MimeType     string     `json:"mime_type,omitempty"`
+	FileSize     int        `json:"file_size,omitempty"`
 }
 
 // Video represents a video file.
 type Video struct {
-	FileID   string     `json:"file_id"`
-	FileUID  string     `json:"file_unique_id"`
-	Width    int        `json:"width"`
-	Height   int        `json:"height"`
-	Duration int        `json:"duration"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	FileName string     `json:"file_name,omitempty"`
-	MimeType string     `json:"mime_type,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
+	FileID       string     `json:"file_id"`
+	FileUniqueID string     `json:"file_unique_id"`
+	Width        int        `json:"width"`
+	Height       int        `json:"height"`
+	Duration     int        `json:"duration"`
+	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	FileName     string     `json:"file_name,omitempty"`
+	MimeType     string     `json:"mime_type,omitempty"`
+	FileSize     int        `json:"file_size,omitempty"`
 }
 
 // VideoNote represents a video message (available in Telegram apps as of v.4.0).
 type VideoNote struct {
-	FileID   string     `json:"file_id"`
-	FileUID  string     `json:"file_unique_id"`
-	Length   int        `json:"length"`
-	Duration int        `json:"duration"`
-	Thumb    *PhotoSize `json:"thumb,omitempty"`
-	FileSize int        `json:"file_size,omitempty"`
+	FileID       string     `json:"file_id"`
+	FileUniqueID string     `json:"file_unique_id"`
+	Length       int        `json:"length"`
+	Duration     int        `json:"duration"`
+	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	FileSize     int        `json:"file_size,omitempty"`
 }
 
 // Voice represents a voice note.
 type Voice struct {
-	FileID   string `json:"file_id"`
-	FileUID  string `json:"file_unique_id"`
-	Duration int    `json:"duration"`
-	MimeType string `json:"mime_type,omitempty"`
-	FileSize int    `json:"file_size,omitempty"`
+	FileID       string `json:"file_id"`
+	FileUniqueID string `json:"file_unique_id"`
+	Duration     int    `json:"duration"`
+	MimeType     string `json:"mime_type,omitempty"`
+	FileSize     int    `json:"file_size,omitempty"`
 }
 
 // Contact represents a phone contact.
@@ -617,10 +621,10 @@ type CallbackQuery struct {
 
 // ChatPhoto represents a chat photo.
 type ChatPhoto struct {
-	SmallFileID  string `json:"small_file_id"`
-	SmallFileUID string `json:"small_file_unique_id"`
-	BigFileID    string `json:"big_file_id"`
-	BigFileUID   string `json:"big_file_unique_id"`
+	SmallFileID       string `json:"small_file_id"`
+	SmallFileUniqueID string `json:"small_file_unique_id"`
+	BigFileID         string `json:"big_file_id"`
+	BigFileUniqueID   string `json:"big_file_unique_id"`
 }
 
 // ChatInviteLink represents an invite link for a chat.
