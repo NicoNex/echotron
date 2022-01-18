@@ -45,32 +45,32 @@ func TestPoll(_ *testing.T) {
 
 	dsp.updates <- &Update{
 		Message: &Message{
-			Chat: &Chat{ID: 0},
+			Chat: Chat{ID: 0},
 		},
 	}
 
 	dsp.updates <- &Update{
 		EditedMessage: &Message{
-			Chat: &Chat{ID: 0},
+			Chat: Chat{ID: 0},
 		},
 	}
 
 	dsp.updates <- &Update{
 		ChannelPost: &Message{
-			Chat: &Chat{ID: 0},
+			Chat: Chat{ID: 0},
 		},
 	}
 
 	dsp.updates <- &Update{
 		EditedChannelPost: &Message{
-			Chat: &Chat{ID: 0},
+			Chat: Chat{ID: 0},
 		},
 	}
 
 	dsp.updates <- &Update{
 		CallbackQuery: &CallbackQuery{
 			Message: &Message{
-				Chat: &Chat{ID: 0},
+				Chat: Chat{ID: 0},
 			},
 		},
 	}
