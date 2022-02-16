@@ -106,6 +106,7 @@ type PreCheckoutQuery struct {
 	OrderInfo        OrderInfo `json:"order_info,omitempty"`
 }
 
+// SendInvoice is used to send invoices.
 func (a API) SendInvoice(chatID int64, title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *InvoiceOptions) (res APIResponseMessage, err error) {
 	p, err := json.Marshal(prices)
 	if err != nil {
@@ -138,6 +139,9 @@ func (a API) SendInvoice(chatID int64, title, description, payload, providerToke
 	return
 }
 
+// AnswerShippingQuery is used to reply to shipping queries.
+// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified,
+// the Bot API will send an Update with a shipping_query field to the bot.
 func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *ShippingQueryOptions) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%sanswerShippingQuery?shipping_query_id=%s&ok=%T&%s",
@@ -160,6 +164,10 @@ func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *Shipping
 	return
 }
 
+// AnswerPreCheckoutQuery is used to respond to such pre-checkout queries.
+// Once the user has confirmed their payment and shipping details,
+// the Bot API sends the final confirmation in the form of an Update with the field pre_checkout_query.
+// NOTE: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
 func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *PreCheckoutOptions) (res APIResponseBase, err error) {
 	var url = fmt.Sprintf(
 		"%sanswerPreCheckoutQuery?pre_checkout_query_id=%s&ok=%T&error_message=%s",

@@ -20,14 +20,11 @@ package echotron
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 )
-
-var ErrEmptyPath = errors.New("empty path in InputFile")
 
 func check(r APIResponse) error {
 	if b := r.Base(); !b.Ok {
@@ -145,9 +142,9 @@ func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []b
 
 	if len(cnt) > 0 {
 		return sendPostRequest(url, cnt...)
-	} else {
-		return sendGetRequest(url)
 	}
+
+	return sendGetRequest(url)
 }
 
 func serializePerms(permissions ChatPermissions) (string, error) {

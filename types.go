@@ -64,7 +64,7 @@ type APIResponseBase struct {
 	Description string `json:"description,omitempty"`
 }
 
-// Returns the APIResponseBase itself.
+// Base returns the APIResponseBase itself.
 func (a APIResponseBase) Base() APIResponseBase {
 	return a
 }
@@ -76,7 +76,7 @@ type APIResponseUpdate struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseUpdate) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -88,7 +88,7 @@ type APIResponseUser struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseUser) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -100,7 +100,7 @@ type APIResponseMessage struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseMessage) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -112,7 +112,7 @@ type APIResponseMessageArray struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseMessageArray) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -124,7 +124,7 @@ type APIResponseMessageID struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseMessageID) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -136,7 +136,7 @@ type APIResponseCommands struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseCommands) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -148,7 +148,7 @@ type APIResponseBool struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseBool) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -160,7 +160,7 @@ type APIResponseString struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseString) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -172,7 +172,7 @@ type APIResponseChat struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseChat) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -184,7 +184,7 @@ type APIResponseInviteLink struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseInviteLink) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -196,7 +196,7 @@ type APIResponseStickerSet struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseStickerSet) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -208,7 +208,7 @@ type APIResponseUserProfile struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseUserProfile) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -220,7 +220,7 @@ type APIResponseFile struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseFile) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -232,7 +232,7 @@ type APIResponseAdministrators struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseAdministrators) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -244,7 +244,7 @@ type APIResponseChatMember struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseChatMember) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -256,7 +256,7 @@ type APIResponseInteger struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseInteger) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -268,7 +268,7 @@ type APIResponsePoll struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponsePoll) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -280,7 +280,7 @@ type APIResponseGameHighScore struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseGameHighScore) Base() APIResponseBase {
 	return a.APIResponseBase
 }
@@ -292,7 +292,7 @@ type APIResponseWebhook struct {
 	APIResponseBase
 }
 
-// Returns the contained object of type APIResponseBase.
+// Base returns the contained object of type APIResponseBase.
 func (a APIResponseWebhook) Base() APIResponseBase {
 	return a.APIResponseBase
 }
