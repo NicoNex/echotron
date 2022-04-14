@@ -70,7 +70,7 @@ func (b *bot) Update(update *echotron.Update) {
 }
 
 func main() {
-	// This is the entry point of echotron library.
+    // This is the entry point of echotron library.
     dsp := echotron.NewDispatcher(token, newBot)
     log.Println(dsp.Poll())
 }
