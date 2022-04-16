@@ -115,7 +115,7 @@ func (b *bot) Update(update *echotron.Update) {
 	b.state = b.state(update)
 }
 
-func (b *bot) handleMessage(update *echotron.Update) {
+func (b *bot) handleMessage(update *echotron.Update) stateFn {
 	if strings.HasPrefix(update.Message.Text, "/set_name") {
 		b.SendMessage("Send me my new name!", b.chatID, nil)
 		// Here we return b.handleName since next time we receive a message it
@@ -125,7 +125,7 @@ func (b *bot) handleMessage(update *echotron.Update) {
 	return b.handleMessage
 }
 
-func (b *bot) handleName(update *echotron.Update) {
+func (b *bot) handleName(update *echotron.Update) stateFn {
 	b.name = update.Message.Text
 	b.SendMessage(fmt.Sprintf("My new name is %q", b.name), b.chatID, nil)
 	// Here we return b.handleMessage since the next time we receive a message
