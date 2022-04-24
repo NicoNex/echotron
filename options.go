@@ -123,6 +123,7 @@ type KeyboardButton struct {
 	RequestContact  bool                    `json:"request_contact,omitempty"`
 	RequestLocation bool                    `json:"request_location,omitempty"`
 	RequestPoll     *KeyboardButtonPollType `json:"request_poll,omitempty"`
+	WebApp          *WebAppInfo             `json:"web_app,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -158,8 +159,9 @@ func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 type InlineKeyboardButton struct {
 	Text                         string        `json:"text"`
 	URL                          string        `json:"url,omitempty"`
-	LoginURL                     *LoginURL     `json:"login_url,omitempty"`
 	CallbackData                 string        `json:"callback_data,omitempty"`
+	WebApp                       *WebAppInfo   `json:"web_app,omitempty"`
+	LoginURL                     *LoginURL     `json:"login_url,omitempty"`
 	SwitchInlineQuery            string        `json:"switch_inline_query,omitempty"`
 	SwitchInlineQueryCurrentChat string        `json:"switch_inline_query_current_chat,omitempty"`
 	CallbackGame                 *CallbackGame `json:"callback_game,omitempty"`
@@ -463,7 +465,7 @@ type PromoteOptions struct {
 	CanPostMessages     bool `query:"can_post_messages"`
 	CanEditMessages     bool `query:"can_edit_messages"`
 	CanDeleteMessages   bool `query:"can_delete_messages"`
-	CanManageVoiceChats bool `query:"can_manage_voice_chats"`
+	CanManageVideoChats bool `query:"can_manage_video_chats"`
 	CanRestrictMembers  bool `query:"can_restrict_members"`
 	CanPromoteMembers   bool `query:"can_promote_members"`
 	CanChangeInfo       bool `query:"can_change_info"`

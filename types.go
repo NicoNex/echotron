@@ -40,14 +40,15 @@ type Update struct {
 
 // WebhookInfo contains information about the current status of a webhook.
 type WebhookInfo struct {
-	URL                  string        `json:"url"`
-	HasCustomCertificate bool          `json:"has_custom_certificate"`
-	PendingUpdateCount   int           `json:"pending_update_count"`
-	IPAddress            string        `json:"ip_address,omitempty"`
-	LastErrorDate        int64         `json:"last_error_date,omitempty"`
-	LastErrorMessage     string        `json:"last_error_message,omitempty"`
-	MaxConnections       int           `json:"max_connections,omitempty"`
-	AllowedUpdates       []*UpdateType `json:"allowed_updates,omitempty"`
+	URL                          string        `json:"url"`
+	HasCustomCertificate         bool          `json:"has_custom_certificate"`
+	PendingUpdateCount           int           `json:"pending_update_count"`
+	IPAddress                    string        `json:"ip_address,omitempty"`
+	LastErrorDate                int64         `json:"last_error_date,omitempty"`
+	LastErrorMessage             string        `json:"last_error_message,omitempty"`
+	LastSynchronizationErrorDate int64         `json:"last_synchronization_error_date,omitempty"`
+	MaxConnections               int           `json:"max_connections,omitempty"`
+	AllowedUpdates               []*UpdateType `json:"allowed_updates,omitempty"`
 }
 
 // APIResponse is implemented by all the APIResponse* types.
@@ -297,6 +298,42 @@ func (a APIResponseWebhook) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseSentWebAppMessage represents the incoming response from Telegram servers.
+// Used by all methods that return a SentWebAppMessage object on success.
+type APIResponseSentWebAppMessage struct {
+	Result *SentWebAppMessage `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseSentWebAppMessage) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponseMenuButton represents the incoming response from Telegram servers.
+// Used by all methods that return a MenuButton object on success.
+type APIResponseMenuButton struct {
+	Result *MenuButton `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseMenuButton) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponseChatAdministratorRights represents the incoming response from Telegram servers.
+// Used by all methods that return a ChatAdministratorRights object on success.
+type APIResponseChatAdministratorRights struct {
+	Result *ChatAdministratorRights `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseChatAdministratorRights) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	ID                      int64  `json:"id"`
@@ -388,9 +425,11 @@ type Message struct {
 	SuccessfulPayment             *SuccessfulPayment             `json:"successful_payment,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered,omitempty"`
-	VoiceChatStarted              *VoiceChatStarted              `json:"voice_chat_started,omitempty"`
-	VoiceChatEnded                *VoiceChatEnded                `json:"voice_chat_ended,omitempty"`
-	VoiceChatParticipantsInvited  *VoiceChatParticipantsInvited  `json:"voice_chat_participants_invited,omitempty"`
+	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled,omitempty"`
+	VideoChatStarted              *VideoChatStarted              `json:"video_chat_started,omitempty"`
+	VideoChatEnded                *VideoChatEnded                `json:"video_chat_ended,omitempty"`
+	VideoChatParticipantsInvited  *VideoChatParticipantsInvited  `json:"video_chat_participants_invited,omitempty"`
+	WebAppData                    *WebAppData                    `json:"web_app_data,omitempty"`
 	ReplyMarkup                   *InlineKeyboardMarkup          `json:"reply_markup,omitempty"`
 }
 
@@ -565,21 +604,21 @@ type MessageAutoDeleteTimerChanged struct {
 	MessageAutoDeleteTime int `json:"message_auto_delete_time"`
 }
 
-// VoiceChatScheduled represents a service message about a voice chat scheduled in the chat.
-type VoiceChatScheduled struct {
+// VideoChatScheduled represents a service message about a voice chat scheduled in the chat.
+type VideoChatScheduled struct {
 	StartDate int `json:"start_date"`
 }
 
-// VoiceChatStarted represents a service message about a voice chat started in the chat.
-type VoiceChatStarted struct{}
+// VideoChatStarted represents a service message about a voice chat started in the chat.
+type VideoChatStarted struct{}
 
-// VoiceChatEnded represents a service message about a voice chat ended in the chat.
-type VoiceChatEnded struct {
+// VideoChatEnded represents a service message about a voice chat ended in the chat.
+type VideoChatEnded struct {
 	Duration int `json:"duration"`
 }
 
-// VoiceChatParticipantsInvited represents a service message about new members invited to a voice chat.
-type VoiceChatParticipantsInvited struct {
+// VideoChatParticipantsInvited represents a service message about new members invited to a voice chat.
+type VideoChatParticipantsInvited struct {
 	Users []*User `json:"users,omitempty"`
 }
 
@@ -651,7 +690,7 @@ type ChatMember struct {
 	CanPostMessages       bool   `json:"can_post_messages,omitempty"`
 	CanEditMessages       bool   `json:"can_edit_messages,omitempty"`
 	CanDeleteMessages     bool   `json:"can_delete_messages,omitempty"`
-	CanManageVoiceChats   bool   `json:"can_manage_voice_chats,omitempty"`
+	CanManageVideoChats   bool   `json:"can_manage_video_chats,omitempty"`
 	CanRestrictMembers    bool   `json:"can_restrict_members,omitempty"`
 	CanPromoteMembers     bool   `json:"can_promote_members,omitempty"`
 	CanChangeInfo         bool   `json:"can_change_info,omitempty"`
