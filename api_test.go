@@ -659,7 +659,7 @@ func TestSendMediaGroupVideo(t *testing.T) {
 			},
 			InputMediaVideo{
 				Type:    MediaTypeVideo,
-				Media:   NewInputFilePath("assets/tests/video_note.mp4"),
+				Media:   NewInputFilePath("assets/tests/video.webm"),
 				Caption: "TestSendMediaGroup2",
 			},
 		},
@@ -956,7 +956,7 @@ func TestPromoteChatMember(t *testing.T) {
 		banUserID,
 		&PromoteOptions{
 			CanDeleteMessages:   true,
-			CanManageVoiceChats: true,
+			CanManageVideoChats: true,
 			CanRestrictMembers:  true,
 			CanPromoteMembers:   true,
 			CanChangeInfo:       true,
@@ -1053,7 +1053,7 @@ func TestEditChatInviteLink(t *testing.T) {
 		channelID,
 		inviteTmp.InviteLink,
 		&InviteLinkOptions{
-			ExpireDate: time.Now().Unix() + 20,
+			ExpireDate: time.Now().Unix() + 300,
 		},
 	)
 
