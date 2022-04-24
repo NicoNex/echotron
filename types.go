@@ -706,10 +706,10 @@ type ResponseParameters struct {
 	RetryAfter      int `json:"retry_after,omitempty"`
 }
 
-// InputMediaType is a custom type for the various InputMediaType*'s Type field.
+// InputMediaType is a custom type for the various InputMedia*'s Type field.
 type InputMediaType string
 
-// These are all the possible types for the various InputMediaType*'s Type field.
+// These are all the possible types for the various InputMedia*'s Type field.
 const (
 	MediaTypePhoto     InputMediaType = "photo"
 	MediaTypeVideo                    = "video"
