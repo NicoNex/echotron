@@ -28,7 +28,7 @@ import (
 
 func check(r APIResponse) error {
 	if b := r.Base(); !b.Ok {
-		return &APIError{b.ErrorCode, b.Description}
+		return &APIError{code: b.ErrorCode, desc: b.Description}
 	}
 	return nil
 }
@@ -40,7 +40,11 @@ func encode(s string) string {
 func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err error) {
 	switch {
 	case media.id != "":
-		im = mediaEnvelope{media.id, "", nil}
+		im = mediaEnvelope{
+			InputMedia: nil,
+			media:      media.id,
+			thumb:      "",
+		}
 
 	case media.path != "" && len(media.content) == 0:
 		if media.content, media.path, err = readFile(media); err != nil {
@@ -50,7 +54,11 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 
 	case media.path != "" && len(media.content) > 0:
 		cnt = append(cnt, content{media.path, media.path, media.content})
-		im = mediaEnvelope{fmt.Sprintf("attach://%s", media.path), "", nil}
+		im = mediaEnvelope{
+			InputMedia: nil,
+			media:      fmt.Sprintf("attach://%s", media.path),
+			thumb:      "",
+		}
 	}
 
 	switch {

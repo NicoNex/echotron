@@ -35,15 +35,15 @@ const (
 
 // MenuButton is a unique type for MenuButtonCommands, MenuButtonWebApp and MenuButtonDefault
 type MenuButton struct {
+	WebApp *WebAppInfo    `json:"web_app,omitempty"`
 	Type   MenuButtonType `json:"type"`
 	Text   string         `json:"text,omitempty"`
-	WebApp *WebAppInfo    `json:"web_app,omitempty"`
 }
 
 // SetChatMenuButtonOptions contains the optional parameters used by the SetChatMenuButton method.
 type SetChatMenuButtonOptions struct {
-	ChatID     int64      `query:"chat_id"`
 	MenuButton MenuButton `query:"menu_button"`
+	ChatID     int64      `query:"chat_id"`
 }
 
 // GetChatMenuButtonOptions contains the optional parameters used by the GetChatMenuButton method.

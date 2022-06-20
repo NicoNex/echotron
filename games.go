@@ -38,8 +38,8 @@ type CallbackGame struct{}
 
 // GameHighScore represents one row of the high scores table for a game.
 type GameHighScore struct {
-	Position int  `json:"position"`
 	User     User `json:"user"`
+	Position int  `json:"position"`
 	Score    int  `json:"score"`
 }
 

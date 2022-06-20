@@ -44,11 +44,11 @@ type NewBotFn func(chatId int64) Bot
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	api        API
 	sessionMap map[int64]Bot
 	newBot     NewBotFn
 	updates    chan *Update
 	httpServer *http.Server
+	api        API
 	mu         sync.Mutex
 }
 

@@ -25,28 +25,28 @@ import (
 
 // Sticker represents a sticker.
 type Sticker struct {
-	FileID       string        `json:"file_id"`
+	Thumb        *PhotoSize    `json:"thumb,omitempty"`
+	MaskPosition *MaskPosition `json:"mask_position,omitempty"`
 	FileUniqueID string        `json:"file_unique_id"`
+	SetName      string        `json:"set_name,omitempty"`
+	FileID       string        `json:"file_id"`
+	Emoji        string        `json:"emoji,omitempty"`
+	FileSize     int           `json:"file_size,omitempty"`
 	Width        int           `json:"width"`
 	Height       int           `json:"height"`
-	IsAnimated   bool          `json:"is_animated"`
 	IsVideo      bool          `json:"is_video"`
-	Thumb        *PhotoSize    `json:"thumb,omitempty"`
-	Emoji        string        `json:"emoji,omitempty"`
-	SetName      string        `json:"set_name,omitempty"`
-	MaskPosition *MaskPosition `json:"mask_position,omitempty"`
-	FileSize     int           `json:"file_size,omitempty"`
+	IsAnimated   bool          `json:"is_animated"`
 }
 
 // StickerSet represents a sticker set.
 type StickerSet struct {
-	Name          string     `json:"name"`
+	Thumb         *PhotoSize `json:"thumb,omitempty"`
 	Title         string     `json:"title"`
+	Name          string     `json:"name"`
+	Stickers      []Sticker  `json:"stickers"`
 	IsAnimated    bool       `json:"is_animated"`
 	IsVideo       bool       `json:"is_video"`
 	ContainsMasks bool       `json:"contains_masks"`
-	Stickers      []Sticker  `json:"stickers"`
-	Thumb         *PhotoSize `json:"thumb,omitempty"`
 }
 
 // MaskPosition describes the position on faces where a mask should be placed by default.
@@ -59,8 +59,8 @@ type MaskPosition struct {
 
 // NewStickerSetOptions contains the optional parameters used in the CreateNewStickerSet method.
 type NewStickerSetOptions struct {
-	ContainsMasks bool         `query:"contains_masks"`
 	MaskPosition  MaskPosition `query:"mask_position"`
+	ContainsMasks bool         `query:"contains_masks"`
 }
 
 // StickerType is a custom type for the various sticker types.
@@ -75,8 +75,8 @@ const (
 
 // StickerFile is a struct which contains info about sticker files.
 type StickerFile struct {
-	File InputFile
 	Type StickerType
+	File InputFile
 }
 
 // SendSticker is used to send static .WEBP or animated .TGS stickers.

@@ -7,8 +7,8 @@ import (
 
 // PassportData contains information about Telegram Passport data shared with the bot by the user.
 type PassportData struct {
-	Data        []EncryptedPassportElement `json:"encrypted_passport_element"`
 	Credentials EncryptedCredentials       `json:"encrypted_credentials"`
+	Data        []EncryptedPassportElement `json:"encrypted_passport_element"`
 }
 
 // PassportFile represents a file uploaded to Telegram Passport.
@@ -162,8 +162,8 @@ func (p PassportElementErrorFile) ImplementsPassportElementError() {}
 type PassportElementErrorFiles struct {
 	Source     PassportElementErrorSource   `json:"source"`
 	Type       EncryptedPassportElementType `json:"type"`
-	FileHashes []string                     `json:"file_hashes"`
 	Message    string                       `json:"message"`
+	FileHashes []string                     `json:"file_hashes"`
 }
 
 // ImplementsPassportElementError us a dummy method which exists to implement the interface PassportElementError.
@@ -192,8 +192,8 @@ func (p PassportElementErrorTranslationFile) ImplementsPassportElementError() {}
 type PassportElementErrorTranslationFiles struct {
 	Source     PassportElementErrorSource   `json:"source"`
 	Type       EncryptedPassportElementType `json:"type"`
-	FileHashes []string                     `json:"file_hashes"`
 	Message    string                       `json:"message"`
+	FileHashes []string                     `json:"file_hashes"`
 }
 
 // ImplementsPassportElementError us a dummy method which exists to implement the interface PassportElementError.

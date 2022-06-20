@@ -22,8 +22,8 @@ import "fmt"
 
 // APIError represents an error returned by the Telegram API.
 type APIError struct {
-	code int
 	desc string
+	code int
 }
 
 // ErrorCode returns the error code received from the Telegram API.

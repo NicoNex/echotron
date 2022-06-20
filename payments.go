@@ -68,42 +68,32 @@ type OrderInfo struct {
 
 // SuccessfulPayment contains basic information about a successful payment.
 type SuccessfulPayment struct {
-	// Three-letter ISO 4217 currency code.
-	Currency string `json:"currency"`
-	// Total amount in the smallest units of the currency (integer, not float/double).
-	// For example, for a price of US$ 1.45 pass amount = 145.
-	// See the exp parameter in currencies.json, it shows the number of digits
-	// past the decimal point for each currency (2 for the majority of currencies).
-	TotalAmount             int       `json:"total_amount"`
+	OrderInfo               OrderInfo `json:"order_info"`
+	Currency                string    `json:"currency"`
 	InvoicePayload          string    `json:"invoice_payload"`
 	ShippingOptionID        string    `json:"shipping_option_id"`
-	OrderInfo               OrderInfo `json:"order_info"`
 	TelegramPaymentChargeID string    `json:"telegram_payment_charge_id"`
 	ProviderPaymentChargeID string    `json:"provider_payment_charge_id"`
+	TotalAmount             int       `json:"total_amount"`
 }
 
 // ShippingQuery contains information about an incoming shipping query.
 type ShippingQuery struct {
-	ID              string          `json:"id"`
-	From            User            `json:"from"`
-	InvoicePayload  string          `json:"invoice_payload"`
 	ShippingAddress ShippingAddress `json:"shipping_address"`
+	ID              string          `json:"id"`
+	InvoicePayload  string          `json:"invoice_payload"`
+	From            User            `json:"from"`
 }
 
 // PreCheckoutQuery contains information about an incoming pre-checkout query.
 type PreCheckoutQuery struct {
-	ID   string `json:"id"`
-	From User   `json:"from"`
-	// Three-letter ISO 4217 currency code.
-	Currency string `json:"currency"`
-	// Total amount in the smallest units of the currency (integer, not float/double).
-	// For example, for a price of US$ 1.45 pass amount = 145.
-	// See the exp parameter in currencies.json, it shows the number of digits
-	// past the decimal point for each currency (2 for the majority of currencies).
-	TotalAmount      int       `json:"total_amount"`
+	OrderInfo        OrderInfo `json:"order_info,omitempty"`
+	Currency         string    `json:"currency"`
 	InvoicePayload   string    `json:"invoice_payload"`
 	ShippingOptionID string    `json:"shipping_option_id,omitempty"`
-	OrderInfo        OrderInfo `json:"order_info,omitempty"`
+	ID               string    `json:"id"`
+	From             User      `json:"from"`
+	TotalAmount      int       `json:"total_amount"`
 }
 
 // SendInvoice is used to send invoices.
