@@ -73,8 +73,8 @@ func (a APIResponseBase) Base() APIResponseBase {
 // APIResponseUpdate represents the incoming response from Telegram servers.
 // Used by all methods that return an array of Update objects on success.
 type APIResponseUpdate struct {
-	APIResponseBase
 	Result []*Update `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // Base returns the contained object of type APIResponseBase.
@@ -109,8 +109,8 @@ func (a APIResponseMessage) Base() APIResponseBase {
 // APIResponseMessageArray represents the incoming response from Telegram servers.
 // Used by all methods that return an array of Message objects on success.
 type APIResponseMessageArray struct {
-	APIResponseBase
 	Result []*Message `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // Base returns the contained object of type APIResponseBase.
@@ -133,8 +133,8 @@ func (a APIResponseMessageID) Base() APIResponseBase {
 // APIResponseCommands represents the incoming response from Telegram servers.
 // Used by all methods that return an array of BotCommand objects on success.
 type APIResponseCommands struct {
-	APIResponseBase
 	Result []*BotCommand `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // Base returns the contained object of type APIResponseBase.
@@ -229,8 +229,8 @@ func (a APIResponseFile) Base() APIResponseBase {
 // APIResponseAdministrators represents the incoming response from Telegram servers.
 // Used by all methods that return an array of ChatMember objects on success.
 type APIResponseAdministrators struct {
-	APIResponseBase
 	Result []*ChatMember `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // Base returns the contained object of type APIResponseBase.
@@ -277,8 +277,8 @@ func (a APIResponsePoll) Base() APIResponseBase {
 // APIResponseGameHighScore represents the incoming response from Telegram servers.
 // Used by all methods that return an array of GameHighScore objects on success.
 type APIResponseGameHighScore struct {
-	APIResponseBase
 	Result []*GameHighScore `json:"result,omitempty"`
+	APIResponseBase
 }
 
 // Base returns the contained object of type APIResponseBase.
@@ -345,6 +345,8 @@ type User struct {
 	CanJoinGroups           bool   `json:"can_join_groups,omitempty"`
 	CanReadAllGroupMessages bool   `json:"can_read_all_group_messages,omitempty"`
 	SupportsInlineQueries   bool   `json:"supports_inline_queries,omitempty"`
+	IsPremium               bool   `json:"is_premium,omitempty"`
+	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
 }
 
 // Chat represents a chat.
@@ -369,11 +371,13 @@ type Chat struct {
 	HasProtectedContent   bool             `json:"has_protected_content,omitempty"`
 	HasPrivateForwards    bool             `json:"has_private_forwards,omitempty"`
 	CanSetStickerSet      bool             `json:"can_set_sticker_set,omitempty"`
+	JoinToSendMessages    bool             `json:"join_to_send_messages,omitempty"`
+	JoinByRequest         bool             `json:"join_by_request,omitempty"`
 }
 
 // Message represents a message.
 type Message struct {
-	Chat                          Chat                           `json:"chat"`
+	MessageAutoDeleteTimerChanged *MessageAutoDeleteTimerChanged `json:"message_auto_delete_timer_changed,omitempty"`
 	Contact                       *Contact                       `json:"contact,omitempty"`
 	SenderChat                    *Chat                          `json:"sender_chat,omitempty"`
 	WebAppData                    *WebAppData                    `json:"web_app_data,omitempty"`
@@ -387,7 +391,7 @@ type Message struct {
 	VideoChatStarted              *VideoChatStarted              `json:"video_chat_started,omitempty"`
 	ReplyToMessage                *Message                       `json:"reply_to_message,omitempty"`
 	ViaBot                        *User                          `json:"via_bot,omitempty"`
-	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled,omitempty"`
+	Poll                          *Poll                          `json:"poll,omitempty"`
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered,omitempty"`
 	ReplyMarkup                   *InlineKeyboardMarkup          `json:"reply_markup,omitempty"`
 	Document                      *Document                      `json:"document,omitempty"`
@@ -403,8 +407,8 @@ type Message struct {
 	Venue                         *Venue                         `json:"venue,omitempty"`
 	Game                          *Game                          `json:"game,omitempty"`
 	Dice                          *Dice                          `json:"dice,omitempty"`
-	MessageAutoDeleteTimerChanged *MessageAutoDeleteTimerChanged `json:"message_auto_delete_timer_changed,omitempty"`
-	Poll                          *Poll                          `json:"poll,omitempty"`
+	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled,omitempty"`
+	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
 	AuthorSignature               string                         `json:"author_signature,omitempty"`
@@ -412,19 +416,19 @@ type Message struct {
 	ForwardSenderName             string                         `json:"forward_sender_name,omitempty"`
 	Caption                       string                         `json:"caption,omitempty"`
 	Text                          string                         `json:"text,omitempty"`
-	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
+	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
 	NewChatPhoto                  []*PhotoSize                   `json:"new_chat_photo,omitempty"`
 	NewChatMembers                []*User                        `json:"new_chat_members,omitempty"`
 	Photo                         []*PhotoSize                   `json:"photo,omitempty"`
 	Entities                      []*MessageEntity               `json:"entities,omitempty"`
-	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
-	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
+	Chat                          Chat                           `json:"chat"`
+	ID                            int                            `json:"message_id"`
 	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
 	Date                          int                            `json:"date"`
 	ForwardFromMessageID          int                            `json:"forward_from_message_id,omitempty"`
 	ForwardDate                   int                            `json:"forward_date,omitempty"`
+	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
 	EditDate                      int                            `json:"edit_date,omitempty"`
-	ID                            int                            `json:"message_id"`
 	DeleteChatPhoto               bool                           `json:"delete_chat_photo,omitempty"`
 	IsAutomaticForward            bool                           `json:"is_automatic_forward,omitempty"`
 	GroupChatCreated              bool                           `json:"group_chat_created,omitempty"`
@@ -468,7 +472,7 @@ type Animation struct {
 	Width        int        `json:"width"`
 	Height       int        `json:"height"`
 	Duration     int        `json:"duration"`
-	FileSize     int        `json:"file_size,omitempty"`
+	FileSize     int64      `json:"file_size,omitempty"`
 }
 
 // Audio represents an audio file to be treated as music by the Telegram clients.
@@ -480,7 +484,7 @@ type Audio struct {
 	Title        string     `json:"title,omitempty"`
 	FileName     string     `json:"file_name,omitempty"`
 	MimeType     string     `json:"mime_type,omitempty"`
-	FileSize     int        `json:"file_size,omitempty"`
+	FileSize     int64      `json:"file_size,omitempty"`
 	Duration     int        `json:"duration"`
 }
 
@@ -491,7 +495,7 @@ type Document struct {
 	Thumb        *PhotoSize `json:"thumb,omitempty"`
 	FileName     string     `json:"file_name,omitempty"`
 	MimeType     string     `json:"mime_type,omitempty"`
-	FileSize     int        `json:"file_size,omitempty"`
+	FileSize     int64      `json:"file_size,omitempty"`
 }
 
 // Video represents a video file.
@@ -504,7 +508,7 @@ type Video struct {
 	Width        int        `json:"width"`
 	Height       int        `json:"height"`
 	Duration     int        `json:"duration"`
-	FileSize     int        `json:"file_size,omitempty"`
+	FileSize     int64      `json:"file_size,omitempty"`
 }
 
 // VideoNote represents a video message (available in Telegram apps as of v.4.0).
@@ -523,7 +527,7 @@ type Voice struct {
 	FileUniqueID string `json:"file_unique_id"`
 	MimeType     string `json:"mime_type,omitempty"`
 	Duration     int    `json:"duration"`
-	FileSize     int    `json:"file_size,omitempty"`
+	FileSize     int64  `json:"file_size,omitempty"`
 }
 
 // Contact represents a phone contact.
@@ -633,7 +637,7 @@ type File struct {
 	FileID       string `json:"file_id"`
 	FileUniqueID string `json:"file_unique_id"`
 	FilePath     string `json:"file_path,omitempty"`
-	FileSize     int    `json:"file_size,omitempty"`
+	FileSize     int64  `json:"file_size,omitempty"`
 }
 
 // LoginURL represents a parameter of the inline keyboard button used to automatically authorize a user.
@@ -707,11 +711,11 @@ type ChatMember struct {
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
-	Chat          Chat            `json:"chat"`
 	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
 	From          User            `json:"from"`
 	OldChatMember ChatMember      `json:"old_chat_member"`
 	NewChatMember ChatMember      `json:"new_chat_member"`
+	Chat          Chat            `json:"chat"`
 	Date          int             `json:"date"`
 }
 
@@ -814,9 +818,9 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 
 	case InputMediaAudio:
 		tmp = struct {
-			InputMediaAudio
 			Media string `json:"media"`
 			Thumb string `json:"thumb,omitempty"`
+			InputMediaAudio
 		}{
 			InputMediaAudio: o,
 			Media:           i.media,
@@ -973,9 +977,9 @@ type PermissionOptions struct {
 
 // ChatJoinRequest represents a join request sent to a chat.
 type ChatJoinRequest struct {
-	Chat       Chat            `json:"chat"`
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
 	Bio        string          `json:"bio,omitempty"`
 	From       User            `json:"user"`
+	Chat       Chat            `json:"chat"`
 	Date       int             `json:"date"`
 }

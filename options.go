@@ -198,6 +198,7 @@ type UpdateOptions struct {
 // WebhookOptions contains the optional parameters used by the SetWebhook method.
 type WebhookOptions struct {
 	IPAddress      string `query:"ip_address"`
+	SecretToken    string `query:"secret_token"`
 	Certificate    InputFile
 	AllowedUpdates []UpdateType `query:"allowed_updates"`
 	MaxConnections int          `query:"max_connections"`
@@ -561,6 +562,24 @@ type InvoiceOptions struct {
 	NeedName                  bool                 `query:"need_name"`
 	AllowSendingWithoutReply  bool                 `query:"allow_sending_without_reply"`
 	NeedEmail                 bool                 `query:"need_email"`
+}
+
+// CreateInvoiceLinkOptions contains the optional parameters used by the CreateInvoiceLink api method.
+type CreateInvoiceLinkOptions struct {
+	ProviderData              string `query:"provider_data"`
+	PhotoURL                  string `query:"photo_url"`
+	SuggestedTipAmount        []int  `query:"suggested_tip_amounts"`
+	PhotoSize                 int    `query:"photo_size"`
+	PhotoWidth                int    `query:"photo_width"`
+	PhotoHeight               int    `query:"photo_height"`
+	MaxTipAmount              int    `query:"max_tip_amount"`
+	NeedPhoneNumber           bool   `query:"need_phone_number"`
+	NeepShippingAddress       bool   `query:"need_shipping_address"`
+	SendPhoneNumberToProvider bool   `query:"send_phone_number_to_provider"`
+	SendEmailToProvider       bool   `query:"send_email_to_provider"`
+	IsFlexible                bool   `query:"is_flexible"`
+	NeedName                  bool   `query:"need_name"`
+	NeedEmail                 bool   `query:"need_email"`
 }
 
 // ShippingOption represents one shipping option.
