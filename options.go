@@ -568,7 +568,7 @@ type InvoiceOptions struct {
 type CreateInvoiceLinkOptions struct {
 	ProviderData              string `query:"provider_data"`
 	PhotoURL                  string `query:"photo_url"`
-	SuggestedTipAmount        []int  `query:"suggested_tip_amounts"`
+	SuggestedTipAmounts       []int  `query:"suggested_tip_amounts"`
 	PhotoSize                 int    `query:"photo_size"`
 	PhotoWidth                int    `query:"photo_width"`
 	PhotoHeight               int    `query:"photo_height"`
