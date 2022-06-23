@@ -179,3 +179,34 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 	err = check(res)
 	return
 }
+
+func (a API) CreateInvoiceLink(title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *CreateInvoiceLinkOptions) (res APIResponseBase, err error) {
+	p, err := json.Marshal(prices)
+	if err != nil {
+		return
+	}
+
+	var url = fmt.Sprintf(
+		"%screateInvoiceLink?title=%s&description=%s&payload=%s&provider_token=%s&currency=%s&prices=%s&%s",
+		a.base,
+		title,
+		description,
+		payload,
+		providerToken,
+		currency,
+		string(p),
+		querify(opts),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
