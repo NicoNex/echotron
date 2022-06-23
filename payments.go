@@ -180,6 +180,7 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 	return
 }
 
+// CreateInvoiceLink creates a link for an invoice.
 func (a API) CreateInvoiceLink(title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *CreateInvoiceLinkOptions) (res APIResponseBase, err error) {
 	p, err := json.Marshal(prices)
 	if err != nil {
