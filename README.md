@@ -156,7 +156,7 @@ type bot struct {
 
 const token = "YOUR TELEGRAM TOKEN"
 
-var dsp echotron.Dispatcher
+var dsp *echotron.Dispatcher
 
 func newBot(chatID int64) echotron.Bot {
 	bot := &bot{
@@ -167,7 +167,7 @@ func newBot(chatID int64) echotron.Bot {
 	return bot
 }
 
-func (b *bot) selfDestruct(timech <- chan time.Time) {
+func (b *bot) selfDestruct(timech <-chan time.Time) {
 	<-timech
 	b.SendMessage("goodbye", b.chatID, nil)
 	dsp.DelSession(b.chatID)
@@ -175,7 +175,7 @@ func (b *bot) selfDestruct(timech <- chan time.Time) {
 
 func (b *bot) Update(update *echotron.Update) {
 	if update.Message.Text == "/start" {
-		b.SendMessage("Hello world", b.chatId, nil)
+		b.SendMessage("Hello world", b.chatID, nil)
 	}
 }
 
