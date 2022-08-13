@@ -90,6 +90,7 @@ const (
 	PreEntity                             = "pre"
 	TextLinkEntity                        = "text_link"
 	TextMentionEntity                     = "text_mention"
+	CustomEmojiEntity                     = "custom_emoji"
 )
 
 // UpdateType is a custom type for the various update types that a bot can be subscribed to.
