@@ -71,8 +71,8 @@ type MaskPosition struct {
 
 // NewStickerSetOptions contains the optional parameters used in the CreateNewStickerSet method.
 type NewStickerSetOptions struct {
-	MaskPosition  MaskPosition `query:"mask_position"`
-	ContainsMasks bool         `query:"contains_masks"`
+	StickerType  StickerSetType `query:"sticker_type"`
+	MaskPosition MaskPosition   `query:"mask_position"`
 }
 
 // StickerType is a custom type for the various sticker types.
@@ -120,6 +120,29 @@ func (a API) GetStickerSet(name string) (res APIResponseStickerSet, err error) {
 		"%sgetStickerSet?name=%s",
 		a.base,
 		encode(name),
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
+
+// GetCustomEmojiStickers is used to get information about custom emoji stickers by their identifiers.
+func (a API) GetCustomEmojiStickers(customEmojiIDs ...string) (res APIResponseStickers, err error) {
+	jsn, _ := json.Marshal(customEmojiIDs)
+
+	var url = fmt.Sprintf(
+		"%getCustomEmojiStickers?custom_emoji_ids=%s",
+		a.base,
+		jsn,
 	)
 
 	cnt, err := sendGetRequest(url)

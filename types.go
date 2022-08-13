@@ -190,6 +190,18 @@ func (a APIResponseInviteLink) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseStickers represents the incoming response from Telegram servers.
+// Used by all methods that return an array of Stickers on success.
+type APIResponseStickers struct {
+	Result []*Sticker `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseStickers) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseStickerSet represents the incoming response from Telegram servers.
 // Used by all methods that return a StickerSet object on success.
 type APIResponseStickerSet struct {
