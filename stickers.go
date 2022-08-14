@@ -37,7 +37,7 @@ type Sticker struct {
 	Height           int            `json:"height"`
 	IsVideo          bool           `json:"is_video"`
 	IsAnimated       bool           `json:"is_animated"`
-	CustomEmojiId    string         `json:"custom_emoji_id,omitempty"`
+	CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
 	Type             StickerSetType `json:"type"`
 }
 
