@@ -140,7 +140,7 @@ func (a API) GetCustomEmojiStickers(customEmojiIDs ...string) (res APIResponseSt
 	jsn, _ := json.Marshal(customEmojiIDs)
 
 	var url = fmt.Sprintf(
-		"%getCustomEmojiStickers?custom_emoji_ids=%s",
+		"%sgetCustomEmojiStickers?custom_emoji_ids=%s",
 		a.base,
 		jsn,
 	)
