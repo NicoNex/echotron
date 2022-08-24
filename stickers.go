@@ -26,19 +26,19 @@ import (
 // Sticker represents a sticker.
 type Sticker struct {
 	Thumb            *PhotoSize     `json:"thumb,omitempty"`
-    MaskPosition     *MaskPosition  `json:"mask_position,omitempty"`
-    Type             StickerSetType `json:"type"`
-    FileUniqueID     string         `json:"file_unique_id"`
-    SetName          string         `json:"set_name,omitempty"`
-    FileID           string         `json:"file_id"`
-    Emoji            string         `json:"emoji,omitempty"`
-    CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
-    PremiumAnimation File           `json:"premium_animation,omitempty"`
-    FileSize         int            `json:"file_size,omitempty"`
-    Width            int            `json:"width"`
-    Height           int            `json:"height"`
-    IsVideo          bool           `json:"is_video"`
-    IsAnimated       bool           `json:"is_animated"`
+	MaskPosition     *MaskPosition  `json:"mask_position,omitempty"`
+	Type             StickerSetType `json:"type"`
+	FileUniqueID     string         `json:"file_unique_id"`
+	SetName          string         `json:"set_name,omitempty"`
+	FileID           string         `json:"file_id"`
+	Emoji            string         `json:"emoji,omitempty"`
+	CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
+	PremiumAnimation File           `json:"premium_animation,omitempty"`
+	FileSize         int            `json:"file_size,omitempty"`
+	Width            int            `json:"width"`
+	Height           int            `json:"height"`
+	IsVideo          bool           `json:"is_video"`
+	IsAnimated       bool           `json:"is_animated"`
 }
 
 // StickerSet represents a sticker set.
