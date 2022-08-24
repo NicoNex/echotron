@@ -81,6 +81,16 @@ func TestAddStickerToSet(t *testing.T) {
 	}
 }
 
+func TestGetCustomEmojiStickers(t *testing.T) {
+	_, err := api.GetCustomEmojiStickers(
+		"5407041870620531251",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGetStickerSet(t *testing.T) {
 	resp, err := api.GetStickerSet(
 		stickerSetName,
