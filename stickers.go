@@ -26,19 +26,19 @@ import (
 // Sticker represents a sticker.
 type Sticker struct {
 	Thumb            *PhotoSize     `json:"thumb,omitempty"`
-	MaskPosition     *MaskPosition  `json:"mask_position,omitempty"`
-	FileUniqueID     string         `json:"file_unique_id"`
-	SetName          string         `json:"set_name,omitempty"`
-	FileID           string         `json:"file_id"`
-	Emoji            string         `json:"emoji,omitempty"`
-	PremiumAnimation File           `json:"premium_animation,omitempty"`
-	FileSize         int            `json:"file_size,omitempty"`
-	Width            int            `json:"width"`
-	Height           int            `json:"height"`
-	IsVideo          bool           `json:"is_video"`
-	IsAnimated       bool           `json:"is_animated"`
-	CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
-	Type             StickerSetType `json:"type"`
+    MaskPosition     *MaskPosition  `json:"mask_position,omitempty"`
+    Type             StickerSetType `json:"type"`
+    FileUniqueID     string         `json:"file_unique_id"`
+    SetName          string         `json:"set_name,omitempty"`
+    FileID           string         `json:"file_id"`
+    Emoji            string         `json:"emoji,omitempty"`
+    CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
+    PremiumAnimation File           `json:"premium_animation,omitempty"`
+    FileSize         int            `json:"file_size,omitempty"`
+    Width            int            `json:"width"`
+    Height           int            `json:"height"`
+    IsVideo          bool           `json:"is_video"`
+    IsAnimated       bool           `json:"is_animated"`
 }
 
 // StickerSet represents a sticker set.
@@ -56,9 +56,9 @@ type StickerSet struct {
 type StickerSetType string
 
 const (
-	RegularStickerType     StickerType = "regular"
-	MaskStickerType                    = "mask"
-	CustomEmojiStickerType             = "custom_emoji"
+	RegularStickerSet     StickerSetType = "regular"
+	MaskStickerSet                       = "mask"
+	CustomEmojiStickerSet                = "custom_emoji"
 )
 
 // MaskPosition describes the position on faces where a mask should be placed by default.

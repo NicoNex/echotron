@@ -464,7 +464,7 @@ type MessageEntity struct {
 	Language      string            `json:"language,omitempty"`
 	Offset        int               `json:"offset"`
 	Length        int               `json:"length"`
-	CustomEmojiId string            `json:"custom_emoji_id,omitempty"`
+	CustomEmojiID string            `json:"custom_emoji_id,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
