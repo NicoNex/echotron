@@ -46,10 +46,10 @@ type StickerSet struct {
 	Thumb       *PhotoSize     `json:"thumb,omitempty"`
 	Title       string         `json:"title"`
 	Name        string         `json:"name"`
+	StickerType StickerSetType `json:"sticker_type"`
 	Stickers    []Sticker      `json:"stickers"`
 	IsAnimated  bool           `json:"is_animated"`
 	IsVideo     bool           `json:"is_video"`
-	StickerType StickerSetType `json:"sticker_type"`
 }
 
 // StickerSetType represents the type of a sticker or of the entire set
