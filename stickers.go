@@ -52,7 +52,7 @@ type StickerSet struct {
 	StickerType StickerSetType `json:"sticker_type"`
 }
 
-// StickerType represents the type of a sticker or of the entire set
+// StickerSetType represents the type of a sticker or of the entire set
 type StickerSetType string
 
 const (
