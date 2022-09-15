@@ -190,6 +190,18 @@ func (a APIResponseInviteLink) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseStickers represents the incoming response from Telegram servers.
+// Used by all methods that return an array of Stickers on success.
+type APIResponseStickers struct {
+	Result []*Sticker `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseStickers) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // APIResponseStickerSet represents the incoming response from Telegram servers.
 // Used by all methods that return a StickerSet object on success.
 type APIResponseStickerSet struct {
@@ -351,28 +363,29 @@ type User struct {
 
 // Chat represents a chat.
 type Chat struct {
-	Permissions           *ChatPermissions `json:"permissions,omitempty"`
-	Location              *ChatLocation    `json:"location,omitempty"`
-	PinnedMessage         *Message         `json:"pinned_message,omitempty"`
-	Photo                 *ChatPhoto       `json:"photo,omitempty"`
-	Type                  string           `json:"type"`
-	Title                 string           `json:"title,omitempty"`
-	Username              string           `json:"username,omitempty"`
-	Bio                   string           `json:"bio,omitempty"`
-	StickerSetName        string           `json:"sticker_set_name,omitempty"`
-	Description           string           `json:"description,omitempty"`
-	FirstName             string           `json:"first_name,omitempty"`
-	LastName              string           `json:"last_name,omitempty"`
-	InviteLink            string           `json:"invite_link,omitempty"`
-	SlowModeDelay         int              `json:"slow_mode_delay,omitempty"`
-	MessageAutoDeleteTime int              `json:"message_auto_delete_time,omitempty"`
-	LinkedChatID          int64            `json:"linked_chat_id,omitempty"`
-	ID                    int64            `json:"id"`
-	HasProtectedContent   bool             `json:"has_protected_content,omitempty"`
-	HasPrivateForwards    bool             `json:"has_private_forwards,omitempty"`
-	CanSetStickerSet      bool             `json:"can_set_sticker_set,omitempty"`
-	JoinToSendMessages    bool             `json:"join_to_send_messages,omitempty"`
-	JoinByRequest         bool             `json:"join_by_request,omitempty"`
+	Permissions                        *ChatPermissions `json:"permissions,omitempty"`
+	Location                           *ChatLocation    `json:"location,omitempty"`
+	PinnedMessage                      *Message         `json:"pinned_message,omitempty"`
+	Photo                              *ChatPhoto       `json:"photo,omitempty"`
+	Type                               string           `json:"type"`
+	Title                              string           `json:"title,omitempty"`
+	Username                           string           `json:"username,omitempty"`
+	Bio                                string           `json:"bio,omitempty"`
+	StickerSetName                     string           `json:"sticker_set_name,omitempty"`
+	Description                        string           `json:"description,omitempty"`
+	FirstName                          string           `json:"first_name,omitempty"`
+	LastName                           string           `json:"last_name,omitempty"`
+	InviteLink                         string           `json:"invite_link,omitempty"`
+	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
+	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
+	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
+	ID                                 int64            `json:"id"`
+	HasProtectedContent                bool             `json:"has_protected_content,omitempty"`
+	HasPrivateForwards                 bool             `json:"has_private_forwards,omitempty"`
+	CanSetStickerSet                   bool             `json:"can_set_sticker_set,omitempty"`
+	JoinToSendMessages                 bool             `json:"join_to_send_messages,omitempty"`
+	JoinByRequest                      bool             `json:"join_by_request,omitempty"`
+	HasRestrictedVoiceAndVideoMessages bool             `json:"has_restricted_voice_and_video_messages,omitempty"`
 }
 
 // Message represents a message.
@@ -445,12 +458,13 @@ type MessageID struct {
 // MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	User     *User             `json:"user,omitempty"`
-	Type     MessageEntityType `json:"type"`
-	URL      string            `json:"url,omitempty"`
-	Language string            `json:"language,omitempty"`
-	Offset   int               `json:"offset"`
-	Length   int               `json:"length"`
+	User          *User             `json:"user,omitempty"`
+	Type          MessageEntityType `json:"type"`
+	URL           string            `json:"url,omitempty"`
+	Language      string            `json:"language,omitempty"`
+	CustomEmojiID string            `json:"custom_emoji_id,omitempty"`
+	Offset        int               `json:"offset"`
+	Length        int               `json:"length"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.

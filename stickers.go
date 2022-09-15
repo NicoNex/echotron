@@ -25,30 +25,41 @@ import (
 
 // Sticker represents a sticker.
 type Sticker struct {
-	Thumb            *PhotoSize    `json:"thumb,omitempty"`
-	MaskPosition     *MaskPosition `json:"mask_position,omitempty"`
-	FileUniqueID     string        `json:"file_unique_id"`
-	SetName          string        `json:"set_name,omitempty"`
-	FileID           string        `json:"file_id"`
-	Emoji            string        `json:"emoji,omitempty"`
-	PremiumAnimation File          `json:"premium_animation,omitempty"`
-	FileSize         int           `json:"file_size,omitempty"`
-	Width            int           `json:"width"`
-	Height           int           `json:"height"`
-	IsVideo          bool          `json:"is_video"`
-	IsAnimated       bool          `json:"is_animated"`
+	Thumb            *PhotoSize     `json:"thumb,omitempty"`
+	MaskPosition     *MaskPosition  `json:"mask_position,omitempty"`
+	Type             StickerSetType `json:"type"`
+	FileUniqueID     string         `json:"file_unique_id"`
+	SetName          string         `json:"set_name,omitempty"`
+	FileID           string         `json:"file_id"`
+	Emoji            string         `json:"emoji,omitempty"`
+	CustomEmojiID    string         `json:"custom_emoji_id,omitempty"`
+	PremiumAnimation File           `json:"premium_animation,omitempty"`
+	FileSize         int            `json:"file_size,omitempty"`
+	Width            int            `json:"width"`
+	Height           int            `json:"height"`
+	IsVideo          bool           `json:"is_video"`
+	IsAnimated       bool           `json:"is_animated"`
 }
 
 // StickerSet represents a sticker set.
 type StickerSet struct {
-	Thumb         *PhotoSize `json:"thumb,omitempty"`
-	Title         string     `json:"title"`
-	Name          string     `json:"name"`
-	Stickers      []Sticker  `json:"stickers"`
-	IsAnimated    bool       `json:"is_animated"`
-	IsVideo       bool       `json:"is_video"`
-	ContainsMasks bool       `json:"contains_masks"`
+	Thumb       *PhotoSize     `json:"thumb,omitempty"`
+	Title       string         `json:"title"`
+	Name        string         `json:"name"`
+	StickerType StickerSetType `json:"sticker_type"`
+	Stickers    []Sticker      `json:"stickers"`
+	IsAnimated  bool           `json:"is_animated"`
+	IsVideo     bool           `json:"is_video"`
 }
+
+// StickerSetType represents the type of a sticker or of the entire set
+type StickerSetType string
+
+const (
+	RegularStickerSet     StickerSetType = "regular"
+	MaskStickerSet                       = "mask"
+	CustomEmojiStickerSet                = "custom_emoji"
+)
 
 // MaskPosition describes the position on faces where a mask should be placed by default.
 type MaskPosition struct {
@@ -60,8 +71,8 @@ type MaskPosition struct {
 
 // NewStickerSetOptions contains the optional parameters used in the CreateNewStickerSet method.
 type NewStickerSetOptions struct {
-	MaskPosition  MaskPosition `query:"mask_position"`
-	ContainsMasks bool         `query:"contains_masks"`
+	StickerType  StickerSetType `query:"sticker_type"`
+	MaskPosition MaskPosition   `query:"mask_position"`
 }
 
 // StickerType is a custom type for the various sticker types.
@@ -95,6 +106,29 @@ func (a API) GetStickerSet(name string) (res APIResponseStickerSet, err error) {
 
 	vals.Set("name", name)
 	return get[APIResponseStickerSet](a.base, "getStickerSet", vals)
+}
+
+// GetCustomEmojiStickers is used to get information about custom emoji stickers by their identifiers.
+func (a API) GetCustomEmojiStickers(customEmojiIDs ...string) (res APIResponseStickers, err error) {
+	jsn, _ := json.Marshal(customEmojiIDs)
+
+	var url = fmt.Sprintf(
+		"%sgetCustomEmojiStickers?custom_emoji_ids=%s",
+		a.base,
+		jsn,
+	)
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
