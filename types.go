@@ -782,7 +782,7 @@ type mediaEnvelope struct {
 
 // MarshalJSON is a custom marshaler for the mediaEnvelope struct.
 func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
-	var tmp interface{}
+	var tmp any
 
 	switch o := i.InputMedia.(type) {
 	case InputMediaPhoto:

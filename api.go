@@ -21,6 +21,8 @@ package echotron
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
 )
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
@@ -37,25 +39,31 @@ func NewAPI(token string) API {
 	}
 }
 
-// GetUpdates is used to receive incoming updates using long polling.
-func (a API) GetUpdates(opts *UpdateOptions) (res APIResponseUpdate, err error) {
-	var url = fmt.Sprintf(
-		"%sgetUpdates?%s",
-		a.base,
-		querify(opts),
-	)
+func get[T APIResponse](base, endpoint string, vals url.Values) (res T, err error) {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return res, err
+	}
+
+	if vals != nil {
+		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+	}
 
 	cnt, err := sendGetRequest(url)
 	if err != nil {
-		return
+		return res, err
 	}
 
 	if err = json.Unmarshal(cnt, &res); err != nil {
 		return
 	}
-
 	err = check(res)
 	return
+}
+
+// GetUpdates is used to receive incoming updates using long polling.
+func (a API) GetUpdates(opts *UpdateOptions) (res APIResponseUpdate, err error) {
+	return get[APIResponseUpdate](a.base, "getUpdates", urlValues(opts))
 }
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
@@ -83,63 +91,20 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
 func (a API) DeleteWebhook(dropPendingUpdates bool) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteWebhook?drop_pending_updates=%t",
-		a.base,
-		dropPendingUpdates,
-	)
+	var vals = make(url.Values)
+	vals.Set("drop_pending_updates", strconv.FormatBool(dropPendingUpdates))
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBase](a.base, "deleteWebhook", vals)
 }
 
 // GetWebhookInfo is used to get current webhook status.
 func (a API) GetWebhookInfo() (res APIResponseWebhook, err error) {
-	var url = fmt.Sprintf(
-		"%sgetWebhookInfo",
-		a.base,
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseWebhook](a.base, "getWebhookInfo", nil)
 }
 
 // GetMe is a simple method for testing your bot's auth token.
 func (a API) GetMe() (res APIResponseUser, err error) {
-	var url = fmt.Sprintf(
-		"%sgetMe",
-		a.base,
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseUser](a.base, "getMe", nil)
 }
 
 // LogOut is used to log out from the cloud Bot API server before launching the bot locally.
@@ -147,92 +112,34 @@ func (a API) GetMe() (res APIResponseUser, err error) {
 // After a successful call, you can immediately log in on a local server,
 // but will not be able to log in back to the cloud Bot API server for 10 minutes.
 func (a API) LogOut() (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%slogOut",
-		a.base,
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBool](a.base, "logOut", nil)
 }
 
 // Close is used to close the bot instance before moving it from one local server to another.
 // You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart.
 // The method will return error 429 in the first 10 minutes after the bot is launched.
 func (a API) Close() (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sclose",
-		a.base,
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBool](a.base, "close", nil)
 }
 
 // SendMessage is used to send text messages.
 func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendMessage?text=%s&chat_id=%d&%s",
-		a.base,
-		encode(text),
-		chatID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("text", encode(text))
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseMessage](a.base, "sendMessage", addValues(opts, vals))
 }
 
 // ForwardMessage is used to forward messages of any kind.
 // Service messages can't be forwarded.
 func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *ForwardOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%sforwardMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",
-		a.base,
-		chatID,
-		fromChatID,
-		messageID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponseMessage](a.base, "forwardMessage", addValues(opts, vals))
 }
 
 // CopyMessage is used to copy messages of any kind.
@@ -240,26 +147,12 @@ func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *Forwa
 // The method is analogous to the method ForwardMessage,
 // but the copied message doesn't have a link to the original message.
 func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOptions) (res APIResponseMessageID, err error) {
-	var url = fmt.Sprintf(
-		"%scopyMessage?chat_id=%d&from_chat_id=%d&message_id=%d&%s",
-		a.base,
-		chatID,
-		fromChatID,
-		messageID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponseMessageID](a.base, "forwardMessage", addValues(opts, vals))
 }
 
 // SendPhoto is used to send photos.

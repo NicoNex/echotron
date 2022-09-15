@@ -48,7 +48,7 @@ func toString(v reflect.Value) string {
 	}
 }
 
-func scan(i interface{}, v url.Values) url.Values {
+func scan(i any, v url.Values) url.Values {
 	e := reflect.ValueOf(i)
 
 	if e.Kind() == reflect.Ptr {
@@ -70,6 +70,14 @@ func scan(i interface{}, v url.Values) url.Values {
 	return v
 }
 
-func querify(i interface{}) string {
+func querify(i any) string {
 	return scan(i, url.Values{}).Encode()
+}
+
+func urlValues(i any) url.Values {
+	return scan(i, url.Values{})
+}
+
+func addValues(i any, vals url.Values) url.Values {
+	return scan(i, vals)
 }
