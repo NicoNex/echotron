@@ -19,8 +19,8 @@
 package echotron
 
 import (
-	"encoding/json"
-	"fmt"
+	"net/url"
+	"strconv"
 )
 
 // Game represents a game.
@@ -51,69 +51,26 @@ type GameScoreOptions struct {
 
 // SendGame is used to send a Game.
 func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendGame?game_short_name=%s&chat_id=%d&%s",
-		a.base,
-		encode(gameShortName),
-		chatID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("game_short_name", gameShortName)
+	return get[APIResponseMessage](a.base, "sendGame", addValues(vals, opts))
 }
 
 // SetGameScore is used to set the score of the specified user in a game.
 func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts *GameScoreOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssetGameScore?user_id=%d&score=%d&%s&%s",
-		a.base,
-		userID,
-		score,
-		querify(msgID),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("score", strconv.FormatInt(int64(score), 10))
+	return get[APIResponseMessage](a.base, "setGameScore", addValues(addValues(vals, msgID), opts))
 }
 
 // GetGameHighScores is used to get data for high score tables.
 func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (res APIResponseGameHighScore, err error) {
-	var url = fmt.Sprintf(
-		"%sgetGameHighScores?user_id=%d&%s",
-		a.base,
-		userID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseGameHighScore](a.base, "getGameHighScores", addValues(vals, opts))
 }

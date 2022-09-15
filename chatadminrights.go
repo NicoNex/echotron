@@ -18,11 +18,6 @@
 
 package echotron
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // ChatAdministratorRights represents the rights of an administrator in a chat.
 type ChatAdministratorRights struct {
 	IsAnonymous          bool `json:"is_anonymous"`
@@ -56,42 +51,10 @@ type GetMyDefaultAdministratorRightsOptions struct {
 // These rights will be suggested to users, but they are are free to modify the list
 // before adding the bot.
 func (a API) SetMyDefaultAdministratorRights(opts SetMyDefaultAdministratorRightsOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetMyDefaultAdministratorRights?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBool](a.base, "setMyDefaultAdministratorRights", urlValues(opts))
 }
 
 // GetMyDefaultAdministratorRights is used to get the current default administrator rights of the bot.
 func (a API) GetMyDefaultAdministratorRights(opts GetMyDefaultAdministratorRightsOptions) (res APIResponseChatAdministratorRights, err error) {
-	var url = fmt.Sprintf(
-		"%sgetMyDefaultAdministratorRights?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseChatAdministratorRights](a.base, "getMyDefaultAdministratorRights", urlValues(opts))
 }

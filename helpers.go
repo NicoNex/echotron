@@ -33,10 +33,6 @@ func check(r APIResponse) error {
 	return nil
 }
 
-func encode(s string) string {
-	return url.QueryEscape(s)
-}
-
 func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err error) {
 	switch {
 	case media.id != "":
@@ -183,4 +179,72 @@ func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {
 	}
 
 	return ret
+}
+
+func get[T APIResponse](base, endpoint string, vals url.Values) (res T, err error) {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return res, err
+	}
+
+	if vals != nil {
+		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+	}
+
+	cnt, err := sendGetRequest(url)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+	err = check(res)
+	return
+}
+
+func postFile[T APIResponse](base, endpoint, fileType string, file, thumb InputFile, vals url.Values) (res T, err error) {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return res, err
+	}
+
+	if vals != nil {
+		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+	}
+
+	cnt, err := sendFile(file, thumb, url, fileType)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
+
+func postMedia[T APIResponse](base, endpoint string, isSingleFile bool, vals url.Values, files ...InputMedia) (res T, err error) {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return res, err
+	}
+
+	if vals != nil {
+		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+	}
+
+	cnt, err := sendMediaFiles(url, isSingleFile, files...)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
 }

@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
@@ -39,28 +40,6 @@ func NewAPI(token string) API {
 	}
 }
 
-func get[T APIResponse](base, endpoint string, vals url.Values) (res T, err error) {
-	url, err := url.JoinPath(base, endpoint)
-	if err != nil {
-		return res, err
-	}
-
-	if vals != nil {
-		url = fmt.Sprintf("%s?%s", url, vals.Encode())
-	}
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-	err = check(res)
-	return
-}
-
 // GetUpdates is used to receive incoming updates using long polling.
 func (a API) GetUpdates(opts *UpdateOptions) (res APIResponseUpdate, err error) {
 	return get[APIResponseUpdate](a.base, "getUpdates", urlValues(opts))
@@ -68,14 +47,20 @@ func (a API) GetUpdates(opts *UpdateOptions) (res APIResponseUpdate, err error) 
 
 // SetWebhook is used to specify a url and receive incoming updates via an outgoing webhook.
 func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%ssetWebhook?drop_pending_updates=%t&%s",
-		a.base,
-		dropPendingUpdates,
-		querify(opts),
+	var (
+		vals   = make(url.Values)
+		keyVal = map[string]string{"url": webhookURL}
 	)
 
-	keyVal := map[string]string{"url": webhookURL}
+	url, err := url.JoinPath(a.base, "setWebhook")
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("drop_pending_updates", strconv.FormatBool(dropPendingUpdates))
+	addValues(vals, opts)
+	url = fmt.Sprintf("%s?%s", strings.TrimSuffix(url, "/"), vals.Encode())
+
 	cnt, err := sendPostForm(url, keyVal)
 	if err != nil {
 		return
@@ -126,9 +111,9 @@ func (a API) Close() (res APIResponseBool, err error) {
 func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("text", encode(text))
+	vals.Set("text", text)
 	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	return get[APIResponseMessage](a.base, "sendMessage", addValues(opts, vals))
+	return get[APIResponseMessage](a.base, "sendMessage", addValues(vals, opts))
 }
 
 // ForwardMessage is used to forward messages of any kind.
@@ -139,7 +124,7 @@ func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *Forwa
 	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
 	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
 	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
-	return get[APIResponseMessage](a.base, "forwardMessage", addValues(opts, vals))
+	return get[APIResponseMessage](a.base, "forwardMessage", addValues(vals, opts))
 }
 
 // CopyMessage is used to copy messages of any kind.
@@ -152,431 +137,197 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
 	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
 	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
-	return get[APIResponseMessageID](a.base, "forwardMessage", addValues(opts, vals))
+	return get[APIResponseMessageID](a.base, "forwardMessage", addValues(vals, opts))
 }
 
 // SendPhoto is used to send photos.
 func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendPhoto?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(file, InputFile{}, url, "photo")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendPhoto", "photo", file, InputFile{}, addValues(vals, opts))
 }
 
 // SendAudio is used to send audio files,
 // if you want Telegram clients to display them in the music player.
 // Your audio must be in the .MP3 or .M4A format.
 func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (res APIResponseMessage, err error) {
-	var thumb InputFile
-	var url = fmt.Sprintf(
-		"%ssendAudio?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
+	var (
+		thumb InputFile
+		vals  = make(url.Values)
 	)
 
 	if opts != nil {
 		thumb = opts.Thumb
 	}
 
-	cnt, err := sendFile(file, thumb, url, "audio")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendAudio", "audio", file, thumb, addValues(vals, opts))
 }
 
 // SendDocument is used to send general files.
 func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (res APIResponseMessage, err error) {
-	var thumb InputFile
-	var url = fmt.Sprintf(
-		"%ssendDocument?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
+	var (
+		thumb InputFile
+		vals  = make(url.Values)
 	)
 
 	if opts != nil {
 		thumb = opts.Thumb
 	}
 
-	cnt, err := sendFile(file, thumb, url, "document")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendDocument", "document", file, thumb, addValues(vals, opts))
 }
 
 // SendVideo is used to send video files.
 // Telegram clients support mp4 videos (other formats may be sent with SendDocument).
 func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (res APIResponseMessage, err error) {
-	var thumb InputFile
-	var url = fmt.Sprintf(
-		"%ssendVideo?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
+	var (
+		thumb InputFile
+		vals  = make(url.Values)
 	)
 
 	if opts != nil {
 		thumb = opts.Thumb
 	}
 
-	cnt, err := sendFile(file, thumb, url, "video")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendVideo", "video", file, thumb, addValues(vals, opts))
 }
 
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
 func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions) (res APIResponseMessage, err error) {
-	var thumb InputFile
-	var url = fmt.Sprintf(
-		"%ssendAnimation?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
+	var (
+		thumb InputFile
+		vals  = make(url.Values)
 	)
 
 	if opts != nil {
 		thumb = opts.Thumb
 	}
 
-	cnt, err := sendFile(file, thumb, url, "animation")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendAnimation", "animation", file, thumb, addValues(vals, opts))
 }
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document).
 func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendVoice?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(file, InputFile{}, url, "voice")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendVoice", "voice", file, InputFile{}, addValues(vals, opts))
 }
 
 // SendVideoNote is used to send video messages.
 func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions) (res APIResponseMessage, err error) {
-	var thumb InputFile
-	var url = fmt.Sprintf(
-		"%ssendVideoNote?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
+	var (
+		thumb InputFile
+		vals  = make(url.Values)
 	)
 
 	if opts != nil {
 		thumb = opts.Thumb
 	}
 
-	cnt, err := sendFile(file, thumb, url, "video_note")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseMessage](a.base, "sendVideoNote", "video_note", file, thumb, addValues(vals, opts))
 }
 
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
 // Documents and audio files can be only grouped in an album with messages of the same type.
 func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *MediaGroupOptions) (res APIResponseMessageArray, err error) {
-	var url = fmt.Sprintf(
-		"%ssendMediaGroup?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
-	)
-
-	cnt, err := sendMediaFiles(url, false, toInputMedia(media)...)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return postMedia[APIResponseMessageArray](a.base, "sendMediaGroup", false, urlValues(opts), toInputMedia(media)...)
 }
 
 // SendLocation is used to send point on the map.
 func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *LocationOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendLocation?chat_id=%d&latitude=%f&longitude=%f&%s",
-		a.base,
-		chatID,
-		latitude,
-		longitude,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
+	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	return get[APIResponseMessage](a.base, "sendLocation", addValues(vals, opts))
 }
 
 // EditMessageLiveLocation is used to edit live location messages.
 // A location can be edited until its `LivePeriod` expires or editing is explicitly disabled by a call to `StopMessageLiveLocation`.
 func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude float64, opts *EditLocationOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%seditMessageLiveLocation?latitude=%f&longitude=%f&%s&%s",
-		a.base,
-		latitude,
-		longitude,
-		querify(msg),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
+	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	return get[APIResponseMessage](a.base, "editMessageLiveLocation", addValues(addValues(vals, msg), opts))
 }
 
 // StopMessageLiveLocation is used to stop updating a live location message before `LivePeriod` expires.
 func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%sstopMessageLiveLocation?%s&%s",
-		a.base,
-		querify(msg),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseMessage](a.base, "stopMessageLiveLocation", urlValues(opts))
 }
 
 // SendVenue is used to send information about a venue.
 func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address string, opts *VenueOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendVenue?chat_id=%d&latitude=%f&longitude=%f&title=%s&address=%s&%s",
-		a.base,
-		chatID,
-		latitude,
-		longitude,
-		encode(title),
-		encode(address),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
+	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	vals.Set("title", title)
+	vals.Set("address", address)
+	return get[APIResponseMessage](a.base, "sendVenue", addValues(vals, opts))
 }
 
 // SendContact is used to send phone contacts.
 func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *ContactOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendContact?chat_id=%d&phone_number=%s&first_name=%s&%s",
-		a.base,
-		chatID,
-		encode(phoneNumber),
-		encode(firstName),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("phoneNumber", phoneNumber)
+	vals.Set("firstName", firstName)
+	return get[APIResponseMessage](a.base, "sendContact", addValues(vals, opts))
 }
 
 // SendPoll is used to send a native poll.
 func (a API) SendPoll(chatID int64, question string, options []string, opts *PollOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
 	pollOpts, err := json.Marshal(options)
 	if err != nil {
-		return
+		return res, err
 	}
 
-	var url = fmt.Sprintf(
-		"%ssendPoll?chat_id=%d&question=%s&options=%s&%s",
-		a.base,
-		chatID,
-		question,
-		encode(string(pollOpts)),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("question", question)
+	vals.Set("options", string(pollOpts))
+	return get[APIResponseMessage](a.base, "sendPoll", addValues(vals, opts))
 }
 
 // SendDice is used to send an animated emoji that will display a random value.
 func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendDice?chat_id=%d&emoji=%s&%s",
-		a.base,
-		chatID,
-		encode(string(emoji)),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("emoji", string(emoji))
+	return get[APIResponseMessage](a.base, "sendDice", addValues(vals, opts))
 }
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
 // The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
 func (a API) SendChatAction(action ChatAction, chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssendChatAction?chat_id=%d&action=%s",
-		a.base,
-		chatID,
-		action,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("action", string(action))
+	return get[APIResponseBool](a.base, "sendChatAction", vals)
 }
 
 // GetUserProfilePhotos is used to get a list of profile pictures for a user.
 func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (res APIResponseUserProfile, err error) {
-	var url = fmt.Sprintf(
-		"%sgetUserProfilePhotos?user_id=%d&%s",
-		a.base,
-		userID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseUserProfile](a.base, "getUserProfilePhotos", addValues(vals, opts))
 }
 
 // GetFile returns the basic info about a file and prepares it for downloading.
@@ -585,23 +336,10 @@ func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (res A
 // It is guaranteed that the file will be downloadable for at least 1 hour.
 // When the download file expires, a new one can be requested by calling GetFile again.
 func (a API) GetFile(fileID string) (res APIResponseFile, err error) {
-	var url = fmt.Sprintf(
-		"%sgetFile?file_id=%s",
-		a.base,
-		fileID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("file_id", fileID)
+	return get[APIResponseFile](a.base, "getFile", vals)
 }
 
 // DownloadFile returns the bytes of the file corresponding to the given filePath.
@@ -620,25 +358,11 @@ func (a API) DownloadFile(filePath string) ([]byte, error) {
 // on their own using invite links, etc., unless unbanned first (through the UnbanChatMember method).
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sbanChatMember?chat_id=%d&user_id=%d&%s",
-		a.base,
-		chatID,
-		userID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseBool](a.base, "banChatMember", addValues(vals, opts))
 }
 
 // UnbanChatMember is used to unban a previously banned user in a supergroup or channel.
@@ -648,773 +372,321 @@ func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (res APIRespo
 // So if the user is a member of the chat they will also be REMOVED from the chat.
 // If you don't want this, use the parameter `OnlyIfBanned`.
 func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sunbanChatMember?chat_id=%d&user_id=%d&%s",
-		a.base,
-		chatID,
-		userID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseBool](a.base, "unbanChatMember", addValues(vals, opts))
 }
 
 // RestrictChatMember is used to restrict a user in a supergroup.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermissions, opts *RestrictOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
 
 	perm, err := serializePerms(permissions)
 	if err != nil {
 		return
 	}
 
-	var url = fmt.Sprintf(
-		"%srestrictChatMember?chat_id=%d&user_id=%d&permissions=%s&%s",
-		a.base,
-		chatID,
-		userID,
-		encode(perm),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("permissions", perm)
+	return get[APIResponseBool](a.base, "restrictChatMember", addValues(vals, opts))
 }
 
 // PromoteChatMember is used to promote or demote a user in a supergroup or a channel.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 func (a API) PromoteChatMember(chatID, userID int64, opts *PromoteOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%spromoteChatMember?chat_id=%d&user_id=%d&%s",
-		a.base,
-		chatID,
-		userID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseBool](a.base, "promoteChatMember", addValues(vals, opts))
 }
 
 // SetChatAdministratorCustomTitle is used to set a custom title for an administrator in a supergroup promoted by the bot.
 func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle string) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatAdministratorCustomTitle?chat_id=%d&user_id=%d&custom_title=%s",
-		a.base,
-		chatID,
-		userID,
-		encode(customTitle),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("custom_title", customTitle)
+	return get[APIResponseBool](a.base, "setChatAdministratorCustomTitle", vals)
 }
 
 // BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.
 // The owner of the chat will not be able to send messages and join live streams on behalf of the chat, unless it is unbanned first.
 // The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights.
 func (a API) BanChatSenderChat(chatID, senderChatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sbanChatSenderChat?chat_id=%d&sender_chat_id=%d",
-		a.base,
-		chatID,
-		senderChatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("sender_chat_id", strconv.FormatInt(senderChatID, 10))
+	return get[APIResponseBool](a.base, "banChatSenderChat", vals)
 }
 
 // UnbanChatSenderChat is used to unban a previously channel chat in a supergroup or channel.
 // The bot must be an administrator for this to work and must have the appropriate administrator rights.
 func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sunbanChatSenderChat?chat_id=%d&sender_chat_id=%d",
-		a.base,
-		chatID,
-		senderChatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("sender_chat_id", strconv.FormatInt(senderChatID, 10))
+	return get[APIResponseBool](a.base, "unbanChatSenderChat", vals)
 }
 
 // SetChatPermissions is used to set default chat permissions for all members.
 // The bot must be an administrator in the supergroup for this to work and must have the can_restrict_members admin rights.
 func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
 
 	perm, err := serializePerms(permissions)
 	if err != nil {
 		return
 	}
 
-	var url = fmt.Sprintf(
-		"%ssetChatPermissions?chat_id=%d&permissions=%s",
-		a.base,
-		chatID,
-		encode(perm),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("permissions", perm)
+	return get[APIResponseBool](a.base, "setChatPermissions", vals)
 }
 
 // ExportChatInviteLink is used to generate a new primary invite link for a chat;
 // any previously generated primary link is revoked.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 func (a API) ExportChatInviteLink(chatID int64) (res APIResponseString, err error) {
-	var url = fmt.Sprintf(
-		"%sexportChatInviteLink?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseString](a.base, "exportChatInviteLink", vals)
 }
 
 // CreateChatInviteLink is used to create an additional invite link for a chat.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 // The link can be revoked using the method RevokeChatInviteLink.
 func (a API) CreateChatInviteLink(chatID int64, opts *InviteLinkOptions) (res APIResponseInviteLink, err error) {
-	var url = fmt.Sprintf(
-		"%screateChatInviteLink?chat_id=%d&%s",
-		a.base,
-		chatID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseInviteLink](a.base, "createChatInviteLink", addValues(vals, opts))
 }
 
 // EditChatInviteLink is used to edit a non-primary invite link created by the bot.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLinkOptions) (res APIResponseInviteLink, err error) {
-	var url = fmt.Sprintf(
-		"%seditChatInviteLink?chat_id=%d&invite_link=%s&%s",
-		a.base,
-		chatID,
-		encode(inviteLink),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("invite_link", inviteLink)
+	return get[APIResponseInviteLink](a.base, "editChatInviteLink", addValues(vals, opts))
 }
 
 // RevokeChatInviteLink is used to revoke an invite link created by the bot.
 // If the primary link is revoked, a new link is automatically generated.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (res APIResponseInviteLink, err error) {
-	var url = fmt.Sprintf(
-		"%srevokeChatInviteLink?chat_id=%d&invite_link=%s",
-		a.base,
-		chatID,
-		encode(inviteLink),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("invite_link", inviteLink)
+	return get[APIResponseInviteLink](a.base, "editChatInviteLink", vals)
 }
 
 // ApproveChatJoinRequest is used to approve a chat join request.
 // The bot must be an administrator in the chat for this to work and must have the CanInviteUsers administrator right.
 func (a API) ApproveChatJoinRequest(chatID, userID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sapproveChatJoinRequest?chat_id=%d&user_id=%d",
-		a.base,
-		chatID,
-		userID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseBool](a.base, "approveChatJoinRequest", vals)
 }
 
 // DeclineChatJoinRequest is used to decline a chat join request.
 // The bot must be an administrator in the chat for this to work and must have the CanInviteUsers administrator right.
 func (a API) DeclineChatJoinRequest(chatID, userID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sdeclineChatJoinRequest?chat_id=%d&user_id=%d",
-		a.base,
-		chatID,
-		userID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseBool](a.base, "declineChatJoinRequest", vals)
 }
 
 // SetChatPhoto is used to set a new profile photo for the chat.
 // Photos can't be changed for private chats.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 func (a API) SetChatPhoto(file InputFile, chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatPhoto?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(file, InputFile{}, url, "photo")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return postFile[APIResponseBool](a.base, "setChatPhoto", "photo", file, InputFile{}, vals)
 }
 
 // DeleteChatPhoto is used to delete a chat photo.
 // Photos can't be changed for private chats.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 func (a API) DeleteChatPhoto(chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteChatPhoto?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseBool](a.base, "deleteChatPhoto", vals)
 }
 
 // SetChatTitle is used to change the title of a chat.
 // Titles can't be changed for private chats.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 func (a API) SetChatTitle(chatID int64, title string) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatTitle?chat_id=%d&title=%s",
-		a.base,
-		chatID,
-		encode(title),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("title", title)
+	return get[APIResponseBool](a.base, "setChatTitle", vals)
 }
 
 // SetChatDescription is used to change the description of a group, a supergroup or a channel.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 func (a API) SetChatDescription(chatID int64, description string) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatDescription?chat_id=%d&description=%s",
-		a.base,
-		chatID,
-		encode(description),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("description", description)
+	return get[APIResponseBool](a.base, "setChatDescription", vals)
 }
 
 // PinChatMessage is used to add a message to the list of pinned messages in the chat.
 // If the chat is not a private chat, the bot must be an administrator in the chat for this to work
 // and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
 func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%spinChatMessage?chat_id=%d&message_id=%d&%s",
-		a.base,
-		chatID,
-		messageID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponseBool](a.base, "pinChatMessage", addValues(vals, opts))
 }
 
 // UnpinChatMessage is used to remove a message from the list of pinned messages in the chat.
 // If the chat is not a private chat, the bot must be an administrator in the chat for this to work
 // and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
 func (a API) UnpinChatMessage(chatID int64, messageID int) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sunpinChatMessage?chat_id=%d&message_id=%d",
-		a.base,
-		chatID,
-		messageID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponseBool](a.base, "unpinChatMessage", vals)
 }
 
 // UnpinAllChatMessages is used to clear the list of pinned messages in a chat.
 // If the chat is not a private chat, the bot must be an administrator in the chat for this to work
 // and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
 func (a API) UnpinAllChatMessages(chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sunpinAllChatMessages?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseBool](a.base, "unpinAllChatMessages", vals)
 }
 
 // LeaveChat is used to make the bot leave a group, supergroup or channel.
 func (a API) LeaveChat(chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sleaveChat?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseBool](a.base, "leaveChat", vals)
 }
 
 // GetChat is used to get up to date information about the chat.
 // (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
 func (a API) GetChat(chatID int64) (res APIResponseChat, err error) {
-	var url = fmt.Sprintf(
-		"%sgetChat?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseChat](a.base, "getChat", vals)
 }
 
 // GetChatAdministrators is used to get a list of administrators in a chat.
 func (a API) GetChatAdministrators(chatID int64) (res APIResponseAdministrators, err error) {
-	var url = fmt.Sprintf(
-		"%sgetChatAdministrators?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseAdministrators](a.base, "getChatAdministrators", vals)
 }
 
 // GetChatMemberCount is used to get the number of members in a chat.
 func (a API) GetChatMemberCount(chatID int64) (res APIResponseInteger, err error) {
-	var url = fmt.Sprintf(
-		"%sgetChatMemberCount?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseInteger](a.base, "getChatMemberCount", vals)
 }
 
 // GetChatMember is used to get information about a member of a chat.
 func (a API) GetChatMember(chatID, userID int64) (res APIResponseChatMember, err error) {
-	var url = fmt.Sprintf(
-		"%sgetChatMember?chat_id=%d&user_id=%d",
-		a.base,
-		chatID,
-		userID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return get[APIResponseChatMember](a.base, "getChatMember", vals)
 }
 
 // SetChatStickerSet is used to set a new group sticker set for a supergroup.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 // Use the field `CanSetStickerSet` optionally returned in GetChat requests to check if the bot can use this method.
 func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatStickerSet?chat_id=%d&sticker_set_name=%s",
-		a.base,
-		chatID,
-		encode(stickerSetName),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("sticker_set_name", stickerSetName)
+	return get[APIResponseBool](a.base, "setChatStickerSet", vals)
 }
 
 // DeleteChatStickerSet is used to delete a group sticker set for a supergroup.
 // The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 // Use the field `CanSetStickerSet` optionally returned in GetChat requests to check if the bot can use this method.
 func (a API) DeleteChatStickerSet(chatID int64) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteChatStickerSet?chat_id=%d",
-		a.base,
-		chatID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseBool](a.base, "deleteChatStickerSet", vals)
 }
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
 func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sanswerCallbackQuery?callback_query_id=%s&%s",
-		a.base,
-		callbackID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("callback_query_id", callbackID)
+	return get[APIResponseBool](a.base, "answerCallbackQuery", addValues(vals, opts))
 }
 
 // SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
 func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
 	jsn, _ := json.Marshal(commands)
-
-	var url = fmt.Sprintf(
-		"%ssetMyCommands?commands=%s&%s",
-		a.base,
-		jsn,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("commands", string(jsn))
+	return get[APIResponseBool](a.base, "setMyCommands", addValues(vals, opts))
 }
 
 // DeleteMyCommands is used to delete the list of the bot's commands for the given scope and user language.
 func (a API) DeleteMyCommands(opts *CommandOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteMyCommands?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBool](a.base, "deleteMyCommands", urlValues(opts))
 }
 
 // GetMyCommands is used to get the current list of the bot's commands for the given scope and user language.
 func (a API) GetMyCommands(opts *CommandOptions) (res APIResponseCommands, err error) {
-	var url = fmt.Sprintf(
-		"%sgetMyCommands?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseCommands](a.base, "getMyCommands", urlValues(opts))
 }
 
 // EditMessageText is used to edit text and game messages.
 func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTextOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%seditMessageText?text=%s&%s&%s",
-		a.base,
-		encode(text),
-		querify(msg),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("text", text)
+	return get[APIResponseMessage](a.base, "editMessageText", addValues(addValues(vals, msg), opts))
 }
 
 // EditMessageCaption is used to edit captions of messages.
 func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%seditMessageCaption?%s&%s",
-		a.base,
-		querify(msg),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseMessage](a.base, "editMessageCaption", addValues(urlValues(msg), opts))
 }
 
 // EditMessageMedia is used to edit animation, audio, document, photo or video messages.
@@ -1423,69 +695,21 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
 func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%seditMessageMedia?%s&%s",
-		a.base,
-		querify(msg),
-		querify(opts),
-	)
-
-	cnt, err := sendMediaFiles(url, true, media)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return postMedia[APIResponseMessage](a.base, "editMessageMedia", true, addValues(urlValues(msg), opts), media)
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
 func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%seditMessageReplyMarkup?%s&%s",
-		a.base,
-		querify(msg),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseMessage](a.base, "editMessageReplyMarkup", addValues(urlValues(msg), opts))
 }
 
 // StopPoll is used to stop a poll which was sent by the bot.
 func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (res APIResponsePoll, err error) {
-	var url = fmt.Sprintf(
-		"%sstopPoll?chat_id=%d&message_id=%d&%s",
-		a.base,
-		chatID,
-		messageID,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponsePoll](a.base, "stopPoll", addValues(vals, opts))
 }
 
 // DeleteMessage is used to delete a message, including service messages, with the following limitations:
@@ -1497,22 +721,9 @@ func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (re
 // - If the bot is an administrator of a group, it can delete any message there.
 // - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
 func (a API) DeleteMessage(chatID int64, messageID int) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteMessage?chat_id=%d&message_id=%d",
-		a.base,
-		chatID,
-		messageID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	return get[APIResponseBase](a.base, "deleteMessage", vals)
 }

@@ -2,7 +2,8 @@ package echotron
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
+	"strconv"
 )
 
 // PassportData contains information about Telegram Passport data shared with the bot by the user.
@@ -215,27 +216,14 @@ func (p PassportElementErrorUnspecified) ImplementsPassportElementError() {}
 // The user will not be able to re-submit their Passport to you until the errors are fixed.
 // The contents of the field for which you returned the error must change.
 func (a API) SetPassportDataErrors(userID int64, errors []PassportElementError) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
 	errorsArr, err := json.Marshal(errors)
 	if err != nil {
-		return
+		return res, err
 	}
 
-	var url = fmt.Sprintf(
-		"%ssetPassportDataErrors?user_id=%d&errors=%s",
-		a.base,
-		userID,
-		encode(string(errorsArr)),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("errors", string(errorsArr))
+	return get[APIResponseBool](a.base, "setPassportDataErrors", vals)
 }

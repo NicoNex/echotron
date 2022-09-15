@@ -20,7 +20,8 @@ package echotron
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
+	"strconv"
 )
 
 // LabeledPrice represents a portion of the price for goods or services.
@@ -98,60 +99,32 @@ type PreCheckoutQuery struct {
 
 // SendInvoice is used to send invoices.
 func (a API) SendInvoice(chatID int64, title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *InvoiceOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
 	p, err := json.Marshal(prices)
 	if err != nil {
-		return
+		return res, err
 	}
 
-	var url = fmt.Sprintf(
-		"%ssendInvoice?chat_id=%d&title=%s&description=%s&payload=%s&provider_token=%s&currency=%s&prices=%s&%s",
-		a.base,
-		chatID,
-		title,
-		description,
-		payload,
-		providerToken,
-		currency,
-		string(p),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("title", title)
+	vals.Set("description", description)
+	vals.Set("payload", payload)
+	vals.Set("provider_token", providerToken)
+	vals.Set("currency", currency)
+	vals.Set("prices", string(p))
+	return get[APIResponseMessage](a.base, "sendInvoice", addValues(vals, opts))
 }
 
 // AnswerShippingQuery is used to reply to shipping queries.
 // If you sent an invoice requesting a shipping address and the parameter is_flexible was specified,
 // the Bot API will send an Update with a shipping_query field to the bot.
 func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *ShippingQueryOptions) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%sanswerShippingQuery?shipping_query_id=%s&ok=%T&%s",
-		a.base,
-		shippingQueryID,
-		ok,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("shipping_query_id", shippingQueryID)
+	vals.Set("ok", strconv.FormatBool(ok))
+	return get[APIResponseBase](a.base, "answerShippingQuery", addValues(vals, opts))
 }
 
 // AnswerPreCheckoutQuery is used to respond to such pre-checkout queries.
@@ -159,55 +132,27 @@ func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *Shipping
 // the Bot API sends the final confirmation in the form of an Update with the field pre_checkout_query.
 // NOTE: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
 func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *PreCheckoutOptions) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%sanswerPreCheckoutQuery?pre_checkout_query_id=%s&ok=%T&error_message=%s",
-		a.base,
-		preCheckoutQueryID,
-		ok,
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("pre_checkout_query_id", preCheckoutQueryID)
+	vals.Set("ok", strconv.FormatBool(ok))
+	return get[APIResponseBase](a.base, "answerPreCheckoutQuery", addValues(vals, opts))
 }
 
 // CreateInvoiceLink creates a link for an invoice.
 func (a API) CreateInvoiceLink(title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *CreateInvoiceLinkOptions) (res APIResponseBase, err error) {
+	var vals = make(url.Values)
+
 	p, err := json.Marshal(prices)
 	if err != nil {
-		return
+		return res, err
 	}
 
-	var url = fmt.Sprintf(
-		"%screateInvoiceLink?title=%s&description=%s&payload=%s&provider_token=%s&currency=%s&prices=%s&%s",
-		a.base,
-		title,
-		description,
-		payload,
-		providerToken,
-		currency,
-		string(p),
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("title", title)
+	vals.Set("description", description)
+	vals.Set("payload", payload)
+	vals.Set("provider_token", providerToken)
+	vals.Set("currency", currency)
+	vals.Set("prices", string(p))
+	return get[APIResponseBase](a.base, "createInvoiceLink", addValues(vals, opts))
 }

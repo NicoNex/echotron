@@ -19,8 +19,8 @@
 package echotron
 
 import (
-	"encoding/json"
-	"fmt"
+	"net/url"
+	"strconv"
 )
 
 // Sticker represents a sticker.
@@ -82,180 +82,73 @@ type StickerFile struct {
 
 // SendSticker is used to send static .WEBP or animated .TGS stickers.
 func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (res APIResponseMessage, err error) {
-	var url = fmt.Sprintf(
-		"%ssendSticker?chat_id=%d&sticker=%s&%s",
-		a.base,
-		chatID,
-		encode(stickerID),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("sticker", stickerID)
+	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	return get[APIResponseMessage](a.base, "sendSticker", addValues(vals, opts))
 }
 
 // GetStickerSet is used to get a sticker set.
 func (a API) GetStickerSet(name string) (res APIResponseStickerSet, err error) {
-	var url = fmt.Sprintf(
-		"%sgetStickerSet?name=%s",
-		a.base,
-		encode(name),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("name", name)
+	return get[APIResponseStickerSet](a.base, "getStickerSet", vals)
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
 // CreateNewStickerSet and AddStickerToSet methods (can be used multiple times).
 func (a API) UploadStickerFile(userID int64, sticker StickerFile) (res APIResponseFile, err error) {
-	var url = fmt.Sprintf(
-		"%suploadStickerFile?user_id=%d",
-		a.base,
-		userID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return postFile[APIResponseFile](a.base, "uploadStickerFile", string(sticker.Type), sticker.File, InputFile{}, vals)
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
 func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, sticker StickerFile, opts *NewStickerSetOptions) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%screateNewStickerSet?user_id=%d&name=%s&title=%s&emojis=%s&%s",
-		a.base,
-		userID,
-		encode(name),
-		encode(title),
-		encode(emojis),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("name", name)
+	vals.Set("title", title)
+	vals.Set("emojis", emojis)
+	return postFile[APIResponseBase](a.base, "createNewStickerSet", string(sticker.Type), sticker.File, InputFile{}, addValues(vals, opts))
 }
 
 // AddStickerToSet is used to add a new sticker to a set created by the bot.
 func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerFile, opts *MaskPosition) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%saddStickerToSet?user_id=%d&name=%s&emojis=%s&%s",
-		a.base,
-		userID,
-		encode(name),
-		encode(emojis),
-		querify(opts),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(sticker.File, InputFile{}, url, string(sticker.Type))
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("name", name)
+	vals.Set("emojis", emojis)
+	return postFile[APIResponseBase](a.base, "addStickerToSet", string(sticker.Type), sticker.File, InputFile{}, addValues(vals, opts))
 }
 
 // SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
 func (a API) SetStickerPositionInSet(sticker string, position int) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%ssetStickerPositionInSet?sticker=%s&position=%d",
-		a.base,
-		encode(sticker),
-		position,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("sticker", sticker)
+	vals.Set("position", strconv.FormatInt(int64(position), 10))
+	return get[APIResponseBase](a.base, "setStickerPositionInSet", vals)
 }
 
 // DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
 func (a API) DeleteStickerFromSet(sticker string) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%sdeleteStickerFromSet?sticker=%s",
-		a.base,
-		encode(sticker),
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("sticker", sticker)
+	return get[APIResponseBase](a.base, "deleteStickerFromSet", vals)
 }
 
 // SetStickerSetThumb is used to set the thumbnail of a sticker set.
 func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (res APIResponseBase, err error) {
-	var url = fmt.Sprintf(
-		"%ssetStickerSetThumb?name=%s&user_id=%d",
-		a.base,
-		encode(name),
-		userID,
-	)
+	var vals = make(url.Values)
 
-	cnt, err := sendFile(thumb, InputFile{}, url, "thumb")
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("name", name)
+	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	return postFile[APIResponseBase](a.base, "setStickerSetThumb", "thumb", thumb, InputFile{}, vals)
 }

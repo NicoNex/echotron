@@ -20,7 +20,7 @@ package echotron
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 )
 
 // InlineQueryType is a custom type for the various InlineQueryResult*'s Type field.
@@ -527,25 +527,10 @@ type InlineQueryOptions struct {
 
 // AnswerInlineQuery is used to send answers to an inline query.
 func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult, opts *InlineQueryOptions) (res APIResponseBase, err error) {
+	var vals = make(url.Values)
+
 	jsn, _ := json.Marshal(results)
-
-	var url = fmt.Sprintf(
-		"%sanswerInlineQuery?inline_query_id=%s&results=%s&%s",
-		a.base,
-		inlineQueryID,
-		jsn,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("inline_query_id", inlineQueryID)
+	vals.Set("results", string(jsn))
+	return get[APIResponseBase](a.base, "answerInlineQuery", addValues(vals, opts))
 }

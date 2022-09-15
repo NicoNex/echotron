@@ -20,7 +20,7 @@ package echotron
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 )
 
 // WebAppInfo contains information about a Web App.
@@ -44,27 +44,14 @@ type WebAppData struct {
 // and send a corresponding message on behalf of the user to the chat from which
 // the query originated.
 func (a API) AnswerWebAppQuery(webAppQueryID string, result InlineQueryResult) (res APIResponseSentWebAppMessage, err error) {
+	var vals = make(url.Values)
+
 	resultJson, err := json.Marshal(result)
 	if err != nil {
-		return
+		return res, err
 	}
 
-	var url = fmt.Sprintf(
-		"%sanswerWebAppQuery?web_app_query_id=%s&result=%s",
-		a.base,
-		webAppQueryID,
-		encode(string(resultJson)),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	vals.Set("web_app_query_id", webAppQueryID)
+	vals.Set("result", string(resultJson))
+	return get[APIResponseSentWebAppMessage](a.base, "answerWebAppQuery", vals)
 }

@@ -18,11 +18,6 @@
 
 package echotron
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // MenuButtonType is a custom type for the various MenuButton*'s Type field.
 type MenuButtonType string
 
@@ -53,42 +48,10 @@ type GetChatMenuButtonOptions struct {
 
 // SetChatMenuButton is used to change the bot's menu button in a private chat, or the default menu button.
 func (a API) SetChatMenuButton(opts SetChatMenuButtonOptions) (res APIResponseBool, err error) {
-	var url = fmt.Sprintf(
-		"%ssetChatMenuButton?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseBool](a.base, "setChatMenuButton", urlValues(opts))
 }
 
 // GetChatMenuButton is used to get the current value of the bot's menu button in a private chat, or the default menu button.
 func (a API) GetChatMenuButton(opts GetChatMenuButtonOptions) (res APIResponseMenuButton, err error) {
-	var url = fmt.Sprintf(
-		"%sgetChatMenuButton?%s",
-		a.base,
-		querify(opts),
-	)
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
+	return get[APIResponseMenuButton](a.base, "getChatMenuButton", urlValues(opts))
 }

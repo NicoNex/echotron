@@ -75,9 +75,18 @@ func querify(i any) string {
 }
 
 func urlValues(i any) url.Values {
+	if i == nil {
+		return nil
+	}
 	return scan(i, url.Values{})
 }
 
-func addValues(i any, vals url.Values) url.Values {
+func addValues(vals url.Values, i any) url.Values {
+	if i == nil {
+		return vals
+	}
+	if vals == nil {
+		vals = make(url.Values)
+	}
 	return scan(i, vals)
 }
