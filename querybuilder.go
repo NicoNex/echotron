@@ -19,6 +19,7 @@
 package echotron
 
 import (
+	"fmt"
 	"encoding/json"
 	"net/url"
 	"reflect"
@@ -51,12 +52,12 @@ func toString(v reflect.Value) string {
 func scan(i any, v url.Values) url.Values {
 	e := reflect.ValueOf(i)
 
-	if e.Kind() == reflect.Ptr {
+	if e.Kind() == reflect.Pointer {
 		e = e.Elem()
 	}
 
 	if e.Kind() == reflect.Invalid {
-		return url.Values{}
+		return v
 	}
 
 	for i := 0; i < e.NumField(); i++ {
