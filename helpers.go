@@ -188,7 +188,9 @@ func get[T APIResponse](base, endpoint string, vals url.Values) (res T, err erro
 	}
 
 	if vals != nil {
-		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+		if queries := vals.Encode(); queries != "" {
+			url = fmt.Sprintf("%s?%s", url, queries)
+		}
 	}
 
 	cnt, err := sendGetRequest(url)
@@ -210,7 +212,9 @@ func postFile[T APIResponse](base, endpoint, fileType string, file, thumb InputF
 	}
 
 	if vals != nil {
-		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+		if queries := vals.Encode(); queries != "" {
+			url = fmt.Sprintf("%s?%s", url, queries)
+		}
 	}
 
 	cnt, err := sendFile(file, thumb, url, fileType)
@@ -233,7 +237,9 @@ func postMedia[T APIResponse](base, endpoint string, isSingleFile bool, vals url
 	}
 
 	if vals != nil {
-		url = fmt.Sprintf("%s?%s", url, vals.Encode())
+		if queries := vals.Encode(); queries != "" {
+			url = fmt.Sprintf("%s?%s", url, queries)
+		}
 	}
 
 	cnt, err := sendMediaFiles(url, isSingleFile, files...)
