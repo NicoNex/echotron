@@ -262,7 +262,7 @@ func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude f
 
 // StopMessageLiveLocation is used to stop updating a live location message before `LivePeriod` expires.
 func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
-	return get[APIResponseMessage](a.base, "stopMessageLiveLocation", urlValues(opts))
+	return get[APIResponseMessage](a.base, "stopMessageLiveLocation", addValues(urlValues(msg), opts))
 }
 
 // SendVenue is used to send information about a venue.
@@ -282,8 +282,8 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
-	vals.Set("phoneNumber", phoneNumber)
-	vals.Set("firstName", firstName)
+	vals.Set("phone_number", phoneNumber)
+	vals.Set("first_name", firstName)
 	return get[APIResponseMessage](a.base, "sendContact", addValues(vals, opts))
 }
 
