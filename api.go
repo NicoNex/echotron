@@ -237,7 +237,10 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
 // Documents and audio files can be only grouped in an album with messages of the same type.
 func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *MediaGroupOptions) (res APIResponseMessageArray, err error) {
-	return postMedia[APIResponseMessageArray](a.base, "sendMediaGroup", false, urlValues(opts), toInputMedia(media)...)
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return postMedia[APIResponseMessageArray](a.base, "sendMediaGroup", false, addValues(vals, opts), toInputMedia(media)...)
 }
 
 // SendLocation is used to send point on the map.
