@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
 )
 
 // Sticker represents a sticker.
@@ -98,7 +97,7 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *BaseOptions) (res
 	var vals = make(url.Values)
 
 	vals.Set("sticker", stickerID)
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseMessage](a.base, "sendSticker", addValues(vals, opts))
 }
 
@@ -138,7 +137,7 @@ func (a API) GetCustomEmojiStickers(customEmojiIDs ...string) (res APIResponseSt
 func (a API) UploadStickerFile(userID int64, sticker StickerFile) (res APIResponseFile, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	return postFile[APIResponseFile](a.base, "uploadStickerFile", string(sticker.Type), sticker.File, InputFile{}, vals)
 }
 
@@ -146,7 +145,7 @@ func (a API) UploadStickerFile(userID int64, sticker StickerFile) (res APIRespon
 func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, sticker StickerFile, opts *NewStickerSetOptions) (res APIResponseBase, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("title", title)
 	vals.Set("emojis", emojis)
@@ -157,7 +156,7 @@ func (a API) CreateNewStickerSet(userID int64, name, title, emojis string, stick
 func (a API) AddStickerToSet(userID int64, name, emojis string, sticker StickerFile, opts *MaskPosition) (res APIResponseBase, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("emojis", emojis)
 	return postFile[APIResponseBase](a.base, "addStickerToSet", string(sticker.Type), sticker.File, InputFile{}, addValues(vals, opts))
@@ -168,7 +167,7 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (res APIRespo
 	var vals = make(url.Values)
 
 	vals.Set("sticker", sticker)
-	vals.Set("position", strconv.FormatInt(int64(position), 10))
+	vals.Set("position", itoa(int64(position)))
 	return get[APIResponseBase](a.base, "setStickerPositionInSet", vals)
 }
 
@@ -185,6 +184,6 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (res
 	var vals = make(url.Values)
 
 	vals.Set("name", name)
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	return postFile[APIResponseBase](a.base, "setStickerSetThumb", "thumb", thumb, InputFile{}, vals)
 }

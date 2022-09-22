@@ -21,7 +21,6 @@ package echotron
 import (
 	"encoding/json"
 	"net/url"
-	"strconv"
 )
 
 // LabeledPrice represents a portion of the price for goods or services.
@@ -106,7 +105,7 @@ func (a API) SendInvoice(chatID int64, title, description, payload, providerToke
 		return res, err
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("title", title)
 	vals.Set("description", description)
 	vals.Set("payload", payload)
@@ -123,7 +122,7 @@ func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *Shipping
 	var vals = make(url.Values)
 
 	vals.Set("shipping_query_id", shippingQueryID)
-	vals.Set("ok", strconv.FormatBool(ok))
+	vals.Set("ok", btoa(ok))
 	return get[APIResponseBase](a.base, "answerShippingQuery", addValues(vals, opts))
 }
 
@@ -135,7 +134,7 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 	var vals = make(url.Values)
 
 	vals.Set("pre_checkout_query_id", preCheckoutQueryID)
-	vals.Set("ok", strconv.FormatBool(ok))
+	vals.Set("ok", btoa(ok))
 	return get[APIResponseBase](a.base, "answerPreCheckoutQuery", addValues(vals, opts))
 }
 

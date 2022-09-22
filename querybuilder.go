@@ -19,7 +19,6 @@
 package echotron
 
 import (
-	"fmt"
 	"encoding/json"
 	"net/url"
 	"reflect"

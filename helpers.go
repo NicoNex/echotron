@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func check(r APIResponse) error {
@@ -253,4 +254,16 @@ func postMedia[T APIResponse](base, endpoint string, isSingleFile bool, vals url
 
 	err = check(res)
 	return
+}
+
+func itoa(i int64) string {
+	return strconv.FormatInt(i, 10)
+}
+
+func ftoa(f float64) string {
+	return strconv.FormatFloat(f, 'f', -1, 64)
+}
+
+func btoa(b bool) string {
+	return strconv.FormatBool(b)
 }

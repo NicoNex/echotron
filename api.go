@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
 	"strings"
 )
 
@@ -57,7 +56,7 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 		return res, err
 	}
 
-	vals.Set("drop_pending_updates", strconv.FormatBool(dropPendingUpdates))
+	vals.Set("drop_pending_updates", btoa(dropPendingUpdates))
 	addValues(vals, opts)
 	url = fmt.Sprintf("%s?%s", strings.TrimSuffix(url, "/"), vals.Encode())
 
@@ -77,7 +76,7 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 // DeleteWebhook is used to remove webhook integration if you decide to switch back to GetUpdates.
 func (a API) DeleteWebhook(dropPendingUpdates bool) (res APIResponseBase, err error) {
 	var vals = make(url.Values)
-	vals.Set("drop_pending_updates", strconv.FormatBool(dropPendingUpdates))
+	vals.Set("drop_pending_updates", btoa(dropPendingUpdates))
 
 	return get[APIResponseBase](a.base, "deleteWebhook", vals)
 }
@@ -112,7 +111,7 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (res A
 	var vals = make(url.Values)
 
 	vals.Set("text", text)
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseMessage](a.base, "sendMessage", addValues(vals, opts))
 }
 
@@ -121,9 +120,9 @@ func (a API) SendMessage(text string, chatID int64, opts *MessageOptions) (res A
 func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *ForwardOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("from_chat_id", itoa(fromChatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseMessage](a.base, "forwardMessage", addValues(vals, opts))
 }
 
@@ -134,9 +133,9 @@ func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *Forwa
 func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOptions) (res APIResponseMessageID, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("from_chat_id", strconv.FormatInt(fromChatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("from_chat_id", itoa(fromChatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseMessageID](a.base, "forwardMessage", addValues(vals, opts))
 }
 
@@ -144,7 +143,7 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendPhoto", "photo", file, InputFile{}, addValues(vals, opts))
 }
 
@@ -161,7 +160,7 @@ func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (res AP
 		thumb = opts.Thumb
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendAudio", "audio", file, thumb, addValues(vals, opts))
 }
 
@@ -176,7 +175,7 @@ func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (
 		thumb = opts.Thumb
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendDocument", "document", file, thumb, addValues(vals, opts))
 }
 
@@ -192,7 +191,7 @@ func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (res AP
 		thumb = opts.Thumb
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendVideo", "video", file, thumb, addValues(vals, opts))
 }
 
@@ -207,7 +206,7 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 		thumb = opts.Thumb
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendAnimation", "animation", file, thumb, addValues(vals, opts))
 }
 
@@ -216,7 +215,7 @@ func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions)
 func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendVoice", "voice", file, InputFile{}, addValues(vals, opts))
 }
 
@@ -231,7 +230,7 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 		thumb = opts.Thumb
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseMessage](a.base, "sendVideoNote", "video_note", file, thumb, addValues(vals, opts))
 }
 
@@ -245,9 +244,9 @@ func (a API) SendMediaGroup(chatID int64, media []GroupableInputMedia, opts *Med
 func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *LocationOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
-	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("latitude", ftoa(latitude))
+	vals.Set("longitude", ftoa(longitude))
 	return get[APIResponseMessage](a.base, "sendLocation", addValues(vals, opts))
 }
 
@@ -256,8 +255,8 @@ func (a API) SendLocation(chatID int64, latitude, longitude float64, opts *Locat
 func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude float64, opts *EditLocationOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
-	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	vals.Set("latitude", ftoa(latitude))
+	vals.Set("longitude", ftoa(longitude))
 	return get[APIResponseMessage](a.base, "editMessageLiveLocation", addValues(addValues(vals, msg), opts))
 }
 
@@ -270,9 +269,9 @@ func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMar
 func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address string, opts *VenueOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("latitude", strconv.FormatFloat(latitude, 'f', -1, 64))
-	vals.Set("longitude", strconv.FormatFloat(longitude, 'f', -1, 64))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("latitude", ftoa(latitude))
+	vals.Set("longitude", ftoa(longitude))
 	vals.Set("title", title)
 	vals.Set("address", address)
 	return get[APIResponseMessage](a.base, "sendVenue", addValues(vals, opts))
@@ -282,7 +281,7 @@ func (a API) SendVenue(chatID int64, latitude, longitude float64, title, address
 func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *ContactOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("phoneNumber", phoneNumber)
 	vals.Set("firstName", firstName)
 	return get[APIResponseMessage](a.base, "sendContact", addValues(vals, opts))
@@ -297,7 +296,7 @@ func (a API) SendPoll(chatID int64, question string, options []string, opts *Pol
 		return res, err
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("question", question)
 	vals.Set("options", string(pollOpts))
 	return get[APIResponseMessage](a.base, "sendPoll", addValues(vals, opts))
@@ -307,7 +306,7 @@ func (a API) SendPoll(chatID int64, question string, options []string, opts *Pol
 func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("emoji", string(emoji))
 	return get[APIResponseMessage](a.base, "sendDice", addValues(vals, opts))
 }
@@ -317,7 +316,7 @@ func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (res API
 func (a API) SendChatAction(action ChatAction, chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("action", string(action))
 	return get[APIResponseBool](a.base, "sendChatAction", vals)
 }
@@ -326,7 +325,7 @@ func (a API) SendChatAction(action ChatAction, chatID int64) (res APIResponseBoo
 func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (res APIResponseUserProfile, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseUserProfile](a.base, "getUserProfilePhotos", addValues(vals, opts))
 }
 
@@ -360,8 +359,8 @@ func (a API) DownloadFile(filePath string) ([]byte, error) {
 func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseBool](a.base, "banChatMember", addValues(vals, opts))
 }
 
@@ -374,8 +373,8 @@ func (a API) BanChatMember(chatID, userID int64, opts *BanOptions) (res APIRespo
 func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseBool](a.base, "unbanChatMember", addValues(vals, opts))
 }
 
@@ -389,8 +388,8 @@ func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermission
 		return
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	vals.Set("permissions", perm)
 	return get[APIResponseBool](a.base, "restrictChatMember", addValues(vals, opts))
 }
@@ -400,8 +399,8 @@ func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermission
 func (a API) PromoteChatMember(chatID, userID int64, opts *PromoteOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseBool](a.base, "promoteChatMember", addValues(vals, opts))
 }
 
@@ -409,8 +408,8 @@ func (a API) PromoteChatMember(chatID, userID int64, opts *PromoteOptions) (res 
 func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	vals.Set("custom_title", customTitle)
 	return get[APIResponseBool](a.base, "setChatAdministratorCustomTitle", vals)
 }
@@ -421,8 +420,8 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 func (a API) BanChatSenderChat(chatID, senderChatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("sender_chat_id", strconv.FormatInt(senderChatID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("sender_chat_id", itoa(senderChatID))
 	return get[APIResponseBool](a.base, "banChatSenderChat", vals)
 }
 
@@ -431,8 +430,8 @@ func (a API) BanChatSenderChat(chatID, senderChatID int64) (res APIResponseBool,
 func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("sender_chat_id", strconv.FormatInt(senderChatID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("sender_chat_id", itoa(senderChatID))
 	return get[APIResponseBool](a.base, "unbanChatSenderChat", vals)
 }
 
@@ -446,7 +445,7 @@ func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (res 
 		return
 	}
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("permissions", perm)
 	return get[APIResponseBool](a.base, "setChatPermissions", vals)
 }
@@ -457,7 +456,7 @@ func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (res 
 func (a API) ExportChatInviteLink(chatID int64) (res APIResponseString, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseString](a.base, "exportChatInviteLink", vals)
 }
 
@@ -467,7 +466,7 @@ func (a API) ExportChatInviteLink(chatID int64) (res APIResponseString, err erro
 func (a API) CreateChatInviteLink(chatID int64, opts *InviteLinkOptions) (res APIResponseInviteLink, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseInviteLink](a.base, "createChatInviteLink", addValues(vals, opts))
 }
 
@@ -476,7 +475,7 @@ func (a API) CreateChatInviteLink(chatID int64, opts *InviteLinkOptions) (res AP
 func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLinkOptions) (res APIResponseInviteLink, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("invite_link", inviteLink)
 	return get[APIResponseInviteLink](a.base, "editChatInviteLink", addValues(vals, opts))
 }
@@ -487,7 +486,7 @@ func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLin
 func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (res APIResponseInviteLink, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("invite_link", inviteLink)
 	return get[APIResponseInviteLink](a.base, "editChatInviteLink", vals)
 }
@@ -497,8 +496,8 @@ func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (res APIRespo
 func (a API) ApproveChatJoinRequest(chatID, userID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseBool](a.base, "approveChatJoinRequest", vals)
 }
 
@@ -507,8 +506,8 @@ func (a API) ApproveChatJoinRequest(chatID, userID int64) (res APIResponseBool, 
 func (a API) DeclineChatJoinRequest(chatID, userID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseBool](a.base, "declineChatJoinRequest", vals)
 }
 
@@ -518,7 +517,7 @@ func (a API) DeclineChatJoinRequest(chatID, userID int64) (res APIResponseBool, 
 func (a API) SetChatPhoto(file InputFile, chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return postFile[APIResponseBool](a.base, "setChatPhoto", "photo", file, InputFile{}, vals)
 }
 
@@ -528,7 +527,7 @@ func (a API) SetChatPhoto(file InputFile, chatID int64) (res APIResponseBool, er
 func (a API) DeleteChatPhoto(chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseBool](a.base, "deleteChatPhoto", vals)
 }
 
@@ -538,7 +537,7 @@ func (a API) DeleteChatPhoto(chatID int64) (res APIResponseBool, err error) {
 func (a API) SetChatTitle(chatID int64, title string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("title", title)
 	return get[APIResponseBool](a.base, "setChatTitle", vals)
 }
@@ -548,7 +547,7 @@ func (a API) SetChatTitle(chatID int64, title string) (res APIResponseBool, err 
 func (a API) SetChatDescription(chatID int64, description string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("description", description)
 	return get[APIResponseBool](a.base, "setChatDescription", vals)
 }
@@ -559,8 +558,8 @@ func (a API) SetChatDescription(chatID int64, description string) (res APIRespon
 func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseBool](a.base, "pinChatMessage", addValues(vals, opts))
 }
 
@@ -570,8 +569,8 @@ func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions
 func (a API) UnpinChatMessage(chatID int64, messageID int) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseBool](a.base, "unpinChatMessage", vals)
 }
 
@@ -581,7 +580,7 @@ func (a API) UnpinChatMessage(chatID int64, messageID int) (res APIResponseBool,
 func (a API) UnpinAllChatMessages(chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseBool](a.base, "unpinAllChatMessages", vals)
 }
 
@@ -589,7 +588,7 @@ func (a API) UnpinAllChatMessages(chatID int64) (res APIResponseBool, err error)
 func (a API) LeaveChat(chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseBool](a.base, "leaveChat", vals)
 }
 
@@ -598,7 +597,7 @@ func (a API) LeaveChat(chatID int64) (res APIResponseBool, err error) {
 func (a API) GetChat(chatID int64) (res APIResponseChat, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseChat](a.base, "getChat", vals)
 }
 
@@ -606,7 +605,7 @@ func (a API) GetChat(chatID int64) (res APIResponseChat, err error) {
 func (a API) GetChatAdministrators(chatID int64) (res APIResponseAdministrators, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseAdministrators](a.base, "getChatAdministrators", vals)
 }
 
@@ -614,7 +613,7 @@ func (a API) GetChatAdministrators(chatID int64) (res APIResponseAdministrators,
 func (a API) GetChatMemberCount(chatID int64) (res APIResponseInteger, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseInteger](a.base, "getChatMemberCount", vals)
 }
 
@@ -622,8 +621,8 @@ func (a API) GetChatMemberCount(chatID int64) (res APIResponseInteger, err error
 func (a API) GetChatMember(chatID, userID int64) (res APIResponseChatMember, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseChatMember](a.base, "getChatMember", vals)
 }
 
@@ -633,7 +632,7 @@ func (a API) GetChatMember(chatID, userID int64) (res APIResponseChatMember, err
 func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("sticker_set_name", stickerSetName)
 	return get[APIResponseBool](a.base, "setChatStickerSet", vals)
 }
@@ -644,7 +643,7 @@ func (a API) SetChatStickerSet(chatID int64, stickerSetName string) (res APIResp
 func (a API) DeleteChatStickerSet(chatID int64) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	return get[APIResponseBool](a.base, "deleteChatStickerSet", vals)
 }
 
@@ -707,8 +706,8 @@ func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMark
 func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (res APIResponsePoll, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponsePoll](a.base, "stopPoll", addValues(vals, opts))
 }
 
@@ -723,7 +722,7 @@ func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (re
 func (a API) DeleteMessage(chatID int64, messageID int) (res APIResponseBase, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
-	vals.Set("message_id", strconv.FormatInt(int64(messageID), 10))
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseBase](a.base, "deleteMessage", vals)
 }

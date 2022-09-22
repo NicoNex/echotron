@@ -3,7 +3,6 @@ package echotron
 import (
 	"encoding/json"
 	"net/url"
-	"strconv"
 )
 
 // PassportData contains information about Telegram Passport data shared with the bot by the user.
@@ -223,7 +222,7 @@ func (a API) SetPassportDataErrors(userID int64, errors []PassportElementError) 
 		return res, err
 	}
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	vals.Set("errors", string(errorsArr))
 	return get[APIResponseBool](a.base, "setPassportDataErrors", vals)
 }

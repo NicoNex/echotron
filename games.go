@@ -18,10 +18,7 @@
 
 package echotron
 
-import (
-	"net/url"
-	"strconv"
-)
+import "net/url"
 
 // Game represents a game.
 type Game struct {
@@ -53,7 +50,7 @@ type GameScoreOptions struct {
 func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("chat_id", strconv.FormatInt(chatID, 10))
+	vals.Set("chat_id", itoa(chatID))
 	vals.Set("game_short_name", gameShortName)
 	return get[APIResponseMessage](a.base, "sendGame", addValues(vals, opts))
 }
@@ -62,8 +59,8 @@ func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (re
 func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts *GameScoreOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
-	vals.Set("score", strconv.FormatInt(int64(score), 10))
+	vals.Set("user_id", itoa(userID))
+	vals.Set("score", itoa(int64(score)))
 	return get[APIResponseMessage](a.base, "setGameScore", addValues(addValues(vals, msgID), opts))
 }
 
@@ -71,6 +68,6 @@ func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts 
 func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (res APIResponseGameHighScore, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("user_id", strconv.FormatInt(userID, 10))
+	vals.Set("user_id", itoa(userID))
 	return get[APIResponseGameHighScore](a.base, "getGameHighScores", addValues(vals, opts))
 }
