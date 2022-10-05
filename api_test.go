@@ -15,7 +15,6 @@ var (
 	pollTmp      *Message
 	locationTmp  *Message
 	inviteTmp    *ChatInviteLink
-	expInviteTmp string
 	filePath     string
 	api          = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID       = int64(14870908)
@@ -1032,8 +1031,6 @@ func TestExportChatInviteLink(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	expInviteTmp = resp.Result
 }
 
 func TestCreateChatInviteLink(t *testing.T) {
@@ -1065,7 +1062,7 @@ func TestEditChatInviteLink(t *testing.T) {
 func TestRevokeChatInviteLink(t *testing.T) {
 	_, err := api.RevokeChatInviteLink(
 		channelID,
-		expInviteTmp,
+		inviteTmp.InviteLink,
 	)
 
 	if err != nil {
