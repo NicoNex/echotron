@@ -1024,7 +1024,7 @@ func TestSetChatPermissions(t *testing.T) {
 }
 
 func TestExportChatInviteLink(t *testing.T) {
-	resp, err := api.ExportChatInviteLink(
+	_, err := api.ExportChatInviteLink(
 		channelID,
 	)
 
