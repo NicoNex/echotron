@@ -187,3 +187,8 @@ func (a API) SetStickerSetThumb(name string, userID int64, thumb InputFile) (res
 	vals.Set("user_id", itoa(userID))
 	return postFile[APIResponseBase](a.base, "setStickerSetThumb", "thumb", thumb, InputFile{}, vals)
 }
+
+// GetForumTopicIconStickers is used to get custom emoji stickers, which can be used as a forum topic icon by any user.
+func (a API) GetForumTopicIconStickers() (res APIResponseStickers, err error) {
+	return get[APIResponseStickers](a.base, "getForumTopicIconStickers", nil)
+}

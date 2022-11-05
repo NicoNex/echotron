@@ -208,6 +208,7 @@ type WebhookOptions struct {
 // BaseOptions contains the optional parameters used frequently in some Telegram API methods.
 type BaseOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+	MessageThreadID          int         `query:"message_thread_id"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	DisableNotification      bool        `query:"disable_notification"`
 	ProtectContent           bool        `query:"protect_content"`
@@ -219,6 +220,7 @@ type MessageOptions struct {
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Entities                 []MessageEntity `query:"entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
 	DisableNotification      bool            `query:"disable_notification"`
@@ -233,6 +235,7 @@ type PinMessageOptions struct {
 
 // ForwardOptions contains the optional parameters used by the ForwardMessage method.
 type ForwardOptions struct {
+	MessageThreadID     int  `query:"message_thread_id"`
 	DisableNotification bool `query:"disable_notification"`
 	ProtectContent      bool `query:"protect_content"`
 }
@@ -243,6 +246,7 @@ type CopyOptions struct {
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ProtectContent           bool            `query:"protect_content"`
@@ -278,6 +282,7 @@ type PhotoOptions struct {
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ProtectContent           bool            `query:"protect_content"`
@@ -293,6 +298,7 @@ type AudioOptions struct {
 	Title                    string      `query:"title"`
 	Thumb                    InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableNotification      bool            `query:"disable_notification"`
@@ -307,6 +313,7 @@ type DocumentOptions struct {
 	Caption                     string      `query:"caption"`
 	Thumb                       InputFile
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
+	MessageThreadID             int             `query:"message_thread_id"`
 	ReplyToMessageID            int             `query:"reply_to_message_id"`
 	DisableNotification         bool            `query:"disable_notification"`
 	ProtectContent              bool            `query:"protect_content"`
@@ -321,6 +328,7 @@ type VideoOptions struct {
 	ParseMode                ParseMode   `query:"parse_mode"`
 	Thumb                    InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
@@ -338,6 +346,7 @@ type AnimationOptions struct {
 	Caption                  string      `query:"caption"`
 	Thumb                    InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
 	Width                    int             `query:"width"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
@@ -353,6 +362,7 @@ type VoiceOptions struct {
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableNotification      bool            `query:"disable_notification"`
@@ -364,6 +374,7 @@ type VoiceOptions struct {
 type VideoNoteOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 	Thumb                    InputFile
+	MessageThreadID          int  `query:"message_thread_id"`
 	Duration                 int  `query:"duration"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`
 	Length                   int  `query:"length"`
@@ -374,6 +385,7 @@ type VideoNoteOptions struct {
 
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
 type MediaGroupOptions struct {
+	MessageThreadID          int  `query:"message_thread_id"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`
 	DisableNotification      bool `query:"disable_notification"`
 	ProtectContent           bool `query:"protect_content"`
@@ -384,6 +396,7 @@ type MediaGroupOptions struct {
 type LocationOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
+	MessageThreadID          int         `query:"message_thread_id"`
 	LivePeriod               int         `query:"live_period"`
 	ProximityAlertRadius     int         `query:"proximity_alert_radius"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
@@ -408,6 +421,7 @@ type VenueOptions struct {
 	FoursquareType           string      `query:"foursquare_type"`
 	GooglePlaceType          string      `query:"google_place_type"`
 	GooglePlaceID            string      `query:"google_place_id"`
+	MessageThreadID          int         `query:"message_thread_id"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	DisableNotification      bool        `query:"disable_notification"`
 	ProtectContent           bool        `query:"protect_content"`
@@ -419,6 +433,7 @@ type ContactOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 	VCard                    string      `query:"vcard"`
 	LastName                 string      `query:"last_name"`
+	MessageThreadID          int         `query:"message_thread_id"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	DisableNotification      bool        `query:"disable_notification"`
 	ProtectContent           bool        `query:"protect_content"`
@@ -432,6 +447,7 @@ type PollOptions struct {
 	ExplanationParseMode     ParseMode       `query:"explanation_parse_mode"`
 	Type                     PollType        `query:"type"`
 	ExplanationEntities      []MessageEntity `query:"explanation_entities"`
+	MessageThreadID          int             `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	CorrectOptionID          int             `query:"correct_option_id"`
 	CloseDate                int             `query:"close_date"`
@@ -473,6 +489,7 @@ type PromoteOptions struct {
 	CanChangeInfo       bool `query:"can_change_info"`
 	CanInviteUsers      bool `query:"can_invite_users"`
 	CanPinMessages      bool `query:"can_pin_messages"`
+	CanManageTopics     bool `json:"can_manage_topics"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
@@ -548,6 +565,7 @@ type InvoiceOptions struct {
 	PhotoURL                  string               `query:"photo_url"`
 	ReplyMarkup               InlineKeyboardMarkup `query:"reply_markup"`
 	SuggestedTipAmount        []int                `query:"suggested_tip_amounts"`
+	MessageThreadID           int                  `query:"message_thread_id"`
 	PhotoSize                 int                  `query:"photo_size"`
 	PhotoWidth                int                  `query:"photo_width"`
 	PhotoHeight               int                  `query:"photo_height"`
@@ -599,4 +617,10 @@ type ShippingQueryOptions struct {
 // PreCheckoutOptions contains the optional parameters used by the AnswerPreCheckoutQuery api method.
 type PreCheckoutOptions struct {
 	ErrorMessage string `query:"error_message"`
+}
+
+// CreateTopicOptions contains the optional parameters used by the CreateForumTopic api method.
+type CreateTopicOptions struct {
+	IconCustomEmojiID string    `json:"icon_custom_emoji_id"`
+	IconColor         IconColor `json:"icon_color"`
 }

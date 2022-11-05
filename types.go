@@ -346,6 +346,18 @@ func (a APIResponseChatAdministratorRights) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseForumTopic represents the incoming response from Telegram servers.
+// Used by all methods that return a ForumTopic object on success.
+type APIResponseForumTopic struct {
+	Result *ForumTopic `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseForumTopic) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`
@@ -376,10 +388,13 @@ type Chat struct {
 	FirstName                          string           `json:"first_name,omitempty"`
 	LastName                           string           `json:"last_name,omitempty"`
 	InviteLink                         string           `json:"invite_link,omitempty"`
+	EmojiStatusCustomEmojiID           string           `json:"emoji_status_custom_emoji_id,omitempty"`
+	ActiveUsernames                    *[]string        `json:"active_usernames,omitempty"`
 	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
 	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
 	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
 	ID                                 int64            `json:"id"`
+	IsForum                            bool             `json:"is_forum,omitempty"`
 	HasProtectedContent                bool             `json:"has_protected_content,omitempty"`
 	HasPrivateForwards                 bool             `json:"has_private_forwards,omitempty"`
 	CanSetStickerSet                   bool             `json:"can_set_sticker_set,omitempty"`
@@ -420,7 +435,10 @@ type Message struct {
 	Venue                         *Venue                         `json:"venue,omitempty"`
 	Game                          *Game                          `json:"game,omitempty"`
 	Dice                          *Dice                          `json:"dice,omitempty"`
+	ForumTopicCreated             *ForumTopicCreated             `json:"forum_topic_created,omitempty"`
 	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled,omitempty"`
+	ForumTopicClosed              *ForumTopicClosed              `json:"forum_topic_closed,omitempty"`
+	ForumTopicReopened            *ForumTopicReopened            `json:"forum_topic_reopened,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
@@ -436,6 +454,7 @@ type Message struct {
 	Entities                      []*MessageEntity               `json:"entities,omitempty"`
 	Chat                          Chat                           `json:"chat"`
 	ID                            int                            `json:"message_id"`
+	ThreadID                      int                            `json:"message_thread_id,omitempty"`
 	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
 	Date                          int                            `json:"date"`
 	ForwardFromMessageID          int                            `json:"forward_from_message_id,omitempty"`
@@ -443,6 +462,7 @@ type Message struct {
 	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
 	EditDate                      int                            `json:"edit_date,omitempty"`
 	DeleteChatPhoto               bool                           `json:"delete_chat_photo,omitempty"`
+	IsTopicMessage                bool                           `json:"is_topic_message,omitempty"`
 	IsAutomaticForward            bool                           `json:"is_automatic_forward,omitempty"`
 	GroupChatCreated              bool                           `json:"group_chat_created,omitempty"`
 	SupergroupChatCreated         bool                           `json:"supergroup_chat_created,omitempty"`
@@ -720,6 +740,7 @@ type ChatMember struct {
 	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
 	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
+	CanManageTopics       bool   `json:"can_manage_topics,omitempty"`
 	UntilDate             int    `json:"until_date,omitempty"`
 }
 
@@ -743,6 +764,7 @@ type ChatPermissions struct {
 	CanChangeInfo         bool `json:"can_change_info,omitempty"`
 	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
+	CanManageTopics       bool `json:"can_manage_topics,omitempty"`
 }
 
 // ChatLocation represents a location to which a chat is connected.
@@ -996,4 +1018,38 @@ type ChatJoinRequest struct {
 	From       User            `json:"user"`
 	Chat       Chat            `json:"chat"`
 	Date       int             `json:"date"`
+}
+
+// ForumTopicCreated represents a service message about a new forum topic created in the chat.
+type ForumTopicCreated struct {
+	Name              string `json:"name"`
+	IconCustomEmojiID string `json:"icon_custom_emoji_id"`
+	IconColor         int    `json:"icon_color"`
+}
+
+// ForumTopicClosed represents a service message about a forum topic closed in the chat.
+type ForumTopicClosed struct{}
+
+// ForumTopicReopened represents a service message about a forum topic reopened in the chat.
+type ForumTopicReopened struct{}
+
+// IconColor represents a forum topic icon in RGB format.
+type IconColor int
+
+// These are all the various icon colors.
+const (
+	LightBlue IconColor = 0x6FB9F0
+	Yellow              = 0xFFD67E
+	Purple              = 0xCB86DB
+	Green               = 0x8EEE98
+	Pink                = 0xFF93B2
+	Red                 = 0xFB6F5F
+)
+
+// ForumTopic represents a forum topic.
+type ForumTopic struct {
+	Name              string    `json:"name"`
+	IconCustomEmojiID string    `json:"icon_custom_emoji_id"`
+	IconColor         IconColor `json:"icon_color"`
+	MessageThreadID   int64     `json:"message_thread_id"`
 }

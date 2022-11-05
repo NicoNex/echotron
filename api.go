@@ -650,6 +650,68 @@ func (a API) DeleteChatStickerSet(chatID int64) (res APIResponseBool, err error)
 	return get[APIResponseBool](a.base, "deleteChatStickerSet", vals)
 }
 
+// CreateForumTopic is used to create a topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) CreateForumTopic(chatID int64, name string, opts *CreateTopicOptions) (res APIResponseForumTopic, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("name", name)
+	return get[APIResponseForumTopic](a.base, "createForumTopic", addValues(vals, opts))
+}
+
+// EditForumTopic is used to edit name and icon of a topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) EditForumTopic(chatID, messageThreadID int64, name, iconCustomEmojiID string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_thread_id", itoa(messageThreadID))
+	vals.Set("name", name)
+	vals.Set("icon_custom_emoji_id", iconCustomEmojiID)
+	return get[APIResponseBool](a.base, "editForumTopic", vals)
+}
+
+// CloseForumTopic is used to close an open topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) CloseForumTopic(chatID, messageThreadID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_thread_id", itoa(messageThreadID))
+	return get[APIResponseBool](a.base, "closeForumTopic", vals)
+}
+
+// ReopenForumTopic is used to reopen a closed topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) ReopenForumTopic(chatID, messageThreadID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_thread_id", itoa(messageThreadID))
+	return get[APIResponseBool](a.base, "reopenForumTopic", vals)
+}
+
+// DeleteForumTopic is used to delete a forum topic along with all its messages in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) DeleteForumTopic(chatID, messageThreadID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_thread_id", itoa(messageThreadID))
+	return get[APIResponseBool](a.base, "deleteForumTopic", vals)
+}
+
+// UnpinAllForumTopicMessages is used to clear the list of pinned messages in a forum topic.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+func (a API) UnpinAllForumTopicMessages(chatID, messageThreadID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_thread_id", itoa(messageThreadID))
+	return get[APIResponseBool](a.base, "unpinAllForumTopicMessages", vals)
+}
+
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
 func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (res APIResponseBool, err error) {
