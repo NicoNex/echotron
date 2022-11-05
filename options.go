@@ -478,18 +478,18 @@ type RestrictOptions struct {
 
 // PromoteOptions contains the optional parameters used by the PromoteChatMember method.
 type PromoteOptions struct {
-	IsAnonymous         bool `query:"is_anonymous"`
-	CanManageChat       bool `query:"can_manage_chat"`
-	CanPostMessages     bool `query:"can_post_messages"`
-	CanEditMessages     bool `query:"can_edit_messages"`
-	CanDeleteMessages   bool `query:"can_delete_messages"`
-	CanManageVideoChats bool `query:"can_manage_video_chats"`
-	CanRestrictMembers  bool `query:"can_restrict_members"`
-	CanPromoteMembers   bool `query:"can_promote_members"`
-	CanChangeInfo       bool `query:"can_change_info"`
-	CanInviteUsers      bool `query:"can_invite_users"`
-	CanPinMessages      bool `query:"can_pin_messages"`
-	CanManageTopics     bool `json:"can_manage_topics"`
+	IsAnonymous         bool `query:"is_anonymous,omitempty"`
+	CanManageChat       bool `query:"can_manage_chat,omitempty"`
+	CanPostMessages     bool `query:"can_post_messages,omitempty"`
+	CanEditMessages     bool `query:"can_edit_messages,omitempty"`
+	CanDeleteMessages   bool `query:"can_delete_messages,omitempty"`
+	CanManageVideoChats bool `query:"can_manage_video_chats,omitempty"`
+	CanRestrictMembers  bool `query:"can_restrict_members,omitempty"`
+	CanPromoteMembers   bool `query:"can_promote_members,omitempty"`
+	CanChangeInfo       bool `query:"can_change_info,omitempty"`
+	CanInviteUsers      bool `query:"can_invite_users,omitempty"`
+	CanPinMessages      bool `query:"can_pin_messages,omitempty"`
+	CanManageTopics     bool `json:"can_manage_topics,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
