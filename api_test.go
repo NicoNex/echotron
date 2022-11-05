@@ -954,6 +954,7 @@ func TestPromoteChatMember(t *testing.T) {
 		groupID,
 		banUserID,
 		&PromoteOptions{
+			CanManageChat:       true,
 			CanDeleteMessages:   true,
 			CanManageVideoChats: true,
 			CanRestrictMembers:  true,
