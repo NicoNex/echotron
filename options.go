@@ -489,7 +489,7 @@ type PromoteOptions struct {
 	CanChangeInfo       bool `query:"can_change_info,omitempty"`
 	CanInviteUsers      bool `query:"can_invite_users,omitempty"`
 	CanPinMessages      bool `query:"can_pin_messages,omitempty"`
-	CanManageTopics     bool `json:"can_manage_topics,omitempty"`
+	CanManageTopics     bool `query:"can_manage_topics,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
@@ -621,6 +621,6 @@ type PreCheckoutOptions struct {
 
 // CreateTopicOptions contains the optional parameters used by the CreateForumTopic api method.
 type CreateTopicOptions struct {
-	IconCustomEmojiID string    `json:"icon_custom_emoji_id"`
-	IconColor         IconColor `json:"icon_color"`
+	IconCustomEmojiID string    `query:"icon_custom_emoji_id"`
+	IconColor         IconColor `query:"icon_color"`
 }
