@@ -136,6 +136,7 @@ type KeyboardButtonPollType struct {
 type ReplyKeyboardMarkup struct {
 	InputFieldPlaceholder string             `json:"input_field_placeholder,omitempty"`
 	Keyboard              [][]KeyboardButton `json:"keyboard"`
+	IsPersistent          bool               `json:"is_persistent,omitempty"`
 	ResizeKeyboard        bool               `json:"resize_keyboard,omitempty"`
 	OneTimeKeyboard       bool               `json:"one_time_keyboard,omitempty"`
 	Selective             bool               `json:"selective,omitempty"`
@@ -284,6 +285,7 @@ type PhotoOptions struct {
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	MessageThreadID          int             `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	HasSpoiler               bool            `query:"has_spoiler"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ProtectContent           bool            `query:"protect_content"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
@@ -333,6 +335,7 @@ type VideoOptions struct {
 	Width                    int             `query:"width"`
 	Height                   int             `query:"height"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
+	HasSpoiler               bool            `query:"has_spoiler"`
 	SupportsStreaming        bool            `query:"supports_streaming"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ProtectContent           bool            `query:"protect_content"`
@@ -351,6 +354,7 @@ type AnimationOptions struct {
 	Width                    int             `query:"width"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	Height                   int             `query:"height"`
+	HasSpoiler               bool            `query:"has_spoiler"`
 	DisableNotification      bool            `query:"disable_notification"`
 	ProtectContent           bool            `query:"protect_content"`
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
@@ -623,4 +627,15 @@ type PreCheckoutOptions struct {
 type CreateTopicOptions struct {
 	IconCustomEmojiID string    `query:"icon_custom_emoji_id"`
 	IconColor         IconColor `query:"icon_color"`
+}
+
+// EditTopicOptions contains the optional parameters used by the EditForumTopic api method.
+type EditTopicOptions struct {
+	Name              string `query:"name"`
+	IconCustomEmojiID string `query:"icon_custom_emoji_id"`
+}
+
+// ChatActionOptions contains the optional parameters used by the SendChatAction api method.
+type ChatActionOptions struct {
+	MessageThreadID int `query:"message_thread_id"`
 }

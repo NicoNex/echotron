@@ -395,6 +395,8 @@ type Chat struct {
 	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
 	ID                                 int64            `json:"id"`
 	IsForum                            bool             `json:"is_forum,omitempty"`
+	HasAggressiveAntiSpamEnabled       bool             `json:"has_aggressive_anti_spam_enabled,omitempty"`
+	HasHiddenMembers                   bool             `json:"has_hidden_members,omitempty"`
 	HasProtectedContent                bool             `json:"has_protected_content,omitempty"`
 	HasPrivateForwards                 bool             `json:"has_private_forwards,omitempty"`
 	CanSetStickerSet                   bool             `json:"can_set_sticker_set,omitempty"`
@@ -436,9 +438,13 @@ type Message struct {
 	Game                          *Game                          `json:"game,omitempty"`
 	Dice                          *Dice                          `json:"dice,omitempty"`
 	ForumTopicCreated             *ForumTopicCreated             `json:"forum_topic_created,omitempty"`
+	ForumTopicEdited              *ForumTopicEdited              `json:"forum_topic_edited,omitempty"`
 	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled,omitempty"`
 	ForumTopicClosed              *ForumTopicClosed              `json:"forum_topic_closed,omitempty"`
 	ForumTopicReopened            *ForumTopicReopened            `json:"forum_topic_reopened,omitempty"`
+	GeneralForumTopicHidden       *GeneralForumTopicHidden       `json:"general_forum_topic_hidden,omitempty"`
+	GeneralForumTopicUnhidden     *GeneralForumTopicUnhidden     `json:"general_forum_topic_unhidden,omitempty"`
+	WriteAccessAllowed            *WriteAccessAllowed            `json:"write_access_allowec,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
@@ -468,6 +474,7 @@ type Message struct {
 	SupergroupChatCreated         bool                           `json:"supergroup_chat_created,omitempty"`
 	ChannelChatCreated            bool                           `json:"channel_chat_created,omitempty"`
 	HasProtectedContent           bool                           `json:"has_protected_content,omitempty"`
+	HasMediaSpoiler               bool                           `json:"has_media_spoiler,omitempty"`
 }
 
 // MessageID represents a unique message identifier.
@@ -886,6 +893,7 @@ type InputMediaPhoto struct {
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
+	HasSpoiler      bool             `json:"has_spoiler,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -910,6 +918,7 @@ type InputMediaVideo struct {
 	Height            int              `json:"height,omitempty"`
 	Duration          int              `json:"duration,omitempty"`
 	SupportsStreaming bool             `json:"supports_streaming,omitempty"`
+	HasSpoiler        bool             `json:"has_spoiler,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -933,6 +942,7 @@ type InputMediaAnimation struct {
 	Width           int              `json:"width,omitempty"`
 	Height          int              `json:"height,omitempty"`
 	Duration        int              `json:"duration,omitempty"`
+	HasSpoiler      bool             `json:"has_spoiler,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -1030,8 +1040,23 @@ type ForumTopicCreated struct {
 // ForumTopicClosed represents a service message about a forum topic closed in the chat.
 type ForumTopicClosed struct{}
 
+// ForumTopicEdited represents a service message about an edited forum topic.
+type ForumTopicEdited struct {
+	Name              string `json:"name"`
+	IconCustomEmojiID string `json:"icon_custom_emoji_id"`
+}
+
 // ForumTopicReopened represents a service message about a forum topic reopened in the chat.
 type ForumTopicReopened struct{}
+
+// GeneralForumTopicHidden represents a service message about General forum topic hidden in the chat.
+type GeneralForumTopicHidden struct{}
+
+// GeneralForumTopicUnhidden represents a service message about General forum topic unhidden in the chat.
+type GeneralForumTopicUnhidden struct{}
+
+// WriteAccessAllowed represents a service message about a user allowing a bot added to the attachment menu to write messages.
+type WriteAccessAllowed struct{}
 
 // IconColor represents a forum topic icon in RGB format.
 type IconColor int

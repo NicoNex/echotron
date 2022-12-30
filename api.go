@@ -316,12 +316,12 @@ func (a API) SendDice(chatID int64, emoji DiceEmoji, opts *BaseOptions) (res API
 
 // SendChatAction is used to tell the user that something is happening on the bot's side.
 // The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
-func (a API) SendChatAction(action ChatAction, chatID int64) (res APIResponseBool, err error) {
+func (a API) SendChatAction(action ChatAction, chatID int64, opts *ChatActionOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("action", string(action))
-	return get[APIResponseBool](a.base, "sendChatAction", vals)
+	return get[APIResponseBool](a.base, "sendChatAction", addValues(vals, opts))
 }
 
 // GetUserProfilePhotos is used to get a list of profile pictures for a user.
@@ -662,14 +662,12 @@ func (a API) CreateForumTopic(chatID int64, name string, opts *CreateTopicOption
 
 // EditForumTopic is used to edit name and icon of a topic in a forum supergroup chat.
 // The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
-func (a API) EditForumTopic(chatID, messageThreadID int64, name, iconCustomEmojiID string) (res APIResponseBool, err error) {
+func (a API) EditForumTopic(chatID, messageThreadID int64, opts *EditTopicOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("message_thread_id", itoa(messageThreadID))
-	vals.Set("name", name)
-	vals.Set("icon_custom_emoji_id", iconCustomEmojiID)
-	return get[APIResponseBool](a.base, "editForumTopic", vals)
+	return get[APIResponseBool](a.base, "editForumTopic", addValues(vals, opts))
 }
 
 // CloseForumTopic is used to close an open topic in a forum supergroup chat.
@@ -710,6 +708,54 @@ func (a API) UnpinAllForumTopicMessages(chatID, messageThreadID int64) (res APIR
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("message_thread_id", itoa(messageThreadID))
 	return get[APIResponseBool](a.base, "unpinAllForumTopicMessages", vals)
+}
+
+// EditGeneralForumTopic is used to edit the name of the 'General' topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+func (a API) EditGeneralForumTopic(chatID int64, name string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("name", name)
+	return get[APIResponseBool](a.base, "editGeneralForumTopic", vals)
+}
+
+// CloseGeneralForumTopic is used to close an open 'General' topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+func (a API) CloseGeneralForumTopic(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return get[APIResponseBool](a.base, "closeGeneralForumTopic", vals)
+}
+
+// ReopenGeneralForumTopic is used to reopen a closed 'General' topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+// The topic will be automatically unhidden if it was hidden.
+func (a API) ReopenGeneralForumTopic(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return get[APIResponseBool](a.base, "reopenGeneralForumTopic", vals)
+}
+
+// HideGeneralForumTopic is used to hide the 'General' topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+// The topic will be automatically closed if it was open.
+func (a API) HideGeneralForumTopic(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return get[APIResponseBool](a.base, "hideGeneralForumTopic", vals)
+}
+
+// UnhideGeneralForumTopic is used to unhide the 'General' topic in a forum supergroup chat.
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+func (a API) UnhideGeneralForumTopic(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return get[APIResponseBool](a.base, "unhideGeneralForumTopic", vals)
 }
 
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
