@@ -379,19 +379,19 @@ type Chat struct {
 	Location                           *ChatLocation    `json:"location,omitempty"`
 	PinnedMessage                      *Message         `json:"pinned_message,omitempty"`
 	Photo                              *ChatPhoto       `json:"photo,omitempty"`
-	Type                               string           `json:"type"`
-	Title                              string           `json:"title,omitempty"`
-	Username                           string           `json:"username,omitempty"`
+	ActiveUsernames                    *[]string        `json:"active_usernames,omitempty"`
 	Bio                                string           `json:"bio,omitempty"`
+	Username                           string           `json:"username,omitempty"`
+	Title                              string           `json:"title,omitempty"`
 	StickerSetName                     string           `json:"sticker_set_name,omitempty"`
 	Description                        string           `json:"description,omitempty"`
 	FirstName                          string           `json:"first_name,omitempty"`
 	LastName                           string           `json:"last_name,omitempty"`
 	InviteLink                         string           `json:"invite_link,omitempty"`
 	EmojiStatusCustomEmojiID           string           `json:"emoji_status_custom_emoji_id,omitempty"`
-	ActiveUsernames                    *[]string        `json:"active_usernames,omitempty"`
-	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
+	Type                               string           `json:"type"`
 	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
+	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
 	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
 	ID                                 int64            `json:"id"`
 	IsForum                            bool             `json:"is_forum,omitempty"`
