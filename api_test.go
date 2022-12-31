@@ -16,6 +16,7 @@ var (
 	locationTmp  *Message
 	inviteTmp    *ChatInviteLink
 	filePath     string
+	msgThreadID  int64
 	api          = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID       = int64(14870908)
 	banUserID    = int64(41876271)
@@ -868,6 +869,7 @@ func TestSendChatAction(t *testing.T) {
 	_, err := api.SendChatAction(
 		Typing,
 		chatID,
+		nil,
 	)
 
 	if err != nil {
@@ -963,18 +965,6 @@ func TestPromoteChatMember(t *testing.T) {
 			CanInviteUsers:      true,
 			CanPinMessages:      true,
 		},
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestSetChatAdministratorCustomTitle(t *testing.T) {
-	_, err := api.SetChatAdministratorCustomTitle(
-		groupID,
-		banUserID,
-		"TestCustomTitle",
 	)
 
 	if err != nil {
@@ -1190,6 +1180,159 @@ func TestGetChatMember(t *testing.T) {
 	_, err := api.GetChatMember(
 		groupID,
 		chatID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateForumTopic(t *testing.T) {
+	res, err := api.CreateForumTopic(
+		groupID,
+		"Test Topic",
+		&CreateTopicOptions{
+			IconColor: Green,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	msgThreadID = res.Result.MessageThreadID
+}
+
+func TestEditForumTopic(t *testing.T) {
+	_, err := api.EditForumTopic(
+		groupID,
+		msgThreadID,
+		&EditTopicOptions{
+			Name:              "Testing Topic",
+			IconCustomEmojiID: "5411138633765757782",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCloseForumTopic(t *testing.T) {
+	_, err := api.CloseForumTopic(
+		groupID,
+		msgThreadID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestReopenForumTopic(t *testing.T) {
+	_, err := api.ReopenForumTopic(
+		groupID,
+		msgThreadID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUnpinAllForumTopicMessages(t *testing.T) {
+	res, err := api.SendMessage(
+		"Test",
+		groupID,
+		&MessageOptions{
+			MessageThreadID: msgThreadID,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.PinChatMessage(
+		groupID,
+		res.Result.ID,
+		&PinMessageOptions{
+			DisableNotification: true,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.UnpinAllForumTopicMessages(
+		groupID,
+		msgThreadID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteForumTopic(t *testing.T) {
+	_, err := api.DeleteForumTopic(
+		groupID,
+		msgThreadID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestEditGeneralForumTopic(t *testing.T) {
+	_, err := api.EditGeneralForumTopic(
+		groupID,
+		fmt.Sprintf(
+			"General | Last changed: %d",
+			time.Now().Unix(),
+		),
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCloseGeneralForumTopic(t *testing.T) {
+	_, err := api.CloseGeneralForumTopic(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestReopenGeneralForumTopic(t *testing.T) {
+	_, err := api.ReopenGeneralForumTopic(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestHideGeneralForumTopic(t *testing.T) {
+	_, err := api.HideGeneralForumTopic(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUnhideGeneralForumTopic(t *testing.T) {
+	_, err := api.UnhideGeneralForumTopic(
+		groupID,
 	)
 
 	if err != nil {
