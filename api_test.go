@@ -1290,7 +1290,7 @@ func TestEditGeneralForumTopic(t *testing.T) {
 	_, err := api.EditGeneralForumTopic(
 		groupID,
 		fmt.Sprintf(
-			"General | Last changed: %d",
+			"General | %d",
 			time.Now().Unix(),
 		),
 	)
@@ -1302,16 +1302,6 @@ func TestEditGeneralForumTopic(t *testing.T) {
 
 func TestCloseGeneralForumTopic(t *testing.T) {
 	_, err := api.CloseGeneralForumTopic(
-		groupID,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestReopenGeneralForumTopic(t *testing.T) {
-	_, err := api.ReopenGeneralForumTopic(
 		groupID,
 	)
 
@@ -1332,6 +1322,16 @@ func TestHideGeneralForumTopic(t *testing.T) {
 
 func TestUnhideGeneralForumTopic(t *testing.T) {
 	_, err := api.UnhideGeneralForumTopic(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestReopenGeneralForumTopic(t *testing.T) {
+	_, err := api.ReopenGeneralForumTopic(
 		groupID,
 	)
 
