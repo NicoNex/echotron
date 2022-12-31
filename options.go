@@ -221,7 +221,7 @@ type MessageOptions struct {
 	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Entities                 []MessageEntity `query:"entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
+	MessageThreadID          int64           `query:"message_thread_id"`
 	ReplyToMessageID         int             `query:"reply_to_message_id"`
 	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
 	DisableNotification      bool            `query:"disable_notification"`
