@@ -353,7 +353,10 @@ func (a API) GetFile(fileID string) (res APIResponseFile, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("file_id", fileID)
-	return get[APIResponseFile](a.base, "getFile", vals)
+	return get[APIResponseFile](fmt.Sprintf(
+		"https://api.telegram.org/bot%s/", a.token),
+		"getFile",
+		vals)
 }
 
 // DownloadFile returns the bytes of the file corresponding to the given filePath.
