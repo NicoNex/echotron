@@ -39,6 +39,18 @@ func NewAPI(token string) API {
 	}
 }
 
+// NewCustomAPI returns a new API object with custom Bot API server
+func NewCustomAPI(token string, server string) API {
+	link, err := url.ParseRequestURI(server)
+	if err != nil {
+		panic("Invalid Bot API server url")
+	}
+	return API{
+		token: token,
+		base:  link.JoinPath(fmt.Sprintf("bot%s", token)).String(),
+	}
+}
+
 // GetUpdates is used to receive incoming updates using long polling.
 func (a API) GetUpdates(opts *UpdateOptions) (res APIResponseUpdate, err error) {
 	return get[APIResponseUpdate](a.base, "getUpdates", urlValues(opts))
