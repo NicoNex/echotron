@@ -999,7 +999,12 @@ func TestSetChatPermissions(t *testing.T) {
 		groupID,
 		ChatPermissions{
 			CanSendMessages:       true,
-			CanSendMediaMessages:  true,
+			CanSendAudios:         true,
+			CanSendDocuments:      true,
+			CanSendPhotos:         true,
+			CanSendVideos:         true,
+			CanSendVideoNotes:     true,
+			CanSendVoiceNotes:     true,
 			CanSendPolls:          true,
 			CanSendOtherMessages:  true,
 			CanAddWebPagePreviews: true,
@@ -1007,6 +1012,7 @@ func TestSetChatPermissions(t *testing.T) {
 			CanInviteUsers:        true,
 			CanPinMessages:        true,
 		},
+		nil,
 	)
 
 	if err != nil {

@@ -440,7 +440,7 @@ func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (res APIResponseBoo
 
 // SetChatPermissions is used to set default chat permissions for all members.
 // The bot must be an administrator in the supergroup for this to work and must have the can_restrict_members admin rights.
-func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (res APIResponseBool, err error) {
+func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions, opts *ChatPermissionsOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	perm, err := serializePerms(permissions)
@@ -450,7 +450,7 @@ func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions) (res 
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("permissions", perm)
-	return get[APIResponseBool](a.base, "setChatPermissions", vals)
+	return get[APIResponseBool](a.base, "setChatPermissions", addValues(vals, opts))
 }
 
 // ExportChatInviteLink is used to generate a new primary invite link for a chat;

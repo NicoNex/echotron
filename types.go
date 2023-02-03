@@ -445,6 +445,8 @@ type Message struct {
 	GeneralForumTopicHidden       *GeneralForumTopicHidden       `json:"general_forum_topic_hidden,omitempty"`
 	GeneralForumTopicUnhidden     *GeneralForumTopicUnhidden     `json:"general_forum_topic_unhidden,omitempty"`
 	WriteAccessAllowed            *WriteAccessAllowed            `json:"write_access_allowec,omitempty"`
+	UserShared                    *UserShared                    `json:"user_shared,omitempty"`
+	ChatShared                    *ChatShared                    `json:"chat_shared,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
@@ -743,7 +745,12 @@ type ChatMember struct {
 	CanPinMessages        bool   `json:"can_pin_messages,omitempty"`
 	IsMember              bool   `json:"is_member,omitempty"`
 	CanSendMessages       bool   `json:"can_send_messages,omitempty"`
-	CanSendMediaMessages  bool   `json:"can_send_media_messages,omitempty"`
+	CanSendAudios         bool   `json:"can_send_audios,omitempty"`
+	CanSendDocuments      bool   `json:"can_send_documents,omitempty"`
+	CanSendPhotos         bool   `json:"can_send_photos,omitempty"`
+	CanSendVideos         bool   `json:"can_send_videos,omitempty"`
+	CanSendVideoNotes     bool   `json:"can_send_video_notes,omitempty"`
+	CanSendVoiceNotes     bool   `json:"can_send_voice_notes,omitempty"`
 	CanSendPolls          bool   `json:"can_send_polls,omitempty"`
 	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
@@ -764,7 +771,12 @@ type ChatMemberUpdated struct {
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
 type ChatPermissions struct {
 	CanSendMessages       bool `json:"can_send_messages,omitempty"`
-	CanSendMediaMessages  bool `json:"can_send_media_messages,omitempty"`
+	CanSendAudios         bool `json:"can_send_audios,omitempty"`
+	CanSendDocuments      bool `json:"can_send_documents,omitempty"`
+	CanSendPhotos         bool `json:"can_send_photos,omitempty"`
+	CanSendVideos         bool `json:"can_send_videos,omitempty"`
+	CanSendVideoNotes     bool `json:"can_send_video_notes,omitempty"`
+	CanSendVoiceNotes     bool `json:"can_send_voice_notes,omitempty"`
 	CanSendPolls          bool `json:"can_send_polls,omitempty"`
 	CanSendOtherMessages  bool `json:"can_send_other_messages,omitempty"`
 	CanAddWebPagePreviews bool `json:"can_add_web_page_previews,omitempty"`
@@ -1028,6 +1040,7 @@ type ChatJoinRequest struct {
 	From       User            `json:"user"`
 	Chat       Chat            `json:"chat"`
 	Date       int             `json:"date"`
+	UserChatID int64           `json:"user_chat_id"`
 }
 
 // ForumTopicCreated represents a service message about a new forum topic created in the chat.
@@ -1077,4 +1090,16 @@ type ForumTopic struct {
 	IconCustomEmojiID string    `json:"icon_custom_emoji_id"`
 	IconColor         IconColor `json:"icon_color"`
 	MessageThreadID   int64     `json:"message_thread_id"`
+}
+
+// UserShared contains information about the user whose identifier was shared with the bot using a KeyboardButtonRequestUser button.
+type UserShared struct {
+	RequestID int   `json:"request_id"`
+	UserID    int64 `json:"user_id"`
+}
+
+// ChatShared contains information about the chat whose identifier was shared with the bot using a KeyboardButtonRequestChat button.
+type ChatShared struct {
+	RequestID int   `json:"request_id"`
+	ChatID    int64 `json:"chat_id"`
 }
