@@ -2,6 +2,7 @@ package echotron
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"reflect"
@@ -1474,14 +1475,45 @@ func TestReopenGeneralForumTopic(t *testing.T) {
 }
 
 func TestSetMyCommands(t *testing.T) {
-	_, err := api.SetMyCommands(
-		nil,
-		commands...,
-	)
-
-	if err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		name string
+		opts *CommandOptions
+		cmds []BotCommand
+		//expect APIResponseBool
+		assertion   require.ErrorAssertionFunc
+		description string
+	}{
+		{
+			name:        "#1",
+			cmds:        commands,
+			assertion:   require.NoError,
+			description: "",
+		},
+		{
+			name: "#2 - with Scope",
+			opts: &CommandOptions{
+				LanguageCode: "ru",
+				Scope:        BotCommandScope{Type: BCSTChat, ChatID: chatID},
+			},
+			cmds:        commands,
+			assertion:   require.NoError,
+			description: "With Scope",
+		},
 	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := api.SetMyCommands(
+				tt.opts,
+				tt.cmds...,
+			)
+			if err != nil {
+				tt.assertion(t, err)
+				return
+			}
+		})
+	}
+
 }
 
 func TestGetMyCommands(t *testing.T) {
