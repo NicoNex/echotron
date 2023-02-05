@@ -2,12 +2,13 @@ package echotron
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 var (
