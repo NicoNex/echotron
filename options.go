@@ -281,6 +281,7 @@ type CopyOptions struct {
 type InputFile struct {
 	id      string
 	path    string
+	url     string
 	ftype   string
 	content []byte
 }
@@ -293,6 +294,11 @@ func NewInputFileID(ID string) InputFile {
 // NewInputFilePath is a wrapper for InputFile which only fills the path field.
 func NewInputFilePath(filePath string) InputFile {
 	return InputFile{path: filePath}
+}
+
+// NewInputFileURL is a wrapper for InputFile which only fills the url field.
+func NewInputFileURL(url string) InputFile {
+	return InputFile{url: url}
 }
 
 // NewInputFileBytes is a wrapper for InputFile which only fills the path and content fields.

@@ -43,6 +43,13 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 			thumb:      "",
 		}
 
+	case media.url != "":
+		im = mediaEnvelope{
+			InputMedia: nil,
+			media:      media.url,
+			thumb:      "",
+		}
+
 	case media.path != "" && len(media.content) == 0:
 		if media.content, media.path, err = readFile(media); err != nil {
 			return
@@ -88,6 +95,8 @@ func sendFile(file, thumb InputFile, url, fileType string) (res []byte, err erro
 
 	if file.id != "" {
 		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
+	} else if file.url != "" {
+		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
 	} else if c, e := toContent(fileType, file); e == nil {
 		cnt = append(cnt, c)
 	} else {
