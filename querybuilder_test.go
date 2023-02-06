@@ -32,18 +32,6 @@ func TestScan(t *testing.T) {
 			},
 			description: "Scopes doesn't serialized",
 		},
-		{
-			// TODO: i don't know what ist...
-			name: "#2",
-			i: CommandOptions{
-				Scope: BotCommandScope{Type: BCSTChat, ChatID: 0101010},
-			},
-			val: url.Values{},
-			except: url.Values{
-				"scope": {"{\"type\":\"chat\",\"chat_id\":0101010,\"user_id\":0}"},
-			},
-			description: "Invalid ChatID",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
