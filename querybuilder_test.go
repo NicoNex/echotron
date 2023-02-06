@@ -22,9 +22,9 @@ func TestScan(t *testing.T) {
 				Scope:        BotCommandScope{Type: BCSTChat, ChatID: 33288},
 			},
 			val: url.Values{
-				"foo":   {"bar"},
-				"scope": {"{\"type\":\"chat\",\"chat_id\":33288,\"user_id\":0}"},
+				"foo": {"bar"},
 			},
+
 			except: url.Values{
 				"foo":           {"bar"},
 				"language_code": {"ru"},
@@ -38,9 +38,7 @@ func TestScan(t *testing.T) {
 			i: CommandOptions{
 				Scope: BotCommandScope{Type: BCSTChat, ChatID: 0101010},
 			},
-			val: url.Values{
-				"scope": {"{\"type\":\"chat\",\"chat_id\":0101010,\"user_id\":0}"},
-			},
+			val: url.Values{},
 			except: url.Values{
 				"scope": {"{\"type\":\"chat\",\"chat_id\":0101010,\"user_id\":0}"},
 			},
