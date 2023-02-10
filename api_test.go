@@ -31,6 +31,14 @@ var (
 	videoID      = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
 	videoNoteID  = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
 	voiceID      = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	photoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
+	animationURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
+	audioURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	documentURL  = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
+	logoInvURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
+	videoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
+	videoNoteURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
+	voiceURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
 
 	commands = []BotCommand{
 		{Command: "test1", Description: "Test command 1"},
@@ -240,6 +248,20 @@ func TestSendPhotoByID(t *testing.T) {
 	}
 }
 
+func TestSendPhotoURL(t *testing.T) {
+	_, err := api.SendPhoto(
+		NewInputFileURL(photoURL),
+		chatID,
+		&PhotoOptions{
+			Caption: "TestSendPhotoURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendPhotoBytes(t *testing.T) {
 	data, err := openBytes("assets/tests/echotron_test.png")
 
@@ -295,6 +317,20 @@ func TestSendAudioByID(t *testing.T) {
 		chatID,
 		&AudioOptions{
 			Caption: "TestSendAudioByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendAudioURL(t *testing.T) {
+	_, err := api.SendAudio(
+		NewInputFileURL(audioURL),
+		chatID,
+		&AudioOptions{
+			Caption: "TestSendAudioURL",
 		},
 	)
 
@@ -381,6 +417,20 @@ func TestSendDocumentByID(t *testing.T) {
 	}
 }
 
+func TestSendDocumentURL(t *testing.T) {
+	_, err := api.SendDocument(
+		NewInputFileURL(documentURL),
+		chatID,
+		&DocumentOptions{
+			Caption: "TestSendDocumentURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendDocumentWithKeyboard(t *testing.T) {
 	_, err := api.SendDocument(
 		NewInputFilePath("assets/tests/document.pdf"),
@@ -442,6 +492,20 @@ func TestSendVideoByID(t *testing.T) {
 		chatID,
 		&VideoOptions{
 			Caption: "TestSendVideoByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendVideoURL(t *testing.T) {
+	_, err := api.SendVideo(
+		NewInputFileURL(videoURL),
+		chatID,
+		&VideoOptions{
+			Caption: "TestSendVideoURL",
 		},
 	)
 
@@ -515,6 +579,22 @@ func TestSendAnimationByID(t *testing.T) {
 	}
 }
 
+func TestSendAnimationURL(t *testing.T) {
+	resp, err := api.SendAnimation(
+		NewInputFileURL(animationURL),
+		chatID,
+		&AnimationOptions{
+			Caption: "TestSendAnimationURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	animationTmp = resp.Result
+}
+
 func TestSendAnimationWithKeyboard(t *testing.T) {
 	_, err := api.SendAnimation(
 		NewInputFilePath("assets/tests/animation.mp4"),
@@ -578,6 +658,20 @@ func TestSendVoiceByID(t *testing.T) {
 	}
 }
 
+func TestSendVoiceURL(t *testing.T) {
+	_, err := api.SendVoice(
+		NewInputFileURL(voiceURL),
+		chatID,
+		&VoiceOptions{
+			Caption: "TestSendVoiceURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendVoiceWithKeyboard(t *testing.T) {
 	_, err := api.SendVoice(
 		NewInputFilePath("assets/tests/audio.mp3"),
@@ -625,92 +719,10 @@ func TestSendVideoNote(t *testing.T) {
 	}
 }
 
-func TestSendMediaGroupPhoto(t *testing.T) {
-	_, err := api.SendMediaGroup(
+func TestSendVideoNoteURL(t *testing.T) {
+	_, err := api.SendVideoNote(
+		NewInputFileURL(videoNoteURL),
 		chatID,
-		[]GroupableInputMedia{
-			InputMediaPhoto{
-				Type:    MediaTypePhoto,
-				Media:   NewInputFileID(photoID),
-				Caption: "TestSendMediaGroup1",
-			},
-			InputMediaPhoto{
-				Type:    MediaTypePhoto,
-				Media:   NewInputFilePath("assets/logo.png"),
-				Caption: "TestSendMediaGroup2",
-			},
-		},
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestSendMediaGroupVideo(t *testing.T) {
-	_, err := api.SendMediaGroup(
-		chatID,
-		[]GroupableInputMedia{
-			InputMediaVideo{
-				Type:    MediaTypeVideo,
-				Media:   NewInputFileID(videoID),
-				Caption: "TestSendMediaGroup1",
-			},
-			InputMediaVideo{
-				Type:    MediaTypeVideo,
-				Media:   NewInputFilePath("assets/tests/video.webm"),
-				Caption: "TestSendMediaGroup2",
-			},
-		},
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestSendMediaGroupDocument(t *testing.T) {
-	_, err := api.SendMediaGroup(
-		chatID,
-		[]GroupableInputMedia{
-			InputMediaDocument{
-				Type:    MediaTypeDocument,
-				Media:   NewInputFileID(documentID),
-				Caption: "TestSendMediaGroup1",
-			},
-			InputMediaDocument{
-				Type:    MediaTypeDocument,
-				Media:   NewInputFilePath("assets/tests/document.pdf"),
-				Caption: "TestSendMediaGroup2",
-			},
-		},
-		nil,
-	)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestSendMediaGroupThumb(t *testing.T) {
-	_, err := api.SendMediaGroup(
-		chatID,
-		[]GroupableInputMedia{
-			InputMediaAudio{
-				Type:    MediaTypeAudio,
-				Media:   NewInputFilePath("assets/tests/audio_inv.mp3"),
-				Thumb:   NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
-				Caption: "TestSendMediaGroupThumb1",
-			},
-			InputMediaAudio{
-				Type:    MediaTypeAudio,
-				Media:   NewInputFilePath("assets/tests/audio.mp3"),
-				Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
-				Caption: "TestSendMediaGroupThumb2",
-			},
-		},
 		nil,
 	)
 
@@ -755,6 +767,121 @@ func TestSendVideoNoteBytes(t *testing.T) {
 	_, err = api.SendVideoNote(
 		NewInputFileBytes("video_note.mp4", data),
 		chatID,
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendMediaGroupPhoto(t *testing.T) {
+	_, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaPhoto{
+				Type:    MediaTypePhoto,
+				Media:   NewInputFileID(photoID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaPhoto{
+				Type:    MediaTypePhoto,
+				Media:   NewInputFilePath("assets/logo.png"),
+				Caption: "TestSendMediaGroup2",
+			},
+			InputMediaPhoto{
+				Type:    MediaTypePhoto,
+				Media:   NewInputFileURL(logoInvURL),
+				Caption: "TestSendMediaGroup3",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendMediaGroupVideo(t *testing.T) {
+	_, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaVideo{
+				Type:    MediaTypeVideo,
+				Media:   NewInputFileID(videoID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaVideo{
+				Type:    MediaTypeVideo,
+				Media:   NewInputFilePath("assets/tests/video.webm"),
+				Caption: "TestSendMediaGroup2",
+			},
+			InputMediaVideo{
+				Type:    MediaTypeVideo,
+				Media:   NewInputFileURL(videoURL),
+				Caption: "TestSendMediaGroup3",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendMediaGroupDocument(t *testing.T) {
+	_, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaDocument{
+				Type:    MediaTypeDocument,
+				Media:   NewInputFileID(documentID),
+				Caption: "TestSendMediaGroup1",
+			},
+			InputMediaDocument{
+				Type:    MediaTypeDocument,
+				Media:   NewInputFilePath("assets/tests/document.pdf"),
+				Caption: "TestSendMediaGroup2",
+			},
+			InputMediaDocument{
+				Type:    MediaTypeDocument,
+				Media:   NewInputFileURL(documentURL),
+				Caption: "TestSendMediaGroup3",
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendMediaGroupThumb(t *testing.T) {
+	_, err := api.SendMediaGroup(
+		chatID,
+		[]GroupableInputMedia{
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio_inv.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
+				Caption: "TestSendMediaGroupThumb1",
+			},
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFilePath("assets/tests/audio.mp3"),
+				Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+				Caption: "TestSendMediaGroupThumb2",
+			},
+			InputMediaAudio{
+				Type:    MediaTypeAudio,
+				Media:   NewInputFileURL(audioURL),
+				Thumb:   NewInputFileURL(logoInvURL),
+				Caption: "TestSendMediaGroupThumb3",
+			},
+		},
 		nil,
 	)
 
@@ -999,7 +1126,12 @@ func TestSetChatPermissions(t *testing.T) {
 		groupID,
 		ChatPermissions{
 			CanSendMessages:       true,
-			CanSendMediaMessages:  true,
+			CanSendAudios:         true,
+			CanSendDocuments:      true,
+			CanSendPhotos:         true,
+			CanSendVideos:         true,
+			CanSendVideoNotes:     true,
+			CanSendVoiceNotes:     true,
 			CanSendPolls:          true,
 			CanSendOtherMessages:  true,
 			CanAddWebPagePreviews: true,
@@ -1007,6 +1139,7 @@ func TestSetChatPermissions(t *testing.T) {
 			CanInviteUsers:        true,
 			CanPinMessages:        true,
 		},
+		nil,
 	)
 
 	if err != nil {
@@ -1421,7 +1554,7 @@ func TestEditMessageCaption(t *testing.T) {
 func TestEditMessageMedia(t *testing.T) {
 	_, err := api.EditMessageMedia(
 		NewMessageID(chatID, animationTmp.ID),
-		InputMediaPhoto{
+		InputMediaAnimation{
 			Type:    MediaTypeAnimation,
 			Media:   NewInputFileID(animationID),
 			Caption: "TestEditMessageMedia",
@@ -1441,6 +1574,22 @@ func TestEditMessageMediaBytes(t *testing.T) {
 			Type:    MediaTypeAnimation,
 			Media:   NewInputFilePath("assets/tests/animation.mp4"),
 			Caption: "TestEditMessageMediaBytes",
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestEditMessageMediaURL(t *testing.T) {
+	_, err := api.EditMessageMedia(
+		NewMessageID(chatID, animationTmp.ID),
+		InputMediaAnimation{
+			Type:    MediaTypeAnimation,
+			Media:   NewInputFileURL(animationURL),
+			Caption: "TestEditMessageMediaURL",
 		},
 		nil,
 	)

@@ -43,6 +43,13 @@ func processMedia(media, thumb InputFile) (im mediaEnvelope, cnt []content, err 
 			thumb:      "",
 		}
 
+	case media.url != "":
+		im = mediaEnvelope{
+			InputMedia: nil,
+			media:      media.url,
+			thumb:      "",
+		}
+
 	case media.path != "" && len(media.content) == 0:
 		if media.content, media.path, err = readFile(media); err != nil {
 			return
@@ -88,6 +95,8 @@ func sendFile(file, thumb InputFile, url, fileType string) (res []byte, err erro
 
 	if file.id != "" {
 		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
+	} else if file.url != "" {
+		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
 	} else if c, e := toContent(fileType, file); e == nil {
 		cnt = append(cnt, c)
 	} else {
@@ -108,7 +117,7 @@ func sendFile(file, thumb InputFile, url, fileType string) (res []byte, err erro
 	return
 }
 
-func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []byte, err error) {
+func sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
 	var (
 		med []mediaEnvelope
 		cnt []content
@@ -133,7 +142,7 @@ func sendMediaFiles(url string, isSingleFile bool, files ...InputMedia) (res []b
 		cnt = append(cnt, cntArr...)
 	}
 
-	if isSingleFile {
+	if editSingle {
 		jsn, err = json.Marshal(med[0])
 	} else {
 		jsn, err = json.Marshal(med)
@@ -231,7 +240,7 @@ func postFile[T APIResponse](base, endpoint, fileType string, file, thumb InputF
 	return
 }
 
-func postMedia[T APIResponse](base, endpoint string, isSingleFile bool, vals url.Values, files ...InputMedia) (res T, err error) {
+func postMedia[T APIResponse](base, endpoint string, editSingle bool, vals url.Values, files ...InputMedia) (res T, err error) {
 	url, err := url.JoinPath(base, endpoint)
 	if err != nil {
 		return res, err
@@ -243,7 +252,7 @@ func postMedia[T APIResponse](base, endpoint string, isSingleFile bool, vals url
 		}
 	}
 
-	cnt, err := sendMediaFiles(url, isSingleFile, files...)
+	cnt, err := sendMediaFiles(url, editSingle, files...)
 	if err != nil {
 		return res, err
 	}

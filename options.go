@@ -120,16 +120,39 @@ type ReplyMarkup interface {
 
 // KeyboardButton represents a button in a keyboard.
 type KeyboardButton struct {
-	RequestPoll     *KeyboardButtonPollType `json:"request_poll,omitempty"`
-	WebApp          *WebAppInfo             `json:"web_app,omitempty"`
-	Text            string                  `json:"text"`
-	RequestContact  bool                    `json:"request_contact,omitempty"`
-	RequestLocation bool                    `json:"request_location,omitempty"`
+	RequestPoll     *KeyboardButtonPollType    `json:"request_poll,omitempty"`
+	WebApp          *WebAppInfo                `json:"web_app,omitempty"`
+	RequestUser     *KeyboardButtonRequestUser `json:"request_user,omitempty"`
+	RequestChat     *KeyboardButtonRequestChat `json:"request_chat,omitempty"`
+	Text            string                     `json:"text"`
+	RequestContact  bool                       `json:"request_contact,omitempty"`
+	RequestLocation bool                       `json:"request_location,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
 type KeyboardButtonPollType struct {
 	Type PollType `json:"type"`
+}
+
+// KeyboardButtonRequestUser defines the criteria used to request a suitable user.
+// The identifier of the selected user will be shared with the bot when the corresponding button is pressed.
+type KeyboardButtonRequestUser struct {
+	RequestID     int  `json:"request_id"`
+	UserIsPremium bool `json:"user_is_premium,omitempty"`
+	UserIsBot     bool `json:"user_is_bot,omitempty"`
+}
+
+// KeyboardButtonRequestChat defines the criteria used to request a suitable chat.
+// The identifier of the selected chat will be shared with the bot when the corresponding button is pressed.
+type KeyboardButtonRequestChat struct {
+	UserAdministratorRights *ChatAdministratorRights `json:"user_administrator_rights,omitempty"`
+	BotAdministratorRights  *ChatAdministratorRights `json:"bot_administrator_rights,omitempty"`
+	RequestID               int                      `json:"request_id"`
+	ChatIsChannel           bool                     `json:"chat_is_channel,omitempty"`
+	ChatIsForum             bool                     `json:"chat_is_forum,omitempty"`
+	ChatHasUsername         bool                     `json:"chat_has_username,omitempty"`
+	ChatIsCreated           bool                     `json:"chat_is_created,omitempty"`
+	BotIsMember             bool                     `json:"bot_is_member,omitempty"`
 }
 
 // ReplyKeyboardMarkup represents a custom keyboard with reply options.
@@ -258,6 +281,7 @@ type CopyOptions struct {
 type InputFile struct {
 	id      string
 	path    string
+	url     string
 	ftype   string
 	content []byte
 }
@@ -270,6 +294,11 @@ func NewInputFileID(ID string) InputFile {
 // NewInputFilePath is a wrapper for InputFile which only fills the path field.
 func NewInputFilePath(filePath string) InputFile {
 	return InputFile{path: filePath}
+}
+
+// NewInputFileURL is a wrapper for InputFile which only fills the url field.
+func NewInputFileURL(url string) InputFile {
+	return InputFile{url: url}
 }
 
 // NewInputFileBytes is a wrapper for InputFile which only fills the path and content fields.
@@ -477,7 +506,8 @@ type UnbanOptions struct {
 
 // RestrictOptions contains the optional parameters used by the RestrictChatMember method.
 type RestrictOptions struct {
-	UntilDate int `query:"until_date"`
+	UseIndependentChatPermissions bool `query:"use_independent_chat_permissions"`
+	UntilDate                     int  `query:"until_date"`
 }
 
 // PromoteOptions contains the optional parameters used by the PromoteChatMember method.
@@ -500,6 +530,11 @@ type PromoteOptions struct {
 type UserProfileOptions struct {
 	Offset int `query:"offset"`
 	Limit  int `query:"limit"`
+}
+
+// ChatPermissionsOptions contains the optional parameters used by the SetChatPermissions method.
+type ChatPermissionsOptions struct {
+	UseIndependentChatPermissions bool `query:"use_independent_chat_permissions"`
 }
 
 // InviteLinkOptions contains the optional parameters used by the CreateChatInviteLink and EditChatInviteLink methods.
