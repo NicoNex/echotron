@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+// PollingUpdates is a wrapper function for PollingUpdatesOptions.
 func PollingUpdates(token string) <-chan *Update {
 	return PollingUpdatesOptions(token, true, UpdateOptions{Timeout: 120})
 }
 
+// PollingUpdatesOptions returns a read-only channel of incoming  updates from the Telegram API.
 func PollingUpdatesOptions(token string, dropPendingUpdates bool, opts UpdateOptions) <-chan *Update {
 	var (
 		api     = NewAPI(token)
@@ -64,10 +66,16 @@ func PollingUpdatesOptions(token string, dropPendingUpdates bool, opts UpdateOpt
 	return updates
 }
 
+// WebhookUpdates is a wrapper function for WebhookUpdatesOptions.
 func WebhookUpdates(url, token string) <-chan *Update {
 	return WebhookUpdatesOptions(url, token, false, nil)
 }
 
+// WebhookUpdatesOptions returns a read-only channel of incoming updates from the Telegram API.
+// The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
+// eg: 'https://example.com:443/bot_token'.
+// WebhookUpdatesOptions will then proceed to communicate the webhook url '<hostname>/<path>'
+// to Telegram and run a webserver that listens to ':<port>' and handles the path.
 func WebhookUpdatesOptions(whURL, token string, dropPendingUpdates bool, opts *WebhookOptions) <-chan *Update {
 	u, err := url.Parse(whURL)
 	if err != nil {
