@@ -10,9 +10,27 @@ go get github.com/NicoNex/echotron/v3
 ```
 
 ## Example
-### Long Polling
+### Simplest implementation
+```golang
+package main
 
-A very simple implementation:
+import "github.com/NicoNex/echotron/v3"
+
+const token = "YOUR TELEGRAM TOKEN"
+
+func main() {
+	api := echotron.NewAPI(token)
+
+	for u := range echotron.PollingUpdates(token) {
+		if u.Message.Text == "/start" {
+			api.SendMessage("Hello world", u.Message.Chat.ID, nil)
+		}
+	}
+}
+```
+For more scalable and recommended implementations see the other examples.
+
+### Long Polling
 
 ```golang
 package main
@@ -84,7 +102,7 @@ _Example: `sendMessage` becomes `SendMessage`_
 - Optional parameters can be added by passing the correct struct to each method that might request optional parameters. If you don't want to pass any optional parameter, `nil` is more than enough. Refer to the [docs](https://pkg.go.dev/github.com/NicoNex/echotron/v3) to check for each method's optional parameters struct: it's the type of the `opts` parameter.
 - Some parameters are hardcoded to avoid putting random stuff which isn't recognized by the Telegram API. Some notable examples are [`ParseMode`](https://github.com/NicoNex/echotron/blob/master/options.go#L21), [`ChatAction`](https://github.com/NicoNex/echotron/blob/master/options.go#L54) and [`InlineQueryType`](https://github.com/NicoNex/echotron/blob/master/inline.go#L27). For a full list of custom hardcoded parameters, refer to the [docs](https://pkg.go.dev/github.com/NicoNex/echotron/v3) for each custom type: by clicking on the type's name, you'll get the source which contains the possible values for that type.
 
-## Other examples
+## Additional examples
 ### Functional approach to state management
 ```golang
 package main
