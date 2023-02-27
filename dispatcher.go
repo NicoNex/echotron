@@ -141,38 +141,7 @@ func (d *Dispatcher) instance(chatID int64) Bot {
 
 func (d *Dispatcher) listen() {
 	for update := range d.updates {
-		var chatID int64
-
-		switch {
-		case update.Message != nil:
-			chatID = update.Message.Chat.ID
-		case update.EditedMessage != nil:
-			chatID = update.EditedMessage.Chat.ID
-		case update.ChannelPost != nil:
-			chatID = update.ChannelPost.Chat.ID
-		case update.EditedChannelPost != nil:
-			chatID = update.EditedChannelPost.Chat.ID
-		case update.InlineQuery != nil:
-			chatID = update.InlineQuery.From.ID
-		case update.ChosenInlineResult != nil:
-			chatID = update.ChosenInlineResult.From.ID
-		case update.CallbackQuery != nil:
-			chatID = update.CallbackQuery.Message.Chat.ID
-		case update.ShippingQuery != nil:
-			chatID = update.ShippingQuery.From.ID
-		case update.PreCheckoutQuery != nil:
-			chatID = update.PreCheckoutQuery.From.ID
-		case update.MyChatMember != nil:
-			chatID = update.MyChatMember.Chat.ID
-		case update.ChatMember != nil:
-			chatID = update.ChatMember.Chat.ID
-		case update.ChatJoinRequest != nil:
-			chatID = update.ChatJoinRequest.Chat.ID
-		default:
-			continue
-		}
-
-		bot := d.instance(chatID)
+		bot := d.instance(update.ChatID())
 		go bot.Update(update)
 	}
 }

@@ -38,6 +38,38 @@ type Update struct {
 	ID                 int                 `json:"update_id"`
 }
 
+// ChatID returns the ID of the chat the update is coming from.
+func (u Update) ChatID() int64 {
+	switch {
+	case u.Message != nil:
+		return u.Message.Chat.ID
+	case u.EditedMessage != nil:
+		return u.EditedMessage.Chat.ID
+	case u.ChannelPost != nil:
+		return u.ChannelPost.Chat.ID
+	case u.EditedChannelPost != nil:
+		return u.EditedChannelPost.Chat.ID
+	case u.InlineQuery != nil:
+		return u.InlineQuery.From.ID
+	case u.ChosenInlineResult != nil:
+		return u.ChosenInlineResult.From.ID
+	case u.CallbackQuery != nil:
+		return u.CallbackQuery.Message.Chat.ID
+	case u.ShippingQuery != nil:
+		return u.ShippingQuery.From.ID
+	case u.PreCheckoutQuery != nil:
+		return u.PreCheckoutQuery.From.ID
+	case u.MyChatMember != nil:
+		return u.MyChatMember.Chat.ID
+	case u.ChatMember != nil:
+		return u.ChatMember.Chat.ID
+	case u.ChatJoinRequest != nil:
+		return u.ChatJoinRequest.Chat.ID
+	default:
+		return 0
+	}
+}
+
 // WebhookInfo contains information about the current status of a webhook.
 type WebhookInfo struct {
 	URL                          string        `json:"url"`
