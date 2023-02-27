@@ -92,9 +92,8 @@ func (d *Dispatcher) Poll() error {
 // upon receiving any update from Telegram.
 func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) error {
 	var (
-		timeout      = opts.Timeout
-		isFirstRun   = true
-		lastUpdateID = -1
+		timeout    = opts.Timeout
+		isFirstRun = true
 	)
 
 	// deletes webhook if present to run in long polling mode
@@ -107,7 +106,6 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) er
 			opts.Timeout = 0
 		}
 
-		opts.Offset = lastUpdateID + 1
 		response, err := d.api.GetUpdates(&opts)
 		if err != nil {
 			return err
@@ -120,7 +118,7 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) er
 		}
 
 		if l := len(response.Result); l > 0 {
-			lastUpdateID = response.Result[l-1].ID
+			opts.Offset = response.Result[l-1].ID + 1
 		}
 
 		if isFirstRun {
