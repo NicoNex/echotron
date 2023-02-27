@@ -10,20 +10,39 @@ go get github.com/NicoNex/echotron/v3
 ```
 
 ## Example
-### Simplest implementation
+### Simplest implementations
+#### Long polling
 ```golang
 package main
 
 import "github.com/NicoNex/echotron/v3"
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 func main() {
 	api := echotron.NewAPI(token)
 
 	for u := range echotron.PollingUpdates(token) {
 		if u.Message.Text == "/start" {
-			api.SendMessage("Hello world", u.Message.Chat.ID, nil)
+			api.SendMessage("Hello world", u.ChatID(), nil)
+		}
+	}
+}
+```
+#### Webhook
+```golang
+package main
+
+import "github.com/NicoNex/echotron/v3"
+
+const token = "MY TELEGRAM TOKEN"
+
+func main() {
+	api := echotron.NewAPI(token)
+
+	for u := range echotron.WebhookUpdates("https://example.com:443/my_token", token) {
+		if u.Message.Text == "/start" {
+			api.SendMessage("Hello world", u.ChatID(), nil)
 		}
 	}
 }
@@ -49,7 +68,7 @@ type bot struct {
 	echotron.API
 }
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 // This function needs to be of type 'echotron.NewBotFn' and is called by
 // the echotron dispatcher upon any new message from a chatID that has never
@@ -124,7 +143,7 @@ type bot struct {
 	echotron.API
 }
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 func newBot(chatID int64) echotron.Bot {
 	bot := &bot{
@@ -181,7 +200,7 @@ type bot struct {
 	echotron.API
 }
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 var dsp *echotron.Dispatcher
 
@@ -224,7 +243,7 @@ type bot struct {
 	echotron.API
 }
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 func newBot(chatID int64) echotron.Bot {
 	return &bot{
@@ -267,7 +286,7 @@ type bot struct {
 	echotron.API
 }
 
-const token = "YOUR TELEGRAM TOKEN"
+const token = "MY TELEGRAM TOKEN"
 
 func newBot(chatID int64) echotron.Bot {
 	return &bot{
