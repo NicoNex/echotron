@@ -16,15 +16,13 @@ func PollingUpdates(token string) <-chan *Update {
 
 // PollingUpdatesOptions returns a read-only channel of incoming  updates from the Telegram API.
 func PollingUpdatesOptions(token string, dropPendingUpdates bool, opts UpdateOptions) <-chan *Update {
-	var (
-		api     = NewAPI(token)
-		updates = make(chan *Update)
-	)
+	var updates = make(chan *Update)
 
 	go func() {
 		defer close(updates)
 
 		var (
+			api        = NewAPI(token)
 			timeout    = opts.Timeout
 			isFirstRun = true
 		)
