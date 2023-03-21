@@ -76,10 +76,10 @@ type InlineQueryResultArticle struct {
 	ID                  string              `json:"id"`
 	Title               string              `json:"title"`
 	Description         string              `json:"description,omitempty"`
-	ThumbURL            string              `json:"thumb_url,omitempty"`
+	ThumbnailURL        string              `json:"thumbnail_url,omitempty"`
 	URL                 string              `json:"url,omitempty"`
-	ThumbWidth          int                 `json:"thumb_width,omitempty"`
-	ThumbHeight         int                 `json:"thumb_height,omitempty"`
+	ThumbnailWidth      int                 `json:"thumbnail_width,omitempty"`
+	ThumbnailHeight     int                 `json:"thumbnail_height,omitempty"`
 	HideURL             bool                `json:"hide_url,omitempty"`
 }
 
@@ -93,7 +93,7 @@ type InlineQueryResultPhoto struct {
 	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Title               string              `json:"title,omitempty"`
-	ThumbURL            string              `json:"thumb_url"`
+	ThumbnailURL        string              `json:"thumbnail_url"`
 	PhotoURL            string              `json:"photo_url"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	ID                  string              `json:"id"`
@@ -118,9 +118,9 @@ type InlineQueryResultGif struct {
 	GifURL              string              `json:"gif_url"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
-	ThumbURL            string              `json:"thumb_url"`
+	ThumbnailURL        string              `json:"thumbnail_url"`
 	ID                  string              `json:"id"`
-	ThumbMimeType       string              `json:"thumb_mime_type,omitempty"`
+	ThumbnailMimeType   string              `json:"thumbnail_mime_type,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
 	GifDuration         int                 `json:"gif_duration,omitempty"`
@@ -141,9 +141,9 @@ type InlineQueryResultMpeg4Gif struct {
 	Mpeg4URL            string              `json:"mpeg4_url"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	Caption             string              `json:"caption,omitempty"`
-	ThumbURL            string              `json:"thumb_url"`
+	ThumbnailURL        string              `json:"thumbnail_url"`
 	ID                  string              `json:"id"`
-	ThumbMimeType       string              `json:"thumb_mime_type,omitempty"`
+	ThumbnailMimeType   string              `json:"thumbnail_mime_type,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
 	Mpeg4Duration       int                 `json:"mpeg4_duration,omitempty"`
@@ -162,7 +162,7 @@ type InlineQueryResultVideo struct {
 	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	Description         string              `json:"description,omitempty"`
 	MimeType            string              `json:"mime_type"`
-	ThumbURL            string              `json:"thumb_url"`
+	ThumbnailURL        string              `json:"thumbnail_url"`
 	Title               string              `json:"title"`
 	Caption             string              `json:"caption,omitempty"`
 	ID                  string              `json:"id"`
@@ -227,15 +227,15 @@ type InlineQueryResultDocument struct {
 	MimeType            string              `json:"mime_type"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
-	ThumbURL            string              `json:"thumb_url,omitempty"`
+	ThumbnailURL        string              `json:"thumbnail_url,omitempty"`
 	DocumentURL         string              `json:"document_url"`
 	Title               string              `json:"title"`
 	Description         string              `json:"description,omitempty"`
 	ID                  string              `json:"id"`
 	Type                InlineQueryType     `json:"type"`
 	CaptionEntities     []*MessageEntity    `json:"caption_entities,omitempty"`
-	ThumbWidth          int                 `json:"thumb_width,omitempty"`
-	ThumbHeight         int                 `json:"thumb_height,omitempty"`
+	ThumbnailWidth      int                 `json:"thumbnail_width,omitempty"`
+	ThumbnailHeight     int                 `json:"thumbnail_height,omitempty"`
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
@@ -248,7 +248,7 @@ type InlineQueryResultLocation struct {
 	InputMessageContent  InputMessageContent `json:"input_message_content,omitempty"`
 	ReplyMarkup          ReplyMarkup         `json:"reply_markup,omitempty"`
 	ID                   string              `json:"id"`
-	ThumbURL             string              `json:"thumb_url,omitempty"`
+	ThumbnailURL         string              `json:"thumbnail_url,omitempty"`
 	Title                string              `json:"title"`
 	Type                 InlineQueryType     `json:"type"`
 	LivePeriod           int                 `json:"live_period,omitempty"`
@@ -256,8 +256,8 @@ type InlineQueryResultLocation struct {
 	ProximityAlertRadius int                 `json:"proximity_alert_radius,omitempty"`
 	Longitude            float64             `json:"longitude"`
 	Latitude             float64             `json:"latitude"`
-	ThumbWidth           int                 `json:"thumb_width,omitempty"`
-	ThumbHeight          int                 `json:"thumb_height,omitempty"`
+	ThumbnailWidth       int                 `json:"thumbnail_width,omitempty"`
+	ThumbnailHeight      int                 `json:"thumbnail_height,omitempty"`
 	Heading              int                 `json:"heading,omitempty"`
 }
 
@@ -271,7 +271,7 @@ type InlineQueryResultVenue struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
 	GooglePlaceType     string              `json:"google_place_type,omitempty"`
-	ThumbURL            string              `json:"thumb_url,omitempty"`
+	ThumbnailURL        string              `json:"thumbnail_url,omitempty"`
 	Title               string              `json:"title"`
 	Address             string              `json:"address"`
 	FoursquareID        string              `json:"foursquare_id,omitempty"`
@@ -281,8 +281,8 @@ type InlineQueryResultVenue struct {
 	Type                InlineQueryType     `json:"type"`
 	Longitude           float64             `json:"longitude"`
 	Latitude            float64             `json:"latitude"`
-	ThumbWidth          int                 `json:"thumb_width,omitempty"`
-	ThumbHeight         int                 `json:"thumb_height,omitempty"`
+	ThumbnailWidth      int                 `json:"thumbnail_width,omitempty"`
+	ThumbnailHeight     int                 `json:"thumbnail_height,omitempty"`
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
@@ -299,10 +299,10 @@ type InlineQueryResultContact struct {
 	FirstName           string              `json:"first_name"`
 	VCard               string              `json:"vcard,omitempty"`
 	Type                InlineQueryType     `json:"type"`
-	ThumbURL            string              `json:"thumb_url,omitempty"`
+	ThumbnailURL        string              `json:"thumbnail_url,omitempty"`
 	LastName            string              `json:"last_name,omitempty"`
-	ThumbWidth          int                 `json:"thumb_width,omitempty"`
-	ThumbHeight         int                 `json:"thumb_height,omitempty"`
+	ThumbnailWidth      int                 `json:"thumbnail_width,omitempty"`
+	ThumbnailHeight     int                 `json:"thumbnail_height,omitempty"`
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.

@@ -277,6 +277,17 @@ type CopyOptions struct {
 	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
 }
 
+// StickerOptions contains the optional parameters used by the SendSticker method.
+type StickerOptions struct {
+	Emoji                    string      `query:"emoji"`
+	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+	MessageThreadID          int         `query:"message_thread_id"`
+	ReplyToMessageID         int         `query:"reply_to_message_id"`
+	DisableNotification      bool        `query:"disable_notification"`
+	ProtectContent           bool        `query:"protect_content"`
+	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+}
+
 // InputFile is a struct which contains data about a file to be sent.
 type InputFile struct {
 	id      string
@@ -327,7 +338,7 @@ type AudioOptions struct {
 	Caption                  string      `query:"caption"`
 	Performer                string      `query:"performer"`
 	Title                    string      `query:"title"`
-	Thumb                    InputFile
+	Thumbnail                InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
@@ -342,7 +353,7 @@ type DocumentOptions struct {
 	ReplyMarkup                 ReplyMarkup `query:"reply_markup"`
 	ParseMode                   ParseMode   `query:"parse_mode"`
 	Caption                     string      `query:"caption"`
-	Thumb                       InputFile
+	Thumbnail                   InputFile
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	MessageThreadID             int             `query:"message_thread_id"`
 	ReplyToMessageID            int             `query:"reply_to_message_id"`
@@ -357,7 +368,7 @@ type VideoOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 	Caption                  string      `query:"caption"`
 	ParseMode                ParseMode   `query:"parse_mode"`
-	Thumb                    InputFile
+	Thumbnail                InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
@@ -376,7 +387,7 @@ type AnimationOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
 	ParseMode                ParseMode   `query:"parse_mode"`
 	Caption                  string      `query:"caption"`
-	Thumb                    InputFile
+	Thumbnail                InputFile
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
 	MessageThreadID          int             `query:"message_thread_id"`
 	Duration                 int             `query:"duration"`
@@ -406,7 +417,7 @@ type VoiceOptions struct {
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
 	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	Thumb                    InputFile
+	Thumbnail                InputFile
 	MessageThreadID          int  `query:"message_thread_id"`
 	Duration                 int  `query:"duration"`
 	ReplyToMessageID         int  `query:"reply_to_message_id"`

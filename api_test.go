@@ -374,13 +374,13 @@ func TestSendAudioBytes(t *testing.T) {
 	}
 }
 
-func TestSendAudioThumb(t *testing.T) {
+func TestSendAudioThumbnail(t *testing.T) {
 	_, err := api.SendAudio(
 		NewInputFilePath("assets/tests/audio.mp3"),
 		chatID,
 		&AudioOptions{
-			Caption: "TestSendAudio",
-			Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+			Caption:   "TestSendAudio",
+			Thumbnail: NewInputFilePath("assets/tests/echotron_thumb.jpg"),
 		},
 	)
 
@@ -859,27 +859,27 @@ func TestSendMediaGroupDocument(t *testing.T) {
 	}
 }
 
-func TestSendMediaGroupThumb(t *testing.T) {
+func TestSendMediaGroupThumbnail(t *testing.T) {
 	_, err := api.SendMediaGroup(
 		chatID,
 		[]GroupableInputMedia{
 			InputMediaAudio{
-				Type:    MediaTypeAudio,
-				Media:   NewInputFilePath("assets/tests/audio_inv.mp3"),
-				Thumb:   NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
-				Caption: "TestSendMediaGroupThumb1",
+				Type:      MediaTypeAudio,
+				Media:     NewInputFilePath("assets/tests/audio_inv.mp3"),
+				Thumbnail: NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
+				Caption:   "TestSendMediaGroupThumbnail1",
 			},
 			InputMediaAudio{
-				Type:    MediaTypeAudio,
-				Media:   NewInputFilePath("assets/tests/audio.mp3"),
-				Thumb:   NewInputFilePath("assets/tests/echotron_thumb.jpg"),
-				Caption: "TestSendMediaGroupThumb2",
+				Type:      MediaTypeAudio,
+				Media:     NewInputFilePath("assets/tests/audio.mp3"),
+				Thumbnail: NewInputFilePath("assets/tests/echotron_thumb.jpg"),
+				Caption:   "TestSendMediaGroupThumbnail2",
 			},
 			InputMediaAudio{
-				Type:    MediaTypeAudio,
-				Media:   NewInputFileURL(audioURL),
-				Thumb:   NewInputFileURL(logoInvURL),
-				Caption: "TestSendMediaGroupThumb3",
+				Type:      MediaTypeAudio,
+				Media:     NewInputFileURL(audioURL),
+				Thumbnail: NewInputFileURL(logoInvURL),
+				Caption:   "TestSendMediaGroupThumbnail3",
 			},
 		},
 		nil,

@@ -33,10 +33,8 @@ var (
 func TestUploadStickerFile(t *testing.T) {
 	resp, err := api.UploadStickerFile(
 		chatID,
-		StickerFile{
-			File: NewInputFilePath("assets/tests/echotron_test.png"),
-			Type: PNGSticker,
-		},
+		NewInputFilePath("assets/tests/echotron_test.png"),
+		StaticFormat,
 	)
 
 	if err != nil {
@@ -51,11 +49,21 @@ func TestCreateNewStickerSet(t *testing.T) {
 		chatID,
 		stickerSetName,
 		"Echotron Coverage Pack",
-		"🤖",
-		StickerFile{
-			File: NewInputFileID(stickerFile.FileID),
-			Type: PNGSticker,
+		[]InputSticker{
+			{
+				Sticker:   NewInputFileID(stickerFile.FileID),
+				EmojiList: []string{"🤖"},
+			},
+			{
+				Sticker:   NewInputFilePath("assets/tests/echotron_test.png"),
+				EmojiList: []string{"🤖"},
+			},
+			{
+				Sticker:   NewInputFileURL(photoURL),
+				EmojiList: []string{"🤖"},
+			},
 		},
+		StaticFormat,
 		nil,
 	)
 
@@ -68,12 +76,10 @@ func TestAddStickerToSet(t *testing.T) {
 	_, err := api.AddStickerToSet(
 		chatID,
 		stickerSetName,
-		"🤖",
-		StickerFile{
-			File: NewInputFilePath("assets/tests/echotron_sticker.png"),
-			Type: PNGSticker,
+		InputSticker{
+			Sticker:   NewInputFilePath("assets/tests/echotron_sticker.png"),
+			EmojiList: []string{"🤖"},
 		},
-		nil,
 	)
 
 	if err != nil {
@@ -114,6 +120,39 @@ func TestSetStickerPositionInSet(t *testing.T) {
 	}
 }
 
+func TestSetStickerEmojiList(t *testing.T) {
+	_, err := api.SetStickerEmojiList(
+		stickerSet.Stickers[0].FileID,
+		[]string{"🤖", "👾"},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSetStickerKeywords(t *testing.T) {
+	_, err := api.SetStickerKeywords(
+		stickerSet.Stickers[0].FileID,
+		[]string{"echotron"},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSetStickerSetTitle(t *testing.T) {
+	_, err := api.SetStickerSetTitle(
+		stickerSetName,
+		fmt.Sprintf("new_%s", stickerSetName),
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDeleteStickerFromSet(t *testing.T) {
 	_, err := api.DeleteStickerFromSet(
 		stickerSet.Stickers[0].FileID,
@@ -136,12 +175,20 @@ func TestSendSticker(t *testing.T) {
 	}
 }
 
-func TestSetStickerSetThumb(t *testing.T) {
-	_, err := api.SetStickerSetThumb(
+func TestSetStickerSetThumbnail(t *testing.T) {
+	_, err := api.SetStickerSetThumbnail(
 		stickerSetName,
 		chatID,
 		NewInputFilePath("assets/tests/echotron_thumb.png"),
 	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteStickerSet(t *testing.T) {
+	_, err := api.DeleteStickerSet(stickerSetName)
 
 	if err != nil {
 		t.Fatal(err)

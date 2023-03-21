@@ -152,62 +152,62 @@ func (a API) SendPhoto(file InputFile, chatID int64, opts *PhotoOptions) (res AP
 // Your audio must be in the .MP3 or .M4A format.
 func (a API) SendAudio(file InputFile, chatID int64, opts *AudioOptions) (res APIResponseMessage, err error) {
 	var (
-		thumb InputFile
-		vals  = make(url.Values)
+		thumbnail InputFile
+		vals      = make(url.Values)
 	)
 
 	if opts != nil {
-		thumb = opts.Thumb
+		thumbnail = opts.Thumbnail
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	return postFile[APIResponseMessage](a.base, "sendAudio", "audio", file, thumb, addValues(vals, opts))
+	return postFile[APIResponseMessage](a.base, "sendAudio", "audio", file, thumbnail, addValues(vals, opts))
 }
 
 // SendDocument is used to send general files.
 func (a API) SendDocument(file InputFile, chatID int64, opts *DocumentOptions) (res APIResponseMessage, err error) {
 	var (
-		thumb InputFile
-		vals  = make(url.Values)
+		thumbnail InputFile
+		vals      = make(url.Values)
 	)
 
 	if opts != nil {
-		thumb = opts.Thumb
+		thumbnail = opts.Thumbnail
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	return postFile[APIResponseMessage](a.base, "sendDocument", "document", file, thumb, addValues(vals, opts))
+	return postFile[APIResponseMessage](a.base, "sendDocument", "document", file, thumbnail, addValues(vals, opts))
 }
 
 // SendVideo is used to send video files.
 // Telegram clients support mp4 videos (other formats may be sent with SendDocument).
 func (a API) SendVideo(file InputFile, chatID int64, opts *VideoOptions) (res APIResponseMessage, err error) {
 	var (
-		thumb InputFile
-		vals  = make(url.Values)
+		thumbnail InputFile
+		vals      = make(url.Values)
 	)
 
 	if opts != nil {
-		thumb = opts.Thumb
+		thumbnail = opts.Thumbnail
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	return postFile[APIResponseMessage](a.base, "sendVideo", "video", file, thumb, addValues(vals, opts))
+	return postFile[APIResponseMessage](a.base, "sendVideo", "video", file, thumbnail, addValues(vals, opts))
 }
 
 // SendAnimation is used to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
 func (a API) SendAnimation(file InputFile, chatID int64, opts *AnimationOptions) (res APIResponseMessage, err error) {
 	var (
-		thumb InputFile
-		vals  = make(url.Values)
+		thumbnail InputFile
+		vals      = make(url.Values)
 	)
 
 	if opts != nil {
-		thumb = opts.Thumb
+		thumbnail = opts.Thumbnail
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	return postFile[APIResponseMessage](a.base, "sendAnimation", "animation", file, thumb, addValues(vals, opts))
+	return postFile[APIResponseMessage](a.base, "sendAnimation", "animation", file, thumbnail, addValues(vals, opts))
 }
 
 // SendVoice is used to send audio files, if you want Telegram clients to display the file as a playable voice message.
@@ -222,16 +222,16 @@ func (a API) SendVoice(file InputFile, chatID int64, opts *VoiceOptions) (res AP
 // SendVideoNote is used to send video messages.
 func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions) (res APIResponseMessage, err error) {
 	var (
-		thumb InputFile
-		vals  = make(url.Values)
+		thumbnail InputFile
+		vals      = make(url.Values)
 	)
 
 	if opts != nil {
-		thumb = opts.Thumb
+		thumbnail = opts.Thumbnail
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	return postFile[APIResponseMessage](a.base, "sendVideoNote", "video_note", file, thumb, addValues(vals, opts))
+	return postFile[APIResponseMessage](a.base, "sendVideoNote", "video_note", file, thumbnail, addValues(vals, opts))
 }
 
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.
@@ -784,6 +784,41 @@ func (a API) DeleteMyCommands(opts *CommandOptions) (res APIResponseBool, err er
 // GetMyCommands is used to get the current list of the bot's commands for the given scope and user language.
 func (a API) GetMyCommands(opts *CommandOptions) (res APIResponseCommands, err error) {
 	return get[APIResponseCommands](a.base, "getMyCommands", urlValues(opts))
+}
+
+// SetMyDescription is used to to change the bot's description, which is shown in the chat with the bot if the chat is empty.
+func (a API) SetMyDescription(description, languageCode string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("description", description)
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBool](a.base, "setMyDescription", vals)
+}
+
+// GetMyDescription is used to get the current bot description for the given user language.
+func (a API) GetMyDescription(languageCode string) (res APIResponseBotDescription, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBotDescription](a.base, "getMyDescription", vals)
+}
+
+// SetMyShortDescription is used to to change the bot's short description,
+// which is shown on the bot's profile page and is sent together with the link when users share the bot.
+func (a API) SetMyShortDescription(shortDescription, languageCode string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("short_description", shortDescription)
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBool](a.base, "setMyShortDescription", vals)
+}
+
+// GetMyShortDescription is used to get the current bot short description for the given user language.
+func (a API) GetMyShortDescription(languageCode string) (res APIResponseBotShortDescription, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBotShortDescription](a.base, "getMyDescription", vals)
 }
 
 // EditMessageText is used to edit text and game messages.

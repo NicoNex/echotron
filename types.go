@@ -390,6 +390,30 @@ func (a APIResponseForumTopic) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseBotDescription represents the incoming response from Telegram servers.
+// Used by all methods that return a BotDescription object on success.
+type APIResponseBotDescription struct {
+	Result *BotDescription `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseBotDescription) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponseBotShortDescription represents the incoming response from Telegram servers.
+// Used by all methods that return a BotShortDescription object on success.
+type APIResponseBotShortDescription struct {
+	Result *BotShortDescription `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseBotShortDescription) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`
@@ -539,7 +563,7 @@ type PhotoSize struct {
 
 // Animation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
 type Animation struct {
-	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
 	FileID       string     `json:"file_id"`
 	FileUniqueID string     `json:"file_unique_id"`
 	FileName     string     `json:"file_name,omitempty"`
@@ -552,7 +576,7 @@ type Animation struct {
 
 // Audio represents an audio file to be treated as music by the Telegram clients.
 type Audio struct {
-	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
 	FileID       string     `json:"file_id"`
 	FileUniqueID string     `json:"file_unique_id"`
 	Performer    string     `json:"performer,omitempty"`
@@ -567,7 +591,7 @@ type Audio struct {
 type Document struct {
 	FileID       string     `json:"file_id"`
 	FileUniqueID string     `json:"file_unique_id"`
-	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
 	FileName     string     `json:"file_name,omitempty"`
 	MimeType     string     `json:"mime_type,omitempty"`
 	FileSize     int64      `json:"file_size,omitempty"`
@@ -575,7 +599,7 @@ type Document struct {
 
 // Video represents a video file.
 type Video struct {
-	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
 	FileID       string     `json:"file_id"`
 	FileUniqueID string     `json:"file_unique_id"`
 	FileName     string     `json:"file_name,omitempty"`
@@ -588,7 +612,7 @@ type Video struct {
 
 // VideoNote represents a video message (available in Telegram apps as of v.4.0).
 type VideoNote struct {
-	Thumb        *PhotoSize `json:"thumb,omitempty"`
+	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
 	FileID       string     `json:"file_id"`
 	FileUniqueID string     `json:"file_unique_id"`
 	Length       int        `json:"length"`
@@ -851,7 +875,7 @@ const (
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	media() InputFile
-	thumb() InputFile
+	thumbnail() InputFile
 }
 
 // GroupableInputMedia is an interface for the various groupable media types.
@@ -863,8 +887,8 @@ type GroupableInputMedia interface {
 // mediaEnvelope is a generic struct for all the various structs under the InputMedia interface.
 type mediaEnvelope struct {
 	InputMedia
-	media string
-	thumb string
+	media     string
+	thumbnail string
 }
 
 // MarshalJSON is a custom marshaler for the mediaEnvelope struct.
@@ -883,46 +907,46 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 
 	case InputMediaVideo:
 		tmp = struct {
-			Media string `json:"media"`
-			Thumb string `json:"thumb,omitempty"`
+			Media     string `json:"media"`
+			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaVideo
 		}{
 			InputMediaVideo: o,
 			Media:           i.media,
-			Thumb:           i.thumb,
+			Thumbnail:       i.thumbnail,
 		}
 
 	case InputMediaAnimation:
 		tmp = struct {
-			Media string `json:"media"`
-			Thumb string `json:"thumb,omitempty"`
+			Media     string `json:"media"`
+			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAnimation
 		}{
 			InputMediaAnimation: o,
 			Media:               i.media,
-			Thumb:               i.thumb,
+			Thumbnail:           i.thumbnail,
 		}
 
 	case InputMediaAudio:
 		tmp = struct {
-			Media string `json:"media"`
-			Thumb string `json:"thumb,omitempty"`
+			Media     string `json:"media"`
+			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAudio
 		}{
 			InputMediaAudio: o,
 			Media:           i.media,
-			Thumb:           i.thumb,
+			Thumbnail:       i.thumbnail,
 		}
 
 	case InputMediaDocument:
 		tmp = struct {
-			Media string `json:"media"`
-			Thumb string `json:"thumb,omitempty"`
+			Media     string `json:"media"`
+			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaDocument
 		}{
 			InputMediaDocument: o,
 			Media:              i.media,
-			Thumb:              i.thumb,
+			Thumbnail:          i.thumbnail,
 		}
 	}
 
@@ -943,8 +967,8 @@ type InputMediaPhoto struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaPhoto) media() InputFile { return i.Media }
 
-// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
-func (i InputMediaPhoto) thumb() InputFile { return InputFile{} }
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputMedia* struct.
+func (i InputMediaPhoto) thumbnail() InputFile { return InputFile{} }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaPhoto) groupable() {}
@@ -954,7 +978,7 @@ func (i InputMediaPhoto) groupable() {}
 type InputMediaVideo struct {
 	Type              InputMediaType   `json:"type"`
 	Media             InputFile        `json:"-"`
-	Thumb             InputFile        `json:"-"`
+	Thumbnail         InputFile        `json:"-"`
 	Caption           string           `json:"caption,omitempty"`
 	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
@@ -968,8 +992,8 @@ type InputMediaVideo struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaVideo) media() InputFile { return i.Media }
 
-// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
-func (i InputMediaVideo) thumb() InputFile { return i.Thumb }
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputMedia* struct.
+func (i InputMediaVideo) thumbnail() InputFile { return i.Thumbnail }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaVideo) groupable() {}
@@ -979,7 +1003,7 @@ func (i InputMediaVideo) groupable() {}
 type InputMediaAnimation struct {
 	Type            InputMediaType   `json:"type"`
 	Media           InputFile        `json:"-"`
-	Thumb           InputFile        `json:"-"`
+	Thumbnail       InputFile        `json:"-"`
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
@@ -992,8 +1016,8 @@ type InputMediaAnimation struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaAnimation) media() InputFile { return i.Media }
 
-// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
-func (i InputMediaAnimation) thumb() InputFile { return i.Thumb }
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputMedia* struct.
+func (i InputMediaAnimation) thumbnail() InputFile { return i.Thumbnail }
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 // Type MUST BE "audio".
@@ -1004,7 +1028,7 @@ type InputMediaAudio struct {
 	Caption         string           `json:"caption,omitempty"`
 	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
 	Media           InputFile        `json:"-"`
-	Thumb           InputFile        `json:"-"`
+	Thumbnail       InputFile        `json:"-"`
 	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
 	Duration        int              `json:"duration,omitempty"`
 }
@@ -1012,8 +1036,8 @@ type InputMediaAudio struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaAudio) media() InputFile { return i.Media }
 
-// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
-func (i InputMediaAudio) thumb() InputFile { return i.Thumb }
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputMedia* struct.
+func (i InputMediaAudio) thumbnail() InputFile { return i.Thumbnail }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaAudio) groupable() {}
@@ -1023,7 +1047,7 @@ func (i InputMediaAudio) groupable() {}
 type InputMediaDocument struct {
 	Type                        InputMediaType   `json:"type"`
 	Media                       InputFile        `json:"-"`
-	Thumb                       InputFile        `json:"-"`
+	Thumbnail                   InputFile        `json:"-"`
 	Caption                     string           `json:"caption,omitempty"`
 	ParseMode                   ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities             []*MessageEntity `json:"caption_entities,omitempty"`
@@ -1033,8 +1057,8 @@ type InputMediaDocument struct {
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
 func (i InputMediaDocument) media() InputFile { return i.Media }
 
-// thumb is a method which allows to obtain the Thumb (type InputFile) field from the InputMedia* struct.
-func (i InputMediaDocument) thumb() InputFile { return i.Thumb }
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputMedia* struct.
+func (i InputMediaDocument) thumbnail() InputFile { return i.Thumbnail }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaDocument) groupable() {}
@@ -1058,6 +1082,16 @@ type BotCommandScope struct {
 	Type   BotCommandScopeType `query:"type"`
 	ChatID int64               `query:"chat_id"`
 	UserID int64               `query:"user_id"`
+}
+
+// BotDescription represents the bot's description.
+type BotDescription struct {
+	Description string `json:"description"`
+}
+
+// BotShortDescription represents the bot's short description.
+type BotShortDescription struct {
+	ShortDescription string `json:"short_description"`
 }
 
 // PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
