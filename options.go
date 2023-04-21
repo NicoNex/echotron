@@ -182,15 +182,16 @@ func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
-	CallbackGame                 *CallbackGame `json:"callback_game,omitempty"`
-	WebApp                       *WebAppInfo   `json:"web_app,omitempty"`
-	LoginURL                     *LoginURL     `json:"login_url,omitempty"`
-	Text                         string        `json:"text"`
-	CallbackData                 string        `json:"callback_data,omitempty"`
-	SwitchInlineQuery            string        `json:"switch_inline_query,omitempty"`
-	SwitchInlineQueryCurrentChat string        `json:"switch_inline_query_current_chat,omitempty"`
-	URL                          string        `json:"url,omitempty"`
-	Pay                          bool          `json:"pay,omitempty"`
+	CallbackGame                 *CallbackGame                `json:"callback_game,omitempty"`
+	WebApp                       *WebAppInfo                  `json:"web_app,omitempty"`
+	LoginURL                     *LoginURL                    `json:"login_url,omitempty"`
+	SwitchInlineQueryChosenChat  *SwitchInlineQueryChosenChat `json:"switch_inline_query_chosen_chat,omitempty"`
+	Text                         string                       `json:"text"`
+	CallbackData                 string                       `json:"callback_data,omitempty"`
+	SwitchInlineQuery            string                       `json:"switch_inline_query,omitempty"`
+	SwitchInlineQueryCurrentChat string                       `json:"switch_inline_query_current_chat,omitempty"`
+	URL                          string                       `json:"url,omitempty"`
+	Pay                          bool                         `json:"pay,omitempty"`
 }
 
 // InlineKeyboardMarkup represents an inline keyboard.

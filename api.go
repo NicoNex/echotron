@@ -786,6 +786,23 @@ func (a API) GetMyCommands(opts *CommandOptions) (res APIResponseCommands, err e
 	return get[APIResponseCommands](a.base, "getMyCommands", urlValues(opts))
 }
 
+// SetMyName is used to change the bot's name.
+func (a API) SetMyName(name, languageCode string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("name", name)
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBool](a.base, "setMyName", vals)
+}
+
+// GetMyName is used to get the current bot name for the given user language.
+func (a API) GetMyName(languageCode string) (res APIResponseBotName, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("language_code", languageCode)
+	return get[APIResponseBotName](a.base, "getMyName", vals)
+}
+
 // SetMyDescription is used to to change the bot's description, which is shown in the chat with the bot if the chat is empty.
 func (a API) SetMyDescription(description, languageCode string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)

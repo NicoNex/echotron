@@ -10,35 +10,36 @@ import (
 )
 
 var (
-	msgTmp       *Message
-	animationTmp *Message
-	pollTmp      *Message
-	locationTmp  *Message
-	inviteTmp    *ChatInviteLink
-	filePath     string
-	msgThreadID  int64
-	api          = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
-	chatID       = int64(14870908)
-	banUserID    = int64(41876271)
-	botID        = int64(1713461126)
-	channelID    = int64(-1001563144067)
-	groupID      = int64(-1001265771214)
-	pinMsgID     = int(11)
-	photoID      = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	animationID  = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
-	audioID      = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID   = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	videoID      = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	videoNoteID  = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
-	voiceID      = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
-	photoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
-	animationURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
-	audioURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
-	documentURL  = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
-	logoInvURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
-	videoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
-	videoNoteURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
-	voiceURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	msgTmp         *Message
+	animationTmp   *Message
+	pollTmp        *Message
+	locationTmp    *Message
+	inviteTmp      *ChatInviteLink
+	filePath       string
+	currentBotName string
+	msgThreadID    int64
+	api            = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
+	chatID         = int64(14870908)
+	banUserID      = int64(41876271)
+	botID          = int64(1713461126)
+	channelID      = int64(-1001563144067)
+	groupID        = int64(-1001265771214)
+	pinMsgID       = int(11)
+	photoID        = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	animationID    = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
+	audioID        = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID     = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	videoID        = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID    = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID        = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	photoURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
+	animationURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
+	audioURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	documentURL    = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
+	logoInvURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
+	videoURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
+	videoNoteURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
+	voiceURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
 
 	commands = []BotCommand{
 		{Command: "test1", Description: "Test command 1"},
@@ -1509,6 +1510,33 @@ func TestDeleteMyCommands(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestSetMyName(t *testing.T) {
+	currentBotName = fmt.Sprintf(
+		"Echotron Coverage Bot - %d",
+		time.Now().Unix(),
+	)
+
+	_, err := api.SetMyName(currentBotName, "")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetMyName(t *testing.T) {
+	res, err := api.GetMyName("")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.Result.Name != currentBotName {
+		t.Logf("expected bot name [\"%s\"]\n", currentBotName)
+		t.Logf("got bot name [\"%s\"]\n", res.Result.Name)
+		t.Fatal("error: bot name mismatch")
 	}
 }
 

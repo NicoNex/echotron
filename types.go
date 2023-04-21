@@ -414,6 +414,18 @@ func (a APIResponseBotShortDescription) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseBotName represents the incoming response from Telegram servers.
+// Used by all methods that return a BotName object on success.
+type APIResponseBotName struct {
+	Result *BotName `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseBotName) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`
@@ -500,7 +512,7 @@ type Message struct {
 	ForumTopicReopened            *ForumTopicReopened            `json:"forum_topic_reopened,omitempty"`
 	GeneralForumTopicHidden       *GeneralForumTopicHidden       `json:"general_forum_topic_hidden,omitempty"`
 	GeneralForumTopicUnhidden     *GeneralForumTopicUnhidden     `json:"general_forum_topic_unhidden,omitempty"`
-	WriteAccessAllowed            *WriteAccessAllowed            `json:"write_access_allowec,omitempty"`
+	WriteAccessAllowed            *WriteAccessAllowed            `json:"write_access_allowed,omitempty"`
 	UserShared                    *UserShared                    `json:"user_shared,omitempty"`
 	ChatShared                    *ChatShared                    `json:"chat_shared,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
@@ -747,6 +759,15 @@ type LoginURL struct {
 	RequestWriteAccess bool   `json:"request_write_access,omitempty"`
 }
 
+// SwitchInlineQueryChosenChat represents an inline button that switches the current user to inline mode in a chosen chat, with an optional default inline query.
+type SwitchInlineQueryChosenChat struct {
+	Query             string `json:"query,omitempty"`
+	AllowUserChats    bool   `json:"allow_user_chats,omitempty"`
+	AllowBotChats     bool   `json:"allow_bot_chats,omitempty"`
+	AllowGroupChats   bool   `json:"allow_group_chats,omitempty"`
+	AllowChannelChats bool   `json:"allow_channel_chats,omitempty"`
+}
+
 // CallbackQuery represents an incoming callback query from a callback button in an inline keyboard.
 // If the button that originated the query was attached to a message sent by the bot,
 // the field message will be present. If the button was attached to a message sent via the bot (in inline mode),
@@ -816,12 +837,13 @@ type ChatMember struct {
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
-	InviteLink    *ChatInviteLink `json:"invite_link,omitempty"`
-	From          User            `json:"from"`
-	OldChatMember ChatMember      `json:"old_chat_member"`
-	NewChatMember ChatMember      `json:"new_chat_member"`
-	Chat          Chat            `json:"chat"`
-	Date          int             `json:"date"`
+	InviteLink              *ChatInviteLink `json:"invite_link,omitempty"`
+	From                    User            `json:"from"`
+	OldChatMember           ChatMember      `json:"old_chat_member"`
+	NewChatMember           ChatMember      `json:"new_chat_member"`
+	Chat                    Chat            `json:"chat"`
+	ViaChatFolderInviteLink bool            `json:"via_chat_folder_invite_link,omitempty"`
+	Date                    int             `json:"date"`
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -1094,6 +1116,11 @@ type BotShortDescription struct {
 	ShortDescription string `json:"short_description"`
 }
 
+// BotName represents the bot's name.
+type BotName struct {
+	Name string `json:"name"`
+}
+
 // PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
 type PermissionOptions struct {
 	Permissions ChatPermissions `json:"permissions"`
@@ -1135,7 +1162,9 @@ type GeneralForumTopicHidden struct{}
 type GeneralForumTopicUnhidden struct{}
 
 // WriteAccessAllowed represents a service message about a user allowing a bot added to the attachment menu to write messages.
-type WriteAccessAllowed struct{}
+type WriteAccessAllowed struct {
+	WebAppName string `json:"web_app_name,omitempty"`
+}
 
 // IconColor represents a forum topic icon in RGB format.
 type IconColor int

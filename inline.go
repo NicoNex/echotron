@@ -516,13 +516,20 @@ type InputContactMessageContent struct {
 // ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputContactMessageContent) ImplementsInputMessageContent() {}
 
+// InlineQueryResultsButton represents a button to be shown above inline query results.
+// You MUST use exactly one of the fields.
+type InlineQueryResultsButton struct {
+	WebApp         WebAppInfo `json:"web_app,omitempty"`
+	StartParameter string     `json:"start_parameter,omitempty"`
+	Text           string     `json:"text"`
+}
+
 // InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQuery method.
 type InlineQueryOptions struct {
-	NextOffset        string `query:"next_offset"`
-	SwitchPmText      string `query:"switch_pm_text"`
-	SwitchPmParameter string `query:"switch_pm_parameter"`
-	CacheTime         int    `query:"cache_time"`
-	IsPersonal        bool   `query:"is_personal"`
+	Button     InlineQueryResultsButton `query:"button"`
+	NextOffset string                   `query:"next_offset"`
+	CacheTime  int                      `query:"cache_time"`
+	IsPersonal bool                     `query:"is_personal"`
 }
 
 // AnswerInlineQuery is used to send answers to an inline query.
