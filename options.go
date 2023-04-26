@@ -115,7 +115,7 @@ const (
 
 // ReplyMarkup is an interface for the various keyboard types.
 type ReplyMarkup interface {
-	ReplyKeyboardMarkup | ReplyKeyboardRemove | InliineKeyboardMarkup | ForceReply
+	ReplyKeyboardMarkup | ReplyKeyboardRemove | InlineKeyboardMarkup | ForceReply
 }
 
 // KeyboardButton represents a button in a keyboard.
