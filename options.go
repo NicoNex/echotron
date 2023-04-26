@@ -115,7 +115,7 @@ const (
 
 // ReplyMarkup is an interface for the various keyboard types.
 type ReplyMarkup interface {
-	ImplementsReplyMarkup()
+	ReplyKeyboardMarkup | ReplyKeyboardRemove | InliineKeyboardMarkup | ForceReply
 }
 
 // KeyboardButton represents a button in a keyboard.
@@ -165,9 +165,6 @@ type ReplyKeyboardMarkup struct {
 	Selective             bool               `json:"selective,omitempty"`
 }
 
-// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
-func (i ReplyKeyboardMarkup) ImplementsReplyMarkup() {}
-
 // ReplyKeyboardRemove is used to remove the current custom keyboard and display the default letter-keyboard.
 // By default, custom keyboards are displayed until a new keyboard is sent by a bot.
 // An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
@@ -176,9 +173,6 @@ type ReplyKeyboardRemove struct {
 	RemoveKeyboard bool `json:"remove_keyboard"`
 	Selective      bool `json:"selective"`
 }
-
-// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
-func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
@@ -199,9 +193,6 @@ type InlineKeyboardMarkup struct {
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard" query:"inline_keyboard"`
 }
 
-// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
-func (i InlineKeyboardMarkup) ImplementsReplyMarkup() {}
-
 // ForceReply is used to display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply').
 // This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
 type ForceReply struct {
@@ -209,9 +200,6 @@ type ForceReply struct {
 	ForceReply            bool   `json:"force_reply"`
 	Selective             bool   `json:"selective"`
 }
-
-// ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
-func (f ForceReply) ImplementsReplyMarkup() {}
 
 // UpdateOptions contains the optional parameters used by the GetUpdates method.
 type UpdateOptions struct {
