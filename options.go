@@ -219,8 +219,8 @@ type WebhookOptions struct {
 }
 
 // BaseOptions contains the optional parameters used frequently in some Telegram API methods.
-type BaseOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type BaseOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	MessageThreadID          int         `query:"message_thread_id"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	DisableNotification      bool        `query:"disable_notification"`
@@ -229,8 +229,8 @@ type BaseOptions struct {
 }
 
 // MessageOptions contains the optional parameters used by some Telegram API methods.
-type MessageOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type MessageOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Entities                 []MessageEntity `query:"entities"`
 	MessageThreadID          int64           `query:"message_thread_id"`
@@ -254,8 +254,8 @@ type ForwardOptions struct {
 }
 
 // CopyOptions contains the optional parameters used by the CopyMessage method.
-type CopyOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type CopyOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
@@ -267,9 +267,9 @@ type CopyOptions struct {
 }
 
 // StickerOptions contains the optional parameters used by the SendSticker method.
-type StickerOptions struct {
+type StickerOptions[Markup ReplyMarkup] struct {
 	Emoji                    string      `query:"emoji"`
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	MessageThreadID          int         `query:"message_thread_id"`
 	ReplyToMessageID         int         `query:"reply_to_message_id"`
 	DisableNotification      bool        `query:"disable_notification"`
@@ -307,8 +307,8 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 }
 
 // PhotoOptions contains the optional parameters used by the SendPhoto method.
-type PhotoOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type PhotoOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
@@ -321,8 +321,8 @@ type PhotoOptions struct {
 }
 
 // AudioOptions contains the optional parameters used by the SendAudio method.
-type AudioOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type AudioOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup 	 `query:"reply_markup"`
 	ParseMode                ParseMode   `query:"parse_mode"`
 	Caption                  string      `query:"caption"`
 	Performer                string      `query:"performer"`
@@ -338,8 +338,8 @@ type AudioOptions struct {
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
-type DocumentOptions struct {
-	ReplyMarkup                 ReplyMarkup `query:"reply_markup"`
+type DocumentOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup                 Markup 		`query:"reply_markup"`
 	ParseMode                   ParseMode   `query:"parse_mode"`
 	Caption                     string      `query:"caption"`
 	Thumbnail                   InputFile
@@ -353,8 +353,8 @@ type DocumentOptions struct {
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
-type VideoOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type VideoOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	Caption                  string      `query:"caption"`
 	ParseMode                ParseMode   `query:"parse_mode"`
 	Thumbnail                InputFile
@@ -372,8 +372,8 @@ type VideoOptions struct {
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
-type AnimationOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type AnimationOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	ParseMode                ParseMode   `query:"parse_mode"`
 	Caption                  string      `query:"caption"`
 	Thumbnail                InputFile
@@ -390,8 +390,8 @@ type AnimationOptions struct {
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
-type VoiceOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type VoiceOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		     `query:"reply_markup"`
 	ParseMode                ParseMode       `query:"parse_mode"`
 	Caption                  string          `query:"caption"`
 	CaptionEntities          []MessageEntity `query:"caption_entities"`
@@ -404,8 +404,8 @@ type VoiceOptions struct {
 }
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
-type VideoNoteOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type VideoNoteOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup `query:"reply_markup"`
 	Thumbnail                InputFile
 	MessageThreadID          int  `query:"message_thread_id"`
 	Duration                 int  `query:"duration"`
@@ -426,8 +426,8 @@ type MediaGroupOptions struct {
 }
 
 // LocationOptions contains the optional parameters used by the SendLocation method.
-type LocationOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type LocationOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
 	MessageThreadID          int         `query:"message_thread_id"`
 	LivePeriod               int         `query:"live_period"`
@@ -448,8 +448,8 @@ type EditLocationOptions struct {
 }
 
 // VenueOptions contains the optional parameters used by the SendVenue method.
-type VenueOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type VenueOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	FoursquareID             string      `query:"foursquare_id"`
 	FoursquareType           string      `query:"foursquare_type"`
 	GooglePlaceType          string      `query:"google_place_type"`
@@ -462,8 +462,8 @@ type VenueOptions struct {
 }
 
 // ContactOptions contains the optional parameters used by the SendContact method.
-type ContactOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
+type ContactOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		 `query:"reply_markup"`
 	VCard                    string      `query:"vcard"`
 	LastName                 string      `query:"last_name"`
 	MessageThreadID          int         `query:"message_thread_id"`
@@ -474,8 +474,8 @@ type ContactOptions struct {
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
-type PollOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
+type PollOptions[Markup ReplyMarkup] struct {
+	ReplyMarkup              Markup		     `query:"reply_markup"`
 	Explanation              string          `query:"explanation"`
 	ExplanationParseMode     ParseMode       `query:"explanation_parse_mode"`
 	Type                     PollType        `query:"type"`
