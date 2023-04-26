@@ -84,7 +84,7 @@ type InlineQueryResultArticle[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultArticle) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultArticle[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultPhoto represents a link to a photo.
 // By default, this photo will be sent by the user with optional caption.
@@ -106,7 +106,7 @@ type InlineQueryResultPhoto[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultPhoto) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultPhoto[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultGif represents a link to an animated GIF file.
 // By default, this animated GIF file will be sent by the user with optional caption.
@@ -129,7 +129,7 @@ type InlineQueryResultGif[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultGif) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultGif[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
 // By default, this animated MPEG-4 file will be sent by the user with optional caption.
@@ -152,7 +152,7 @@ type InlineQueryResultMpeg4Gif[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultMpeg4Gif) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultMpeg4Gif[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file.
 // By default, this video file will be sent by the user with an optional caption.
@@ -176,7 +176,7 @@ type InlineQueryResultVideo[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultVideo) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultVideo[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultAudio represents a link to an MP3 audio file.
 // By default, this audio file will be sent by the user.
@@ -196,7 +196,7 @@ type InlineQueryResultAudio[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultAudio) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultAudio[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultVoice represents a link to a voice recording in an .OGG container encoded with OPUS.
 // By default, this voice recording will be sent by the user.
@@ -215,7 +215,7 @@ type InlineQueryResultVoice[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultVoice) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultVoice[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultDocument represents a link to a file.
 // By default, this file will be sent by the user with an optional caption.
@@ -239,7 +239,7 @@ type InlineQueryResultDocument[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultDocument) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultDocument[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultLocation represents a location on a map.
 // By default, the location will be sent by the user.
@@ -262,7 +262,7 @@ type InlineQueryResultLocation[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultLocation) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultLocation[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultVenue represents a venue.
 // By default, the venue will be sent by the user.
@@ -286,7 +286,7 @@ type InlineQueryResultVenue[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultVenue) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultVenue[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultContact represents a contact with a phone number.
 // By default, this contact will be sent by the user.
@@ -306,7 +306,7 @@ type InlineQueryResultContact[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultContact) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultContact[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultGame represents a Game.
 type InlineQueryResultGame[Markup ReplyMarkup] struct {
@@ -317,7 +317,7 @@ type InlineQueryResultGame[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultGame) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultGame[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedPhoto represents a link to a photo stored on the Telegram servers.
 // By default, this photo will be sent by the user with an optional caption.
@@ -336,7 +336,7 @@ type InlineQueryResultCachedPhoto[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedPhoto) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedPhoto[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedGif represents a link to an animated GIF file stored on the Telegram servers.
 // By default, this animated GIF file will be sent by the user with an optional caption.
@@ -354,7 +354,7 @@ type InlineQueryResultCachedGif[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedGif) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedGif[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
 // By default, this animated MPEG-4 file will be sent by the user with an optional caption.
@@ -372,7 +372,7 @@ type InlineQueryResultCachedMpeg4Gif[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedMpeg4Gif) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedMpeg4Gif[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedSticker represents a link to a sticker stored on the Telegram servers.
 // By default, this sticker will be sent by the user.
@@ -386,7 +386,7 @@ type InlineQueryResultCachedSticker[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedSticker) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedSticker[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedDocument represents a link to a file stored on the Telegram servers.
 // By default, this file will be sent by the user with an optional caption.
@@ -405,7 +405,7 @@ type InlineQueryResultCachedDocument[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedDocument) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedDocument[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedVideo represents a link to a video file stored on the Telegram servers.
 // By default, this video file will be sent by the user with an optional caption.
@@ -424,7 +424,7 @@ type InlineQueryResultCachedVideo[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedVideo) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedVideo[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedVoice represents a link to a voice message stored on the Telegram servers.
 // By default, this voice message will be sent by the user.
@@ -442,7 +442,7 @@ type InlineQueryResultCachedVoice[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedVoice) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedVoice[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultCachedAudio represents a link to an MP3 audio file stored on the Telegram servers.
 // By default, this audio file will be sent by the user.
@@ -459,7 +459,7 @@ type InlineQueryResultCachedAudio[Markup ReplyMarkup] struct {
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.
-func (i InlineQueryResultCachedAudio) ImplementsInlineQueryResult() {}
+func (i InlineQueryResultCachedAudio[ReplyMarkup]) ImplementsInlineQueryResult() {}
 
 // InputMessageContent represents an interface that implements all the various Input*MessageContent types.
 type InputMessageContent interface {
