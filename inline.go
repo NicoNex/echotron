@@ -69,8 +69,8 @@ type InlineQueryResult interface {
 }
 
 // InlineQueryResultArticle represents a link to an article or web page.
-type InlineQueryResultArticle struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultArticle[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup         		`json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -89,8 +89,8 @@ func (i InlineQueryResultArticle) ImplementsInlineQueryResult() {}
 // InlineQueryResultPhoto represents a link to a photo.
 // By default, this photo will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
-type InlineQueryResultPhoto struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultPhoto[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup     		    `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Title               string              `json:"title,omitempty"`
 	ThumbnailURL        string              `json:"thumbnail_url"`
@@ -111,9 +111,9 @@ func (i InlineQueryResultPhoto) ImplementsInlineQueryResult() {}
 // InlineQueryResultGif represents a link to an animated GIF file.
 // By default, this animated GIF file will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
-type InlineQueryResultGif struct {
+type InlineQueryResultGif[Markup ReplyMarkup] struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup         Markup         		`json:"reply_markup,omitempty"`
 	Title               string              `json:"title,omitempty"`
 	GifURL              string              `json:"gif_url"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -134,9 +134,9 @@ func (i InlineQueryResultGif) ImplementsInlineQueryResult() {}
 // InlineQueryResultMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
 // By default, this animated MPEG-4 file will be sent by the user with optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
-type InlineQueryResultMpeg4Gif struct {
+type InlineQueryResultMpeg4Gif[Markup ReplyMarkup] struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup         Markup     		    `json:"reply_markup,omitempty"`
 	Title               string              `json:"title,omitempty"`
 	Mpeg4URL            string              `json:"mpeg4_url"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -157,9 +157,9 @@ func (i InlineQueryResultMpeg4Gif) ImplementsInlineQueryResult() {}
 // InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file.
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
-type InlineQueryResultVideo struct {
+type InlineQueryResultVideo[Markup ReplyMarkup] struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup         Markup       		`json:"reply_markup,omitempty"`
 	Description         string              `json:"description,omitempty"`
 	MimeType            string              `json:"mime_type"`
 	ThumbnailURL        string              `json:"thumbnail_url"`
@@ -181,8 +181,8 @@ func (i InlineQueryResultVideo) ImplementsInlineQueryResult() {}
 // InlineQueryResultAudio represents a link to an MP3 audio file.
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
-type InlineQueryResultAudio struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultAudio[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -201,8 +201,8 @@ func (i InlineQueryResultAudio) ImplementsInlineQueryResult() {}
 // InlineQueryResultVoice represents a link to a voice recording in an .OGG container encoded with OPUS.
 // By default, this voice recording will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the the voice message.
-type InlineQueryResultVoice struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultVoice[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup    		    `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -221,9 +221,9 @@ func (i InlineQueryResultVoice) ImplementsInlineQueryResult() {}
 // By default, this file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
 // Currently, only .PDF and .ZIP files can be sent using this method.
-type InlineQueryResultDocument struct {
+type InlineQueryResultDocument[Markup ReplyMarkup] struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup         Markup      	    `json:"reply_markup,omitempty"`
 	MimeType            string              `json:"mime_type"`
 	Caption             string              `json:"caption,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
@@ -244,9 +244,9 @@ func (i InlineQueryResultDocument) ImplementsInlineQueryResult() {}
 // InlineQueryResultLocation represents a location on a map.
 // By default, the location will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the location.
-type InlineQueryResultLocation struct {
+type InlineQueryResultLocation[Markup ReplyMarkup] struct {
 	InputMessageContent  InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup          ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup          Markup   		     `json:"reply_markup,omitempty"`
 	ID                   string              `json:"id"`
 	ThumbnailURL         string              `json:"thumbnail_url,omitempty"`
 	Title                string              `json:"title"`
@@ -267,9 +267,9 @@ func (i InlineQueryResultLocation) ImplementsInlineQueryResult() {}
 // InlineQueryResultVenue represents a venue.
 // By default, the venue will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the venue.
-type InlineQueryResultVenue struct {
+type InlineQueryResultVenue[Markup ReplyMarkup] struct {
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	GooglePlaceType     string              `json:"google_place_type,omitempty"`
 	ThumbnailURL        string              `json:"thumbnail_url,omitempty"`
 	Title               string              `json:"title"`
@@ -291,8 +291,8 @@ func (i InlineQueryResultVenue) ImplementsInlineQueryResult() {}
 // InlineQueryResultContact represents a contact with a phone number.
 // By default, this contact will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the contact.
-type InlineQueryResultContact struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultContact[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	ID                  string              `json:"id"`
 	PhoneNumber         string              `json:"phone_number"`
@@ -309,8 +309,8 @@ type InlineQueryResultContact struct {
 func (i InlineQueryResultContact) ImplementsInlineQueryResult() {}
 
 // InlineQueryResultGame represents a Game.
-type InlineQueryResultGame struct {
-	ReplyMarkup   ReplyMarkup     `json:"reply_markup,omitempty"`
+type InlineQueryResultGame[Markup ReplyMarkup] struct {
+	ReplyMarkup   Markup	      `json:"reply_markup,omitempty"`
 	Type          InlineQueryType `json:"type"`
 	ID            string          `json:"id"`
 	GameShortName string          `json:"game_short_name"`
@@ -322,8 +322,8 @@ func (i InlineQueryResultGame) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedPhoto represents a link to a photo stored on the Telegram servers.
 // By default, this photo will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the photo.
-type InlineQueryResultCachedPhoto struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedPhoto[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -341,8 +341,8 @@ func (i InlineQueryResultCachedPhoto) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedGif represents a link to an animated GIF file stored on the Telegram servers.
 // By default, this animated GIF file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with specified content instead of the animation.
-type InlineQueryResultCachedGif struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedGif[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup   		    `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	Title               string              `json:"title,omitempty"`
@@ -359,8 +359,8 @@ func (i InlineQueryResultCachedGif) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers.
 // By default, this animated MPEG-4 file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the animation.
-type InlineQueryResultCachedMpeg4Gif struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedMpeg4Gif[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup       		`json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	Title               string              `json:"title,omitempty"`
@@ -377,8 +377,8 @@ func (i InlineQueryResultCachedMpeg4Gif) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedSticker represents a link to a sticker stored on the Telegram servers.
 // By default, this sticker will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the sticker.
-type InlineQueryResultCachedSticker struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedSticker[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -391,8 +391,8 @@ func (i InlineQueryResultCachedSticker) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedDocument represents a link to a file stored on the Telegram servers.
 // By default, this file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the file.
-type InlineQueryResultCachedDocument struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedDocument[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -410,8 +410,8 @@ func (i InlineQueryResultCachedDocument) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedVideo represents a link to a video file stored on the Telegram servers.
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the video.
-type InlineQueryResultCachedVideo struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedVideo[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup         		`json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	ID                  string              `json:"id"`
@@ -429,8 +429,8 @@ func (i InlineQueryResultCachedVideo) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedVoice represents a link to a voice message stored on the Telegram servers.
 // By default, this voice message will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the voice message.
-type InlineQueryResultCachedVoice struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedVoice[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup		        `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	Type                InlineQueryType     `json:"type"`
 	Title               string              `json:"title"`
@@ -447,8 +447,8 @@ func (i InlineQueryResultCachedVoice) ImplementsInlineQueryResult() {}
 // InlineQueryResultCachedAudio represents a link to an MP3 audio file stored on the Telegram servers.
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use InputMessageContent to send a message with the specified content instead of the audio.
-type InlineQueryResultCachedAudio struct {
-	ReplyMarkup         ReplyMarkup         `json:"reply_markup,omitempty"`
+type InlineQueryResultCachedAudio[Markup ReplyMarkup] struct {
+	ReplyMarkup         Markup    		    `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 	AudioFileID         string              `json:"audio_file_id"`
 	Caption             string              `json:"caption,omitempty"`
