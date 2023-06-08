@@ -1475,8 +1475,13 @@ func TestReopenGeneralForumTopic(t *testing.T) {
 }
 
 func TestSetMyCommands(t *testing.T) {
+	opts := &CommandOptions{
+		LanguageCode: "it",
+		Scope:        BotCommandScope{Type: BCSTChat, ChatID: chatID},
+	}
+
 	_, err := api.SetMyCommands(
-		nil,
+		opts,
 		commands...,
 	)
 

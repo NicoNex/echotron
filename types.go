@@ -1101,9 +1101,9 @@ const (
 
 // BotCommandScope is an optional parameter used in the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
 type BotCommandScope struct {
-	Type   BotCommandScopeType `query:"type"`
-	ChatID int64               `query:"chat_id"`
-	UserID int64               `query:"user_id"`
+	Type   BotCommandScopeType `json:"type"`
+	ChatID int64               `json:"chat_id"`
+	UserID int64               `json:"user_id"`
 }
 
 // BotDescription represents the bot's description.
