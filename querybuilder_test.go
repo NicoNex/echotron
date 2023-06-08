@@ -2,41 +2,36 @@ package echotron
 
 import (
 	"net/url"
+	"reflect"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
+type scanTest struct {
+	i          any
+	predefined url.Values
+	expected   url.Values
+}
+
 func TestScan(t *testing.T) {
-	tests := []struct {
-		name        string
-		i           any
-		val         url.Values
-		except      url.Values
-		description string
-	}{
+	tests := []scanTest{
 		{
-			name: "#1",
 			i: CommandOptions{
-				LanguageCode: "ru",
+				LanguageCode: "it",
 				Scope:        BotCommandScope{Type: BCSTChat, ChatID: 33288},
 			},
-			val: url.Values{
-				"foo": {"bar"},
-			},
-
-			except: url.Values{
+			predefined: url.Values{"foo": {"bar"}},
+			expected: url.Values{
 				"foo":           {"bar"},
-				"language_code": {"ru"},
-				"scope":         {"{\"type\":\"chat\",\"chat_id\":33288,\"user_id\":0}"},
+				"language_code": {"it"},
+				"scope":         {`{"type":"chat","chat_id":33288,"user_id":0}`},
 			},
-			description: "Scopes doesn't serialized",
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := scan(tt.i, tt.val)
-			assert.Equal(t, tt.except, result, tt.description)
-		})
+
+	for i, tt := range tests {
+		result := scan(tt.i, tt.predefined)
+		if !reflect.DeepEqual(tt.expected, result) {
+			t.Fatalf("test #%d: result differs from expected value\n", i)
+		}
 	}
 }
