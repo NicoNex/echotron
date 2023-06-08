@@ -1023,9 +1023,9 @@ const (
 
 // BotCommandScope is an optional parameter used in the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
 type BotCommandScope struct {
-	Type   BotCommandScopeType `query:"type" json:"type"`
-	ChatID int64               `query:"chat_id" json:"chat_id"`
-	UserID int64               `query:"user_id" json:"user_id"`
+	Type   BotCommandScopeType `json:"type"`
+	ChatID int64               `json:"chat_id"`
+	UserID int64               `json:"user_id"`
 }
 
 // PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
