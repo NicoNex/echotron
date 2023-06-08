@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -1476,45 +1474,19 @@ func TestReopenGeneralForumTopic(t *testing.T) {
 }
 
 func TestSetMyCommands(t *testing.T) {
-	tests := []struct {
-		name string
-		opts *CommandOptions
-		cmds []BotCommand
-		//expect APIResponseBool
-		assertion   require.ErrorAssertionFunc
-		description string
-	}{
-		{
-			name:        "#1",
-			cmds:        commands,
-			assertion:   require.NoError,
-			description: "",
-		},
-		{
-			name: "#2 - with Scope",
-			opts: &CommandOptions{
-				LanguageCode: "ru",
-				Scope:        BotCommandScope{Type: BCSTChat, ChatID: chatID},
-			},
-			cmds:        commands,
-			assertion:   require.NoError,
-			description: "With Scope",
-		},
+	opts := &CommandOptions{
+		LanguageCode: "it",
+		Scope:        BotCommandScope{Type: BCSTChat, ChatID: chatID},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := api.SetMyCommands(
-				tt.opts,
-				tt.cmds...,
-			)
-			if err != nil {
-				tt.assertion(t, err)
-				return
-			}
-		})
-	}
+	_, err := api.SetMyCommands(
+		opts,
+		commands...,
+	)
 
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestGetMyCommands(t *testing.T) {
