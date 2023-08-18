@@ -1474,6 +1474,16 @@ func TestReopenGeneralForumTopic(t *testing.T) {
 	}
 }
 
+func TestUnpinAllGeneralForumTopicMessages(t *testing.T) {
+	_, err := api.UnpinAllGeneralForumTopicMessages(
+		groupID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSetMyCommands(t *testing.T) {
 	opts := &CommandOptions{
 		LanguageCode: "it",

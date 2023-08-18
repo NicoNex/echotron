@@ -758,6 +758,15 @@ func (a API) UnhideGeneralForumTopic(chatID int64) (res APIResponseBool, err err
 	return get[APIResponseBool](a.base, "unhideGeneralForumTopic", vals)
 }
 
+// UnpinAllGeneralForumTopicMessages is used to clear the list of pinned messages in a General forum topic.
+// The bot must be an administrator in the chat for this to work and must have can_pin_messages administrator right in the supergroup.
+func (a API) UnpinAllGeneralForumTopicMessages(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return get[APIResponseBool](a.base, "unpinAllGeneralForumTopicMessages", vals)
+}
+
 // AnswerCallbackQuery is used to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
 func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) (res APIResponseBool, err error) {
