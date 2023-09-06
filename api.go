@@ -136,7 +136,7 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("from_chat_id", itoa(fromChatID))
 	vals.Set("message_id", itoa(int64(messageID)))
-	return get[APIResponseMessageID](a.base, "forwardMessage", addValues(vals, opts))
+	return get[APIResponseMessageID](a.base, "copyMessage", addValues(vals, opts))
 }
 
 // SendPhoto is used to send photos.
