@@ -458,7 +458,7 @@ type Chat struct {
 	InviteLink                         string           `json:"invite_link,omitempty"`
 	EmojiStatusCustomEmojiID           string           `json:"emoji_status_custom_emoji_id,omitempty"`
 	Type                               string           `json:"type"`
-	EmojiStatusExpirationDate		   int				`json:"emoji_status_expiration_date,omitempty"`
+	EmojiStatusExpirationDate          int              `json:"emoji_status_expiration_date,omitempty"`
 	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
 	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
 	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
@@ -516,7 +516,7 @@ type Message struct {
 	WriteAccessAllowed            *WriteAccessAllowed            `json:"write_access_allowed,omitempty"`
 	UserShared                    *UserShared                    `json:"user_shared,omitempty"`
 	ChatShared                    *ChatShared                    `json:"chat_shared,omitempty"`
-	Story						  *Story						 `json:"story,omitempty"`
+	Story                         *Story                         `json:"story,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
@@ -1204,4 +1204,4 @@ type ChatShared struct {
 
 // Story represents a message about a forwarded story in the chat.
 // Currently holds no information.
-type Story struct {}
+type Story struct{}
