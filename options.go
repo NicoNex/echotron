@@ -535,6 +535,9 @@ type PromoteOptions struct {
 	CanChangeInfo       bool `query:"can_change_info,omitempty"`
 	CanInviteUsers      bool `query:"can_invite_users,omitempty"`
 	CanPinMessages      bool `query:"can_pin_messages,omitempty"`
+	CanPostStories      bool `json:"can_post_stories,omitempty"`
+	CanEditStories      bool `json:"can_edit_stories,omitempty"`
+	CanDeleteStories    bool `json:"can_delete_stories,omitempty"`
 	CanManageTopics     bool `query:"can_manage_topics,omitempty"`
 }
 

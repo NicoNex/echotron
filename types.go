@@ -835,6 +835,9 @@ type ChatMember struct {
 	CanSendOtherMessages  bool   `json:"can_send_other_messages,omitempty"`
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews,omitempty"`
 	CanManageTopics       bool   `json:"can_manage_topics,omitempty"`
+	CanPostStories        bool   `json:"can_post_stories,omitempty"`
+	CanEditStories        bool   `json:"can_edit_stories,omitempty"`
+	CanDeleteStories      bool   `json:"can_delete_stories,omitempty"`
 	UntilDate             int    `json:"until_date,omitempty"`
 }
 
@@ -1161,7 +1164,9 @@ type GeneralForumTopicUnhidden struct{}
 
 // WriteAccessAllowed represents a service message about a user allowing a bot added to the attachment menu to write messages.
 type WriteAccessAllowed struct {
-	WebAppName string `json:"web_app_name,omitempty"`
+	FromRequest        bool   `json:"from_request,omitempty"`
+	WebAppName         string `json:"web_app_name,omitempty"`
+	FromAttachmentMenu bool   `json:"from_attachment_menu,omitempty"`
 }
 
 // IconColor represents a forum topic icon in RGB format.
