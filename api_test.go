@@ -1070,8 +1070,12 @@ func TestRestrictChatMember(t *testing.T) {
 	_, err := api.RestrictChatMember(
 		groupID,
 		banUserID,
-		ChatPermissions{},
-		nil,
+		ChatPermissions{
+			CanSendMessages: true,
+		},
+		&RestrictOptions{
+			UseIndependentChatPermissions: true,
+		},
 	)
 
 	if err != nil {
@@ -1085,6 +1089,8 @@ func TestPromoteChatMember(t *testing.T) {
 		banUserID,
 		&PromoteOptions{
 			CanManageChat:       true,
+			CanPostMessages:     true,
+			CanEditMessages:     true,
 			CanDeleteMessages:   true,
 			CanManageVideoChats: true,
 			CanRestrictMembers:  true,
@@ -1092,6 +1098,10 @@ func TestPromoteChatMember(t *testing.T) {
 			CanChangeInfo:       true,
 			CanInviteUsers:      true,
 			CanPinMessages:      true,
+			CanPostStories:      true,
+			CanEditStories:      true,
+			CanDeleteStories:    true,
+			CanManageTopics:     true,
 		},
 	)
 
