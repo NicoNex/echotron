@@ -1124,11 +1124,6 @@ type BotName struct {
 	Name string `json:"name"`
 }
 
-// PermissionOptions is a custom type used to allow proper serialization of ChatPermissions-type parameters in some methods.
-type PermissionOptions struct {
-	Permissions ChatPermissions `json:"permissions"`
-}
-
 // ChatJoinRequest represents a join request sent to a chat.
 type ChatJoinRequest struct {
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
