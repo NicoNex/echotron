@@ -120,13 +120,13 @@ type ReplyMarkup interface {
 
 // KeyboardButton represents a button in a keyboard.
 type KeyboardButton struct {
-	RequestPoll     *KeyboardButtonPollType    `json:"request_poll,omitempty"`
-	WebApp          *WebAppInfo                `json:"web_app,omitempty"`
-	RequestUser     *KeyboardButtonRequestUser `json:"request_user,omitempty"`
-	RequestChat     *KeyboardButtonRequestChat `json:"request_chat,omitempty"`
-	Text            string                     `json:"text"`
-	RequestContact  bool                       `json:"request_contact,omitempty"`
-	RequestLocation bool                       `json:"request_location,omitempty"`
+	RequestPoll     *KeyboardButtonPollType     `json:"request_poll,omitempty"`
+	WebApp          *WebAppInfo                 `json:"web_app,omitempty"`
+	RequestUsers    *KeyboardButtonRequestUsers `json:"request_users,omitempty"`
+	RequestChat     *KeyboardButtonRequestChat  `json:"request_chat,omitempty"`
+	Text            string                      `json:"text"`
+	RequestContact  bool                        `json:"request_contact,omitempty"`
+	RequestLocation bool                        `json:"request_location,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -134,12 +134,13 @@ type KeyboardButtonPollType struct {
 	Type PollType `json:"type"`
 }
 
-// KeyboardButtonRequestUser defines the criteria used to request a suitable user.
-// The identifier of the selected user will be shared with the bot when the corresponding button is pressed.
-type KeyboardButtonRequestUser struct {
+// KeyboardButtonRequestUsers defines the criteria used to request suitable users.
+// The identifiers of the selected users will be shared with the bot when the corresponding button is pressed.
+type KeyboardButtonRequestUsers struct {
 	RequestID     int  `json:"request_id"`
-	UserIsPremium bool `json:"user_is_premium,omitempty"`
+	MaxQuantity   int  `json:"max_quantity,omitempty"`
 	UserIsBot     bool `json:"user_is_bot,omitempty"`
+	UserIsPremium bool `json:"user_is_premium,omitempty"`
 }
 
 // KeyboardButtonRequestChat defines the criteria used to request a suitable chat.
@@ -232,25 +233,23 @@ type WebhookOptions struct {
 
 // BaseOptions contains the optional parameters used frequently in some Telegram API methods.
 type BaseOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	MessageThreadID          int         `query:"message_thread_id"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ProtectContent           bool        `query:"protect_content"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // MessageOptions contains the optional parameters used by some Telegram API methods.
 type MessageOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
-	ParseMode                ParseMode       `query:"parse_mode"`
-	Entities                 []MessageEntity `query:"entities"`
-	MessageThreadID          int64           `query:"message_thread_id"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	DisableWebPagePreview    bool            `query:"disable_web_page_preview"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup        `query:"reply_markup"`
+	ReplyParameters     ReplyParameters    `query:"reply_parameters"`
+	ParseMode           ParseMode          `query:"parse_mode"`
+	LinkPreviewOptions  LinkPreviewOptions `query:"link_preview_options"`
+	Entities            []MessageEntity    `query:"entities"`
+	MessageThreadID     int64              `query:"message_thread_id"`
+	DisableNotification bool               `query:"disable_notification"`
+	ProtectContent      bool               `query:"protect_content"`
 }
 
 // PinMessageOptions contains the optional parameters used by the PinChatMember method.
@@ -267,26 +266,32 @@ type ForwardOptions struct {
 
 // CopyOptions contains the optional parameters used by the CopyMessage method.
 type CopyOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
-	ParseMode                ParseMode       `query:"parse_mode"`
-	Caption                  string          `query:"caption"`
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Caption             string          `query:"caption"`
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
+}
+
+// CopyMessagesOptions contains the optional parameters used by the CopyMessages methods.
+type CopyMessagesOptions struct {
+	MessageThreadID     int  `query:"message_thread_id"`
+	DisableNotification bool `query:"disable_notification"`
+	ProtectContent      bool `query:"protect_content"`
+	RemoveCaption       bool `query:"remove_caption"`
 }
 
 // StickerOptions contains the optional parameters used by the SendSticker method.
 type StickerOptions struct {
-	Emoji                    string      `query:"emoji"`
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	MessageThreadID          int         `query:"message_thread_id"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ProtectContent           bool        `query:"protect_content"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	Emoji               string          `query:"emoji"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // InputFile is a struct which contains data about a file to be sent.
@@ -320,135 +325,126 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 
 // PhotoOptions contains the optional parameters used by the SendPhoto method.
 type PhotoOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
-	ParseMode                ParseMode       `query:"parse_mode"`
-	Caption                  string          `query:"caption"`
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	HasSpoiler               bool            `query:"has_spoiler"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Caption             string          `query:"caption"`
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	HasSpoiler          bool            `query:"has_spoiler"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // AudioOptions contains the optional parameters used by the SendAudio method.
 type AudioOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	ParseMode                ParseMode   `query:"parse_mode"`
-	Caption                  string      `query:"caption"`
-	Performer                string      `query:"performer"`
-	Title                    string      `query:"title"`
-	Thumbnail                InputFile
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	Duration                 int             `query:"duration"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Caption             string          `query:"caption"`
+	Performer           string          `query:"performer"`
+	Title               string          `query:"title"`
+	Thumbnail           InputFile
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	Duration            int             `query:"duration"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
 type DocumentOptions struct {
-	ReplyMarkup                 ReplyMarkup `query:"reply_markup"`
-	ParseMode                   ParseMode   `query:"parse_mode"`
-	Caption                     string      `query:"caption"`
+	ReplyMarkup                 ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters             ReplyParameters `query:"reply_parameters"`
+	ParseMode                   ParseMode       `query:"parse_mode"`
+	Caption                     string          `query:"caption"`
 	Thumbnail                   InputFile
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	MessageThreadID             int             `query:"message_thread_id"`
-	ReplyToMessageID            int             `query:"reply_to_message_id"`
 	DisableNotification         bool            `query:"disable_notification"`
 	ProtectContent              bool            `query:"protect_content"`
-	AllowSendingWithoutReply    bool            `query:"allow_sending_without_reply"`
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
 type VideoOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	Caption                  string      `query:"caption"`
-	ParseMode                ParseMode   `query:"parse_mode"`
-	Thumbnail                InputFile
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	Duration                 int             `query:"duration"`
-	Width                    int             `query:"width"`
-	Height                   int             `query:"height"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	HasSpoiler               bool            `query:"has_spoiler"`
-	SupportsStreaming        bool            `query:"supports_streaming"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	Caption             string          `query:"caption"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Thumbnail           InputFile
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	Duration            int             `query:"duration"`
+	Width               int             `query:"width"`
+	Height              int             `query:"height"`
+	HasSpoiler          bool            `query:"has_spoiler"`
+	SupportsStreaming   bool            `query:"supports_streaming"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
 type AnimationOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	ParseMode                ParseMode   `query:"parse_mode"`
-	Caption                  string      `query:"caption"`
-	Thumbnail                InputFile
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	Duration                 int             `query:"duration"`
-	Width                    int             `query:"width"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	Height                   int             `query:"height"`
-	HasSpoiler               bool            `query:"has_spoiler"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Caption             string          `query:"caption"`
+	Thumbnail           InputFile
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	Duration            int             `query:"duration"`
+	Width               int             `query:"width"`
+	Height              int             `query:"height"`
+	HasSpoiler          bool            `query:"has_spoiler"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
 type VoiceOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
-	ParseMode                ParseMode       `query:"parse_mode"`
-	Caption                  string          `query:"caption"`
-	CaptionEntities          []MessageEntity `query:"caption_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	Duration                 int             `query:"duration"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	ParseMode           ParseMode       `query:"parse_mode"`
+	Caption             string          `query:"caption"`
+	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	Duration            int             `query:"duration"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	Thumbnail                InputFile
-	MessageThreadID          int  `query:"message_thread_id"`
-	Duration                 int  `query:"duration"`
-	ReplyToMessageID         int  `query:"reply_to_message_id"`
-	Length                   int  `query:"length"`
-	DisableNotification      bool `query:"disable_notification"`
-	ProtectContent           bool `query:"protect_content"`
-	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	Thumbnail           InputFile
+	MessageThreadID     int  `query:"message_thread_id"`
+	Duration            int  `query:"duration"`
+	Length              int  `query:"length"`
+	DisableNotification bool `query:"disable_notification"`
+	ProtectContent      bool `query:"protect_content"`
 }
 
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
 type MediaGroupOptions struct {
-	MessageThreadID          int  `query:"message_thread_id"`
-	ReplyToMessageID         int  `query:"reply_to_message_id"`
-	DisableNotification      bool `query:"disable_notification"`
-	ProtectContent           bool `query:"protect_content"`
-	AllowSendingWithoutReply bool `query:"allow_sending_without_reply"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // LocationOptions contains the optional parameters used by the SendLocation method.
 type LocationOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	HorizontalAccuracy       float64     `query:"horizontal_accuracy"`
-	MessageThreadID          int         `query:"message_thread_id"`
-	LivePeriod               int         `query:"live_period"`
-	ProximityAlertRadius     int         `query:"proximity_alert_radius"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	Heading                  int         `query:"heading"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ProtectContent           bool        `query:"protect_content"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup          ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters      ReplyParameters `query:"reply_parameters"`
+	HorizontalAccuracy   float64         `query:"horizontal_accuracy"`
+	MessageThreadID      int             `query:"message_thread_id"`
+	LivePeriod           int             `query:"live_period"`
+	ProximityAlertRadius int             `query:"proximity_alert_radius"`
+	Heading              int             `query:"heading"`
+	DisableNotification  bool            `query:"disable_notification"`
+	ProtectContent       bool            `query:"protect_content"`
 }
 
 // EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
@@ -461,48 +457,45 @@ type EditLocationOptions struct {
 
 // VenueOptions contains the optional parameters used by the SendVenue method.
 type VenueOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	FoursquareID             string      `query:"foursquare_id"`
-	FoursquareType           string      `query:"foursquare_type"`
-	GooglePlaceType          string      `query:"google_place_type"`
-	GooglePlaceID            string      `query:"google_place_id"`
-	MessageThreadID          int         `query:"message_thread_id"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ProtectContent           bool        `query:"protect_content"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	FoursquareID        string          `query:"foursquare_id"`
+	FoursquareType      string          `query:"foursquare_type"`
+	GooglePlaceType     string          `query:"google_place_type"`
+	GooglePlaceID       string          `query:"google_place_id"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // ContactOptions contains the optional parameters used by the SendContact method.
 type ContactOptions struct {
-	ReplyMarkup              ReplyMarkup `query:"reply_markup"`
-	VCard                    string      `query:"vcard"`
-	LastName                 string      `query:"last_name"`
-	MessageThreadID          int         `query:"message_thread_id"`
-	ReplyToMessageID         int         `query:"reply_to_message_id"`
-	DisableNotification      bool        `query:"disable_notification"`
-	ProtectContent           bool        `query:"protect_content"`
-	AllowSendingWithoutReply bool        `query:"allow_sending_without_reply"`
+	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
+	VCard               string          `query:"vcard"`
+	LastName            string          `query:"last_name"`
+	MessageThreadID     int             `query:"message_thread_id"`
+	DisableNotification bool            `query:"disable_notification"`
+	ProtectContent      bool            `query:"protect_content"`
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
 type PollOptions struct {
-	ReplyMarkup              ReplyMarkup     `query:"reply_markup"`
-	Explanation              string          `query:"explanation"`
-	ExplanationParseMode     ParseMode       `query:"explanation_parse_mode"`
-	Type                     PollType        `query:"type"`
-	ExplanationEntities      []MessageEntity `query:"explanation_entities"`
-	MessageThreadID          int             `query:"message_thread_id"`
-	ReplyToMessageID         int             `query:"reply_to_message_id"`
-	CorrectOptionID          int             `query:"correct_option_id"`
-	CloseDate                int             `query:"close_date"`
-	OpenPeriod               int             `query:"open_period"`
-	IsClosed                 bool            `query:"is_closed"`
-	DisableNotification      bool            `query:"disable_notification"`
-	ProtectContent           bool            `query:"protect_content"`
-	AllowsMultipleAnswers    bool            `query:"allows_multiple_answers"`
-	AllowSendingWithoutReply bool            `query:"allow_sending_without_reply"`
-	IsAnonymous              bool            `query:"is_anonymous"`
+	ReplyMarkup           ReplyMarkup     `query:"reply_markup"`
+	ReplyParameters       ReplyParameters `query:"reply_parameters"`
+	Explanation           string          `query:"explanation"`
+	ExplanationParseMode  ParseMode       `query:"explanation_parse_mode"`
+	Type                  PollType        `query:"type"`
+	ExplanationEntities   []MessageEntity `query:"explanation_entities"`
+	MessageThreadID       int             `query:"message_thread_id"`
+	CorrectOptionID       int             `query:"correct_option_id"`
+	CloseDate             int             `query:"close_date"`
+	OpenPeriod            int             `query:"open_period"`
+	IsClosed              bool            `query:"is_closed"`
+	DisableNotification   bool            `query:"disable_notification"`
+	ProtectContent        bool            `query:"protect_content"`
+	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
+	IsAnonymous           bool            `query:"is_anonymous"`
 }
 
 // BanOptions contains the optional parameters used by the BanChatMember method.
@@ -587,10 +580,10 @@ func NewInlineMessageID(ID string) MessageIDOptions {
 
 // MessageTextOptions contains the optional parameters used by the EditMessageText method.
 type MessageTextOptions struct {
-	ParseMode             ParseMode            `query:"parse_mode"`
-	Entities              []MessageEntity      `query:"entities"`
-	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
-	DisableWebPagePreview bool                 `query:"disable_web_page_preview"`
+	ParseMode          ParseMode            `query:"parse_mode"`
+	Entities           []MessageEntity      `query:"entities"`
+	ReplyMarkup        InlineKeyboardMarkup `query:"reply_markup"`
+	LinkPreviewOptions LinkPreviewOptions   `query:"link_preview_options"`
 }
 
 // MessageCaptionOptions contains the optional parameters used by the EditMessageCaption method.
@@ -612,18 +605,18 @@ type CommandOptions struct {
 	Scope        BotCommandScope `query:"scope"`
 }
 
-// InvoiceOptions contains the optional parameters used by the SendInvoice api method.
+// InvoiceOptions contains the optional parameters used by the SendInvoice API method.
 type InvoiceOptions struct {
 	StartParameter            string               `query:"start_parameter"`
 	ProviderData              string               `query:"provider_data"`
 	PhotoURL                  string               `query:"photo_url"`
 	ReplyMarkup               InlineKeyboardMarkup `query:"reply_markup"`
+	ReplyParameters           ReplyParameters      `query:"reply_parameters"`
 	SuggestedTipAmount        []int                `query:"suggested_tip_amounts"`
 	MessageThreadID           int                  `query:"message_thread_id"`
 	PhotoSize                 int                  `query:"photo_size"`
 	PhotoWidth                int                  `query:"photo_width"`
 	PhotoHeight               int                  `query:"photo_height"`
-	ReplyToMessageID          int                  `query:"reply_to_message_id"`
 	MaxTipAmount              int                  `query:"max_tip_amount"`
 	NeedPhoneNumber           bool                 `query:"need_phone_number"`
 	NeepShippingAddress       bool                 `query:"need_shipping_address"`
@@ -633,11 +626,10 @@ type InvoiceOptions struct {
 	DisableNotification       bool                 `query:"disable_notification"`
 	ProtectContent            bool                 `query:"protect_content"`
 	NeedName                  bool                 `query:"need_name"`
-	AllowSendingWithoutReply  bool                 `query:"allow_sending_without_reply"`
 	NeedEmail                 bool                 `query:"need_email"`
 }
 
-// CreateInvoiceLinkOptions contains the optional parameters used by the CreateInvoiceLink api method.
+// CreateInvoiceLinkOptions contains the optional parameters used by the CreateInvoiceLink API method.
 type CreateInvoiceLinkOptions struct {
 	ProviderData              string `query:"provider_data"`
 	PhotoURL                  string `query:"photo_url"`
@@ -662,30 +654,36 @@ type ShippingOption struct {
 	Prices []LabeledPrice `query:"prices"`
 }
 
-// ShippingQueryOptions contains the optional parameters used by the AnswerShippingQuery api method.
+// ShippingQueryOptions contains the optional parameters used by the AnswerShippingQuery API method.
 type ShippingQueryOptions struct {
 	ErrorMessage    string           `query:"error_message"`
 	ShippingOptions []ShippingOption `query:"shipping_options"`
 }
 
-// PreCheckoutOptions contains the optional parameters used by the AnswerPreCheckoutQuery api method.
+// PreCheckoutOptions contains the optional parameters used by the AnswerPreCheckoutQuery API method.
 type PreCheckoutOptions struct {
 	ErrorMessage string `query:"error_message"`
 }
 
-// CreateTopicOptions contains the optional parameters used by the CreateForumTopic api method.
+// CreateTopicOptions contains the optional parameters used by the CreateForumTopic API method.
 type CreateTopicOptions struct {
 	IconCustomEmojiID string    `query:"icon_custom_emoji_id"`
 	IconColor         IconColor `query:"icon_color"`
 }
 
-// EditTopicOptions contains the optional parameters used by the EditForumTopic api method.
+// EditTopicOptions contains the optional parameters used by the EditForumTopic API method.
 type EditTopicOptions struct {
 	Name              string `query:"name"`
 	IconCustomEmojiID string `query:"icon_custom_emoji_id"`
 }
 
-// ChatActionOptions contains the optional parameters used by the SendChatAction api method.
+// ChatActionOptions contains the optional parameters used by the SendChatAction API method.
 type ChatActionOptions struct {
 	MessageThreadID int `query:"message_thread_id"`
+}
+
+// MessageReactionOptions contains the optional parameters used by the SetMessageReaction API method.
+type MessageReactionOptions struct {
+	Reaction []ReactionType `query:"reaction"`
+	IsBig    bool           `query:"is_big"`
 }

@@ -180,6 +180,25 @@ func TestForwardMessage(t *testing.T) {
 	}
 }
 
+func TestForwardMessages(t *testing.T) {
+	msg, _ := api.SendMessage(
+		"TestForwardMessages",
+		chatID,
+		nil,
+	)
+
+	_, err := api.ForwardMessages(
+		chatID,
+		chatID, // fromChatID
+		[]int{msgTmp.ID, msg.Result.ID},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCopyMessage(t *testing.T) {
 	_, err := api.CopyMessage(
 		chatID,
@@ -193,12 +212,33 @@ func TestCopyMessage(t *testing.T) {
 	}
 }
 
+func TestCopyMessages(t *testing.T) {
+	msg, _ := api.SendMessage(
+		"TestCopyMessages",
+		chatID,
+		nil,
+	)
+
+	_, err := api.CopyMessages(
+		chatID,
+		chatID, // fromChatID
+		[]int{msgTmp.ID, msg.Result.ID},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendMessageReply(t *testing.T) {
 	_, err := api.SendMessage(
 		"TestSendMessageReply",
 		chatID,
 		&MessageOptions{
-			ReplyToMessageID: msgTmp.ID,
+			ReplyParameters: ReplyParameters{
+				MessageID: msgTmp.ID,
+			},
 		},
 	)
 
@@ -1494,6 +1534,17 @@ func TestUnpinAllGeneralForumTopicMessages(t *testing.T) {
 	}
 }
 
+func TestGetUserChatBoosts(t *testing.T) {
+	_, err := api.GetUserChatBoosts(
+		channelID,
+		chatID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSetMyCommands(t *testing.T) {
 	opts := &CommandOptions{
 		LanguageCode: "it",
@@ -1681,6 +1732,23 @@ func TestDeleteMessage(t *testing.T) {
 	_, err := api.DeleteMessage(
 		chatID,
 		msgTmp.ID,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteMessages(t *testing.T) {
+	msg, _ := api.SendMessage(
+		"TestForwardMessages",
+		chatID,
+		nil,
+	)
+
+	_, err := api.DeleteMessages(
+		chatID,
+		[]int{msgTmp.ID, msg.Result.ID},
 	)
 
 	if err != nil {

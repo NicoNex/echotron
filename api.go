@@ -126,6 +126,24 @@ func (a API) ForwardMessage(chatID, fromChatID int64, messageID int, opts *Forwa
 	return get[APIResponseMessage](a.base, "forwardMessage", addValues(vals, opts))
 }
 
+// ForwardMessages is used to forward multiple messages of any kind.
+// If some of the specified messages can't be found or forwarded, they are skipped.
+// Service messages and messages with protected content can't be forwarded.
+// Album grouping is kept for forwarded messages.
+func (a API) ForwardMessages(chatID, fromChatID int64, messageIDs []int, opts *ForwardOptions) (res APIResponseMessageIDs, err error) {
+	var vals = make(url.Values)
+
+	msgIDs, err := json.Marshal(messageIDs)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("from_chat_id", itoa(fromChatID))
+	vals.Set("message_ids", string(msgIDs))
+	return get[APIResponseMessageIDs](a.base, "forwardMessages", addValues(vals, opts))
+}
+
 // CopyMessage is used to copy messages of any kind.
 // Service messages and invoice messages can't be copied.
 // The method is analogous to the method ForwardMessage,
@@ -137,6 +155,26 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 	vals.Set("from_chat_id", itoa(fromChatID))
 	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseMessageID](a.base, "copyMessage", addValues(vals, opts))
+}
+
+// CopyMessages is used to copy messages of any kind.
+// If some of the specified messages can't be found or copied, they are skipped.
+// Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied.
+// A quiz poll can be copied only if the value of the field correct_option_id is known to the bot.
+// The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message.
+// Album grouping is kept for copied messages.
+func (a API) CopyMessages(chatID, fromChatID int64, messageIDs []int, opts *CopyMessagesOptions) (res APIResponseMessageIDs, err error) {
+	var vals = make(url.Values)
+
+	msgIDs, err := json.Marshal(messageIDs)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("from_chat_id", itoa(fromChatID))
+	vals.Set("message_ids", string(msgIDs))
+	return get[APIResponseMessageIDs](a.base, "copyMessages", addValues(vals, opts))
 }
 
 // SendPhoto is used to send photos.
@@ -322,6 +360,18 @@ func (a API) SendChatAction(action ChatAction, chatID int64, opts *ChatActionOpt
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("action", string(action))
 	return get[APIResponseBool](a.base, "sendChatAction", addValues(vals, opts))
+}
+
+// SetMessageReaction is used to change the chosen reactions on a message.
+// Service messages can't be reacted to.
+// Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel.
+// In albums, bots must react to the first message.
+func (a API) SetMessageReaction(chatID int64, messageID int, opts *MessageReactionOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	return get[APIResponseBool](a.base, "setMessageReaction", addValues(vals, opts))
 }
 
 // GetUserProfilePhotos is used to get a list of profile pictures for a user.
@@ -776,6 +826,16 @@ func (a API) AnswerCallbackQuery(callbackID string, opts *CallbackQueryOptions) 
 	return get[APIResponseBool](a.base, "answerCallbackQuery", addValues(vals, opts))
 }
 
+// GetUserChatBoosts is used to get the list of boosts added to a chat by a user.
+// Requires administrator rights in the chat.
+func (a API) GetUserChatBoosts(chatID, userID int64) (res APIResponseUserChatBoosts, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
+	return get[APIResponseUserChatBoosts](a.base, "getUserChatBoosts", vals)
+}
+
 // SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
 func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
@@ -897,4 +957,19 @@ func (a API) DeleteMessage(chatID int64, messageID int) (res APIResponseBase, er
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("message_id", itoa(int64(messageID)))
 	return get[APIResponseBase](a.base, "deleteMessage", vals)
+}
+
+// DeleteMessages is used to delete multiple messages simultaneously.
+// If some of the specified messages can't be found, they are skipped.
+func (a API) DeleteMessages(chatID int64, messageIDs []int) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	msgIDs, err := json.Marshal(messageIDs)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_ids", string(msgIDs))
+	return get[APIResponseBool](a.base, "deleteMessages", vals)
 }
