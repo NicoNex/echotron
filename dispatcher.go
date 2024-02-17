@@ -153,7 +153,7 @@ func (d *Dispatcher) ListenWebhook(webhookURL string) error {
 
 // ListenWebhookOptions sets a webhook and listens for incoming updates.
 // The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
-// eg: 'https://example.com:443/bot_token'.
+// eg: 'http://example.com:443/bot_token'.
 // ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
 // and run a webserver that listens to ':<port>' and handles the path.
 func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
@@ -176,6 +176,37 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 	}
 	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
 	return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
+}
+
+// ListenWebhookTLS is a wrapper function for ListenWebhookOptionsTLS.
+func (d *Dispatcher) ListenWebhookTLS(webhookURL, certFile, keyFile string) error {
+	return d.ListenWebhookOptionsTLS(webhookURL, certFile, keyFile, false, nil)
+}
+
+// ListenWebhookOptionsTLS acts identically to ListenWebhookOptions except that
+// it expects HTTPS connections.
+// Additionally, files containing a certificate and matching private key
+// for the server must be provided.
+func (d *Dispatcher) ListenWebhookOptionsTLS(webhookURL, certFile, keyFile string, dropPendingUpdates bool, opts *WebhookOptions) error {
+	u, err := url.Parse(webhookURL)
+	if err != nil {
+		return err
+	}
+
+	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
+	if _, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts); err != nil {
+		return err
+	}
+
+	if d.httpServer != nil {
+		mux := http.NewServeMux()
+		mux.Handle("/", d.httpServer.Handler)
+		mux.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+		d.httpServer.Handler = mux
+		return d.httpServer.ListenAndServe()
+	}
+	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
+	return http.ListenAndServeTLS(fmt.Sprintf(":%s", u.Port()), certFile, keyFile, nil)
 }
 
 // SetHTTPServer allows to set a custom http.Server for ListenWebhook and ListenWebhookOptions.
