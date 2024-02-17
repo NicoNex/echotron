@@ -489,11 +489,13 @@ type Chat struct {
 	InviteLink                         string           `json:"invite_link,omitempty"`
 	EmojiStatusCustomEmojiID           string           `json:"emoji_status_custom_emoji_id,omitempty"`
 	Type                               string           `json:"type"`
+	CustomEmojiStickerSetName          string           `json:"custom_emoji_sticker_set_name,omitempty"`
 	AccentColorID                      int              `json:"accent_color_id,omitempty"`
 	ProfileAccentColorID               int              `json:"profile_accent_color_id,omitempty"`
 	EmojiStatusExpirationDate          int              `json:"emoji_status_expiration_date,omitempty"`
 	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
 	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
+	UnrestrictBoostCount               int              `json:"unrestrict_boost_count,omitempty"`
 	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
 	ID                                 int64            `json:"id"`
 	IsForum                            bool             `json:"is_forum,omitempty"`
@@ -553,10 +555,12 @@ type Message struct {
 	UsersShared                   *UsersShared                   `json:"users_shared,omitempty"`
 	ChatShared                    *ChatShared                    `json:"chat_shared,omitempty"`
 	Story                         *Story                         `json:"story,omitempty"`
+	ReplyToStory                  *Story                         `json:"reply_to_story,omitempty"`
 	ExternalReply                 *ExternalReplyInfo             `json:"external_reply,omitempty"`
 	Quote                         *TextQuote                     `json:"quote,omitempty"`
 	LinkPreviewOptions            *LinkPreviewOptions            `json:"link_preview_options,omitempty"`
 	ForwardOrigin                 *MessageOrigin                 `json:"forward_origin,omitempty"`
+	BoostAdded                    *ChatBoostAdded                `json:"boost_added,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
@@ -575,6 +579,7 @@ type Message struct {
 	Date                          int                            `json:"date"`
 	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
 	EditDate                      int                            `json:"edit_date,omitempty"`
+	SenderBoostCount              int                            `json:"sender_boost_count,omitempty"`
 	DeleteChatPhoto               bool                           `json:"delete_chat_photo,omitempty"`
 	IsTopicMessage                bool                           `json:"is_topic_message,omitempty"`
 	IsAutomaticForward            bool                           `json:"is_automatic_forward,omitempty"`
@@ -1173,6 +1178,11 @@ type ChatJoinRequest struct {
 	UserChatID int64           `json:"user_chat_id"`
 }
 
+// ChatBoostAdded represents a service message about a user boosting a chat.
+type ChatBoostAdded struct {
+	BoostCount int `json:"boost_count"`
+}
+
 // ForumTopicCreated represents a service message about a new forum topic created in the chat.
 type ForumTopicCreated struct {
 	Name              string `json:"name"`
@@ -1238,9 +1248,11 @@ type ChatShared struct {
 	ChatID    int64 `json:"chat_id"`
 }
 
-// Story represents a message about a forwarded story in the chat.
-// Currently holds no information.
-type Story struct{}
+// Story represents a story.
+type Story struct {
+	Chat Chat  `json:"chat"`
+	ID   int64 `json:"id"`
+}
 
 type ReactionType interface {
 	ImplementsReactionType()
