@@ -116,3 +116,47 @@ func sendPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 
 	return content, nil
 }
+
+// sendPostForm is used to send an "application/x-www-form-urlencoded" through an HTTP POST request.
+func sendPostFormCert(reqURL string, keyVals map[string]string, cert content) ([]byte, error) {
+	var (
+		form = make(url.Values)
+		buf  = new(bytes.Buffer)
+		w    = multipart.NewWriter(buf)
+	)
+
+	for k, v := range keyVals {
+		form.Add(k, v)
+	}
+
+	part, err := w.CreateFormFile("certificate", filepath.Base(cert.fname))
+	if err != nil {
+		return nil, err
+	}
+
+	part.Write(cert.fdata)
+	w.Close()
+
+	request, err := http.NewRequest("POST", reqURL, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	request.PostForm = form
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Content-Type", w.FormDataContentType())
+
+	var client http.Client
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	content, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}

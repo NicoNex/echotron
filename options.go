@@ -323,6 +323,10 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 	return InputFile{path: fileName, content: content}
 }
 
+func (i InputFile) isZero() bool {
+	return i.id == "" && i.path == "" && i.url == "" && i.ftype == "" && len(i.content) == 0
+}
+
 // PhotoOptions contains the optional parameters used by the SendPhoto method.
 type PhotoOptions struct {
 	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`

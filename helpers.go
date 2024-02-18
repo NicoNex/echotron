@@ -99,12 +99,12 @@ func processSticker(sticker InputFile) (se stickerEnvelope, cnt []content, err e
 	return
 }
 
-func readFile(im InputFile) (content []byte, path string, err error) {
-	content, err = os.ReadFile(im.path)
+func readFile(f InputFile) (content []byte, path string, err error) {
+	content, err = os.ReadFile(f.path)
 	if err != nil {
 		return
 	}
-	path = filepath.Base(im.path)
+	path = filepath.Base(f.path)
 
 	return
 }
@@ -226,15 +226,16 @@ func serializePerms(permissions ChatPermissions) (string, error) {
 	return string(perm), nil
 }
 
-func toContent(ftype string, f InputFile) (content, error) {
+func toContent(ftype string, f InputFile) (c content, err error) {
+	c.ftype = ftype
 	if f.path != "" && len(f.content) == 0 {
-		var err error
-		if f.content, f.path, err = readFile(f); err != nil {
-			return content{}, err
-		}
+		c.fdata, c.fname, err = readFile(f)
+		return
 	}
 
-	return content{f.path, ftype, f.content}, nil
+	c.fname = filepath.Base(f.path)
+	c.fdata = f.content
+	return
 }
 
 func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {

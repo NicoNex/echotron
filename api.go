@@ -60,7 +60,18 @@ func (a API) SetWebhook(webhookURL string, dropPendingUpdates bool, opts *Webhoo
 	addValues(vals, opts)
 	url = fmt.Sprintf("%s?%s", strings.TrimSuffix(url, "/"), vals.Encode())
 
-	cnt, err := sendPostForm(url, keyVal)
+	var cnt []byte
+
+	if opts != nil && !opts.Certificate.isZero() {
+		c, err := toContent("certificate", opts.Certificate)
+		if err != nil {
+			return res, err
+		}
+		cnt, err = sendPostFormCert(url, keyVal, c)
+	} else {
+		cnt, err = sendPostForm(url, keyVal)
+	}
+
 	if err != nil {
 		return
 	}
