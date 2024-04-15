@@ -202,13 +202,10 @@ func (a API) DeleteStickerFromSet(sticker string) (res APIResponseBase, err erro
 func (a API) ReplaceStickerInSet(userID int64, name string, old_sticker string, sticker InputSticker) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	jsn, _ := json.Marshal(sticker)
-
 	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("old_sticker", old_sticker)
-	vals.Set("sticker", string(jsn))
-	return get[APIResponseBool](a.base, "replaceStickerInSet", vals)
+	return postStickers[APIResponseBool](a.base, "replaceStickerInSet", vals, sticker)
 }
 
 // SetStickerEmojiList is used to change the list of emoji assigned to a regular or custom emoji sticker.
