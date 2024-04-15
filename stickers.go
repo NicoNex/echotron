@@ -50,8 +50,6 @@ type StickerSet struct {
 	Name        string         `json:"name"`
 	StickerType StickerSetType `json:"sticker_type"`
 	Stickers    []Sticker      `json:"stickers"`
-	IsAnimated  bool           `json:"is_animated"`
-	IsVideo     bool           `json:"is_video"`
 }
 
 // StickerSetType represents the type of a sticker or of the entire set
@@ -100,10 +98,11 @@ type NewStickerSetOptions struct {
 
 // InputSticker is a struct which describes a sticker to be added to a sticker set.
 type InputSticker struct {
-	Sticker      InputFile     `json:"-"`
-	EmojiList    []string      `json:"emoji_list"`
 	MaskPosition *MaskPosition `json:"mask_position,omitempty"`
 	Keywords     *[]string     `json:"keywords,omitempty"`
+	Format       StickerFormat `json:"format"`
+	Sticker      InputFile     `json:"-"`
+	EmojiList    []string      `json:"emoji_list"`
 }
 
 // stickerEnvelope is a generic struct for all the various structs under the InputSticker interface.
@@ -163,13 +162,12 @@ func (a API) UploadStickerFile(userID int64, sticker InputFile, format StickerFo
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
-func (a API) CreateNewStickerSet(userID int64, name, title string, stickers []InputSticker, format StickerFormat, opts *NewStickerSetOptions) (res APIResponseBool, err error) {
+func (a API) CreateNewStickerSet(userID int64, name, title string, stickers []InputSticker, opts *NewStickerSetOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("title", title)
-	vals.Set("sticker_format", string(format))
 	return postStickers[APIResponseBool](a.base, "createNewStickerSet", addValues(vals, opts), stickers...)
 }
 
@@ -197,6 +195,20 @@ func (a API) DeleteStickerFromSet(sticker string) (res APIResponseBase, err erro
 
 	vals.Set("sticker", sticker)
 	return get[APIResponseBase](a.base, "deleteStickerFromSet", vals)
+}
+
+// ReplaceStickerInSet is used to replace an existing sticker in a sticker set with a new one.
+// The method is equivalent to calling DeleteStickerFromSet, then AddStickerToSet, then SetStickerPositionInSet.
+func (a API) ReplaceStickerInSet(userID int64, name string, old_sticker string, sticker InputSticker) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	jsn, _ := json.Marshal(sticker)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("name", name)
+	vals.Set("old_sticker", old_sticker)
+	vals.Set("sticker", string(jsn))
+	return get[APIResponseBool](a.base, "replaceStickerInSet", vals)
 }
 
 // SetStickerEmojiList is used to change the list of emoji assigned to a regular or custom emoji sticker.
@@ -245,11 +257,12 @@ func (a API) SetStickerSetTitle(name, title string) (res APIResponseBool, err er
 }
 
 // SetStickerSetThumbnail is used to set the thumbnail of a sticker set.
-func (a API) SetStickerSetThumbnail(name string, userID int64, thumbnail InputFile) (res APIResponseBase, err error) {
+func (a API) SetStickerSetThumbnail(name string, userID int64, thumbnail InputFile, format StickerFormat) (res APIResponseBase, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("name", name)
 	vals.Set("user_id", itoa(userID))
+	vals.Set("format", string(format))
 	return postFile[APIResponseBase](a.base, "setStickerSetThumbnail", "thumbnail", thumbnail, InputFile{}, vals)
 }
 

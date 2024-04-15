@@ -836,6 +836,14 @@ func (a API) GetUserChatBoosts(chatID, userID int64) (res APIResponseUserChatBoo
 	return get[APIResponseUserChatBoosts](a.base, "getUserChatBoosts", vals)
 }
 
+// GetBusinessConnection is used to get information about the connection of the bot with a business account.
+func (a API) GetBusinessConnection(business_connection_id string) (res APIResponseBusinessConnection, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", business_connection_id)
+	return get[APIResponseBusinessConnection](a.base, "getBusinessConnection", vals)
+}
+
 // SetMyCommands is used to change the list of the bot's commands for the given scope and user language.
 func (a API) SetMyCommands(opts *CommandOptions, commands ...BotCommand) (res APIResponseBool, err error) {
 	var vals = make(url.Values)

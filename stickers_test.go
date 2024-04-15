@@ -63,7 +63,6 @@ func TestCreateNewStickerSet(t *testing.T) {
 				EmojiList: []string{"🤖"},
 			},
 		},
-		StaticFormat,
 		nil,
 	)
 
@@ -180,6 +179,7 @@ func TestSetStickerSetThumbnail(t *testing.T) {
 		stickerSetName,
 		chatID,
 		NewInputFilePath("assets/tests/echotron_thumb.png"),
+		StaticFormat,
 	)
 
 	if err != nil {

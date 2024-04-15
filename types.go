@@ -23,23 +23,27 @@ import "encoding/json"
 // Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
 type Update struct {
-	ChatJoinRequest      *ChatJoinRequest             `json:"chat_join_request,omitempty"`
-	ChatBoost            *ChatBoostUpdated            `json:"chat_boost,omitempty"`
-	RemovedChatBoost     *ChatBoostRemoved            `json:"removed_chat_boost,omitempty"`
-	Message              *Message                     `json:"message,omitempty"`
-	EditedMessage        *Message                     `json:"edited_message,omitempty"`
-	ChannelPost          *Message                     `json:"channel_post,omitempty"`
-	EditedChannelPost    *Message                     `json:"edited_channel_post,omitempty"`
-	MessageReaction      *MessageReactionUpdated      `json:"message_reaction,omitempty"`
-	MessageReactionCount *MessageReactionCountUpdated `json:"message_reaction_count,omitempty"`
-	InlineQuery          *InlineQuery                 `json:"inline_query,omitempty"`
-	ChosenInlineResult   *ChosenInlineResult          `json:"chosen_inline_result,omitempty"`
-	CallbackQuery        *CallbackQuery               `json:"callback_query,omitempty"`
-	ShippingQuery        *ShippingQuery               `json:"shipping_query,omitempty"`
-	PreCheckoutQuery     *PreCheckoutQuery            `json:"pre_checkout_query,omitempty"`
-	MyChatMember         *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
-	ChatMember           *ChatMemberUpdated           `json:"chat_member,omitempty"`
-	ID                   int                          `json:"update_id"`
+	ChatJoinRequest         *ChatJoinRequest             `json:"chat_join_request,omitempty"`
+	ChatBoost               *ChatBoostUpdated            `json:"chat_boost,omitempty"`
+	RemovedChatBoost        *ChatBoostRemoved            `json:"removed_chat_boost,omitempty"`
+	Message                 *Message                     `json:"message,omitempty"`
+	EditedMessage           *Message                     `json:"edited_message,omitempty"`
+	ChannelPost             *Message                     `json:"channel_post,omitempty"`
+	EditedChannelPost       *Message                     `json:"edited_channel_post,omitempty"`
+	BusinessConnection      *BusinessConnection          `json:"business_connection,omitempty"`
+	BusinessMessage         *Message                     `json:"business_message,omitempty"`
+	EditedBusinessMessage   *Message                     `json:"edited_business_message,omitempty"`
+	DeletedBusinessMessages *BusinessMessagesDeleted     `json:"deleted_business_messages,omitempty"`
+	MessageReaction         *MessageReactionUpdated      `json:"message_reaction,omitempty"`
+	MessageReactionCount    *MessageReactionCountUpdated `json:"message_reaction_count,omitempty"`
+	InlineQuery             *InlineQuery                 `json:"inline_query,omitempty"`
+	ChosenInlineResult      *ChosenInlineResult          `json:"chosen_inline_result,omitempty"`
+	CallbackQuery           *CallbackQuery               `json:"callback_query,omitempty"`
+	ShippingQuery           *ShippingQuery               `json:"shipping_query,omitempty"`
+	PreCheckoutQuery        *PreCheckoutQuery            `json:"pre_checkout_query,omitempty"`
+	MyChatMember            *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
+	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
+	ID                      int                          `json:"update_id"`
 }
 
 // ChatID returns the ID of the chat the update is coming from.
@@ -454,6 +458,18 @@ func (a APIResponseUserChatBoosts) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseBusinessConnection represents the incoming response from Telegram servers.
+// Used by all methods that return a BusinessConnection object on success.
+type APIResponseBusinessConnection struct {
+	Result *BusinessConnection `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseBusinessConnection) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`
@@ -465,49 +481,55 @@ type User struct {
 	CanJoinGroups           bool   `json:"can_join_groups,omitempty"`
 	CanReadAllGroupMessages bool   `json:"can_read_all_group_messages,omitempty"`
 	SupportsInlineQueries   bool   `json:"supports_inline_queries,omitempty"`
+	CanConnectToBusiness    bool   `json:"can_connect_to_business,omitempty"`
 	IsPremium               bool   `json:"is_premium,omitempty"`
 	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
 }
 
 // Chat represents a chat.
 type Chat struct {
-	Permissions                        *ChatPermissions `json:"permissions,omitempty"`
-	Location                           *ChatLocation    `json:"location,omitempty"`
-	PinnedMessage                      *Message         `json:"pinned_message,omitempty"`
-	Photo                              *ChatPhoto       `json:"photo,omitempty"`
-	ActiveUsernames                    *[]string        `json:"active_usernames,omitempty"`
-	AvailableReactions                 *[]ReactionType  `json:"available_reactions,omitempty"`
-	BackgroundCustomEmojiID            string           `json:"background_custom_emoji_id,omitempty"`
-	ProfileBackgroundCustomEmojiID     string           `json:"profile_background_custom_emoji_id,omitempty"`
-	Bio                                string           `json:"bio,omitempty"`
-	Username                           string           `json:"username,omitempty"`
-	Title                              string           `json:"title,omitempty"`
-	StickerSetName                     string           `json:"sticker_set_name,omitempty"`
-	Description                        string           `json:"description,omitempty"`
-	FirstName                          string           `json:"first_name,omitempty"`
-	LastName                           string           `json:"last_name,omitempty"`
-	InviteLink                         string           `json:"invite_link,omitempty"`
-	EmojiStatusCustomEmojiID           string           `json:"emoji_status_custom_emoji_id,omitempty"`
-	Type                               string           `json:"type"`
-	CustomEmojiStickerSetName          string           `json:"custom_emoji_sticker_set_name,omitempty"`
-	AccentColorID                      int              `json:"accent_color_id,omitempty"`
-	ProfileAccentColorID               int              `json:"profile_accent_color_id,omitempty"`
-	EmojiStatusExpirationDate          int              `json:"emoji_status_expiration_date,omitempty"`
-	MessageAutoDeleteTime              int              `json:"message_auto_delete_time,omitempty"`
-	SlowModeDelay                      int              `json:"slow_mode_delay,omitempty"`
-	UnrestrictBoostCount               int              `json:"unrestrict_boost_count,omitempty"`
-	LinkedChatID                       int64            `json:"linked_chat_id,omitempty"`
-	ID                                 int64            `json:"id"`
-	IsForum                            bool             `json:"is_forum,omitempty"`
-	HasAggressiveAntiSpamEnabled       bool             `json:"has_aggressive_anti_spam_enabled,omitempty"`
-	HasHiddenMembers                   bool             `json:"has_hidden_members,omitempty"`
-	HasProtectedContent                bool             `json:"has_protected_content,omitempty"`
-	HasVisibleHistory                  bool             `json:"has_visible_history,omitempty"`
-	HasPrivateForwards                 bool             `json:"has_private_forwards,omitempty"`
-	CanSetStickerSet                   bool             `json:"can_set_sticker_set,omitempty"`
-	JoinToSendMessages                 bool             `json:"join_to_send_messages,omitempty"`
-	JoinByRequest                      bool             `json:"join_by_request,omitempty"`
-	HasRestrictedVoiceAndVideoMessages bool             `json:"has_restricted_voice_and_video_messages,omitempty"`
+	Permissions                        *ChatPermissions      `json:"permissions,omitempty"`
+	Location                           *ChatLocation         `json:"location,omitempty"`
+	PinnedMessage                      *Message              `json:"pinned_message,omitempty"`
+	Photo                              *ChatPhoto            `json:"photo,omitempty"`
+	ActiveUsernames                    *[]string             `json:"active_usernames,omitempty"`
+	AvailableReactions                 *[]ReactionType       `json:"available_reactions,omitempty"`
+	BusinessIntro                      *BusinessIntro        `json:"business_intro,omitempty"`
+	BusinessLocation                   *BusinessLocation     `json:"business_location,omitempty"`
+	BusinessOpeningHours               *BusinessOpeningHours `json:"business_opening_hours,omitempty"`
+	PersonalChat                       *Chat                 `json:"personal_chat,omitempty"`
+	Birthdate                          *Birthdate            `json:"birthdate,omitempty"`
+	BackgroundCustomEmojiID            string                `json:"background_custom_emoji_id,omitempty"`
+	ProfileBackgroundCustomEmojiID     string                `json:"profile_background_custom_emoji_id,omitempty"`
+	Bio                                string                `json:"bio,omitempty"`
+	Username                           string                `json:"username,omitempty"`
+	Title                              string                `json:"title,omitempty"`
+	StickerSetName                     string                `json:"sticker_set_name,omitempty"`
+	Description                        string                `json:"description,omitempty"`
+	FirstName                          string                `json:"first_name,omitempty"`
+	LastName                           string                `json:"last_name,omitempty"`
+	InviteLink                         string                `json:"invite_link,omitempty"`
+	EmojiStatusCustomEmojiID           string                `json:"emoji_status_custom_emoji_id,omitempty"`
+	Type                               string                `json:"type"`
+	CustomEmojiStickerSetName          string                `json:"custom_emoji_sticker_set_name,omitempty"`
+	AccentColorID                      int                   `json:"accent_color_id,omitempty"`
+	ProfileAccentColorID               int                   `json:"profile_accent_color_id,omitempty"`
+	EmojiStatusExpirationDate          int                   `json:"emoji_status_expiration_date,omitempty"`
+	MessageAutoDeleteTime              int                   `json:"message_auto_delete_time,omitempty"`
+	SlowModeDelay                      int                   `json:"slow_mode_delay,omitempty"`
+	UnrestrictBoostCount               int                   `json:"unrestrict_boost_count,omitempty"`
+	LinkedChatID                       int64                 `json:"linked_chat_id,omitempty"`
+	ID                                 int64                 `json:"id"`
+	IsForum                            bool                  `json:"is_forum,omitempty"`
+	HasAggressiveAntiSpamEnabled       bool                  `json:"has_aggressive_anti_spam_enabled,omitempty"`
+	HasHiddenMembers                   bool                  `json:"has_hidden_members,omitempty"`
+	HasProtectedContent                bool                  `json:"has_protected_content,omitempty"`
+	HasVisibleHistory                  bool                  `json:"has_visible_history,omitempty"`
+	HasPrivateForwards                 bool                  `json:"has_private_forwards,omitempty"`
+	CanSetStickerSet                   bool                  `json:"can_set_sticker_set,omitempty"`
+	JoinToSendMessages                 bool                  `json:"join_to_send_messages,omitempty"`
+	JoinByRequest                      bool                  `json:"join_by_request,omitempty"`
+	HasRestrictedVoiceAndVideoMessages bool                  `json:"has_restricted_voice_and_video_messages,omitempty"`
 }
 
 // Message represents a message.
@@ -561,12 +583,14 @@ type Message struct {
 	LinkPreviewOptions            *LinkPreviewOptions            `json:"link_preview_options,omitempty"`
 	ForwardOrigin                 *MessageOrigin                 `json:"forward_origin,omitempty"`
 	BoostAdded                    *ChatBoostAdded                `json:"boost_added,omitempty"`
+	SenderBusinessBot             *User                          `json:"sender_business_bot,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
 	AuthorSignature               string                         `json:"author_signature,omitempty"`
 	Caption                       string                         `json:"caption,omitempty"`
 	Text                          string                         `json:"text,omitempty"`
+	BusinessConnectionID          string                         `json:"business_connection_id,omitempty"`
 	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
 	NewChatPhoto                  []*PhotoSize                   `json:"new_chat_photo,omitempty"`
 	NewChatMembers                []*User                        `json:"new_chat_members,omitempty"`
@@ -588,6 +612,7 @@ type Message struct {
 	ChannelChatCreated            bool                           `json:"channel_chat_created,omitempty"`
 	HasProtectedContent           bool                           `json:"has_protected_content,omitempty"`
 	HasMediaSpoiler               bool                           `json:"has_media_spoiler,omitempty"`
+	IsFromOffline                 bool                           `json:"is_from_offline,omitempty"`
 }
 
 // MessageID represents a unique message identifier.
@@ -909,6 +934,38 @@ type ChatPermissions struct {
 	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
 	CanManageTopics       bool `json:"can_manage_topics,omitempty"`
+}
+
+// Birthdate
+type Birthdate struct {
+	Day   int `json:"day"`
+	Month int `json:"month"`
+	Year  int `json:"year"`
+}
+
+// BusinessIntro
+type BusinessIntro struct {
+	Sticker *Sticker `json:"sticker,omitempty"`
+	Title   string   `json:"title,omitempty"`
+	Message string   `json:"message,omitempty"`
+}
+
+// BusinessLocation
+type BusinessLocation struct {
+	Location *Location `json:"location,omitempty"`
+	Address  string    `json:"address"`
+}
+
+// BusinessOpeningHoursInterval
+type BusinessOpeningHoursInterval struct {
+	OpeningMinute int `json:"opening_minute"`
+	ClosingMinute int `json:"closing_minute"`
+}
+
+// BusinessOpeningHours
+type BusinessOpeningHours struct {
+	TimeZoneName string                         `json:"time_zone_name"`
+	OpeningHours []BusinessOpeningHoursInterval `json:"opening_hours"`
 }
 
 // ChatLocation represents a location to which a chat is connected.
@@ -1244,8 +1301,11 @@ type UserShared struct {
 
 // ChatShared contains information about the chat whose identifier was shared with the bot using a KeyboardButtonRequestChat button.
 type ChatShared struct {
-	RequestID int   `json:"request_id"`
-	ChatID    int64 `json:"chat_id"`
+	Photo     *[]PhotoSize `json:"photo,omitempty"`
+	Title     string       `json:"title,omitempty"`
+	Username  string       `json:"username,omitempty"`
+	RequestID int          `json:"request_id"`
+	ChatID    int64        `json:"chat_id"`
 }
 
 // Story represents a story.
@@ -1364,12 +1424,22 @@ type ReplyParameters struct {
 	QuoteParseMode           string          `json:"quote_parse_mode,omitempty"`
 	QuoteEntities            []MessageEntity `json:"quote_entitites,omitempty"`
 	QuotePosition            int             `json:"quote_position,omitempty"`
+	AllowSendingWithoutReply bool            `json:"allow_sending_without_reply,omitempty"`
+}
+
+// SharedUser contains information about a user that was shared with the bot using a KeyboardButtonRequestUser button.
+type SharedUser struct {
+	Photo     *[]PhotoSize `json:"photo,omitempty"`
+	FirstName string       `json:"firstname,omitempty"`
+	LastName  string       `json:"lastname,omitempty"`
+	Username  string       `json:"username,omitempty"`
+	UserID    int64        `json:"user_id"`
 }
 
 // UsersShared contains information about the users whose identifiers were shared with the bot using a KeyboardButtonRequestUsers button.
 type UsersShared struct {
-	RequestID int     `json:"request_id"`
-	UserIDs   []int64 `json:"user_ids"`
+	Users     []SharedUser `json:"users"`
+	RequestID int          `json:"request_id"`
 }
 
 // ChatBoost contains information about a chat boost.
@@ -1415,6 +1485,23 @@ type ChatBoostRemoved struct {
 // UserChatBoosts represents a list of boosts added to a chat by a user.
 type UserChatBoosts struct {
 	Boosts []ChatBoost `json:"boosts"`
+}
+
+// BusinessConnection describes the connection of the bot with a business account.
+type BusinessConnection struct {
+	ID         string `json:"id"`
+	User       User   `json:"user"`
+	UserChatID int64  `json:"user_chat_id"`
+	Date       int64  `json:"date"`
+	CanReply   bool   `json:"can_reply"`
+	IsEnabled  bool   `json:"is_enabled"`
+}
+
+// BusinessMessagesDeleted is received when messages are deleted from a connected business account.
+type BusinessMessagesDeleted struct {
+	BusinessConnectionID string `json:"business_connection_id"`
+	MessageIDs           []int  `json:"message_ids"`
+	Chat                 Chat   `json:"chat"`
 }
 
 // Giveaway represents a message about a scheduled giveaway.
