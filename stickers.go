@@ -107,8 +107,8 @@ type InputSticker struct {
 
 // stickerEnvelope is a generic struct for all the various structs under the InputSticker interface.
 type stickerEnvelope struct {
-	InputSticker
 	Sticker string `json:"sticker"`
+	InputSticker
 }
 
 // SendSticker is used to send static .WEBP or animated .TGS stickers.

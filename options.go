@@ -275,10 +275,10 @@ type ForwardOptions struct {
 // CopyOptions contains the optional parameters used by the CopyMessage method.
 type CopyOptions struct {
 	ReplyMarkup         ReplyMarkup     `query:"reply_markup"`
-	ReplyParameters     ReplyParameters `query:"reply_parameters"`
 	ParseMode           ParseMode       `query:"parse_mode"`
 	Caption             string          `query:"caption"`
 	CaptionEntities     []MessageEntity `query:"caption_entities"`
+	ReplyParameters     ReplyParameters `query:"reply_parameters"`
 	MessageThreadID     int             `query:"message_thread_id"`
 	DisableNotification bool            `query:"disable_notification"`
 	ProtectContent      bool            `query:"protect_content"`
@@ -308,7 +308,6 @@ type InputFile struct {
 	id      string
 	path    string
 	url     string
-	ftype   string
 	content []byte
 }
 
@@ -632,16 +631,16 @@ type InvoiceOptions struct {
 	ProviderData              string               `query:"provider_data"`
 	PhotoURL                  string               `query:"photo_url"`
 	ReplyMarkup               InlineKeyboardMarkup `query:"reply_markup"`
-	ReplyParameters           ReplyParameters      `query:"reply_parameters"`
 	SuggestedTipAmount        []int                `query:"suggested_tip_amounts"`
-	MessageThreadID           int                  `query:"message_thread_id"`
+	ReplyParameters           ReplyParameters      `query:"reply_parameters"`
+	MaxTipAmount              int                  `query:"max_tip_amount"`
 	PhotoSize                 int                  `query:"photo_size"`
 	PhotoWidth                int                  `query:"photo_width"`
 	PhotoHeight               int                  `query:"photo_height"`
-	MaxTipAmount              int                  `query:"max_tip_amount"`
-	NeedPhoneNumber           bool                 `query:"need_phone_number"`
-	NeepShippingAddress       bool                 `query:"need_shipping_address"`
+	MessageThreadID           int                  `query:"message_thread_id"`
 	SendPhoneNumberToProvider bool                 `query:"send_phone_number_to_provider"`
+	NeepShippingAddress       bool                 `query:"need_shipping_address"`
+	NeedPhoneNumber           bool                 `query:"need_phone_number"`
 	SendEmailToProvider       bool                 `query:"send_email_to_provider"`
 	IsFlexible                bool                 `query:"is_flexible"`
 	DisableNotification       bool                 `query:"disable_notification"`
