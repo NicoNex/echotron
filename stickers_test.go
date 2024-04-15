@@ -175,7 +175,7 @@ func TestReplaceStickerInSet(t *testing.T) {
 
 func TestDeleteStickerFromSet(t *testing.T) {
 	_, err := api.DeleteStickerFromSet(
-		stickerSet.Stickers[0].FileID,
+		stickerSet.Stickers[1].FileID,
 	)
 
 	if err != nil {
