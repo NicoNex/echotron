@@ -73,6 +73,22 @@ func (u Update) ChatID() int64 {
 		return u.ChatMember.Chat.ID
 	case u.ChatJoinRequest != nil:
 		return u.ChatJoinRequest.Chat.ID
+	case u.ChatBoost != nil:
+		return u.ChatBoost.Chat.ID
+	case u.RemovedChatBoost != nil:
+		return u.RemovedChatBoost.Chat.ID
+	case u.MessageReaction != nil:
+		return u.MessageReaction.User.ID
+	case u.MessageReactionCount != nil:
+		return u.MessageReactionCount.Chat.ID
+	case u.BusinessConnection != nil:
+		return u.BusinessConnection.User.ID
+	case u.BusinessMessage != nil:
+		return u.BusinessMessage.From.ID
+	case u.EditedBusinessMessage != nil:
+		return u.EditedBusinessMessage.From.ID
+	case u.DeletedBusinessMessages != nil:
+		return u.DeletedBusinessMessages.Chat.ID
 	default:
 		return 0
 	}
