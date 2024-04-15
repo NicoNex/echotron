@@ -53,14 +53,17 @@ func TestCreateNewStickerSet(t *testing.T) {
 			{
 				Sticker:   NewInputFileID(stickerFile.FileID),
 				EmojiList: []string{"🤖"},
+				Format:    StaticFormat,
 			},
 			{
 				Sticker:   NewInputFilePath("assets/tests/echotron_test.png"),
 				EmojiList: []string{"🤖"},
+				Format:    StaticFormat,
 			},
 			{
 				Sticker:   NewInputFileURL(photoURL),
 				EmojiList: []string{"🤖"},
+				Format:    StaticFormat,
 			},
 		},
 		nil,
@@ -78,6 +81,7 @@ func TestAddStickerToSet(t *testing.T) {
 		InputSticker{
 			Sticker:   NewInputFilePath("assets/tests/echotron_sticker.png"),
 			EmojiList: []string{"🤖"},
+			Format:    StaticFormat,
 		},
 	)
 
