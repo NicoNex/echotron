@@ -102,6 +102,36 @@ func TestAPIResponseWebhook(_ *testing.T) {
 	a.Base()
 }
 
+func TestAPIResponseSentWebAppMessage(_ *testing.T) {
+	a := APIResponseSentWebAppMessage{}
+	a.Base()
+}
+
+func TestAPIResponseMenuButton(_ *testing.T) {
+	a := APIResponseMenuButton{}
+	a.Base()
+}
+
+func TestAPIResponseChatAdministratorRights(_ *testing.T) {
+	a := APIResponseChatAdministratorRights{}
+	a.Base()
+}
+
+func TestAPIResponseBotDescription(_ *testing.T) {
+	a := APIResponseBotDescription{}
+	a.Base()
+}
+
+func TestAPIResponseBotShortDescription(_ *testing.T) {
+	a := APIResponseBotShortDescription{}
+	a.Base()
+}
+
+func TestAPIResponseBusinessConnection(_ *testing.T) {
+	a := APIResponseBusinessConnection{}
+	a.Base()
+}
+
 func TestInputMediaPhoto(_ *testing.T) {
 	i := InputMediaPhoto{}
 	i.media()
@@ -134,4 +164,14 @@ func TestInputMediaDocument(_ *testing.T) {
 	i.media()
 	i.thumbnail()
 	i.groupable()
+}
+
+func TestReactionTypeEmoji(_ *testing.T) {
+	r := ReactionTypeEmoji{}
+	r.ImplementsReactionType()
+}
+
+func TestReactionTypeCustomEmoji(_ *testing.T) {
+	r := ReactionTypeCustomEmoji{}
+	r.ImplementsReactionType()
 }

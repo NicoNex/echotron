@@ -17,6 +17,7 @@ var (
 	inviteTmp      *ChatInviteLink
 	filePath       string
 	currentBotName string
+	currentBotDesc string
 	msgThreadID    int64
 	api            = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID         = int64(14870908)
@@ -165,6 +166,25 @@ func TestSendMessage(t *testing.T) {
 	}
 
 	msgTmp = resp.Result
+}
+
+func TestSetMessageReaction(t *testing.T) {
+	_, err := api.SetMessageReaction(
+		chatID,
+		msgTmp.ID,
+		&MessageReactionOptions{
+			Reaction: []ReactionType{
+				ReactionTypeEmoji{
+					Type:  "emoji",
+					Emoji: "👍",
+				},
+			},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestForwardMessage(t *testing.T) {
@@ -1613,6 +1633,33 @@ func TestGetMyName(t *testing.T) {
 		t.Logf("expected bot name [\"%s\"]\n", currentBotName)
 		t.Logf("got bot name [\"%s\"]\n", res.Result.Name)
 		t.Fatal("error: bot name mismatch")
+	}
+}
+
+func TestSetMyDescription(t *testing.T) {
+	currentBotDesc = fmt.Sprintf(
+		"Echotron Coverage Bot - %d",
+		time.Now().Unix(),
+	)
+
+	_, err := api.SetMyDescription(currentBotDesc, "")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetMyDescription(t *testing.T) {
+	res, err := api.GetMyDescription("")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.Result.Description != currentBotDesc {
+		t.Logf("expected bot description [\"%s\"]\n", currentBotDesc)
+		t.Logf("got bot description [\"%s\"]\n", res.Result.Description)
+		t.Fatal("error: bot description mismatch")
 	}
 }
 

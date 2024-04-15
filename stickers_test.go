@@ -156,6 +156,23 @@ func TestSetStickerSetTitle(t *testing.T) {
 	}
 }
 
+func TestReplaceStickerInSet(t *testing.T) {
+	_, err := api.ReplaceStickerInSet(
+		chatID,
+		stickerSetName,
+		stickerSet.Stickers[0].FileID,
+		InputSticker{
+			Sticker:   NewInputFileURL(photoURL),
+			EmojiList: []string{"🤖"},
+			Format:    StaticFormat,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDeleteStickerFromSet(t *testing.T) {
 	_, err := api.DeleteStickerFromSet(
 		stickerSet.Stickers[0].FileID,
