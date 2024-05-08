@@ -329,7 +329,7 @@ func (a API) SendContact(phoneNumber, firstName string, chatID int64, opts *Cont
 }
 
 // SendPoll is used to send a native poll.
-func (a API) SendPoll(chatID int64, question string, options []string, opts *PollOptions) (res APIResponseMessage, err error) {
+func (a API) SendPoll(chatID int64, question string, options []InputPollOption, opts *PollOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
 	pollOpts, err := json.Marshal(options)

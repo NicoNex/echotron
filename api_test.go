@@ -1030,7 +1030,11 @@ func TestSendPoll(t *testing.T) {
 	resp, err := api.SendPoll(
 		chatID,
 		"TestSendPoll",
-		[]string{"Option 1", "Option 2", "Option 3"},
+		[]InputPollOption{
+			{Text: "Option 1"},
+			{Text: "Option 2"},
+			{Text: "Option 3"},
+		},
 		nil,
 	)
 

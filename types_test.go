@@ -175,3 +175,38 @@ func TestReactionTypeCustomEmoji(_ *testing.T) {
 	r := ReactionTypeCustomEmoji{}
 	r.ImplementsReactionType()
 }
+
+func TestBackgroundFillSolid(_ *testing.T) {
+	b := BackgroundFillSolid{}
+	b.ImplementsBackgroundFill()
+}
+
+func TestBackgroundFillGradient(_ *testing.T) {
+	b := BackgroundFillGradient{}
+	b.ImplementsBackgroundFill()
+}
+
+func TestBackgroundFillFreeformGradient(_ *testing.T) {
+	b := BackgroundFillFreeformGradient{}
+	b.ImplementsBackgroundFill()
+}
+
+func TestBackgroundTypeFill(_ *testing.T) {
+	b := BackgroundTypeFill{}
+	b.ImplementsBackgroundType()
+}
+
+func TestBackgroundTypeWallpaper(_ *testing.T) {
+	b := BackgroundTypeWallpaper{}
+	b.ImplementsBackgroundType()
+}
+
+func TestBackgroundTypePattern(_ *testing.T) {
+	b := BackgroundTypePattern{}
+	b.ImplementsBackgroundType()
+}
+
+func TestBackgroundTypeChatTheme(_ *testing.T) {
+	b := BackgroundTypeChatTheme{}
+	b.ImplementsBackgroundType()
+}

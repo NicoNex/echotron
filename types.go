@@ -504,6 +504,17 @@ type User struct {
 
 // Chat represents a chat.
 type Chat struct {
+	ID        int64  `json:"id"`
+	Type      string `json:"type"`
+	Title     string `json:"title,omitempty"`
+	Username  string `json:"username,omitempty"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	IsForum   bool   `json:"is_forum,omitempty"`
+}
+
+// ChatFullInfo contains full information about a chat.
+type ChatFullInfo struct {
 	Permissions                        *ChatPermissions      `json:"permissions,omitempty"`
 	Location                           *ChatLocation         `json:"location,omitempty"`
 	PinnedMessage                      *Message              `json:"pinned_message,omitempty"`
@@ -529,6 +540,7 @@ type Chat struct {
 	Type                               string                `json:"type"`
 	CustomEmojiStickerSetName          string                `json:"custom_emoji_sticker_set_name,omitempty"`
 	AccentColorID                      int                   `json:"accent_color_id,omitempty"`
+	MaxReactionCount                   int                   `json:"max_reaction_count,omitempty"`
 	ProfileAccentColorID               int                   `json:"profile_accent_color_id,omitempty"`
 	EmojiStatusExpirationDate          int                   `json:"emoji_status_expiration_date,omitempty"`
 	MessageAutoDeleteTime              int                   `json:"message_auto_delete_time,omitempty"`
@@ -599,6 +611,7 @@ type Message struct {
 	LinkPreviewOptions            *LinkPreviewOptions            `json:"link_preview_options,omitempty"`
 	ForwardOrigin                 *MessageOrigin                 `json:"forward_origin,omitempty"`
 	BoostAdded                    *ChatBoostAdded                `json:"boost_added,omitempty"`
+	ChatBackgroundSet             *ChatBackground                `json:"chat_background_set,omitempty"`
 	SenderBusinessBot             *User                          `json:"sender_business_bot,omitempty"`
 	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
 	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
@@ -742,8 +755,16 @@ type Dice struct {
 
 // PollOption contains information about one answer option in a poll.
 type PollOption struct {
-	Text       string `json:"text"`
-	VoterCount int    `json:"voter_count"`
+	Text         string           `json:"text"`
+	TextEntities []*MessageEntity `json:"text_entities,omitempty"`
+	VoterCount   int              `json:"voter_count"`
+}
+
+// InputPollOption contains information about one answer option in a poll to send.
+type InputPollOption struct {
+	Text          string           `json:"text"`
+	TextParseMode ParseMode        `json:"text_parse_mode,omitempty"`
+	TextEntities  []*MessageEntity `json:"text_entities,omitempty"`
 }
 
 // PollAnswer represents an answer of a user in a non-anonymous poll.
@@ -761,6 +782,7 @@ type Poll struct {
 	Explanation           string           `json:"explanation,omitempty"`
 	ID                    string           `json:"id"`
 	ExplanationEntities   []*MessageEntity `json:"explanation_entities,omitempty"`
+	QuestionEntities      []*MessageEntity `json:"question_entities,omitempty"`
 	Options               []*PollOption    `json:"options"`
 	OpenPeriod            int              `json:"open_period,omitempty"`
 	TotalVoterCount       int              `json:"total_voter_count"`
@@ -931,6 +953,7 @@ type ChatMemberUpdated struct {
 	NewChatMember           ChatMember      `json:"new_chat_member"`
 	Chat                    Chat            `json:"chat"`
 	ViaChatFolderInviteLink bool            `json:"via_chat_folder_invite_link,omitempty"`
+	ViaJoinRequest          bool            `json:"via_join_request,omitempty"`
 	Date                    int             `json:"date"`
 }
 
@@ -1256,11 +1279,100 @@ type ChatBoostAdded struct {
 	BoostCount int `json:"boost_count"`
 }
 
+// BackgroundFill describes the way a background is filled based on the selected colors.
+type BackgroundFill interface {
+	ImplementsBackgroundFill()
+}
+
+// BackgroundFillSolid is a background filled using the selected color.
+// Type MUST be "solid".
+type BackgroundFillSolid struct {
+	Type  string `json:"type"`
+	Color int    `json:"color"`
+}
+
+func (b BackgroundFillSolid) ImplementsBackgroundFill() {}
+
+// BackgroundFillGradient is a background with a gradient fill.
+// Type MUST be "gradient".
+type BackgroundFillGradient struct {
+	Type          string `json:"type"`
+	TopColor      int    `json:"top_color"`
+	BottomColor   int    `json:"bottom_color"`
+	RotationAngle int    `json:"rotation_angle"`
+}
+
+func (b BackgroundFillGradient) ImplementsBackgroundFill() {}
+
+// BackgroundFillFreeformGradient is a background with a freeform gradient that rotates after every message in the chat.
+// Type MUST be "freeform_gradient".
+type BackgroundFillFreeformGradient struct {
+	Type   string `json:"type"`
+	Colors []int  `json:"colors"`
+}
+
+func (b BackgroundFillFreeformGradient) ImplementsBackgroundFill() {}
+
+// BackgroundType describes the type of a background.
+type BackgroundType interface {
+	ImplementsBackgroundType()
+}
+
+// BackgroundTypeFill is a background which is automatically filled based on the selected colors.
+// Type MUST be "fill".
+type BackgroundTypeFill struct {
+	Type             string         `json:"type"`
+	Fill             BackgroundFill `json:"fill"`
+	DarkThemeDimming int            `json:"dark_theme_dimming"`
+}
+
+func (b BackgroundTypeFill) ImplementsBackgroundType() {}
+
+// BackgroundTypeWallpaper is a background which is a wallpaper in the JPEG format.
+// Type MUST be "wallpaper".
+type BackgroundTypeWallpaper struct {
+	Type             string   `json:"type"`
+	Document         Document `json:"document"`
+	DarkThemeDimming int      `json:"dark_theme_dimming"`
+	IsBlurred        bool     `json:"is_blurred,omitempty"`
+	IsMoving         bool     `json:"is_moving,omitempty"`
+}
+
+func (b BackgroundTypeWallpaper) ImplementsBackgroundType() {}
+
+// BackgroundTypePattern is a PNG or TGV (gzipped subset of SVG with MIME type “application/x-tgwallpattern”) pattern
+// to be combined with the background fill chosen by the user.
+// Type MUST be "pattern".
+type BackgroundTypePattern struct {
+	Type       string         `json:"type"`
+	Document   Document       `json:"document"`
+	Fill       BackgroundFill `json:"fill"`
+	Intensity  int            `json:"intensity"`
+	IsInverted bool           `json:"is_inverted,omitempty"`
+	IsMoving   bool           `json:"is_moving,omitempty"`
+}
+
+func (b BackgroundTypePattern) ImplementsBackgroundType() {}
+
+// BackgroundTypeChatTheme is taken directly from a built-in chat theme.
+// Type MUST be "chat_theme".
+type BackgroundTypeChatTheme struct {
+	Type      string `json:"type"`
+	ThemeName string `json:"theme_name"`
+}
+
+func (b BackgroundTypeChatTheme) ImplementsBackgroundType() {}
+
 // ForumTopicCreated represents a service message about a new forum topic created in the chat.
 type ForumTopicCreated struct {
 	Name              string `json:"name"`
 	IconCustomEmojiID string `json:"icon_custom_emoji_id"`
 	IconColor         int    `json:"icon_color"`
+}
+
+// ChatBackground represents a chat background.
+type ChatBackground struct {
+	Type BackgroundType `json:"type"`
 }
 
 // ForumTopicClosed represents a service message about a forum topic closed in the chat.

@@ -450,6 +450,9 @@ type MediaGroupOptions struct {
 	ProtectContent       bool            `query:"protect_content"`
 }
 
+// This is a custom constant to set an infinite live period value in LocationOptions and EditLocationOptions.
+const InfiniteLivePeriod = 0x7FFFFFFF
+
 // LocationOptions contains the optional parameters used by the SendLocation method.
 type LocationOptions struct {
 	BusinessConnectionID string          `query:"business_connection_id"`
@@ -469,6 +472,7 @@ type EditLocationOptions struct {
 	ReplyMarkup          InlineKeyboardMarkup `query:"reply_markup"`
 	HorizontalAccuracy   float64              `query:"horizontal_accuracy"`
 	Heading              int                  `query:"heading"`
+	LivePeriod           int                  `query:"live_period"`
 	ProximityAlertRadius int                  `query:"proximity_alert_radius"`
 }
 
@@ -504,8 +508,10 @@ type PollOptions struct {
 	BusinessConnectionID  string          `query:"business_connection_id"`
 	Explanation           string          `query:"explanation"`
 	ExplanationParseMode  ParseMode       `query:"explanation_parse_mode"`
+	QuestionParseMode     ParseMode       `query:"question_parse_mode"`
 	Type                  PollType        `query:"type"`
 	ExplanationEntities   []MessageEntity `query:"explanation_entities"`
+	QuestionEntities      []MessageEntity `query:"question_entities"`
 	ReplyParameters       ReplyParameters `query:"reply_parameters"`
 	CorrectOptionID       int             `query:"correct_option_id"`
 	MessageThreadID       int             `query:"message_thread_id"`
