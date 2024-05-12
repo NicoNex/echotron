@@ -44,6 +44,24 @@ func TestPoll(_ *testing.T) {
 	dsp.updates <- &Update{}
 
 	dsp.updates <- &Update{
+		ChatJoinRequest: &ChatJoinRequest{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		ChatBoost: &ChatBoostUpdated{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		RemovedChatBoost: &ChatBoostRemoved{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
 		Message: &Message{
 			Chat: Chat{ID: 0},
 		},
@@ -68,10 +86,38 @@ func TestPoll(_ *testing.T) {
 	}
 
 	dsp.updates <- &Update{
-		CallbackQuery: &CallbackQuery{
-			Message: &Message{
-				Chat: Chat{ID: 0},
-			},
+		BusinessConnection: &BusinessConnection{
+			User: User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		BusinessMessage: &Message{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		EditedBusinessMessage: &Message{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		DeletedBusinessMessages: &BusinessMessagesDeleted{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		MessageReaction: &MessageReactionUpdated{
+			Chat: Chat{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
+		MessageReactionCount: &MessageReactionCountUpdated{
+			Chat: Chat{ID: 0},
 		},
 	}
 
@@ -88,6 +134,14 @@ func TestPoll(_ *testing.T) {
 	}
 
 	dsp.updates <- &Update{
+		CallbackQuery: &CallbackQuery{
+			Message: &Message{
+				Chat: Chat{ID: 0},
+			},
+		},
+	}
+
+	dsp.updates <- &Update{
 		ShippingQuery: &ShippingQuery{
 			From: User{ID: 0},
 		},
@@ -100,6 +154,12 @@ func TestPoll(_ *testing.T) {
 	}
 
 	dsp.updates <- &Update{
+		PollAnswer: &PollAnswer{
+			User: &User{ID: 0},
+		},
+	}
+
+	dsp.updates <- &Update{
 		MyChatMember: &ChatMemberUpdated{
 			Chat: Chat{ID: 0},
 		},
@@ -107,12 +167,6 @@ func TestPoll(_ *testing.T) {
 
 	dsp.updates <- &Update{
 		ChatMember: &ChatMemberUpdated{
-			Chat: Chat{ID: 0},
-		},
-	}
-
-	dsp.updates <- &Update{
-		ChatJoinRequest: &ChatJoinRequest{
 			Chat: Chat{ID: 0},
 		},
 	}

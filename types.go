@@ -41,6 +41,8 @@ type Update struct {
 	CallbackQuery           *CallbackQuery               `json:"callback_query,omitempty"`
 	ShippingQuery           *ShippingQuery               `json:"shipping_query,omitempty"`
 	PreCheckoutQuery        *PreCheckoutQuery            `json:"pre_checkout_query,omitempty"`
+	Poll                    *Poll                        `json:"poll,omitempty"`
+	PollAnswer              *PollAnswer                  `json:"poll_answer,omitempty"`
 	MyChatMember            *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
 	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
 	ID                      int                          `json:"update_id"`
@@ -49,6 +51,12 @@ type Update struct {
 // ChatID returns the ID of the chat the update is coming from.
 func (u Update) ChatID() int64 {
 	switch {
+	case u.ChatJoinRequest != nil:
+		return u.ChatJoinRequest.Chat.ID
+	case u.ChatBoost != nil:
+		return u.ChatBoost.Chat.ID
+	case u.RemovedChatBoost != nil:
+		return u.RemovedChatBoost.Chat.ID
 	case u.Message != nil:
 		return u.Message.Chat.ID
 	case u.EditedMessage != nil:
@@ -57,6 +65,18 @@ func (u Update) ChatID() int64 {
 		return u.ChannelPost.Chat.ID
 	case u.EditedChannelPost != nil:
 		return u.EditedChannelPost.Chat.ID
+	case u.BusinessConnection != nil:
+		return u.BusinessConnection.User.ID
+	case u.BusinessMessage != nil:
+		return u.BusinessMessage.Chat.ID
+	case u.EditedBusinessMessage != nil:
+		return u.EditedBusinessMessage.Chat.ID
+	case u.DeletedBusinessMessages != nil:
+		return u.DeletedBusinessMessages.Chat.ID
+	case u.MessageReaction != nil:
+		return u.MessageReaction.Chat.ID
+	case u.MessageReactionCount != nil:
+		return u.MessageReactionCount.Chat.ID
 	case u.InlineQuery != nil:
 		return u.InlineQuery.From.ID
 	case u.ChosenInlineResult != nil:
@@ -67,28 +87,12 @@ func (u Update) ChatID() int64 {
 		return u.ShippingQuery.From.ID
 	case u.PreCheckoutQuery != nil:
 		return u.PreCheckoutQuery.From.ID
+	case u.PollAnswer != nil:
+		return u.PollAnswer.User.ID
 	case u.MyChatMember != nil:
 		return u.MyChatMember.Chat.ID
 	case u.ChatMember != nil:
 		return u.ChatMember.Chat.ID
-	case u.ChatJoinRequest != nil:
-		return u.ChatJoinRequest.Chat.ID
-	case u.ChatBoost != nil:
-		return u.ChatBoost.Chat.ID
-	case u.RemovedChatBoost != nil:
-		return u.RemovedChatBoost.Chat.ID
-	case u.MessageReaction != nil:
-		return u.MessageReaction.User.ID
-	case u.MessageReactionCount != nil:
-		return u.MessageReactionCount.Chat.ID
-	case u.BusinessConnection != nil:
-		return u.BusinessConnection.User.ID
-	case u.BusinessMessage != nil:
-		return u.BusinessMessage.From.ID
-	case u.EditedBusinessMessage != nil:
-		return u.EditedBusinessMessage.From.ID
-	case u.DeletedBusinessMessages != nil:
-		return u.DeletedBusinessMessages.Chat.ID
 	default:
 		return 0
 	}
@@ -504,12 +508,12 @@ type User struct {
 
 // Chat represents a chat.
 type Chat struct {
-	ID        int64  `json:"id"`
 	Type      string `json:"type"`
 	Title     string `json:"title,omitempty"`
 	Username  string `json:"username,omitempty"`
 	FirstName string `json:"first_name,omitempty"`
 	LastName  string `json:"last_name,omitempty"`
+	ID        int64  `json:"id"`
 	IsForum   bool   `json:"is_forum,omitempty"`
 }
 
@@ -948,13 +952,13 @@ type ChatMember struct {
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
 	InviteLink              *ChatInviteLink `json:"invite_link,omitempty"`
+	Chat                    Chat            `json:"chat"`
 	From                    User            `json:"from"`
 	OldChatMember           ChatMember      `json:"old_chat_member"`
 	NewChatMember           ChatMember      `json:"new_chat_member"`
-	Chat                    Chat            `json:"chat"`
+	Date                    int             `json:"date"`
 	ViaChatFolderInviteLink bool            `json:"via_chat_folder_invite_link,omitempty"`
 	ViaJoinRequest          bool            `json:"via_join_request,omitempty"`
-	Date                    int             `json:"date"`
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -1268,8 +1272,8 @@ type BotName struct {
 type ChatJoinRequest struct {
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
 	Bio        string          `json:"bio,omitempty"`
-	From       User            `json:"user"`
 	Chat       Chat            `json:"chat"`
+	From       User            `json:"user"`
 	Date       int             `json:"date"`
 	UserChatID int64           `json:"user_chat_id"`
 }
@@ -1321,8 +1325,8 @@ type BackgroundType interface {
 // BackgroundTypeFill is a background which is automatically filled based on the selected colors.
 // Type MUST be "fill".
 type BackgroundTypeFill struct {
-	Type             string         `json:"type"`
 	Fill             BackgroundFill `json:"fill"`
+	Type             string         `json:"type"`
 	DarkThemeDimming int            `json:"dark_theme_dimming"`
 }
 
@@ -1344,9 +1348,9 @@ func (b BackgroundTypeWallpaper) ImplementsBackgroundType() {}
 // to be combined with the background fill chosen by the user.
 // Type MUST be "pattern".
 type BackgroundTypePattern struct {
+	Fill       BackgroundFill `json:"fill"`
 	Type       string         `json:"type"`
 	Document   Document       `json:"document"`
-	Fill       BackgroundFill `json:"fill"`
 	Intensity  int            `json:"intensity"`
 	IsInverted bool           `json:"is_inverted,omitempty"`
 	IsMoving   bool           `json:"is_moving,omitempty"`
@@ -1472,11 +1476,11 @@ type ReactionCount struct {
 
 // MessageReactionUpdated represents a change of a reaction on a message performed by a user.
 type MessageReactionUpdated struct {
+	Chat        Chat           `json:"chat"`
+	ActorChat   Chat           `json:"actor_chat,omitempty"`
 	OldReaction []ReactionType `json:"old_reaction"`
 	NewReaction []ReactionType `json:"new_reaction"`
 	User        User           `json:"user,omitempty"`
-	Chat        Chat           `json:"chat"`
-	ActorChat   Chat           `json:"actor_chat,omitempty"`
 	MessageID   int            `json:"message_id"`
 	Date        int            `json:"date"`
 }
@@ -1499,26 +1503,26 @@ type TextQuote struct {
 
 // ExternalReplyInfo contains information about a message that is being replied to, which may come from another chat or forum topic.
 type ExternalReplyInfo struct {
-	Origin             MessageOrigin      `json:"origin"`
-	GiveawayWinners    GiveawayWinners    `json:"giveaway_winners,omitempty"`
 	Venue              Venue              `json:"venue,omitempty"`
-	Giveaway           Giveaway           `json:"giveaway,omitempty"`
+	Chat               Chat               `json:"chat,omitempty"`
 	Document           Document           `json:"document,omitempty"`
+	Origin             MessageOrigin      `json:"origin"`
 	Contact            Contact            `json:"contact,omitempty"`
 	Invoice            Invoice            `json:"invoice,omitempty"`
+	Dice               Dice               `json:"dice,omitempty"`
 	LinkPreviewOptions LinkPreviewOptions `json:"link_preview_options,omitempty"`
 	Photo              []PhotoSize        `json:"photo,omitempty"`
-	Dice               Dice               `json:"dice,omitempty"`
 	Audio              Audio              `json:"audio,omitempty"`
+	Story              Story              `json:"story,omitempty"`
 	Voice              Voice              `json:"voice,omitempty"`
 	VideoNote          VideoNote          `json:"video_note,omitempty"`
 	Game               Game               `json:"game,omitempty"`
 	Video              Video              `json:"video,omitempty"`
 	Animation          Animation          `json:"animation,omitempty"`
 	Sticker            Sticker            `json:"sticker,omitempty"`
+	Giveaway           Giveaway           `json:"giveaway,omitempty"`
 	Poll               Poll               `json:"poll,omitempty"`
-	Chat               Chat               `json:"chat,omitempty"`
-	Story              Story              `json:"story,omitempty"`
+	GiveawayWinners    GiveawayWinners    `json:"giveaway_winners,omitempty"`
 	Location           Location           `json:"location,omitempty"`
 	MessageID          int                `json:"message_id,omitempty"`
 	HasMediaSpoiler    bool               `json:"has_media_spoiler,omitempty"`
@@ -1597,15 +1601,15 @@ type ChatBoostSource struct {
 
 // ChatBoostUpdated represents a boost added to a chat or changed.
 type ChatBoostUpdated struct {
-	Boost ChatBoost `json:"boost"`
 	Chat  Chat      `json:"chat"`
+	Boost ChatBoost `json:"boost"`
 }
 
 // ChatBoostRemoved represents a boost removed from a chat.
 type ChatBoostRemoved struct {
 	BoostID    string          `json:"boost_id"`
-	Source     ChatBoostSource `json:"source"`
 	Chat       Chat            `json:"chat"`
+	Source     ChatBoostSource `json:"source"`
 	RemoveDate int             `json:"remove_date"`
 }
 
