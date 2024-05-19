@@ -48,10 +48,10 @@ type GetChatMenuButtonOptions struct {
 
 // SetChatMenuButton is used to change the bot's menu button in a private chat, or the default menu button.
 func (a API) SetChatMenuButton(opts SetChatMenuButtonOptions) (res APIResponseBool, err error) {
-	return get[APIResponseBool](a.client, a.base, "setChatMenuButton", urlValues(opts))
+	return res, a.client.get(a.base, "setChatMenuButton", urlValues(opts), &res)
 }
 
 // GetChatMenuButton is used to get the current value of the bot's menu button in a private chat, or the default menu button.
 func (a API) GetChatMenuButton(opts GetChatMenuButtonOptions) (res APIResponseMenuButton, err error) {
-	return get[APIResponseMenuButton](a.client, a.base, "getChatMenuButton", urlValues(opts))
+	return res, a.client.get(a.base, "getChatMenuButton", urlValues(opts), &res)
 }

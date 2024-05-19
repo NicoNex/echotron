@@ -47,7 +47,7 @@ func newClient() client {
 	}
 }
 
-func (c client) get(reqURL string) ([]byte, error) {
+func (c client) doGet(reqURL string) ([]byte, error) {
 	if err := c.Wait(context.Background()); err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c client) get(reqURL string) ([]byte, error) {
 	return data, nil
 }
 
-func (c client) post(reqURL string, files ...content) ([]byte, error) {
+func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
 	var (
 		buf = new(bytes.Buffer)
 		w   = multipart.NewWriter(buf)
@@ -98,7 +98,7 @@ func (c client) post(reqURL string, files ...content) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func (c client) postForm(reqURL string, keyVals map[string]string) ([]byte, error) {
+func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 	var form = make(url.Values)
 
 	for k, v := range keyVals {
@@ -124,88 +124,7 @@ func (c client) postForm(reqURL string, keyVals map[string]string) ([]byte, erro
 	return io.ReadAll(res.Body)
 }
 
-func get[T APIResponse](c client, base, endpoint string, vals url.Values) (res T, err error) {
-	url, err := url.JoinPath(base, endpoint)
-	if err != nil {
-		return res, err
-	}
-
-	if vals != nil {
-		if queries := vals.Encode(); queries != "" {
-			url = fmt.Sprintf("%s?%s", url, queries)
-		}
-	}
-
-	cnt, err := c.get(url)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-	err = check(res)
-	return
-}
-
-func postFile[T APIResponse](c client, base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendFile(c, file, thumbnail, url, fileType)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
-}
-
-func postMedia[T APIResponse](c client, base, endpoint string, editSingle bool, vals url.Values, files ...InputMedia) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendMediaFiles(c, url, editSingle, files...)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
-}
-
-func postStickers[T APIResponse](c client, base, endpoint string, vals url.Values, stickers ...InputSticker) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendStickers(c, url, stickers...)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
-}
-
-func sendFile(c client, file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
+func (c client) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
 	var cnt []content
 
 	if file.id != "" {
@@ -225,9 +144,9 @@ func sendFile(c client, file, thumbnail InputFile, url, fileType string) (res []
 	}
 
 	if len(cnt) > 0 {
-		res, err = c.post(url, cnt...)
+		res, err = c.doPost(url, cnt...)
 	} else {
-		res, err = c.get(url)
+		res, err = c.doGet(url)
 	}
 	return
 }
@@ -270,10 +189,9 @@ func sendMediaFiles(c client, url string, editSingle bool, files ...InputMedia) 
 	url = fmt.Sprintf("%s&media=%s", url, jsn)
 
 	if len(cnt) > 0 {
-		return c.post(url, cnt...)
+		return c.doPost(url, cnt...)
 	}
-
-	return c.get(url)
+	return c.doGet(url)
 }
 
 func sendStickers(c client, url string, stickers ...InputSticker) (res []byte, err error) {
@@ -307,8 +225,80 @@ func sendStickers(c client, url string, stickers ...InputSticker) (res []byte, e
 	}
 
 	if len(cnt) > 0 {
-		return c.post(url, cnt...)
+		return c.doPost(url, cnt...)
+	}
+	return c.doGet(url)
+}
+
+func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return err
 	}
 
-	return c.get(url)
+	if vals != nil {
+		if queries := vals.Encode(); queries != "" {
+			url = fmt.Sprintf("%s?%s", url, queries)
+		}
+	}
+
+	cnt, err := c.doGet(url)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+func (c client) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	cnt, err := c.sendFile(file, thumbnail, url, fileType)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+func (c client) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	cnt, err := sendMediaFiles(c, url, editSingle, files...)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+func (c client) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	cnt, err := sendStickers(c, url, stickers...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
 }

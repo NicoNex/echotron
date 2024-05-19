@@ -112,7 +112,7 @@ func (a API) SendInvoice(chatID int64, title, description, payload, providerToke
 	vals.Set("provider_token", providerToken)
 	vals.Set("currency", currency)
 	vals.Set("prices", string(p))
-	return get[APIResponseMessage](a.client, a.base, "sendInvoice", addValues(vals, opts))
+	return res, a.client.get(a.base, "sendInvoice", addValues(vals, opts), &res)
 }
 
 // AnswerShippingQuery is used to reply to shipping queries.
@@ -123,7 +123,7 @@ func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *Shipping
 
 	vals.Set("shipping_query_id", shippingQueryID)
 	vals.Set("ok", btoa(ok))
-	return get[APIResponseBase](a.client, a.base, "answerShippingQuery", addValues(vals, opts))
+	return res, a.client.get(a.base, "answerShippingQuery", addValues(vals, opts), &res)
 }
 
 // AnswerPreCheckoutQuery is used to respond to such pre-checkout queries.
@@ -135,7 +135,7 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 
 	vals.Set("pre_checkout_query_id", preCheckoutQueryID)
 	vals.Set("ok", btoa(ok))
-	return get[APIResponseBase](a.client, a.base, "answerPreCheckoutQuery", addValues(vals, opts))
+	return res, a.client.get(a.base, "answerPreCheckoutQuery", addValues(vals, opts), &res)
 }
 
 // CreateInvoiceLink creates a link for an invoice.
@@ -153,5 +153,5 @@ func (a API) CreateInvoiceLink(title, description, payload, providerToken, curre
 	vals.Set("provider_token", providerToken)
 	vals.Set("currency", currency)
 	vals.Set("prices", string(p))
-	return get[APIResponseBase](a.client, a.base, "createInvoiceLink", addValues(vals, opts))
+	return res, a.client.get(a.base, "createInvoiceLink", addValues(vals, opts), &res)
 }
