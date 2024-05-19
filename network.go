@@ -57,20 +57,24 @@ func newClient() client {
 func (c client) wait(chatID string) error {
 	var ctx = context.Background()
 
-	// If no limiter exists for a chat, create one.
-	l, ok := c.cl[chatID]
-	if !ok {
-		if isGroup(chatID) {
-			l = rate.NewLimiter(rate.Every(time.Second), 20)
-		} else {
-			l = rate.NewLimiter(rate.Every(time.Second), 5)
+	// If the chatID is empty, it's a general API call like GetUpdates, GetMe
+	// and similar, so skip the per-chat request limit wait.
+	if chatID != "" {
+		// If no limiter exists for a chat, create one.
+		l, ok := c.cl[chatID]
+		if !ok {
+			if isGroup(chatID) {
+				l = rate.NewLimiter(rate.Every(time.Second), 20)
+			} else {
+				l = rate.NewLimiter(rate.Every(time.Second), 5)
+			}
+			c.cl[chatID] = l
 		}
-		c.cl[chatID] = l
-	}
 
-	// Make sure to respect the single chat limit of requests.
-	if err := l.Wait(ctx); err != nil {
-		return err
+		// Make sure to respect the single chat limit of requests.
+		if err := l.Wait(ctx); err != nil {
+			return err
+		}
 	}
 
 	// Make sure to respect the global limit of requests.
