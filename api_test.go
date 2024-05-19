@@ -16,9 +16,9 @@ var (
 	locationTmp    *Message
 	inviteTmp      *ChatInviteLink
 	filePath       string
-	currentBotName string
 	currentBotDesc string
 	msgThreadID    int64
+	currentBotName = "bot name unset"
 	api            = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID         = int64(14870908)
 	banUserID      = int64(41876271)

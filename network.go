@@ -50,7 +50,7 @@ func newClient() client {
 	return client{
 		Client: &http.Client{},
 		cl:     make(map[string]*rate.Limiter),
-		gl:     rate.NewLimiter(rate.Every(time.Second), 30),
+		gl:     rate.NewLimiter(rate.Every(time.Second/30), 10),
 	}
 }
 
@@ -63,11 +63,7 @@ func (c client) wait(chatID string) error {
 		// If no limiter exists for a chat, create one.
 		l, ok := c.cl[chatID]
 		if !ok {
-			if isGroup(chatID) {
-				l = rate.NewLimiter(rate.Every(time.Second), 20)
-			} else {
-				l = rate.NewLimiter(rate.Every(time.Second), 5)
-			}
+			l = rate.NewLimiter(rate.Every(time.Minute/20), 10)
 			c.cl[chatID] = l
 		}
 
