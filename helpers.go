@@ -27,6 +27,13 @@ import (
 	"strconv"
 )
 
+// content is a struct which contains a file's name, its type and its data.
+type content struct {
+	fname string
+	ftype string
+	fdata []byte
+}
+
 func check(r APIResponse) error {
 	if b := r.Base(); !b.Ok {
 		return &APIError{code: b.ErrorCode, desc: b.Description}
@@ -109,114 +116,6 @@ func readFile(im InputFile) (content []byte, path string, err error) {
 	return
 }
 
-func sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
-	var cnt []content
-
-	if file.id != "" {
-		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
-	} else if file.url != "" {
-		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
-	} else if c, e := toContent(fileType, file); e == nil {
-		cnt = append(cnt, c)
-	} else {
-		err = e
-	}
-
-	if c, e := toContent("thumbnail", thumbnail); e == nil {
-		cnt = append(cnt, c)
-	} else {
-		err = e
-	}
-
-	if len(cnt) > 0 {
-		res, err = sendPostRequest(url, cnt...)
-	} else {
-		res, err = sendGetRequest(url)
-	}
-	return
-}
-
-func sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
-	var (
-		med []mediaEnvelope
-		cnt []content
-		jsn []byte
-	)
-
-	for _, file := range files {
-		var im mediaEnvelope
-		var cntArr []content
-
-		media := file.media()
-		thumbnail := file.thumbnail()
-
-		im, cntArr, err = processMedia(media, thumbnail)
-		if err != nil {
-			return
-		}
-
-		im.InputMedia = file
-
-		med = append(med, im)
-		cnt = append(cnt, cntArr...)
-	}
-
-	if editSingle {
-		jsn, err = json.Marshal(med[0])
-	} else {
-		jsn, err = json.Marshal(med)
-	}
-
-	if err != nil {
-		return
-	}
-
-	url = fmt.Sprintf("%s&media=%s", url, jsn)
-
-	if len(cnt) > 0 {
-		return sendPostRequest(url, cnt...)
-	}
-
-	return sendGetRequest(url)
-}
-
-func sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
-	var (
-		sti []stickerEnvelope
-		cnt []content
-		jsn []byte
-	)
-
-	for _, s := range stickers {
-		var se stickerEnvelope
-		var cntArr []content
-
-		se, cntArr, err = processSticker(s.Sticker)
-		if err != nil {
-			return
-		}
-
-		se.InputSticker = s
-
-		sti = append(sti, se)
-		cnt = append(cnt, cntArr...)
-	}
-
-	if len(sti) == 1 {
-		jsn, _ = json.Marshal(sti[0])
-		url = fmt.Sprintf("%s&sticker=%s", url, jsn)
-	} else {
-		jsn, _ = json.Marshal(sti)
-		url = fmt.Sprintf("%s&stickers=%s", url, jsn)
-	}
-
-	if len(cnt) > 0 {
-		return sendPostRequest(url, cnt...)
-	}
-
-	return sendGetRequest(url)
-}
-
 func serializePerms(permissions ChatPermissions) (string, error) {
 	perm, err := json.Marshal(permissions)
 	if err != nil {
@@ -245,87 +144,6 @@ func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {
 	}
 
 	return ret
-}
-
-func get[T APIResponse](base, endpoint string, vals url.Values) (res T, err error) {
-	url, err := url.JoinPath(base, endpoint)
-	if err != nil {
-		return res, err
-	}
-
-	if vals != nil {
-		if queries := vals.Encode(); queries != "" {
-			url = fmt.Sprintf("%s?%s", url, queries)
-		}
-	}
-
-	cnt, err := sendGetRequest(url)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-	err = check(res)
-	return
-}
-
-func postFile[T APIResponse](base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendFile(file, thumbnail, url, fileType)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
-}
-
-func postMedia[T APIResponse](base, endpoint string, editSingle bool, vals url.Values, files ...InputMedia) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendMediaFiles(url, editSingle, files...)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
-}
-
-func postStickers[T APIResponse](base, endpoint string, vals url.Values, stickers ...InputSticker) (res T, err error) {
-	url, err := joinURL(base, endpoint, vals)
-	if err != nil {
-		return res, err
-	}
-
-	cnt, err := sendStickers(url, stickers...)
-	if err != nil {
-		return res, err
-	}
-
-	if err = json.Unmarshal(cnt, &res); err != nil {
-		return
-	}
-
-	err = check(res)
-	return
 }
 
 func joinURL(base, endpoint string, vals url.Values) (addr string, err error) {

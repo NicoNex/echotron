@@ -20,99 +20,295 @@ package echotron
 
 import (
 	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/time/rate"
 )
 
-// content is a struct which contains a file's name, its type and its data.
-type content struct {
-	fname string
-	ftype string
-	fdata []byte
+type client struct {
+	*http.Client
+	*rate.Limiter
 }
 
-// sendGetRequest is used to send an HTTP GET request.
-func sendGetRequest(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+var lclient = newClient()
+
+func newClient() client {
+	return client{
+		Client:  &http.Client{},
+		Limiter: rate.NewLimiter(30, 30),
+	}
+}
+
+func (c client) get(reqURL string) ([]byte, error) {
+	if err := c.Wait(context.Background()); err != nil {
+		return nil, err
+	}
+
+	resp, err := c.Get(reqURL)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
-
 	return data, nil
 }
 
-// sendPostRequest is used to send an HTTP POST request.
-func sendPostRequest(url string, files ...content) ([]byte, error) {
-	var buf = new(bytes.Buffer)
-	var w = multipart.NewWriter(buf)
+func (c client) post(reqURL string, files ...content) ([]byte, error) {
+	var (
+		buf = new(bytes.Buffer)
+		w   = multipart.NewWriter(buf)
+	)
+
+	if err := c.Wait(context.Background()); err != nil {
+		return nil, err
+	}
 
 	for _, f := range files {
 		part, err := w.CreateFormFile(f.ftype, filepath.Base(f.fname))
 		if err != nil {
-			return []byte{}, err
+			return nil, err
 		}
 		part.Write(f.fdata)
 	}
-
 	w.Close()
 
-	req, err := http.NewRequest("POST", url, buf)
+	req, err := http.NewRequest(http.MethodPost, reqURL, buf)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
 
-	var client = new(http.Client)
-	res, err := client.Do(req)
+	res, err := c.Do(req)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 	defer res.Body.Close()
-
-	cnt, err := io.ReadAll(res.Body)
-	if err != nil {
-		return []byte{}, err
-	}
-	return cnt, nil
+	return io.ReadAll(res.Body)
 }
 
-// sendPostForm is used to send an "application/x-www-form-urlencoded" through an HTTP POST request.
-func sendPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
+func (c client) postForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 	var form = make(url.Values)
 
 	for k, v := range keyVals {
 		form.Add(k, v)
 	}
 
-	request, err := http.NewRequest("POST", reqURL, strings.NewReader(form.Encode()))
-	if err != nil {
-		return []byte{}, err
-	}
-	request.PostForm = form
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	var client http.Client
-
-	response, err := client.Do(request)
-	if err != nil {
-		return []byte{}, err
-	}
-	defer response.Body.Close()
-
-	content, err := io.ReadAll(response.Body)
-	if err != nil {
-		return []byte{}, err
+	if err := c.Wait(context.Background()); err != nil {
+		return nil, err
 	}
 
-	return content, nil
+	req, err := http.NewRequest(http.MethodPost, reqURL, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.PostForm = form
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	res, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	return io.ReadAll(res.Body)
+}
+
+func get[T APIResponse](c client, base, endpoint string, vals url.Values) (res T, err error) {
+	url, err := url.JoinPath(base, endpoint)
+	if err != nil {
+		return res, err
+	}
+
+	if vals != nil {
+		if queries := vals.Encode(); queries != "" {
+			url = fmt.Sprintf("%s?%s", url, queries)
+		}
+	}
+
+	cnt, err := c.get(url)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+	err = check(res)
+	return
+}
+
+func postFile[T APIResponse](c client, base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values) (res T, err error) {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return res, err
+	}
+
+	cnt, err := sendFile(c, file, thumbnail, url, fileType)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
+
+func postMedia[T APIResponse](c client, base, endpoint string, editSingle bool, vals url.Values, files ...InputMedia) (res T, err error) {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return res, err
+	}
+
+	cnt, err := sendMediaFiles(c, url, editSingle, files...)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
+
+func postStickers[T APIResponse](c client, base, endpoint string, vals url.Values, stickers ...InputSticker) (res T, err error) {
+	url, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return res, err
+	}
+
+	cnt, err := sendStickers(c, url, stickers...)
+	if err != nil {
+		return res, err
+	}
+
+	if err = json.Unmarshal(cnt, &res); err != nil {
+		return
+	}
+
+	err = check(res)
+	return
+}
+
+func sendFile(c client, file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
+	var cnt []content
+
+	if file.id != "" {
+		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
+	} else if file.url != "" {
+		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
+	} else if c, e := toContent(fileType, file); e == nil {
+		cnt = append(cnt, c)
+	} else {
+		err = e
+	}
+
+	if c, e := toContent("thumbnail", thumbnail); e == nil {
+		cnt = append(cnt, c)
+	} else {
+		err = e
+	}
+
+	if len(cnt) > 0 {
+		res, err = c.post(url, cnt...)
+	} else {
+		res, err = c.get(url)
+	}
+	return
+}
+
+func sendMediaFiles(c client, url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
+	var (
+		med []mediaEnvelope
+		cnt []content
+		jsn []byte
+	)
+
+	for _, file := range files {
+		var im mediaEnvelope
+		var cntArr []content
+
+		media := file.media()
+		thumbnail := file.thumbnail()
+
+		im, cntArr, err = processMedia(media, thumbnail)
+		if err != nil {
+			return
+		}
+
+		im.InputMedia = file
+
+		med = append(med, im)
+		cnt = append(cnt, cntArr...)
+	}
+
+	if editSingle {
+		jsn, err = json.Marshal(med[0])
+	} else {
+		jsn, err = json.Marshal(med)
+	}
+
+	if err != nil {
+		return
+	}
+
+	url = fmt.Sprintf("%s&media=%s", url, jsn)
+
+	if len(cnt) > 0 {
+		return c.post(url, cnt...)
+	}
+
+	return c.get(url)
+}
+
+func sendStickers(c client, url string, stickers ...InputSticker) (res []byte, err error) {
+	var (
+		sti []stickerEnvelope
+		cnt []content
+		jsn []byte
+	)
+
+	for _, s := range stickers {
+		var se stickerEnvelope
+		var cntArr []content
+
+		se, cntArr, err = processSticker(s.Sticker)
+		if err != nil {
+			return
+		}
+
+		se.InputSticker = s
+
+		sti = append(sti, se)
+		cnt = append(cnt, cntArr...)
+	}
+
+	if len(sti) == 1 {
+		jsn, _ = json.Marshal(sti[0])
+		url = fmt.Sprintf("%s&sticker=%s", url, jsn)
+	} else {
+		jsn, _ = json.Marshal(sti)
+		url = fmt.Sprintf("%s&stickers=%s", url, jsn)
+	}
+
+	if len(cnt) > 0 {
+		return c.post(url, cnt...)
+	}
+
+	return c.get(url)
 }

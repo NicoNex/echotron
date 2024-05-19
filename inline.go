@@ -539,5 +539,5 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 	jsn, _ := json.Marshal(results)
 	vals.Set("inline_query_id", inlineQueryID)
 	vals.Set("results", string(jsn))
-	return get[APIResponseBase](a.base, "answerInlineQuery", addValues(vals, opts))
+	return get[APIResponseBase](a.client, a.base, "answerInlineQuery", addValues(vals, opts))
 }
