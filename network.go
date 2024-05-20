@@ -40,10 +40,6 @@ type client struct {
 	gl *rate.Limiter            // global limiter
 }
 
-const (
-	globalRateLimit = 30
-)
-
 var lclient = newClient()
 
 func newClient() client {
@@ -63,7 +59,7 @@ func (c client) wait(chatID string) error {
 		// If no limiter exists for a chat, create one.
 		l, ok := c.cl[chatID]
 		if !ok {
-			l = rate.NewLimiter(rate.Every(time.Minute/20), 10)
+			l = rate.NewLimiter(rate.Every(time.Minute/20), 1)
 			c.cl[chatID] = l
 		}
 
@@ -335,8 +331,4 @@ func (c client) sendStickers(url string, stickers ...InputSticker) (res []byte, 
 		return c.doPost(url, cnt...)
 	}
 	return c.doGet(url)
-}
-
-func isGroup(chatID string) bool {
-	return strings.HasPrefix(chatID, "-")
 }
