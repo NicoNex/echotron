@@ -41,6 +41,7 @@ func NewAPI(token string) API {
 	}
 }
 
+// NewLocalAPI is like NewAPI but allows to use a local API server.
 func NewLocalAPI(url, token string) API {
 	return API{
 		token:  token,
