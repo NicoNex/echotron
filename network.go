@@ -29,6 +29,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/time/rate"
@@ -36,30 +37,55 @@ import (
 
 type client struct {
 	*http.Client
-	cl map[string]*rate.Limiter // chat based limiter
-	gl *rate.Limiter            // global limiter
+	*sync.RWMutex
+	cl       map[string]*rate.Limiter // chat based limiter
+	gl       *rate.Limiter            // global limiter
+	climiter func() *rate.Limiter
 }
 
 var lclient = newClient()
 
-func newClient() client {
-	return client{
-		Client: &http.Client{},
-		cl:     make(map[string]*rate.Limiter),
-		gl:     rate.NewLimiter(rate.Every(time.Second/30), 10),
+// SetGlobalRequestLimit sets the global frequency of requests to the Telegram API.
+func SetGlobalRequestLimit(d time.Duration) {
+	lclient.Lock()
+	lclient.gl = rate.NewLimiter(rate.Every(d), 10)
+	lclient.Unlock()
+}
+
+// SetChatRequestLimit sets the per-chat frequency of requests to the Telegram API.
+func SetChatRequestLimit(d time.Duration) {
+	lclient.Lock()
+	lclient.cl = make(map[string]*rate.Limiter)
+	lclient.climiter = func() *rate.Limiter {
+		return rate.NewLimiter(rate.Every(d), 1)
+	}
+	lclient.Unlock()
+}
+
+func newClient() *client {
+	return &client{
+		Client:  new(http.Client),
+		RWMutex: new(sync.RWMutex),
+		cl:      make(map[string]*rate.Limiter),
+		gl:      rate.NewLimiter(rate.Every(time.Second/30), 10),
+		climiter: func() *rate.Limiter {
+			return rate.NewLimiter(rate.Every(time.Minute/20), 1)
+		},
 	}
 }
 
 func (c client) wait(chatID string) error {
-	var ctx = context.Background()
+	c.RLock()
+	defer c.RUnlock()
 
+	ctx := context.Background()
 	// If the chatID is empty, it's a general API call like GetUpdates, GetMe
 	// and similar, so skip the per-chat request limit wait.
 	if chatID != "" {
 		// If no limiter exists for a chat, create one.
 		l, ok := c.cl[chatID]
 		if !ok {
-			l = rate.NewLimiter(rate.Every(time.Minute/20), 1)
+			l = c.climiter()
 			c.cl[chatID] = l
 		}
 

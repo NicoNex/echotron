@@ -29,7 +29,7 @@ import (
 type API struct {
 	token  string
 	base   string
-	client client
+	client *client
 }
 
 // NewAPI returns a new API object.
