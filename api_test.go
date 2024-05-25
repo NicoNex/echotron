@@ -10,37 +10,38 @@ import (
 )
 
 var (
-	msgTmp         *Message
-	animationTmp   *Message
-	pollTmp        *Message
-	locationTmp    *Message
-	inviteTmp      *ChatInviteLink
-	filePath       string
-	currentBotDesc string
-	msgThreadID    int64
-	currentBotName = "bot name unset"
-	api            = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
-	chatID         = int64(14870908)
-	banUserID      = int64(41876271)
-	botID          = int64(1713461126)
-	channelID      = int64(-1001563144067)
-	groupID        = int64(-1001265771214)
-	pinMsgID       = int(11)
-	photoID        = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	animationID    = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
-	audioID        = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID     = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	videoID        = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	videoNoteID    = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
-	voiceID        = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
-	photoURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
-	animationURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
-	audioURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
-	documentURL    = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
-	logoInvURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
-	videoURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
-	videoNoteURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
-	voiceURL       = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	msgTmp              *Message
+	animationTmp        *Message
+	pollTmp             *Message
+	locationTmp         *Message
+	inviteTmp           *ChatInviteLink
+	filePath            string
+	currentBotDesc      string
+	currentBotShortDesc string
+	msgThreadID         int64
+	currentBotName      = "bot name unset"
+	api                 = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
+	chatID              = int64(14870908)
+	banUserID           = int64(41876271)
+	botID               = int64(1713461126)
+	channelID           = int64(-1001563144067)
+	groupID             = int64(-1001265771214)
+	pinMsgID            = int(11)
+	photoID             = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	animationID         = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
+	audioID             = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID          = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	videoID             = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID         = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID             = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	photoURL            = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
+	animationURL        = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
+	audioURL            = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	documentURL         = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
+	logoInvURL          = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
+	videoURL            = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
+	videoNoteURL        = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
+	voiceURL            = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
 
 	commands = []BotCommand{
 		{Command: "test1", Description: "Test command 1"},
@@ -126,6 +127,18 @@ func TestSetWebhook(t *testing.T) {
 	}
 }
 
+func TestSetWebhookWrongURL(t *testing.T) {
+	_, err := api.SetWebhook(
+		"example.com_",
+		false,
+		nil,
+	)
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+}
+
 func TestDeleteWebhook(t *testing.T) {
 	_, err := api.DeleteWebhook(
 		false,
@@ -153,7 +166,7 @@ func TestGetMe(t *testing.T) {
 }
 
 func TestSendMessage(t *testing.T) {
-	resp, err := api.SendMessage(
+	res, err := api.SendMessage(
 		"TestSendMessage *bold* _italic_ `monospace`",
 		chatID,
 		&MessageOptions{
@@ -165,7 +178,7 @@ func TestSendMessage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	msgTmp = resp.Result
+	msgTmp = res.Result
 }
 
 func TestSetMessageReaction(t *testing.T) {
@@ -219,6 +232,19 @@ func TestForwardMessages(t *testing.T) {
 	}
 }
 
+func TestForwardMessagesWrongMsgID(t *testing.T) {
+	_, err := api.ForwardMessages(
+		chatID,
+		chatID, // fromChatID
+		[]int{},
+		nil,
+	)
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+}
+
 func TestCopyMessage(t *testing.T) {
 	_, err := api.CopyMessage(
 		chatID,
@@ -248,6 +274,19 @@ func TestCopyMessages(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestCopyMessagesWrongMsgID(t *testing.T) {
+	_, err := api.CopyMessages(
+		chatID,
+		chatID, // fromChatID
+		[]int{},
+		nil,
+	)
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
 	}
 }
 
@@ -611,7 +650,7 @@ func TestSendVideoBytes(t *testing.T) {
 }
 
 func TestSendAnimation(t *testing.T) {
-	resp, err := api.SendAnimation(
+	res, err := api.SendAnimation(
 		NewInputFilePath("assets/tests/animation.mp4"),
 		chatID,
 		&AnimationOptions{
@@ -623,7 +662,7 @@ func TestSendAnimation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	animationTmp = resp.Result
+	animationTmp = res.Result
 }
 
 func TestSendAnimationByID(t *testing.T) {
@@ -641,7 +680,7 @@ func TestSendAnimationByID(t *testing.T) {
 }
 
 func TestSendAnimationURL(t *testing.T) {
-	resp, err := api.SendAnimation(
+	res, err := api.SendAnimation(
 		NewInputFileURL(animationURL),
 		chatID,
 		&AnimationOptions{
@@ -653,7 +692,7 @@ func TestSendAnimationURL(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	animationTmp = resp.Result
+	animationTmp = res.Result
 }
 
 func TestSendAnimationWithKeyboard(t *testing.T) {
@@ -952,7 +991,7 @@ func TestSendMediaGroupThumbnail(t *testing.T) {
 }
 
 func TestSendLocation(t *testing.T) {
-	resp, err := api.SendLocation(
+	res, err := api.SendLocation(
 		chatID,
 		0.0,
 		0.0,
@@ -966,7 +1005,7 @@ func TestSendLocation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	locationTmp = resp.Result
+	locationTmp = res.Result
 }
 
 func TestEditMessageLiveLocation(t *testing.T) {
@@ -1027,7 +1066,7 @@ func TestSendContact(t *testing.T) {
 }
 
 func TestSendPoll(t *testing.T) {
-	resp, err := api.SendPoll(
+	res, err := api.SendPoll(
 		chatID,
 		"TestSendPoll",
 		[]InputPollOption{
@@ -1042,7 +1081,20 @@ func TestSendPoll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pollTmp = resp.Result
+	pollTmp = res.Result
+}
+
+func TestSendPollWrongOptions(t *testing.T) {
+	_, err := api.SendPoll(
+		chatID,
+		"TestSendPoll",
+		[]InputPollOption{},
+		nil,
+	)
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
 }
 
 func TestSendDice(t *testing.T) {
@@ -1081,7 +1133,7 @@ func TestGetUserProfilePhotos(t *testing.T) {
 }
 
 func TestGetFile(t *testing.T) {
-	resp, err := api.GetFile(
+	res, err := api.GetFile(
 		photoID,
 	)
 
@@ -1089,11 +1141,11 @@ func TestGetFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	filePath = resp.Result.FilePath
+	filePath = res.Result.FilePath
 }
 
 func TestDownloadFile(t *testing.T) {
-	resp, err := api.DownloadFile(
+	res, err := api.DownloadFile(
 		filePath,
 	)
 
@@ -1101,7 +1153,7 @@ func TestDownloadFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(resp) == 0 {
+	if len(res) == 0 {
 		t.Fatal("empty file received")
 	}
 }
@@ -1233,7 +1285,7 @@ func TestExportChatInviteLink(t *testing.T) {
 }
 
 func TestCreateChatInviteLink(t *testing.T) {
-	resp, err := api.CreateChatInviteLink(
+	res, err := api.CreateChatInviteLink(
 		channelID, nil,
 	)
 
@@ -1241,7 +1293,7 @@ func TestCreateChatInviteLink(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	inviteTmp = resp.Result
+	inviteTmp = res.Result
 }
 
 func TestEditChatInviteLink(t *testing.T) {
@@ -1349,7 +1401,7 @@ func TestUnpinAllChatMessages(t *testing.T) {
 }
 
 func TestGetChat(t *testing.T) {
-	resp, err := api.GetChat(
+	res, err := api.GetChat(
 		chatID,
 	)
 
@@ -1357,10 +1409,10 @@ func TestGetChat(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.Result.Type != "private" && resp.Result.Type != "group" &&
-		resp.Result.Type != "supergroup" && resp.Result.Type != "channel" {
+	if res.Result.Type != "private" && res.Result.Type != "group" &&
+		res.Result.Type != "supergroup" && res.Result.Type != "channel" {
 
-		t.Fatal("wrong chat type, got:", resp.Result.Type)
+		t.Fatal("wrong chat type, got:", res.Result.Type)
 	}
 }
 
@@ -1586,7 +1638,7 @@ func TestSetMyCommands(t *testing.T) {
 }
 
 func TestGetMyCommands(t *testing.T) {
-	resp, err := api.GetMyCommands(
+	res, err := api.GetMyCommands(
 		nil,
 	)
 
@@ -1594,10 +1646,10 @@ func TestGetMyCommands(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for i, res := range resp.Result {
-		if !reflect.DeepEqual(*res, commands[i]) {
-			t.Logf("expected command in %d: %v", i, commands[i])
-			t.Logf("command in %d from API: %v", i, res)
+	for i, cmd := range res.Result {
+		if !reflect.DeepEqual(*cmd, commands[i]) {
+			t.Logf("expected command in %d: %+v", i, commands[i])
+			t.Logf("command in %d from API: %+v", i, cmd)
 			t.Fatal("error: commands mismatch")
 		}
 	}
@@ -1664,6 +1716,19 @@ func TestGetMyDescription(t *testing.T) {
 		t.Logf("expected bot description [\"%s\"]\n", currentBotDesc)
 		t.Logf("got bot description [\"%s\"]\n", res.Result.Description)
 		t.Fatal("error: bot description mismatch")
+	}
+}
+
+func TestSetMyShortDescription(t *testing.T) {
+	currentBotShortDesc = fmt.Sprintf(
+		"Echotron Coverage Bot - %d",
+		time.Now().Unix(),
+	)
+
+	_, err := api.SetMyShortDescription(currentBotShortDesc, "")
+
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -1792,7 +1857,7 @@ func TestDeleteMessage(t *testing.T) {
 
 func TestDeleteMessages(t *testing.T) {
 	msg, _ := api.SendMessage(
-		"TestForwardMessages",
+		"TestDeleteMessages",
 		chatID,
 		nil,
 	)
@@ -1804,5 +1869,16 @@ func TestDeleteMessages(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestDeleteMessagesWrongMsgIDs(t *testing.T) {
+	_, err := api.DeleteMessages(
+		chatID,
+		[]int{},
+	)
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
 	}
 }
