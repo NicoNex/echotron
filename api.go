@@ -447,14 +447,14 @@ func (a API) UnbanChatMember(chatID, userID int64, opts *UnbanOptions) (res APIR
 func (a API) RestrictChatMember(chatID, userID int64, permissions ChatPermissions, opts *RestrictOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	perm, err := serializePerms(permissions)
+	perm, err := json.Marshal(permissions)
 	if err != nil {
 		return
 	}
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("user_id", itoa(userID))
-	vals.Set("permissions", perm)
+	vals.Set("permissions", string(perm))
 	return res, a.client.get(a.base, "restrictChatMember", addValues(vals, opts), &res)
 }
 
@@ -504,13 +504,13 @@ func (a API) UnbanChatSenderChat(chatID, senderChatID int64) (res APIResponseBoo
 func (a API) SetChatPermissions(chatID int64, permissions ChatPermissions, opts *ChatPermissionsOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	perm, err := serializePerms(permissions)
+	perm, err := json.Marshal(permissions)
 	if err != nil {
 		return
 	}
 
 	vals.Set("chat_id", itoa(chatID))
-	vals.Set("permissions", perm)
+	vals.Set("permissions", string(perm))
 	return res, a.client.get(a.base, "setChatPermissions", addValues(vals, opts), &res)
 }
 

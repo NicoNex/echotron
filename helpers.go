@@ -19,7 +19,6 @@
 package echotron
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -27,7 +26,7 @@ import (
 	"strconv"
 )
 
-// content is a struct which contains a file's name, its type and its data.
+// content contains a file's name, its type and its data.
 type content struct {
 	fname string
 	ftype string
@@ -114,15 +113,6 @@ func readFile(im InputFile) (content []byte, path string, err error) {
 	path = filepath.Base(im.path)
 
 	return
-}
-
-func serializePerms(permissions ChatPermissions) (string, error) {
-	perm, err := json.Marshal(permissions)
-	if err != nil {
-		return "", err
-	}
-
-	return string(perm), nil
 }
 
 func toContent(ftype string, f InputFile) (content, error) {
