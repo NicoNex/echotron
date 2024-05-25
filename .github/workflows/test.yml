@@ -1,12 +1,15 @@
 ---
-on: [push, pull_request]
 name: Test
+
+on: [push, pull_request]
+
 jobs:
   test:
     strategy:
       matrix:
         go-version: [1.19.x]
         os: [ubuntu-latest]
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/setup-go@v3
@@ -14,8 +17,9 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - uses: actions/checkout@v3
-      - run: go test -coverprofile profile.cov
+      - run: go test -coverprofile=coverage.out -covermode=atomic
 
-      - uses: shogo82148/actions-goveralls@v1
+      - uses: codecov/codecov-action@v4
         with:
-          path-to-profile: profile.cov
+          files: ./coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
