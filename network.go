@@ -45,14 +45,16 @@ type client struct {
 
 var lclient = newClient()
 
-// SetGlobalRequestLimit sets the global frequency of requests to the Telegram API.
+// SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
+// A duration of 0 disables the rate limiter, allowing unlimited requests.
 func SetGlobalRequestLimit(d time.Duration) {
 	lclient.Lock()
 	lclient.gl = rate.NewLimiter(rate.Every(d), 10)
 	lclient.Unlock()
 }
 
-// SetChatRequestLimit sets the per-chat frequency of requests to the Telegram API.
+// SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
+// A duration of 0 disables the rate limiter, allowing unlimited requests.
 func SetChatRequestLimit(d time.Duration) {
 	lclient.Lock()
 	lclient.cl = make(map[string]*rate.Limiter)
