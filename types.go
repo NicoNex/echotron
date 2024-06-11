@@ -239,9 +239,9 @@ func (a APIResponseString) Base() APIResponseBase {
 }
 
 // APIResponseChat represents the incoming response from Telegram servers.
-// Used by all methods that return a Chat object on success.
+// Used by all methods that return a ChatFullInfo object on success.
 type APIResponseChat struct {
-	Result *Chat `json:"result,omitempty"`
+	Result *ChatFullInfo `json:"result,omitempty"`
 	APIResponseBase
 }
 
