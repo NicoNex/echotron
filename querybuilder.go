@@ -70,10 +70,6 @@ func scan(i any, v url.Values) url.Values {
 	return v
 }
 
-func querify(i any) string {
-	return scan(i, url.Values{}).Encode()
-}
-
 func urlValues(i any) url.Values {
 	if i == nil {
 		return nil
