@@ -132,6 +132,11 @@ func TestAPIResponseBusinessConnection(_ *testing.T) {
 	a.Base()
 }
 
+func TestAPIResponseStarTransactions(_ *testing.T) {
+	a := APIResponseStarTransactions{}
+	a.Base()
+}
+
 func TestInputMediaPhoto(_ *testing.T) {
 	i := InputMediaPhoto{}
 	i.media()
