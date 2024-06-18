@@ -490,6 +490,18 @@ func (a APIResponseBusinessConnection) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseStarTransactions represents the incoming response from Telegram servers.
+// Used by all methods that return a StarTransactions object on success.
+type APIResponseStarTransactions struct {
+	Result *StarTransactions `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseStarTransactions) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`

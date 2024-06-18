@@ -96,6 +96,88 @@ type PreCheckoutQuery struct {
 	TotalAmount      int       `json:"total_amount"`
 }
 
+// RevenueWithdrawalState describes the state of a revenue withdrawal operation.
+type RevenueWithdrawalState interface {
+	ImplementsRevenueWithdrawalState()
+}
+
+// RevenueWithdrawalStatePending describes the state of a withdrawal in progress.
+type RevenueWithdrawalStatePending struct {
+	Type string `json:"type"`
+}
+
+// ImplementsRevenueWithdrawalState is used to implement the RevenueWithdrawalState interface.
+func (r RevenueWithdrawalStatePending) ImplementsRevenueWithdrawalState() {}
+
+// RevenueWithdrawalStateSucceeded describes the state of a succeeded withdrawal.
+type RevenueWithdrawalStateSucceeded struct {
+	Type string `json:"type"`
+	URL  string `json:"url"`
+	Date int    `json:"date"`
+}
+
+// ImplementsRevenueWithdrawalState is used to implement the RevenueWithdrawalState interface.
+func (r RevenueWithdrawalStateSucceeded) ImplementsRevenueWithdrawalState() {}
+
+// RevenueWithdrawalStateFailed describes the state of a failed withdrawal, in which the transaction was refunded.
+type RevenueWithdrawalStateFailed struct {
+	Type string `json:"type"`
+}
+
+// ImplementsRevenueWithdrawalState is used to implement the RevenueWithdrawalState interface.
+func (r RevenueWithdrawalStateFailed) ImplementsRevenueWithdrawalState() {}
+
+// TransactionPartner describes the source of a transaction, or its recipient for outgoing transactions.
+type TransactionPartner interface {
+	ImplementsTransactionPartner()
+}
+
+// TransactionPartnerFragment describes a withdrawal transaction with Fragment.
+type TransactionPartnerFragment struct {
+	WithdrawalState RevenueWithdrawalState `json:"withdrawal_state"`
+	Type            string                 `json:"type"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerFragment) ImplementsTransactionPartner() {}
+
+// TransactionPartnerUser describes a transaction with a user.
+type TransactionPartnerUser struct {
+	Type string `json:"type"`
+	User User   `json:"user"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerUser) ImplementsTransactionPartner() {}
+
+// TransactionPartnerOther describes a transaction with an unknown source or recipient.
+type TransactionPartnerOther struct {
+	Type string `json:"type"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerOther) ImplementsTransactionPartner() {}
+
+// StarTransaction describes a Telegram Star transaction.
+type StarTransaction struct {
+	Source   TransactionPartner `json:"source"`
+	Receiver TransactionPartner `json:"receiver"`
+	ID       string             `json:"id"`
+	Amount   int                `json:"amount"`
+	Date     int                `json:"date"`
+}
+
+// StarTransactions contains a list of Telegram Star transactions.
+type StarTransactions struct {
+	Transaction []StarTransaction `json:"transaction"`
+}
+
+// StarTransactionsOptions contains the optional parameters used by the GetStarTransactions method.
+type StarTransactionsOptions struct {
+	Offset int `query:"offset"`
+	Limit  int `query:"limit"`
+}
+
 // SendInvoice is used to send invoices.
 func (a API) SendInvoice(chatID int64, title, description, payload, currency string, prices []LabeledPrice, opts *InvoiceOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
@@ -152,6 +234,11 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 	vals.Set("pre_checkout_query_id", preCheckoutQueryID)
 	vals.Set("ok", btoa(ok))
 	return res, a.client.get(a.base, "answerPreCheckoutQuery", addValues(vals, opts), &res)
+}
+
+// GetStarTransactions returns the bot's Telegram Star transactions in chronological order.
+func (a API) GetStarTransactions(opts *StarTransactionsOptions) (res APIResponseStarTransactions, err error) {
+	return res, a.client.get(a.base, "getStarTransactions", urlValues(opts), &res)
 }
 
 // RefundStarPayment refunds a successful payment in Telegram Stars.

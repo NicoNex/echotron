@@ -1822,7 +1822,7 @@ func TestEditMessageMediaURL(t *testing.T) {
 func TestEditMessageReplyMarkup(t *testing.T) {
 	_, err := api.EditMessageReplyMarkup(
 		NewMessageID(chatID, msgTmp.ID),
-		&MessageReplyMarkup{
+		&MessageReplyMarkupOptions{
 			ReplyMarkup: inlineKeyboardEdit,
 		},
 	)

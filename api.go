@@ -313,7 +313,7 @@ func (a API) EditMessageLiveLocation(msg MessageIDOptions, latitude, longitude f
 }
 
 // StopMessageLiveLocation is used to stop updating a live location message before `LivePeriod` expires.
-func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
+func (a API) StopMessageLiveLocation(msg MessageIDOptions, opts *StopLocationOptions) (res APIResponseMessage, err error) {
 	return res, a.client.get(a.base, "stopMessageLiveLocation", addValues(urlValues(msg), opts), &res)
 }
 
@@ -944,17 +944,17 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 // only to a document for document albums and to a photo or a video otherwise.
 // When an inline message is edited, a new file can't be uploaded.
 // Use a previously uploaded file via its file_id or specify a URL.
-func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
+func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageMediaOptions) (res APIResponseMessage, err error) {
 	return res, a.client.postMedia(a.base, "editMessageMedia", true, addValues(urlValues(msg), opts), &res, media)
 }
 
 // EditMessageReplyMarkup is used to edit only the reply markup of messages.
-func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMarkup) (res APIResponseMessage, err error) {
+func (a API) EditMessageReplyMarkup(msg MessageIDOptions, opts *MessageReplyMarkupOptions) (res APIResponseMessage, err error) {
 	return res, a.client.get(a.base, "editMessageReplyMarkup", addValues(urlValues(msg), opts), &res)
 }
 
 // StopPoll is used to stop a poll which was sent by the bot.
-func (a API) StopPoll(chatID int64, messageID int, opts *MessageReplyMarkup) (res APIResponsePoll, err error) {
+func (a API) StopPoll(chatID int64, messageID int, opts *StopPollOptions) (res APIResponsePoll, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))

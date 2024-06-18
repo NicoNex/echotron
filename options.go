@@ -487,11 +487,18 @@ type LocationOptions struct {
 
 // EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
 type EditLocationOptions struct {
+	BusinessConnectionID string               `query:"business_connection_id"`
 	ReplyMarkup          InlineKeyboardMarkup `query:"reply_markup"`
 	HorizontalAccuracy   float64              `query:"horizontal_accuracy"`
 	Heading              int                  `query:"heading"`
 	LivePeriod           int                  `query:"live_period"`
 	ProximityAlertRadius int                  `query:"proximity_alert_radius"`
+}
+
+// StopLocationOptions contains the optional parameters used by the StopMessageLiveLocation method.
+type StopLocationOptions struct {
+	ReplyMarkup          ReplyMarkup `query:"reply_markup"`
+	BusinessConnectionID string      `query:"business_connection_id"`
 }
 
 // VenueOptions contains the optional parameters used by the SendVenue method.
@@ -543,6 +550,12 @@ type PollOptions struct {
 	ProtectContent        bool            `query:"protect_content"`
 	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
 	IsAnonymous           bool            `query:"is_anonymous"`
+}
+
+// StopPollOptions contains the optional parameters used by the StopPoll method.
+type StopPollOptions struct {
+	ReplyMarkup          ReplyMarkup `query:"reply_markup"`
+	BusinessConnectionID string      `query:"business_connection_id"`
 }
 
 // BanOptions contains the optional parameters used by the BanChatMember method.
@@ -627,24 +640,33 @@ func NewInlineMessageID(ID string) MessageIDOptions {
 
 // MessageTextOptions contains the optional parameters used by the EditMessageText method.
 type MessageTextOptions struct {
-	ParseMode          ParseMode            `query:"parse_mode"`
-	Entities           []MessageEntity      `query:"entities"`
-	ReplyMarkup        InlineKeyboardMarkup `query:"reply_markup"`
-	LinkPreviewOptions LinkPreviewOptions   `query:"link_preview_options"`
+	ParseMode            ParseMode            `query:"parse_mode"`
+	BusinessConnectionID string               `query:"business_connection_id"`
+	Entities             []MessageEntity      `query:"entities"`
+	ReplyMarkup          InlineKeyboardMarkup `query:"reply_markup"`
+	LinkPreviewOptions   LinkPreviewOptions   `query:"link_preview_options"`
 }
 
 // MessageCaptionOptions contains the optional parameters used by the EditMessageCaption method.
 type MessageCaptionOptions struct {
 	Caption               string               `query:"caption"`
+	BusinessConnectionID  string               `query:"business_connection_id"`
 	ParseMode             ParseMode            `query:"parse_mode"`
 	CaptionEntities       []MessageEntity      `query:"caption_entities"`
 	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
 	ShowCaptionAboveMedia bool                 `query:"show_caption_above_media"`
 }
 
-// MessageReplyMarkup contains the optional parameters used by the method which only require reply_markup.
-type MessageReplyMarkup struct {
-	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
+// MessageMediaOptions contains the optional parameters used by the EditMessageMedia method.
+type MessageMediaOptions struct {
+	ReplyMarkup          ReplyMarkup `query:"reply_markup"`
+	BusinessConnectionID string      `query:"business_connection_id"`
+}
+
+// MessageReplyMarkupOptions contains the optional parameters used by the EditMessageReplyMarkup method.
+type MessageReplyMarkupOptions struct {
+	BusinessConnectionID string               `query:"business_connection_id"`
+	ReplyMarkup          InlineKeyboardMarkup `query:"reply_markup"`
 }
 
 // CommandOptions contains the optional parameters used by the SetMyCommands, DeleteMyCommands and GetMyCommands methods.
