@@ -624,6 +624,7 @@ type Message struct {
 	Caption                       string                         `json:"caption,omitempty"`
 	Text                          string                         `json:"text,omitempty"`
 	BusinessConnectionID          string                         `json:"business_connection_id,omitempty"`
+	EffectID                      string                         `json:"effect_id,omitempty"`
 	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
 	NewChatPhoto                  []*PhotoSize                   `json:"new_chat_photo,omitempty"`
 	NewChatMembers                []*User                        `json:"new_chat_members,omitempty"`
@@ -646,6 +647,7 @@ type Message struct {
 	HasProtectedContent           bool                           `json:"has_protected_content,omitempty"`
 	HasMediaSpoiler               bool                           `json:"has_media_spoiler,omitempty"`
 	IsFromOffline                 bool                           `json:"is_from_offline,omitempty"`
+	ShowCaptionAboveMedia         bool                           `json:"show_caption_above_media,omitempty"`
 }
 
 // MessageID represents a unique message identifier.
@@ -1125,12 +1127,13 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 // InputMediaPhoto represents a photo to be sent.
 // Type MUST BE "photo".
 type InputMediaPhoto struct {
-	Type            InputMediaType   `json:"type"`
-	Media           InputFile        `json:"-"`
-	Caption         string           `json:"caption,omitempty"`
-	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
-	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
-	HasSpoiler      bool             `json:"has_spoiler,omitempty"`
+	Type                  InputMediaType   `json:"type"`
+	Media                 InputFile        `json:"-"`
+	Caption               string           `json:"caption,omitempty"`
+	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities       []*MessageEntity `json:"caption_entities,omitempty"`
+	HasSpoiler            bool             `json:"has_spoiler,omitempty"`
+	ShowCaptionAboveMedia bool             `json:"show_caption_above_media,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -1145,17 +1148,18 @@ func (i InputMediaPhoto) groupable() {}
 // InputMediaVideo represents a video to be sent.
 // Type MUST BE "video".
 type InputMediaVideo struct {
-	Type              InputMediaType   `json:"type"`
-	Media             InputFile        `json:"-"`
-	Thumbnail         InputFile        `json:"-"`
-	Caption           string           `json:"caption,omitempty"`
-	ParseMode         ParseMode        `json:"parse_mode,omitempty"`
-	CaptionEntities   []*MessageEntity `json:"caption_entities,omitempty"`
-	Width             int              `json:"width,omitempty"`
-	Height            int              `json:"height,omitempty"`
-	Duration          int              `json:"duration,omitempty"`
-	SupportsStreaming bool             `json:"supports_streaming,omitempty"`
-	HasSpoiler        bool             `json:"has_spoiler,omitempty"`
+	Type                  InputMediaType   `json:"type"`
+	Media                 InputFile        `json:"-"`
+	Thumbnail             InputFile        `json:"-"`
+	Caption               string           `json:"caption,omitempty"`
+	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities       []*MessageEntity `json:"caption_entities,omitempty"`
+	Width                 int              `json:"width,omitempty"`
+	Height                int              `json:"height,omitempty"`
+	Duration              int              `json:"duration,omitempty"`
+	SupportsStreaming     bool             `json:"supports_streaming,omitempty"`
+	HasSpoiler            bool             `json:"has_spoiler,omitempty"`
+	ShowCaptionAboveMedia bool             `json:"show_caption_above_media,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -1170,16 +1174,17 @@ func (i InputMediaVideo) groupable() {}
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 // Type MUST BE "animation".
 type InputMediaAnimation struct {
-	Type            InputMediaType   `json:"type"`
-	Media           InputFile        `json:"-"`
-	Thumbnail       InputFile        `json:"-"`
-	Caption         string           `json:"caption,omitempty"`
-	ParseMode       ParseMode        `json:"parse_mode,omitempty"`
-	CaptionEntities []*MessageEntity `json:"caption_entities,omitempty"`
-	Width           int              `json:"width,omitempty"`
-	Height          int              `json:"height,omitempty"`
-	Duration        int              `json:"duration,omitempty"`
-	HasSpoiler      bool             `json:"has_spoiler,omitempty"`
+	Type                  InputMediaType   `json:"type"`
+	Media                 InputFile        `json:"-"`
+	Thumbnail             InputFile        `json:"-"`
+	Caption               string           `json:"caption,omitempty"`
+	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
+	CaptionEntities       []*MessageEntity `json:"caption_entities,omitempty"`
+	Width                 int              `json:"width,omitempty"`
+	Height                int              `json:"height,omitempty"`
+	Duration              int              `json:"duration,omitempty"`
+	HasSpoiler            bool             `json:"has_spoiler,omitempty"`
+	ShowCaptionAboveMedia bool             `json:"show_caption_above_media,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.

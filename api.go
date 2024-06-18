@@ -27,9 +27,9 @@ import (
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
 type API struct {
+	client *client
 	token  string
 	base   string
-	client *client
 }
 
 // NewAPI returns a new API object.

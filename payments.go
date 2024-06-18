@@ -97,7 +97,7 @@ type PreCheckoutQuery struct {
 }
 
 // SendInvoice is used to send invoices.
-func (a API) SendInvoice(chatID int64, title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *InvoiceOptions) (res APIResponseMessage, err error) {
+func (a API) SendInvoice(chatID int64, title, description, payload, currency string, prices []LabeledPrice, opts *InvoiceOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
 	p, err := json.Marshal(prices)
@@ -109,10 +109,26 @@ func (a API) SendInvoice(chatID int64, title, description, payload, providerToke
 	vals.Set("title", title)
 	vals.Set("description", description)
 	vals.Set("payload", payload)
-	vals.Set("provider_token", providerToken)
 	vals.Set("currency", currency)
 	vals.Set("prices", string(p))
 	return res, a.client.get(a.base, "sendInvoice", addValues(vals, opts), &res)
+}
+
+// CreateInvoiceLink creates a link for an invoice.
+func (a API) CreateInvoiceLink(title, description, payload, currency string, prices []LabeledPrice, opts *CreateInvoiceLinkOptions) (res APIResponseBase, err error) {
+	var vals = make(url.Values)
+
+	p, err := json.Marshal(prices)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("title", title)
+	vals.Set("description", description)
+	vals.Set("payload", payload)
+	vals.Set("currency", currency)
+	vals.Set("prices", string(p))
+	return res, a.client.get(a.base, "createInvoiceLink", addValues(vals, opts), &res)
 }
 
 // AnswerShippingQuery is used to reply to shipping queries.
@@ -138,20 +154,11 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 	return res, a.client.get(a.base, "answerPreCheckoutQuery", addValues(vals, opts), &res)
 }
 
-// CreateInvoiceLink creates a link for an invoice.
-func (a API) CreateInvoiceLink(title, description, payload, providerToken, currency string, prices []LabeledPrice, opts *CreateInvoiceLinkOptions) (res APIResponseBase, err error) {
+// RefundStarPayment refunds a successful payment in Telegram Stars.
+func (a API) RefundStarPayment(userID int64, telegramPaymentChargeID string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
-	p, err := json.Marshal(prices)
-	if err != nil {
-		return res, err
-	}
-
-	vals.Set("title", title)
-	vals.Set("description", description)
-	vals.Set("payload", payload)
-	vals.Set("provider_token", providerToken)
-	vals.Set("currency", currency)
-	vals.Set("prices", string(p))
-	return res, a.client.get(a.base, "createInvoiceLink", addValues(vals, opts), &res)
+	vals.Set("user_id", itoa(userID))
+	vals.Set("telegram_payment_charge_id", telegramPaymentChargeID)
+	return res, a.client.get(a.base, "refundStarPayment", vals, &res)
 }
