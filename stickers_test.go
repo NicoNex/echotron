@@ -215,3 +215,15 @@ func TestDeleteStickerSet(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetForumTopicIconStickers(t *testing.T) {
+	res, err := api.GetForumTopicIconStickers()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(res.Result) == 0 {
+		t.Fatal("error: Telegram returned no forum topic icon stickers")
+	}
+}
