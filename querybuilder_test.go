@@ -35,3 +35,38 @@ func TestScan(t *testing.T) {
 		}
 	}
 }
+
+func TestToStringDefault(t *testing.T) {
+	ret := toString(reflect.ValueOf(nil))
+
+	if ret != "" {
+		t.Fatalf("expected empty string, got %+v", ret)
+	}
+}
+
+func TestUrlValues(t *testing.T) {
+	ret := urlValues(nil)
+
+	if ret != nil {
+		t.Fatalf("expected nil, got %+v", ret)
+	}
+}
+
+func TestAddValues(t *testing.T) {
+	vals := url.Values{}
+	ret := addValues(vals, nil)
+
+	if !reflect.DeepEqual(vals, ret) {
+		t.Fatalf("expected nil, got %+v", ret)
+	}
+}
+
+func TestAddValuesNil(t *testing.T) {
+	opts := MessageOptions{ParseMode: MarkdownV2}
+	vals := urlValues(opts)
+	ret := addValues(nil, opts)
+
+	if !reflect.DeepEqual(vals, ret) {
+		t.Fatalf("expected %+v, got %+v", vals, ret)
+	}
+}
