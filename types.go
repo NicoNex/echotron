@@ -18,7 +18,10 @@
 
 package echotron
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
@@ -536,7 +539,7 @@ type ChatFullInfo struct {
 	PinnedMessage                      *Message              `json:"pinned_message,omitempty"`
 	Photo                              *ChatPhoto            `json:"photo,omitempty"`
 	ActiveUsernames                    *[]string             `json:"active_usernames,omitempty"`
-	AvailableReactions                 *[]ReactionType       `json:"available_reactions,omitempty"`
+	AvailableReactions                 *[]ChatReactionType   `json:"available_reactions,omitempty"`
 	BusinessIntro                      *BusinessIntro        `json:"business_intro,omitempty"`
 	BusinessLocation                   *BusinessLocation     `json:"business_location,omitempty"`
 	BusinessOpeningHours               *BusinessOpeningHours `json:"business_opening_hours,omitempty"`
@@ -1463,6 +1466,52 @@ type Story struct {
 	ID   int64 `json:"id"`
 }
 
+type ReactionTypeName string
+
+// These are all the possible types for the various ChatReactionType's Type field.
+const (
+	ReactionTypeNameEmoji       ReactionTypeName = "emoji"
+	ReactionTypeNameCustomEmoji ReactionTypeName = "custom_emoji"
+)
+
+// ChatReactionType wraps the ReactionType interface to implement proper unmarshalling of API responses.
+type ChatReactionType struct {
+	ReactionType
+}
+
+func (t *ChatReactionType) UnmarshalJSON(data []byte) error {
+	var typ struct {
+		Type ReactionTypeName `json:"type"`
+	}
+
+	if err := json.Unmarshal(data, &typ); err != nil {
+		return err
+	}
+
+	var target ReactionType
+
+	switch typ.Type {
+	case ReactionTypeNameEmoji:
+		target = new(ReactionTypeEmoji)
+	case ReactionTypeNameCustomEmoji:
+		target = new(ReactionTypeCustomEmoji)
+	default:
+		return fmt.Errorf("unknown reaction type: %s", typ.Type)
+	}
+
+	if err := json.Unmarshal(data, target); err != nil {
+		return err
+	}
+
+	*t = ChatReactionType{ReactionType: target}
+
+	return nil
+}
+
+func (t ChatReactionType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.ReactionType)
+}
+
 type ReactionType interface {
 	ImplementsReactionType()
 }
@@ -1470,8 +1519,8 @@ type ReactionType interface {
 // ReactionTypeEmoji is based on an emoji.
 // Type is always "emoji".
 type ReactionTypeEmoji struct {
-	Type  string `json:"type"`
-	Emoji string `json:"emoji"`
+	Type  ReactionTypeName `json:"type"`
+	Emoji string           `json:"emoji"`
 }
 
 func (i ReactionTypeEmoji) ImplementsReactionType() {}
@@ -1479,27 +1528,27 @@ func (i ReactionTypeEmoji) ImplementsReactionType() {}
 // ReactionTypeCustomEmoji is based on a custom emoji.
 // Type is always "custom_emoji".
 type ReactionTypeCustomEmoji struct {
-	Type        string `json:"type"`
-	CustomEmoji string `json:"custom_emoji"`
+	Type        ReactionTypeName `json:"type"`
+	CustomEmoji string           `json:"custom_emoji"`
 }
 
 func (i ReactionTypeCustomEmoji) ImplementsReactionType() {}
 
 // ReactionCount represents a reaction added to a message along with the number of times it was added.
 type ReactionCount struct {
-	Type       ReactionType `json:"type"`
-	TotalCount int          `json:"total_count"`
+	Type       ChatReactionType `json:"type"`
+	TotalCount int              `json:"total_count"`
 }
 
 // MessageReactionUpdated represents a change of a reaction on a message performed by a user.
 type MessageReactionUpdated struct {
-	Chat        Chat           `json:"chat"`
-	ActorChat   Chat           `json:"actor_chat,omitempty"`
-	OldReaction []ReactionType `json:"old_reaction"`
-	NewReaction []ReactionType `json:"new_reaction"`
-	User        User           `json:"user,omitempty"`
-	MessageID   int            `json:"message_id"`
-	Date        int            `json:"date"`
+	Chat        Chat               `json:"chat"`
+	ActorChat   Chat               `json:"actor_chat,omitempty"`
+	OldReaction []ChatReactionType `json:"old_reaction"`
+	NewReaction []ChatReactionType `json:"new_reaction"`
+	User        User               `json:"user,omitempty"`
+	MessageID   int                `json:"message_id"`
+	Date        int                `json:"date"`
 }
 
 // MessageReactionCountUpdated represents reaction changes on a message with anonymous reactions.
