@@ -1463,27 +1463,11 @@ type Story struct {
 	ID   int64 `json:"id"`
 }
 
-type ReactionType interface {
-	ImplementsReactionType()
-}
-
-// ReactionTypeEmoji is based on an emoji.
-// Type is always "emoji".
-type ReactionTypeEmoji struct {
-	Type  string `json:"type"`
-	Emoji string `json:"emoji"`
-}
-
-func (i ReactionTypeEmoji) ImplementsReactionType() {}
-
-// ReactionTypeCustomEmoji is based on a custom emoji.
-// Type is always "custom_emoji".
-type ReactionTypeCustomEmoji struct {
+type ReactionType struct {
 	Type        string `json:"type"`
+	Emoji       string `json:"emoji"`
 	CustomEmoji string `json:"custom_emoji"`
 }
-
-func (i ReactionTypeCustomEmoji) ImplementsReactionType() {}
 
 // ReactionCount represents a reaction added to a message along with the number of times it was added.
 type ReactionCount struct {
