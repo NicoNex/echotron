@@ -47,6 +47,7 @@ var lclient = newClient()
 
 // SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
 // A duration of 0 disables the rate limiter, allowing unlimited requests.
+// By default the duration of this limiter is set to time.Second/30.
 func SetGlobalRequestLimit(d time.Duration) {
 	lclient.Lock()
 	lclient.gl = rate.NewLimiter(rate.Every(d), 10)
@@ -55,6 +56,7 @@ func SetGlobalRequestLimit(d time.Duration) {
 
 // SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
 // A duration of 0 disables the rate limiter, allowing unlimited requests.
+// By default the duration of this limiter is set to time.Minute/20.
 func SetChatRequestLimit(d time.Duration) {
 	lclient.Lock()
 	lclient.cl = make(map[string]*rate.Limiter)
