@@ -187,7 +187,7 @@ func TestSetMessageReaction(t *testing.T) {
 		msgTmp.ID,
 		&MessageReactionOptions{
 			Reaction: []ReactionType{
-				ReactionTypeEmoji{
+				ReactionType{
 					Type:  "emoji",
 					Emoji: "👍",
 				},

@@ -171,16 +171,6 @@ func TestInputMediaDocument(_ *testing.T) {
 	i.groupable()
 }
 
-func TestReactionTypeEmoji(_ *testing.T) {
-	r := ReactionTypeEmoji{}
-	r.ImplementsReactionType()
-}
-
-func TestReactionTypeCustomEmoji(_ *testing.T) {
-	r := ReactionTypeCustomEmoji{}
-	r.ImplementsReactionType()
-}
-
 func TestBackgroundFillSolid(_ *testing.T) {
 	b := BackgroundFillSolid{}
 	b.ImplementsBackgroundFill()
