@@ -20,13 +20,17 @@ package echotron
 
 import (
 	"compress/gzip"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"sync"
+	"sync/atomic"
+	"time"
 )
 
 // Bot is the interface that must be implemented by your definition of
@@ -44,24 +48,32 @@ type NewBotFn func(chatId int64) Bot
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	sessionMap map[int64]Bot
+	sessionMap sync.Map
 	newBot     NewBotFn
 	updates    chan *Update
 	httpServer *http.Server
 	api        API
-	mu         sync.Mutex
+	ctx        context.Context
+	cancel     context.CancelFunc
+	isPolling  atomic.Value
+	wg         sync.WaitGroup
 }
 
 // NewDispatcher returns a new instance of the Dispatcher object.
 // Calls the Update function of the bot associated with each chat ID.
 // If a new chat ID is found, newBotFn will be called first.
 func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	d := &Dispatcher{
 		api:        NewAPI(token),
-		sessionMap: make(map[int64]Bot),
+		sessionMap: sync.Map{},
 		newBot:     newBotFn,
-		updates:    make(chan *Update),
+		updates:    make(chan *Update, 100),
+		ctx:        ctx,
+		cancel:     cancel,
 	}
+	d.isPolling.Store(false)
 	go d.listen()
 	return d
 }
@@ -69,22 +81,25 @@ func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 // DelSession deletes the Bot instance, seen as a session, from the
 // map with all of them.
 func (d *Dispatcher) DelSession(chatID int64) {
-	d.mu.Lock()
-	delete(d.sessionMap, chatID)
-	d.mu.Unlock()
+	d.sessionMap.Delete(chatID)
 }
 
 // AddSession allows to arbitrarily create a new Bot instance.
-func (d *Dispatcher) AddSession(chatID int64) {
-	d.mu.Lock()
-	if _, isIn := d.sessionMap[chatID]; !isIn {
-		d.sessionMap[chatID] = d.newBot(chatID)
+func (d *Dispatcher) AddSession(chatID int64) error {
+	_, loaded := d.sessionMap.LoadOrStore(chatID, d.newBot(chatID))
+	if loaded {
+		return fmt.Errorf("session for chat ID %d already exists", chatID)
 	}
-	d.mu.Unlock()
+	return nil
 }
 
 // Poll is a wrapper function for PollOptions.
 func (d *Dispatcher) Poll() error {
+	if !d.isPolling.CompareAndSwap(false, true) {
+		return errors.New("polling is already in progress")
+	}
+
+	defer d.isPolling.Store(false)
 	return d.PollOptions(true, UpdateOptions{Timeout: 120})
 }
 
@@ -102,47 +117,93 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) er
 	}
 
 	for {
-		if isFirstRun {
-			opts.Timeout = 0
-		}
+		select {
+		case <-d.ctx.Done():
+			return context.Canceled
+		default:
+			if isFirstRun {
+				opts.Timeout = 0
+			}
 
-		response, err := d.api.GetUpdates(&opts)
-		if err != nil {
-			return err
-		}
+			ctx, cancel := context.WithTimeout(d.ctx, time.Duration(opts.Timeout+30)*time.Second)
 
-		if !dropPendingUpdates || !isFirstRun {
-			for _, u := range response.Result {
-				d.updates <- u
+			response, err := d.getUpdatesWithTimeout(ctx, &opts)
+			cancel()
+
+			if err != nil {
+				if err == context.DeadlineExceeded {
+					log.Println("echotron.Dispatcher", "PollOptions", "GetUpdates timed out, retrying...")
+					continue
+				}
+				return err
+			}
+
+			if !dropPendingUpdates || !isFirstRun {
+				for _, u := range response.Result {
+					d.updates <- u
+				}
+			}
+
+			if l := len(response.Result); l > 0 {
+				opts.Offset = response.Result[l-1].ID + 1
+			}
+
+			if isFirstRun {
+				isFirstRun = false
+				opts.Timeout = timeout
 			}
 		}
+	}
+}
 
-		if l := len(response.Result); l > 0 {
-			opts.Offset = response.Result[l-1].ID + 1
-		}
+func (d *Dispatcher) getUpdatesWithTimeout(ctx context.Context, opts *UpdateOptions) (APIResponseUpdate, error) {
+	type result struct {
+		response APIResponseUpdate
+		err      error
+	}
+	ch := make(chan result, 1)
 
-		if isFirstRun {
-			isFirstRun = false
-			opts.Timeout = timeout
-		}
+	go func() {
+		response, err := d.api.GetUpdates(opts)
+		ch <- result{response, err}
+	}()
+
+	select {
+	case <-ctx.Done():
+		return APIResponseUpdate{}, ctx.Err()
+	case res := <-ch:
+		return res.response, res.err
 	}
 }
 
 func (d *Dispatcher) instance(chatID int64) Bot {
-	bot, ok := d.sessionMap[chatID]
+	bot, ok := d.sessionMap.Load(chatID)
 	if !ok {
-		bot = d.newBot(chatID)
-		d.mu.Lock()
-		d.sessionMap[chatID] = bot
-		d.mu.Unlock()
+		newBot := d.newBot(chatID)
+		bot, _ = d.sessionMap.LoadOrStore(chatID, newBot)
 	}
-	return bot
+	return bot.(Bot)
 }
 
 func (d *Dispatcher) listen() {
-	for update := range d.updates {
-		bot := d.instance(update.ChatID())
-		go bot.Update(update)
+	for {
+		select {
+		case <-d.ctx.Done():
+			return
+		case update := <-d.updates:
+			d.wg.Add(1)
+			select {
+			case <-d.ctx.Done():
+				d.wg.Done()
+				return
+			default:
+				go func(u *Update) {
+					defer d.wg.Done()
+					bot := d.instance(u.ChatID())
+					bot.Update(u)
+				}(update)
+			}
+		}
 	}
 }
 
@@ -214,5 +275,27 @@ func readRequest(r *http.Request) ([]byte, error) {
 
 	default:
 		return io.ReadAll(r.Body)
+	}
+}
+
+// Stop stops the polling and listening process.
+func (d *Dispatcher) Stop() error {
+	if !d.isPolling.CompareAndSwap(true, false) {
+		return errors.New("dispatcher is not polling")
+	}
+
+	d.cancel()
+
+	done := make(chan struct{})
+	go func() {
+		d.wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		return nil
+	case <-time.After(10 * time.Second):
+		return errors.New("timeout waiting for goroutines to complete")
 	}
 }
