@@ -510,12 +510,13 @@ type User struct {
 	LanguageCode            string `json:"language_code,omitempty"`
 	ID                      int64  `json:"id"`
 	IsBot                   bool   `json:"is_bot"`
+	IsPremium               bool   `json:"is_premium,omitempty"`
+	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
 	CanJoinGroups           bool   `json:"can_join_groups,omitempty"`
 	CanReadAllGroupMessages bool   `json:"can_read_all_group_messages,omitempty"`
 	SupportsInlineQueries   bool   `json:"supports_inline_queries,omitempty"`
 	CanConnectToBusiness    bool   `json:"can_connect_to_business,omitempty"`
-	IsPremium               bool   `json:"is_premium,omitempty"`
-	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
+	HasMainWebApp           bool   `json:"has_main_web_app,omitempty"`
 }
 
 // Chat represents a chat.
@@ -773,6 +774,28 @@ type PaidMedia struct {
 	Width    int          `json:"width,omitempty"`
 	Height   int          `json:"height,omitempty"`
 	Duration int          `json:"duration,omitempty"`
+}
+
+// TODO: IMPLEMENT CUSTOM UNMARSHALER FOR VARIOUS PAID MEDIA TYPES.
+
+// PaidMediaPreview is a paid media that isn't available before the payment.
+type PaidMediaPreview struct {
+	Type     string `json:"type"`
+	Width    int    `json:"width,omitempty"`
+	Height   int    `json:"height,omitempty"`
+	Duration int    `json:"duration,omitempty"`
+}
+
+// PaidMediaPhoto is a paid photo.
+type PaidMediaPhoto struct {
+	Type  string      `json:"type"`
+	Photo []PhotoSize `json:"photo"`
+}
+
+// PaidMediaVideo is a paid video.
+type PaidMediaVideo struct {
+	Type  string `json:"type"`
+	Video Video  `json:"video"`
 }
 
 // Contact represents a phone contact.

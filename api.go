@@ -639,12 +639,11 @@ func (a API) PinChatMessage(chatID int64, messageID int, opts *PinMessageOptions
 // UnpinChatMessage is used to remove a message from the list of pinned messages in the chat.
 // If the chat is not a private chat, the bot must be an administrator in the chat for this to work
 // and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
-func (a API) UnpinChatMessage(chatID int64, messageID int) (res APIResponseBool, err error) {
+func (a API) UnpinChatMessage(chatID int64, opts *UnpinMessageOptions) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
-	vals.Set("message_id", itoa(int64(messageID)))
-	return res, a.client.get(a.base, "unpinChatMessage", vals, &res)
+	return res, a.client.get(a.base, "unpinChatMessage", addValues(vals, opts), &res)
 }
 
 // UnpinAllChatMessages is used to clear the list of pinned messages in a chat.
