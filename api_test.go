@@ -1625,7 +1625,9 @@ func TestPinChatMessage(t *testing.T) {
 	_, err := api.PinChatMessage(
 		groupID,
 		pinMsgID,
-		&PinMessageOptions{true},
+		&PinMessageOptions{
+			DisableNotification: true,
+		},
 	)
 
 	if err != nil {
@@ -1636,7 +1638,9 @@ func TestPinChatMessage(t *testing.T) {
 func TestUnpinChatMessage(t *testing.T) {
 	_, err := api.UnpinChatMessage(
 		groupID,
-		pinMsgID,
+		&UnpinMessageOptions{
+			MessageID: pinMsgID,
+		},
 	)
 
 	if err != nil {
