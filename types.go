@@ -1152,20 +1152,24 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 
 	case InputPaidMediaPhoto:
 		tmp = struct {
+			Type  string `json:"type"`
 			Media string `json:"media"`
 			InputPaidMediaPhoto
 		}{
 			InputPaidMediaPhoto: o,
+			Type:                "photo",
 			Media:               i.media,
 		}
 
 	case InputPaidMediaVideo:
 		tmp = struct {
+			Type      string `json:"type"`
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputPaidMediaVideo
 		}{
 			InputPaidMediaVideo: o,
+			Type:                "video",
 			Media:               i.media,
 			Thumbnail:           i.thumbnail,
 		}
@@ -1277,19 +1281,9 @@ func (i InputMediaDocument) thumbnail() InputFile { return i.Thumbnail }
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaDocument) groupable() {}
 
-// InputPaidMediaType represents the various InputPaidMedia types.
-type InputPaidMediaType string
-
-// These are the various InputPaidMediaType values.
-const (
-	InputPaidMediaTypePhoto InputPaidMediaType = "photo"
-	InputPaidMediaTypeVideo                    = "video"
-)
-
 // InputPaidMediaPhoto represents a paid photo to send.
 type InputPaidMediaPhoto struct {
-	Type  InputPaidMediaType `json:"type"`
-	Media InputFile          `json:"-"`
+	Media InputFile `json:"-"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.
@@ -1303,13 +1297,12 @@ func (i InputPaidMediaPhoto) groupable() {}
 
 // InputPaidMediaVideo represents a paid video to send.
 type InputPaidMediaVideo struct {
-	Type              InputPaidMediaType `json:"type"`
-	Media             InputFile          `json:"-"`
-	Thumbnail         InputFile          `json:"-"`
-	Width             int                `json:"width,omitempty"`
-	Height            int                `json:"height,omitempty"`
-	Duration          int                `json:"duration,omitempty"`
-	SupportsStreaming bool               `json:"supports_streaming,omitempty"`
+	Media             InputFile `json:"-"`
+	Thumbnail         InputFile `json:"-"`
+	Width             int       `json:"width,omitempty"`
+	Height            int       `json:"height,omitempty"`
+	Duration          int       `json:"duration,omitempty"`
+	SupportsStreaming bool      `json:"supports_streaming,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.
