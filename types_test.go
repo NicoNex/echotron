@@ -171,6 +171,20 @@ func TestInputMediaDocument(_ *testing.T) {
 	i.groupable()
 }
 
+func TestInputPaidMediaPhoto(_ *testing.T) {
+	i := InputPaidMediaPhoto{}
+	i.media()
+	i.groupable()
+	i.thumbnail()
+}
+
+func TestInputPaidMediaVideo(_ *testing.T) {
+	i := InputPaidMediaVideo{}
+	i.media()
+	i.groupable()
+	i.thumbnail()
+}
+
 func TestBackgroundFillSolid(_ *testing.T) {
 	b := BackgroundFillSolid{}
 	b.ImplementsBackgroundFill()
