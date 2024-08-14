@@ -15,6 +15,7 @@ var (
 	pollTmp             *Message
 	locationTmp         *Message
 	inviteTmp           *ChatInviteLink
+	chatSubInviteTmp    *ChatInviteLink
 	filePath            string
 	currentBotDesc      string
 	currentBotShortDesc string
@@ -1556,6 +1557,37 @@ func TestEditChatInviteLink(t *testing.T) {
 		inviteTmp.InviteLink,
 		&InviteLinkOptions{
 			ExpireDate: time.Now().Unix() + 300,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateChatSubscriptionInviteLink(t *testing.T) {
+	res, err := api.CreateChatSubscriptionInviteLink(
+		channelID,
+		2592000,
+		1,
+		&ChatSubscriptionInviteOptions{
+			Name: "TestCreateChatSubscriptionInviteLink",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	chatSubInviteTmp = res.Result
+}
+
+func TestEditChatSubscriptionInviteLink(t *testing.T) {
+	_, err := api.EditChatSubscriptionInviteLink(
+		channelID,
+		chatSubInviteTmp.InviteLink,
+		&ChatSubscriptionInviteOptions{
+			Name: "TestEditChatSubscriptionInviteLink",
 		},
 	)
 
