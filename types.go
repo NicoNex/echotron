@@ -587,6 +587,7 @@ type Message struct {
 	VideoChatParticipantsInvited  *VideoChatParticipantsInvited  `json:"video_chat_participants_invited,omitempty"`
 	Invoice                       *Invoice                       `json:"invoice,omitempty"`
 	SuccessfulPayment             *SuccessfulPayment             `json:"successful_payment,omitempty"`
+	RefundedPayment               *RefundedPayment               `json:"refunded_payment,omitempty"`
 	VideoChatEnded                *VideoChatEnded                `json:"video_chat_ended,omitempty"`
 	VideoChatStarted              *VideoChatStarted              `json:"video_chat_started,omitempty"`
 	ReplyToMessage                *Message                       `json:"reply_to_message,omitempty"`

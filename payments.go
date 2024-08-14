@@ -77,6 +77,15 @@ type SuccessfulPayment struct {
 	TotalAmount             int       `json:"total_amount"`
 }
 
+// RefundedPayment contains basic information about a refunded payment.
+type RefundedPayment struct {
+	Currency                string `json:"currency"`
+	InvoicePayload          string `json:"invoice_payload"`
+	TelegramPaymentChargeID string `json:"telegram_payment_charge_id"`
+	ProviderPaymentChargeID string `json:"provider_payment_charge_id,omitempty"`
+	TotalAmount             int    `json:"total_amount"`
+}
+
 // ShippingQuery contains information about an incoming shipping query.
 type ShippingQuery struct {
 	ShippingAddress ShippingAddress `json:"shipping_address"`
