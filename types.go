@@ -1063,18 +1063,6 @@ type ResponseParameters struct {
 	RetryAfter      int `json:"retry_after,omitempty"`
 }
 
-// InputMediaType is a custom type for the various InputMedia*'s Type field.
-type InputMediaType string
-
-// These are all the possible types for the various InputMedia*'s Type field.
-const (
-	MediaTypePhoto     InputMediaType = "photo"
-	MediaTypeVideo                    = "video"
-	MediaTypeAnimation                = "animation"
-	MediaTypeAudio                    = "audio"
-	MediaTypeDocument                 = "document"
-)
-
 // InputMedia is an interface for the various media types.
 type InputMedia interface {
 	media() InputFile
@@ -1101,53 +1089,63 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 	switch o := i.InputMedia.(type) {
 	case InputMediaPhoto:
 		tmp = struct {
+			Type  string `json:"type"`
 			Media string `json:"media"`
 			InputMediaPhoto
 		}{
 			InputMediaPhoto: o,
+			Type:            "photo",
 			Media:           i.media,
 		}
 
 	case InputMediaVideo:
 		tmp = struct {
+			Type      string `json:"type"`
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaVideo
 		}{
 			InputMediaVideo: o,
+			Type:            "video",
 			Media:           i.media,
 			Thumbnail:       i.thumbnail,
 		}
 
 	case InputMediaAnimation:
 		tmp = struct {
+			Type      string `json:"type"`
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAnimation
 		}{
 			InputMediaAnimation: o,
+			Type:                "animation",
 			Media:               i.media,
 			Thumbnail:           i.thumbnail,
 		}
 
 	case InputMediaAudio:
 		tmp = struct {
+			Type      string `json:"type"`
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAudio
 		}{
 			InputMediaAudio: o,
+			Type:            "audio",
 			Media:           i.media,
 			Thumbnail:       i.thumbnail,
 		}
 
 	case InputMediaDocument:
 		tmp = struct {
+			Type      string `json:"type"`
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaDocument
 		}{
 			InputMediaDocument: o,
+			Type:               "document",
 			Media:              i.media,
 			Thumbnail:          i.thumbnail,
 		}
@@ -1177,9 +1175,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 }
 
 // InputMediaPhoto represents a photo to be sent.
-// Type MUST BE "photo".
 type InputMediaPhoto struct {
-	Type                  InputMediaType   `json:"type"`
 	Media                 InputFile        `json:"-"`
 	Caption               string           `json:"caption,omitempty"`
 	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
@@ -1198,9 +1194,7 @@ func (i InputMediaPhoto) thumbnail() InputFile { return InputFile{} }
 func (i InputMediaPhoto) groupable() {}
 
 // InputMediaVideo represents a video to be sent.
-// Type MUST BE "video".
 type InputMediaVideo struct {
-	Type                  InputMediaType   `json:"type"`
 	Media                 InputFile        `json:"-"`
 	Thumbnail             InputFile        `json:"-"`
 	Caption               string           `json:"caption,omitempty"`
@@ -1224,9 +1218,7 @@ func (i InputMediaVideo) thumbnail() InputFile { return i.Thumbnail }
 func (i InputMediaVideo) groupable() {}
 
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
-// Type MUST BE "animation".
 type InputMediaAnimation struct {
-	Type                  InputMediaType   `json:"type"`
 	Media                 InputFile        `json:"-"`
 	Thumbnail             InputFile        `json:"-"`
 	Caption               string           `json:"caption,omitempty"`
@@ -1246,9 +1238,7 @@ func (i InputMediaAnimation) media() InputFile { return i.Media }
 func (i InputMediaAnimation) thumbnail() InputFile { return i.Thumbnail }
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
-// Type MUST BE "audio".
 type InputMediaAudio struct {
-	Type            InputMediaType   `json:"type"`
 	Performer       string           `json:"performer,omitempty"`
 	Title           string           `json:"title,omitempty"`
 	Caption         string           `json:"caption,omitempty"`
@@ -1269,9 +1259,7 @@ func (i InputMediaAudio) thumbnail() InputFile { return i.Thumbnail }
 func (i InputMediaAudio) groupable() {}
 
 // InputMediaDocument represents a general file to be sent.
-// Type MUST BE "document".
 type InputMediaDocument struct {
-	Type                        InputMediaType   `json:"type"`
 	Media                       InputFile        `json:"-"`
 	Thumbnail                   InputFile        `json:"-"`
 	Caption                     string           `json:"caption,omitempty"`

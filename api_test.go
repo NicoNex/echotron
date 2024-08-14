@@ -1135,17 +1135,14 @@ func TestSendMediaGroupPhoto(t *testing.T) {
 		chatID,
 		[]GroupableInputMedia{
 			InputMediaPhoto{
-				Type:    MediaTypePhoto,
 				Media:   NewInputFileID(photoID),
 				Caption: "TestSendMediaGroup1",
 			},
 			InputMediaPhoto{
-				Type:    MediaTypePhoto,
 				Media:   NewInputFilePath("assets/logo.png"),
 				Caption: "TestSendMediaGroup2",
 			},
 			InputMediaPhoto{
-				Type:    MediaTypePhoto,
 				Media:   NewInputFileURL(logoInvURL),
 				Caption: "TestSendMediaGroup3",
 			},
@@ -1163,17 +1160,14 @@ func TestSendMediaGroupVideo(t *testing.T) {
 		chatID,
 		[]GroupableInputMedia{
 			InputMediaVideo{
-				Type:    MediaTypeVideo,
 				Media:   NewInputFileID(videoID),
 				Caption: "TestSendMediaGroup1",
 			},
 			InputMediaVideo{
-				Type:    MediaTypeVideo,
 				Media:   NewInputFilePath("assets/tests/video.webm"),
 				Caption: "TestSendMediaGroup2",
 			},
 			InputMediaVideo{
-				Type:    MediaTypeVideo,
 				Media:   NewInputFileURL(videoURL),
 				Caption: "TestSendMediaGroup3",
 			},
@@ -1191,17 +1185,14 @@ func TestSendMediaGroupDocument(t *testing.T) {
 		chatID,
 		[]GroupableInputMedia{
 			InputMediaDocument{
-				Type:    MediaTypeDocument,
 				Media:   NewInputFileID(documentID),
 				Caption: "TestSendMediaGroup1",
 			},
 			InputMediaDocument{
-				Type:    MediaTypeDocument,
 				Media:   NewInputFilePath("assets/tests/document.pdf"),
 				Caption: "TestSendMediaGroup2",
 			},
 			InputMediaDocument{
-				Type:    MediaTypeDocument,
 				Media:   NewInputFileURL(documentURL),
 				Caption: "TestSendMediaGroup3",
 			},
@@ -1219,19 +1210,16 @@ func TestSendMediaGroupThumbnail(t *testing.T) {
 		chatID,
 		[]GroupableInputMedia{
 			InputMediaAudio{
-				Type:      MediaTypeAudio,
 				Media:     NewInputFilePath("assets/tests/audio_inv.mp3"),
 				Thumbnail: NewInputFilePath("assets/tests/echotron_thumb_inv.jpg"),
 				Caption:   "TestSendMediaGroupThumbnail1",
 			},
 			InputMediaAudio{
-				Type:      MediaTypeAudio,
 				Media:     NewInputFilePath("assets/tests/audio.mp3"),
 				Thumbnail: NewInputFilePath("assets/tests/echotron_thumb.jpg"),
 				Caption:   "TestSendMediaGroupThumbnail2",
 			},
 			InputMediaAudio{
-				Type:      MediaTypeAudio,
 				Media:     NewInputFileURL(audioURL),
 				Thumbnail: NewInputFileURL(logoInvURL),
 				Caption:   "TestSendMediaGroupThumbnail3",
@@ -2065,7 +2053,6 @@ func TestEditMessageMedia(t *testing.T) {
 	_, err := api.EditMessageMedia(
 		NewMessageID(chatID, animationTmp.ID),
 		InputMediaAnimation{
-			Type:    MediaTypeAnimation,
 			Media:   NewInputFileID(animationID),
 			Caption: "TestEditMessageMedia",
 		},
@@ -2081,7 +2068,6 @@ func TestEditMessageMediaBytes(t *testing.T) {
 	_, err := api.EditMessageMedia(
 		NewMessageID(chatID, animationTmp.ID),
 		InputMediaAnimation{
-			Type:    MediaTypeAnimation,
 			Media:   NewInputFilePath("assets/tests/animation.mp4"),
 			Caption: "TestEditMessageMediaBytes",
 		},
@@ -2097,7 +2083,6 @@ func TestEditMessageMediaURL(t *testing.T) {
 	_, err := api.EditMessageMedia(
 		NewMessageID(chatID, animationTmp.ID),
 		InputMediaAnimation{
-			Type:    MediaTypeAnimation,
 			Media:   NewInputFileURL(animationURL),
 			Caption: "TestEditMessageMediaURL",
 		},
