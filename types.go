@@ -510,12 +510,13 @@ type User struct {
 	LanguageCode            string `json:"language_code,omitempty"`
 	ID                      int64  `json:"id"`
 	IsBot                   bool   `json:"is_bot"`
+	IsPremium               bool   `json:"is_premium,omitempty"`
+	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
 	CanJoinGroups           bool   `json:"can_join_groups,omitempty"`
 	CanReadAllGroupMessages bool   `json:"can_read_all_group_messages,omitempty"`
 	SupportsInlineQueries   bool   `json:"supports_inline_queries,omitempty"`
 	CanConnectToBusiness    bool   `json:"can_connect_to_business,omitempty"`
-	IsPremium               bool   `json:"is_premium,omitempty"`
-	AddedToAttachmentMenu   bool   `json:"added_to_attachment_menu,omitempty"`
+	HasMainWebApp           bool   `json:"has_main_web_app,omitempty"`
 }
 
 // Chat represents a chat.

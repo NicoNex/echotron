@@ -266,7 +266,14 @@ type MessageOptions struct {
 
 // PinMessageOptions contains the optional parameters used by the PinChatMember method.
 type PinMessageOptions struct {
-	DisableNotification bool `query:"disable_notification"`
+	BusinessConnectionID string `query:"business_connection_id"`
+	DisableNotification  bool   `query:"disable_notification"`
+}
+
+// UnpinMessageOptions contains the optional parameters used by the UnpinChatMember method.
+type UnpinMessageOptions struct {
+	BusinessConnectionID string `query:"business_connection_id"`
+	MessageID            int    `query:"message_id"`
 }
 
 // ForwardOptions contains the optional parameters used by the ForwardMessage method.
