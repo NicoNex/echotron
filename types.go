@@ -565,6 +565,7 @@ type ChatFullInfo struct {
 	LinkedChatID                       int64                 `json:"linked_chat_id,omitempty"`
 	ID                                 int64                 `json:"id"`
 	IsForum                            bool                  `json:"is_forum,omitempty"`
+	CanSendPaidMedia                   bool                  `json:"can_send_paid_media,omitempty"`
 	HasAggressiveAntiSpamEnabled       bool                  `json:"has_aggressive_anti_spam_enabled,omitempty"`
 	HasHiddenMembers                   bool                  `json:"has_hidden_members,omitempty"`
 	HasProtectedContent                bool                  `json:"has_protected_content,omitempty"`
@@ -594,6 +595,7 @@ type Message struct {
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered,omitempty"`
 	ReplyMarkup                   *InlineKeyboardMarkup          `json:"reply_markup,omitempty"`
 	Document                      *Document                      `json:"document,omitempty"`
+	PaidMedia                     *PaidMediaInfo                 `json:"paid_media,omitempty"`
 	PinnedMessage                 *Message                       `json:"pinned_message,omitempty"`
 	LeftChatMember                *User                          `json:"left_chat_member,omitempty"`
 	Animation                     *Animation                     `json:"animation,omitempty"`
@@ -754,6 +756,22 @@ type Voice struct {
 	MimeType     string `json:"mime_type,omitempty"`
 	Duration     int    `json:"duration"`
 	FileSize     int64  `json:"file_size,omitempty"`
+}
+
+// PaidMediaInfo describes the paid media added to a message.
+type PaidMediaInfo struct {
+	PaidMedia []PaidMedia `json:"paid_media"`
+	StarCount int         `json:"star_count"`
+}
+
+// PaidMedia describes paid media.
+type PaidMedia struct {
+	Photo    *[]PhotoSize `json:"photo,omitempty"`
+	Video    *Video       `json:"video,omitempty"`
+	Type     string       `json:"type"`
+	Width    int          `json:"width,omitempty"`
+	Height   int          `json:"height,omitempty"`
+	Duration int          `json:"duration,omitempty"`
 }
 
 // Contact represents a phone contact.
@@ -1131,6 +1149,26 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Media:              i.media,
 			Thumbnail:          i.thumbnail,
 		}
+
+	case InputPaidMediaPhoto:
+		tmp = struct {
+			Media string `json:"media"`
+			InputPaidMediaPhoto
+		}{
+			InputPaidMediaPhoto: o,
+			Media:               i.media,
+		}
+
+	case InputPaidMediaVideo:
+		tmp = struct {
+			Media     string `json:"media"`
+			Thumbnail string `json:"thumbnail,omitempty"`
+			InputPaidMediaVideo
+		}{
+			InputPaidMediaVideo: o,
+			Media:               i.media,
+			Thumbnail:           i.thumbnail,
+		}
 	}
 
 	return json.Marshal(tmp)
@@ -1248,6 +1286,50 @@ func (i InputMediaDocument) thumbnail() InputFile { return i.Thumbnail }
 
 // groupable is a dummy method which exists to implement the interface GroupableInputMedia.
 func (i InputMediaDocument) groupable() {}
+
+// InputPaidMediaType represents the various InputPaidMedia types.
+type InputPaidMediaType string
+
+// These are the various InputPaidMediaType values.
+const (
+	InputPaidMediaTypePhoto InputPaidMediaType = "photo"
+	InputPaidMediaTypeVideo                    = "video"
+)
+
+// InputPaidMediaPhoto represents a paid photo to send.
+type InputPaidMediaPhoto struct {
+	Type  InputPaidMediaType `json:"type"`
+	Media InputFile          `json:"-"`
+}
+
+// media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.
+func (i InputPaidMediaPhoto) media() InputFile { return i.Media }
+
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputPaidMedia* struct.
+func (i InputPaidMediaPhoto) thumbnail() InputFile { return InputFile{} }
+
+// groupable is a dummy method which exists to implement the interface GroupableInputMedia.
+func (i InputPaidMediaPhoto) groupable() {}
+
+// InputPaidMediaVideo represents a paid video to send.
+type InputPaidMediaVideo struct {
+	Type              InputPaidMediaType `json:"type"`
+	Media             InputFile          `json:"-"`
+	Thumbnail         InputFile          `json:"-"`
+	Width             int                `json:"width,omitempty"`
+	Height            int                `json:"height,omitempty"`
+	Duration          int                `json:"duration,omitempty"`
+	SupportsStreaming bool               `json:"supports_streaming,omitempty"`
+}
+
+// media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.
+func (i InputPaidMediaVideo) media() InputFile { return i.Media }
+
+// thumbnail is a method which allows to obtain the Thumbnail (type InputFile) field from the InputPaidMedia* struct.
+func (i InputPaidMediaVideo) thumbnail() InputFile { return i.Thumbnail }
+
+// groupable is a dummy method which exists to implement the interface GroupableInputMedia.
+func (i InputPaidMediaVideo) groupable() {}
 
 // BotCommandScopeType is a custom type for the various bot command scope types.
 type BotCommandScopeType string
@@ -1507,6 +1589,7 @@ type ExternalReplyInfo struct {
 	Venue              Venue              `json:"venue,omitempty"`
 	Chat               Chat               `json:"chat,omitempty"`
 	Document           Document           `json:"document,omitempty"`
+	PaidMedia          PaidMediaInfo      `json:"paid_media,omitempty"`
 	Origin             MessageOrigin      `json:"origin"`
 	Contact            Contact            `json:"contact,omitempty"`
 	Invoice            Invoice            `json:"invoice,omitempty"`

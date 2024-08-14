@@ -23,7 +23,6 @@ var (
 	api                 = NewAPI("1713461126:AAEV5sgVo513Vz4PT33mpp0ZykJqrnSluzM")
 	chatID              = int64(14870908)
 	banUserID           = int64(41876271)
-	botID               = int64(1713461126)
 	channelID           = int64(-1001563144067)
 	groupID             = int64(-1001265771214)
 	pinMsgID            = int(11)
@@ -31,6 +30,7 @@ var (
 	animationID         = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
 	audioID             = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
 	documentID          = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	paidVideoID         = "BAACAgQAAx0EXSuvgwADGGa7vNTyDxfQiyICxWhnLUfhJphkAAIvFAACHozgUVOTwR-Bak97NQQ"
 	videoID             = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
 	videoNoteID         = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
 	voiceID             = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
@@ -868,6 +868,260 @@ func TestSendVideoNoteBytes(t *testing.T) {
 		NewInputFileBytes("video_note.mp4", data),
 		chatID,
 		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaPhoto(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFilePath("assets/logo.png"),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaPhoto",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaPhotoByID(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFileID(photoID),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaPhotoByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaPhotoURL(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFileURL(photoURL),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaPhotoURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaPhotoBytes(t *testing.T) {
+	data, err := openBytes("assets/tests/echotron_test.png")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFileBytes("echotron_test.png", data),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaPhotoBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaPhotoWithKeyboard(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFilePath("assets/logo.png"),
+			},
+		},
+		&PaidMediaOptions{
+			Caption:     "TestSendPaidMediaPhotoWithKeyboard",
+			ReplyMarkup: inlineKeyboard,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaVideo(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFilePath("assets/tests/video_note.mp4"),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaVideo",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaVideoByID(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFileID(paidVideoID),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaVideoByID",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaVideoURL(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFileURL(videoNoteURL),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaVideoURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaVideoBytes(t *testing.T) {
+	data, err := openBytes("assets/tests/video_note.mp4")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFileBytes("video_note.mp4", data),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaVideoBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaVideoWithKeyboard(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFilePath("assets/tests/video_note.mp4"),
+			},
+		},
+		&PaidMediaOptions{
+			Caption:     "TestSendPaidMediaVideoWithKeyboard",
+			ReplyMarkup: inlineKeyboard,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPaidMediaGroup(t *testing.T) {
+	_, err := api.SendPaidMedia(
+		channelID,
+		1,
+		[]GroupableInputMedia{
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFilePath("assets/logo.png"),
+			},
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFileID(photoID),
+			},
+			InputPaidMediaPhoto{
+				Type:  InputPaidMediaTypePhoto,
+				Media: NewInputFileURL(logoInvURL),
+			},
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFilePath("assets/tests/video_note.mp4"),
+			},
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFileID(paidVideoID),
+			},
+			InputPaidMediaVideo{
+				Type:  InputPaidMediaTypeVideo,
+				Media: NewInputFileURL(videoNoteURL),
+			},
+		},
+		&PaidMediaOptions{
+			Caption: "TestSendPaidMediaGroup",
+		},
 	)
 
 	if err != nil {

@@ -457,6 +457,18 @@ type VideoNoteOptions struct {
 	ProtectContent       bool            `query:"protect_content"`
 }
 
+// PaidMediaOptions contains the optional parameters used by the SendPaidMedia method.
+type PaidMediaOptions struct {
+	ReplyMarkup           ReplyMarkup     `query:"reply_markup"`
+	Caption               string          `query:"caption"`
+	ParseMode             ParseMode       `query:"parse_mode"`
+	CaptionEntities       []MessageEntity `query:"caption_entities"`
+	ReplyParameters       ReplyParameters `query:"reply_parameters"`
+	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
+	DisableNotification   bool            `query:"disable_notification"`
+	ProtectContent        bool            `query:"protect_content"`
+}
+
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
 type MediaGroupOptions struct {
 	BusinessConnectionID string          `query:"business_connection_id"`

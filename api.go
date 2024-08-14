@@ -156,7 +156,7 @@ func (a API) ForwardMessages(chatID, fromChatID int64, messageIDs []int, opts *F
 }
 
 // CopyMessage is used to copy messages of any kind.
-// Service messages and invoice messages can't be copied.
+// Service messages, paid media mesages, giveaway messages, giveaway winners messages, and invoice messages can't be copied.
 // The method is analogous to the method ForwardMessage,
 // but the copied message doesn't have a link to the original message.
 func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOptions) (res APIResponseMessageID, err error) {
@@ -170,7 +170,7 @@ func (a API) CopyMessage(chatID, fromChatID int64, messageID int, opts *CopyOpti
 
 // CopyMessages is used to copy messages of any kind.
 // If some of the specified messages can't be found or copied, they are skipped.
-// Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied.
+// Service messages, paid media mesages, giveaway messages, giveaway winners messages, and invoice messages can't be copied.
 // A quiz poll can be copied only if the value of the field correct_option_id is known to the bot.
 // The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message.
 // Album grouping is kept for copied messages.
@@ -281,6 +281,15 @@ func (a API) SendVideoNote(file InputFile, chatID int64, opts *VideoNoteOptions)
 
 	vals.Set("chat_id", itoa(chatID))
 	return res, a.client.postFile(a.base, "sendVideoNote", "video_note", file, thumbnail, addValues(vals, opts), &res)
+}
+
+// SendPaidMedia is used to send paid media to channel chats.
+func (a API) SendPaidMedia(chatID int64, starCount int64, media []GroupableInputMedia, opts *PaidMediaOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("star_count", itoa(starCount))
+	return res, a.client.postMedia(a.base, "sendPaidMedia", false, addValues(vals, opts), &res, toInputMedia(media)...)
 }
 
 // SendMediaGroup is used to send a group of photos, videos, documents or audios as an album.

@@ -133,6 +133,7 @@ type TransactionPartner interface {
 }
 
 // TransactionPartnerFragment describes a withdrawal transaction with Fragment.
+// Type MUST be "fragment".
 type TransactionPartnerFragment struct {
 	WithdrawalState RevenueWithdrawalState `json:"withdrawal_state"`
 	Type            string                 `json:"type"`
@@ -142,15 +143,27 @@ type TransactionPartnerFragment struct {
 func (t TransactionPartnerFragment) ImplementsTransactionPartner() {}
 
 // TransactionPartnerUser describes a transaction with a user.
+// Type MUST be "user".
 type TransactionPartnerUser struct {
-	Type string `json:"type"`
-	User User   `json:"user"`
+	Type           string `json:"type"`
+	InvoicePayload string `json:"invoice_payload,omitempty"`
+	User           User   `json:"user"`
 }
 
 // ImplementsTransactionPartner is used to implement the TransactionPartner interface.
 func (t TransactionPartnerUser) ImplementsTransactionPartner() {}
 
+// TransactionPartnerTelegramAds describes a withdrawal transaction to the Telegram Ads platform.
+// Type MUST be "telegram_ads".
+type TransactionPartnerTelegramAds struct {
+	Type string `json:"type"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerTelegramAds) ImplementsTransactionPartner() {}
+
 // TransactionPartnerOther describes a transaction with an unknown source or recipient.
+// Type MUST be "other".
 type TransactionPartnerOther struct {
 	Type string `json:"type"`
 }
