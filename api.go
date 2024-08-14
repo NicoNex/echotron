@@ -553,6 +553,28 @@ func (a API) EditChatInviteLink(chatID int64, inviteLink string, opts *InviteLin
 	return res, a.client.get(a.base, "editChatInviteLink", addValues(vals, opts), &res)
 }
 
+// CreateChatSubscriptionInviteLink is used to create a subscription invite link for a channel chat.
+// The bot must have the can_invite_users administrator rights.
+// The link can be edited using the method editChatSubscriptionInviteLink or revoked using the method revokeChatInviteLink.
+func (a API) CreateChatSubscriptionInviteLink(chatID int64, subscriptionPeriod, subscriptionPrice int, opts *ChatSubscriptionInviteOptions) (res APIResponseInviteLink, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("subscription_period", itoa(int64(subscriptionPeriod)))
+	vals.Set("subscription_price", itoa(int64(subscriptionPrice)))
+	return res, a.client.get(a.base, "createChatSubscriptionInviteLink", addValues(vals, opts), &res)
+}
+
+// EditChatSubscriptionInviteLink is used to creeditate a subscription invite link for a channel chat.
+// The bot must have the can_invite_users administrator rights.
+func (a API) EditChatSubscriptionInviteLink(chatID int64, inviteLink string, opts *ChatSubscriptionInviteOptions) (res APIResponseInviteLink, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("invite_link", inviteLink)
+	return res, a.client.get(a.base, "editChatSubscriptionInviteLink", addValues(vals, opts), &res)
+}
+
 // RevokeChatInviteLink is used to revoke an invite link created by the bot.
 // If the primary link is revoked, a new link is automatically generated.
 // The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.

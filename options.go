@@ -467,6 +467,7 @@ type VideoNoteOptions struct {
 // PaidMediaOptions contains the optional parameters used by the SendPaidMedia method.
 type PaidMediaOptions struct {
 	ReplyMarkup           ReplyMarkup     `query:"reply_markup"`
+	BusinessConnectionID  string          `query:"business_connection_id"`
 	Caption               string          `query:"caption"`
 	ParseMode             ParseMode       `query:"parse_mode"`
 	CaptionEntities       []MessageEntity `query:"caption_entities"`
@@ -630,6 +631,11 @@ type InviteLinkOptions struct {
 	ExpireDate         int64  `query:"expire_date"`
 	MemberLimit        int    `query:"member_limit"`
 	CreatesJoinRequest bool   `query:"creates_join_request"`
+}
+
+// ChatSubscriptionInviteOptions contains the optional parameters used by the CreateChatSubscriptionInviteLink and EditChatSubscriptionInviteLink methods.
+type ChatSubscriptionInviteOptions struct {
+	Name string `query:"name"`
 }
 
 // CallbackQueryOptions contains the optional parameters used by the AnswerCallbackQuery method.
