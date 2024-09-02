@@ -36,88 +36,154 @@ import (
 )
 
 type client struct {
-	*http.Client
-	*sync.RWMutex
-	cl       map[string]*rate.Limiter // chat based limiter
-	gl       *rate.Limiter            // global limiter
-	climiter func() *rate.Limiter
+	httpClient *http.Client
+	globalRL   *rate.Limiter
+	mu         sync.Mutex
+	chats      map[string]*chatClient
+	config     rateLimitConfig
 }
 
-var lclient = newClient()
-
-// SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
-// A duration of 0 disables the rate limiter, allowing unlimited requests.
-// By default the duration of this limiter is set to time.Second/30.
-func SetGlobalRequestLimit(d time.Duration) {
-	lclient.Lock()
-	lclient.gl = rate.NewLimiter(rate.Every(d), 10)
-	lclient.Unlock()
+type rateLimitConfig struct {
+	enabled bool
+	rps     rate.Limit
+	burst   int
+	cleanup time.Duration
 }
 
-// SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
-// A duration of 0 disables the rate limiter, allowing unlimited requests.
-// By default the duration of this limiter is set to time.Minute/20.
-func SetChatRequestLimit(d time.Duration) {
-	lclient.Lock()
-	lclient.cl = make(map[string]*rate.Limiter)
-	lclient.climiter = func() *rate.Limiter {
-		return rate.NewLimiter(rate.Every(d), 1)
-	}
-	lclient.Unlock()
+type chatClient struct {
+	limiter  *rate.Limiter
+	lastSeen time.Time
 }
+
+/*
+When initializing the Echotron client, the following default rate limit settings are applied:
+
+Global Rate Limit:
+30 requests per second
+Burst of 10 requests
+
+Per-Chat Rate Limit:
+20 requests per minute
+Burst of 5 requests
+Cleanup interval of 1 minute
+
+Cleanup Interval: 1 minute
+Rate Limiting: Enabled by default
+ */
 
 func newClient() *client {
-	return &client{
-		Client:  new(http.Client),
-		RWMutex: new(sync.RWMutex),
-		cl:      make(map[string]*rate.Limiter),
-		gl:      rate.NewLimiter(rate.Every(time.Second/30), 10),
-		climiter: func() *rate.Limiter {
-			return rate.NewLimiter(rate.Every(time.Minute/20), 1)
+	c := &client{
+		httpClient: &http.Client{Timeout: 30 * time.Second},
+		globalRL:   rate.NewLimiter(rate.Every(time.Second/30), 10), // Default global rate limit
+		chats:      make(map[string]*chatClient),
+		config: rateLimitConfig{
+			enabled: true,
+			rps:     rate.Every(time.Minute / 20), // Default per-chat rate limit: 20 requests per minute
+			burst:   5,
+			cleanup: time.Minute,
 		},
 	}
+
+	// Start the cleanup goroutine
+	go c.cleanupChats()
+
+	return c
 }
 
-func (c client) wait(chatID string) error {
-	c.RLock()
-	defer c.RUnlock()
+// Helper function to create a new chat client with a rate limiter
+func newChatClient(rps rate.Limit, burst int) *chatClient {
+	return &chatClient{
+		// Create a new rate limiter with the specified rate and burst
+		limiter:  rate.NewLimiter(rps, burst),
+		// Set the initial last seen time to now
+		lastSeen: time.Now(),
+	}
+}
 
-	ctx := context.Background()
-	// If the chatID is empty, it's a general API call like GetUpdates, GetMe
-	// and similar, so skip the per-chat request limit wait.
-	if chatID != "" {
-		// If no limiter exists for a chat, create one.
-		l, ok := c.cl[chatID]
-		if !ok {
-			l = c.climiter()
-			c.cl[chatID] = l
-		}
+// Internal global client instance
+var lclient = newClient()
 
-		// Make sure to respect the single chat limit of requests.
-		if err := l.Wait(ctx); err != nil {
-			return err
+// SetGlobalRequestLimit allows changing the global rate limit
+func SetGlobalRequestLimit(rps rate.Limit, burst int) {
+	lclient.mu.Lock()
+	defer lclient.mu.Unlock()
+	lclient.globalRL = rate.NewLimiter(rps, burst)
+}
+
+// SetChatRequestLimit function should be updated to reflect these changes
+func SetChatRequestLimit(rps rate.Limit, burst int, cleanup time.Duration) {
+	lclient.mu.Lock()
+	defer lclient.mu.Unlock()
+
+	lclient.config.rps = rps
+	lclient.config.burst = burst
+	lclient.config.cleanup = cleanup
+
+	// Reset existing chat limiters to apply new settings
+	for _, chat := range lclient.chats {
+		chat.limiter = rate.NewLimiter(rps, burst)
+	}
+}
+
+// SetRateLimiterEnabled allows enabling or disabling the rate limiter
+func SetRateLimiterEnabled(enabled bool) {
+	lclient.mu.Lock()
+	defer lclient.mu.Unlock()
+	lclient.config.enabled = enabled
+}
+
+// Cleanup goroutine (typically started in init() or similar)
+func (c *client) cleanupChats() {
+	for {
+		time.Sleep(c.config.cleanup)
+		c.mu.Lock()
+		now := time.Now()
+		for chatID, chat := range c.chats {
+			if now.Sub(chat.lastSeen) > 3*c.config.cleanup {
+				delete(c.chats, chatID)
+			}
 		}
+		c.mu.Unlock()
+	}
+}
+
+// Internal function to get or create a limiter for a specific chat
+func (c *client) getLimiter(chatID string) *rate.Limiter {
+	// If rate limiting is disabled or no chat ID is provided, it returns the global rate limiter.
+	if !c.config.enabled || chatID == "" {
+		return c.globalRL
 	}
 
-	// Make sure to respect the global limit of requests.
-	return c.gl.Wait(ctx)
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// Check if a limiter already exists for this chat ID
+	if chat, found := c.chats[chatID]; found {
+		// If found, update the last seen time to prevent premature cleanup
+		chat.lastSeen = time.Now()
+		// Return the existing limiter for this chat
+		return chat.limiter
+	}
+
+	// If no limiter exists for this chat, create a new one
+	// Use the current per-chat rate limit settings from the config
+	newChat := newChatClient(c.config.rps, c.config.burst)
+	// Store the new chat client in the chats map
+	c.chats[chatID] = newChat
+	// Return the limiter of the newly created chat client
+	return newChat.limiter
 }
 
-func (c client) doGet(reqURL string) ([]byte, error) {
-	resp, err := c.Get(reqURL)
+func (c *client) doGet(reqURL string) ([]byte, error) {
+	resp, err := c.httpClient.Get(reqURL)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	return io.ReadAll(resp.Body)
 }
 
-func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
+func (c *client) doPost(reqURL string, files ...content) ([]byte, error) {
 	var (
 		buf = new(bytes.Buffer)
 		w   = multipart.NewWriter(buf)
@@ -138,7 +204,7 @@ func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
 
-	res, err := c.Do(req)
+	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -146,9 +212,8 @@ func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
-	var form = make(url.Values)
-
+func (c *client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
+	form := make(url.Values)
 	for k, v := range keyVals {
 		form.Add(k, v)
 	}
@@ -160,7 +225,7 @@ func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, er
 	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	res, err := c.Do(req)
+	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +233,8 @@ func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, er
 	return io.ReadAll(res.Body)
 }
 
-func (c client) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
+// This method doesn't need rate limiting as it's called by postFile which already has rate limiting
+func (c *client) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
 	var cnt []content
 
 	if file.id != "" {
@@ -195,7 +261,7 @@ func (c client) sendFile(file, thumbnail InputFile, url, fileType string) (res [
 	return
 }
 
-func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error {
+func (c *client) get(base, endpoint string, vals url.Values, v APIResponse) error {
 	url, err := url.JoinPath(base, endpoint)
 	if err != nil {
 		return err
@@ -207,7 +273,8 @@ func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error
 		}
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
+	chatID := vals.Get("chat_id")
+	if err := c.waitForLimiter(chatID); err != nil {
 		return err
 	}
 
@@ -222,69 +289,75 @@ func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error
 	return check(v)
 }
 
-func (c client) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
+
+func (c *client) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
-		return err
+		return fmt.Errorf("joining URL: %w", err)
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
+	chatID := vals.Get("chat_id")
+	if err := c.waitForLimiter(chatID); err != nil {
 		return err
 	}
 
 	cnt, err := c.sendFile(file, thumbnail, url, fileType)
 	if err != nil {
-		return err
+		return fmt.Errorf("sending file: %w", err)
 	}
 
 	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling response: %w", err)
 	}
+
 	return check(v)
 }
 
-func (c client) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
+func (c *client) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
-		return err
+		return fmt.Errorf("joining URL: %w", err)
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
+	chatID := vals.Get("chat_id")
+	if err := c.waitForLimiter(chatID); err != nil {
 		return err
 	}
 
 	cnt, err := c.sendMediaFiles(url, editSingle, files...)
 	if err != nil {
-		return err
+		return fmt.Errorf("sending media files: %w", err)
 	}
 
 	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling response: %w", err)
 	}
 	return check(v)
 }
 
-func (c client) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
+func (c *client) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
-		return err
+		return fmt.Errorf("joining URL: %w", err)
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
+	chatID := vals.Get("chat_id")
+	if err := c.waitForLimiter(chatID); err != nil {
 		return err
 	}
 
 	cnt, err := c.sendStickers(url, stickers...)
 	if err != nil {
-		return err
+		return fmt.Errorf("sending stickers: %w", err)
 	}
 	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling response: %w", err)
 	}
 	return check(v)
 }
 
-func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
+// This method doesn't need rate limiting as it's called by postMedia which already has rate limiting
+func (c *client) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
 	var (
 		med []mediaEnvelope
 		cnt []content
@@ -300,7 +373,7 @@ func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia)
 
 		im, cntArr, err = processMedia(media, thumbnail)
 		if err != nil {
-			return
+			return nil, fmt.Errorf("processing media: %w", err)
 		}
 
 		im.InputMedia = file
@@ -316,7 +389,7 @@ func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia)
 	}
 
 	if err != nil {
-		return
+		return nil, fmt.Errorf("marshaling media: %w", err)
 	}
 
 	url = fmt.Sprintf("%s&media=%s", url, jsn)
@@ -327,7 +400,9 @@ func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia)
 	return c.doGet(url)
 }
 
-func (c client) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
+
+// This method doesn't need rate limiting as it's called by postStickers which already has rate limiting
+func (c *client) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
 	var (
 		sti []stickerEnvelope
 		cnt []content
@@ -340,7 +415,7 @@ func (c client) sendStickers(url string, stickers ...InputSticker) (res []byte, 
 
 		se, cntArr, err = processSticker(s.Sticker)
 		if err != nil {
-			return
+			return nil, fmt.Errorf("processing sticker: %w", err)
 		}
 
 		se.InputSticker = s
@@ -350,15 +425,28 @@ func (c client) sendStickers(url string, stickers ...InputSticker) (res []byte, 
 	}
 
 	if len(sti) == 1 {
-		jsn, _ = json.Marshal(sti[0])
+		jsn, err = json.Marshal(sti[0])
 		url = fmt.Sprintf("%s&sticker=%s", url, jsn)
 	} else {
-		jsn, _ = json.Marshal(sti)
+		jsn, err = json.Marshal(sti)
 		url = fmt.Sprintf("%s&stickers=%s", url, jsn)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("marshaling stickers: %w", err)
 	}
 
 	if len(cnt) > 0 {
 		return c.doPost(url, cnt...)
 	}
 	return c.doGet(url)
+}
+
+// waitForLimiter is called before making any API request
+func (c *client) waitForLimiter(chatID string) error {
+	limiter := c.getLimiter(chatID)
+	if err := limiter.Wait(context.Background()); err != nil {
+		return fmt.Errorf("rate limit exceeded: %w", err)
+	}
+	return nil
 }
