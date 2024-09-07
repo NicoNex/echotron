@@ -19,200 +19,412 @@
 package echotron
 
 import (
-	"compress/gzip"
-	"encoding/json"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"net/url"
+	"time"
+	"sync/atomic"
 	"sync"
+	"golang.org/x/sync/semaphore"
+	"context"
+	"fmt"
+	"runtime"
+	"errors"
 )
 
-// Bot is the interface that must be implemented by your definition of
-// the struct thus it represent each open session with a user on Telegram.
 type Bot interface {
-	// Update will be called upon receiving any update from Telegram.
 	Update(*Update)
 }
 
-// NewBotFn is called every time echotron receives an update with a chat ID never
-// encountered before.
 type NewBotFn func(chatId int64) Bot
 
-// The Dispatcher passes the updates from the Telegram Bot API to the Bot instance
-// associated with each chatID. When a new chat ID is found, the provided function
-// of type NewBotFn will be called.
 type Dispatcher struct {
-	sessionMap map[int64]Bot
-	newBot     NewBotFn
-	updates    chan *Update
-	httpServer *http.Server
 	api        API
+	newBot     NewBotFn
+	sessions   *sessionManager
+	options    dispatcherOptions
+
+	inShutdown atomic.Bool
 	mu         sync.Mutex
+	ctx           context.Context
+	cancel        context.CancelFunc
+	isRunning    atomic.Bool
+	updateChan chan *Update
+	wg         sync.WaitGroup
 }
 
-// NewDispatcher returns a new instance of the Dispatcher object.
-// Calls the Update function of the bot associated with each chat ID.
-// If a new chat ID is found, newBotFn will be called first.
-func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
+type dispatcherOptions struct {
+	pollInterval     time.Duration
+	updateBufferSize int
+	sessionTTL       time.Duration
+	allowedUpdates   []UpdateType
+	errorHandler     func(error)
+	workerSem  *semaphore.Weighted
+}
+
+type Option func(*dispatcherOptions) error
+
+func WithPollInterval(interval time.Duration) Option {
+	return func(o *dispatcherOptions) error {
+		if interval <= 0 {
+			return errors.New("poll interval must be positive")
+		}
+		o.pollInterval = interval
+		return nil
+	}
+}
+
+func WithUpdateBufferSize(size int) Option {
+	return func(o *dispatcherOptions) error {
+		if size <= 0 {
+			return errors.New("update buffer size must be positive")
+		}
+		o.updateBufferSize = size
+		return nil
+	}
+}
+
+func WithSessionTTL(ttl time.Duration) Option {
+	return func(o *dispatcherOptions) error {
+		if ttl <= 0 {
+			return errors.New("session TTL must be positive")
+		}
+		o.sessionTTL = ttl
+		return nil
+	}
+}
+
+func WithAllowedUpdates(types []UpdateType) Option {
+	return func(o *dispatcherOptions) error {
+		o.allowedUpdates = types
+		return nil
+	}
+}
+
+func WithErrorHandler(handler func(error)) Option {
+	return func(o *dispatcherOptions) error {
+		if handler == nil {
+			return errors.New("error handler cannot be nil")
+		}
+		o.errorHandler = handler
+		return nil
+	}
+}
+
+func WithMaxConcurrentUpdates(max int64) Option {
+	return func(o *dispatcherOptions) error {
+		if max <= 0 {
+			return errors.New("max concurrent updates must be positive")
+		}
+		o.workerSem = semaphore.NewWeighted(max)
+		return nil
+	}
+}
+
+func NewDispatcher(token string, newBot NewBotFn, opts ...Option) (*Dispatcher, error) {
+	options := dispatcherOptions{
+		pollInterval:     5 * time.Second,
+		updateBufferSize: 1000,
+		sessionTTL:       24 * time.Hour,
+		allowedUpdates:   []UpdateType{},
+		errorHandler:     func(err error) { fmt.Println("Dispatcher error:", err) },
+		workerSem:  semaphore.NewWeighted(int64(runtime.NumCPU() * 2)),
+	}
+	for _, opt := range opts {
+		if err := opt(&options); err != nil {
+			return nil, err
+		}
+	}
 	d := &Dispatcher{
-		api:        NewAPI(token),
-		sessionMap: make(map[int64]Bot),
-		newBot:     newBotFn,
-		updates:    make(chan *Update),
+		api:     NewAPI(token),
+		newBot:  newBot,
+		options: options,
+		sessions: newSessionManager(options.sessionTTL),
+		updateChan: make(chan *Update, options.updateBufferSize),
 	}
-	go d.listen()
-	return d
+	return d, nil
 }
 
-// DelSession deletes the Bot instance, seen as a session, from the
-// map with all of them.
-func (d *Dispatcher) DelSession(chatID int64) {
+// Start begins the Dispatcher's operations.
+func (d *Dispatcher) Start() error {
+
 	d.mu.Lock()
-	delete(d.sessionMap, chatID)
-	d.mu.Unlock()
+	defer d.mu.Unlock()
+
+	if d.inShutdown.Load() {
+		return errors.New("dispatcher is shutting down")
+	}
+
+	if !d.isRunning.CompareAndSwap(false, true) {
+		return errors.New("dispatcher is already running")
+	}
+	d.ctx, d.cancel = context.WithCancel(context.Background())
+
+	// Start the update polling goroutine
+	d.wg.Add(1)
+	go func() {
+		defer d.wg.Done()
+		if err := d.pollUpdates(); err != nil {
+			d.options.errorHandler(fmt.Errorf("polling updates: %w", err))
+		}
+	}()
+
+	// Start the single worker goroutine
+	d.wg.Add(1)
+	go func() {
+		defer d.wg.Done()
+		d.worker()
+	}()
+
+	// Start the session cleaner
+	d.wg.Add(1)
+	go func() {
+		defer d.wg.Done()
+		if err := d.sessions.clean(d.ctx); err != nil {
+			d.options.errorHandler(fmt.Errorf("cleaning sessions: %w", err))
+
+		}
+	}()
+
+	return nil
 }
 
-// AddSession allows to arbitrarily create a new Bot instance.
-func (d *Dispatcher) AddSession(chatID int64) {
+func (d *Dispatcher) close() error {
 	d.mu.Lock()
-	if _, isIn := d.sessionMap[chatID]; !isIn {
-		d.sessionMap[chatID] = d.newBot(chatID)
+	if d.inShutdown.Swap(true) {
+		d.mu.Unlock()
+		return errors.New("dispatcher is already shutting down")
 	}
+	d.cancel()
+	close(d.updateChan)
 	d.mu.Unlock()
+	d.wg.Wait()
+	return nil
 }
 
-// Poll is a wrapper function for PollOptions.
-func (d *Dispatcher) Poll() error {
-	return d.PollOptions(true, UpdateOptions{Timeout: 120})
-}
-
-// PollOptions starts the polling loop so that the dispatcher calls the function Update
-// upon receiving any update from Telegram.
-func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) error {
-	var (
-		timeout    = opts.Timeout
-		isFirstRun = true
-	)
-
-	// deletes webhook if present to run in long polling mode
-	if _, err := d.api.DeleteWebhook(dropPendingUpdates); err != nil {
-		return err
+func (d *Dispatcher) Stop(ctx context.Context) error {
+	if !d.isRunning.CompareAndSwap(true, false) {
+		return errors.New("dispatcher is not running")
 	}
+
+	closeErr := d.close()
+	if closeErr != nil {
+		return closeErr
+	}
+
+	select {
+	case <-d.ctx.Done():
+		return nil
+	}
+}
+
+func (d *Dispatcher) worker() {
+	for {
+		select {
+		case <-d.ctx.Done():
+			return
+		case update, ok := <-d.updateChan:
+			if !ok {
+				return
+			}
+			if d.inShutdown.Load() {
+				// Discard updates during shutdown
+				continue
+			}
+			if err := d.options.workerSem.Acquire(d.ctx, 1); err != nil {
+				if errors.Is(err, context.Canceled) {
+					return
+				}
+				d.options.errorHandler(fmt.Errorf("failed to acquire semaphore: %w", err))
+				continue
+			}
+			d.wg.Add(1)
+			go func(update *Update) {
+				defer d.options.workerSem.Release(1)
+				defer d.wg.Done()
+				if err := d.processUpdate(update); err != nil {
+					d.options.errorHandler(fmt.Errorf("processing update: %w", err))
+				}
+			}(update)
+		}
+	}
+}
+
+func (d *Dispatcher) processUpdate(update *Update) error {
+	bot, err := d.sessions.getSession(update.ChatID(), d.newBot)
+	if err != nil {
+		return fmt.Errorf("getting bot instance: %w", err)
+	}
+	bot.Update(update)
+	return nil
+}
+
+// Polls Telegram for updates and queues them for processing.
+func (d *Dispatcher) pollUpdates() error {
+	if _, err := d.api.DeleteWebhook(true); err != nil {
+		return fmt.Errorf("failed to delete webhook: %w", err)
+	}
+
+	opts := UpdateOptions{
+		Timeout:        int(d.options.pollInterval.Seconds()),
+		Limit:          100,
+		Offset:         0,
+		AllowedUpdates: d.options.allowedUpdates,
+	}
+
+	ticker := time.NewTicker(d.options.pollInterval)
+	defer ticker.Stop()
 
 	for {
-		if isFirstRun {
-			opts.Timeout = 0
-		}
+		select {
+		case <-d.ctx.Done():
+			return nil
+		case <-ticker.C:
+			if d.inShutdown.Load() {
+				return nil
+			}
+			updates, err := d.api.GetUpdates(&opts)
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					return nil
+				}
+				d.options.errorHandler(fmt.Errorf("failed to get updates: %w", err))
+				continue
+			}
 
-		response, err := d.api.GetUpdates(&opts)
-		if err != nil {
-			return err
-		}
+			if len(updates.Result) > 0 {
+				lastUpdateID := updates.Result[len(updates.Result)-1].ID
+				opts.Offset = lastUpdateID + 1
 
-		if !dropPendingUpdates || !isFirstRun {
-			for _, u := range response.Result {
-				d.updates <- u
+				for _, update := range updates.Result {
+					select {
+					case <-d.ctx.Done():
+						return nil
+					case d.updateChan <- update:
+						// Update sent successfully
+					default:
+						// Channel is full, log an error or handle it appropriately
+						d.options.errorHandler(fmt.Errorf("update channel is full, discarding update"))
+					}
+				}
 			}
 		}
+	}
+}
 
-		if l := len(response.Result); l > 0 {
-			opts.Offset = response.Result[l-1].ID + 1
+// Session Manager
+type sessionManager struct {
+	sessions sync.Map
+	locks    sync.Map
+	ttl      time.Duration
+}
+
+type session struct {
+	bot          Bot
+	lastAccessed atomic.Int64
+}
+
+// Create session manager with ttl option.
+func newSessionManager(ttl time.Duration) *sessionManager {
+	return &sessionManager{ttl: ttl}
+}
+
+// GetSession retrieves an existing session or creates a new one if it doesn't exist.
+func (sm *sessionManager) getSession(chatID int64, newBot NewBotFn) (Bot, error) {
+
+	// Get or create a lock for this chatID
+	lock, _ := sm.locks.LoadOrStore(chatID, &sync.Mutex{})
+	mutex := lock.(*sync.Mutex)
+	// Lock to ensure only one goroutine accesses or creates a session for this chatID
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// Check if a session exists (now inside the lock)
+	if value, loaded := sm.sessions.Load(chatID); loaded {
+		if s, ok := value.(*session); ok {
+			s.lastAccessed.Store(time.Now().UnixNano())
+			return s.bot, nil
+		}
+		return nil, fmt.Errorf("invalid session type for chat ID %d", chatID)
+	}
+
+	// Create a new session
+	newSession := &session{
+		bot: newBot(chatID),
+	}
+	newSession.lastAccessed.Store(time.Now().UnixNano())
+
+	// Store the new session
+	sm.sessions.Store(chatID, newSession)
+
+	return newSession.bot, nil
+}
+
+// DelSession deletes the Bot instance (session) for the specified chat ID.
+func (d *Dispatcher) DelSession(chatID int64) {
+	d.sessions.delete(chatID)
+}
+
+// AddSession creates a new Bot instance (session) for the specified chat ID.
+func (d *Dispatcher) AddSession(chatID int64) error {
+	return d.sessions.add(chatID, d.newBot)
+}
+
+func (sm *sessionManager) delete(chatID int64) {
+	sm.sessions.Delete(chatID)
+}
+
+func (sm *sessionManager) add(chatID int64, newBot NewBotFn) error {
+	now := time.Now().UnixNano()
+	newSession := &session{
+		bot: newBot(chatID),
+	}
+	newSession.lastAccessed.Store(now)
+
+	_, loaded := sm.sessions.LoadOrStore(chatID, newSession)
+	if loaded {
+		return fmt.Errorf("session for chat ID %d already exists", chatID)
+	}
+	return nil
+}
+
+
+// Periodically cleans up inactive sessions based on the configured TTL.
+func (sm *sessionManager) clean(ctx context.Context) error {
+	ticker := time.NewTicker(sm.ttl / 2)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			// Perform one last cleaning before exiting
+			sm.forceCleanup(true)
+			return nil
+		case <-ticker.C:
+			sm.forceCleanup(false)
+		}
+	}
+}
+
+
+// forceCleanup removes all expired sessions. If force is true, it removes all sessions regardless of expiration.
+func (sm *sessionManager) forceCleanup(force bool) int {
+	var cleaned int
+	now := time.Now().UnixNano()
+	ttlNano := sm.ttl.Nanoseconds()
+
+	sm.sessions.Range(func(key, value interface{}) bool {
+		s, ok := value.(*session)
+		if !ok {
+			fmt.Printf("Invalid session type for key %v", key)
+			return true
 		}
 
-		if isFirstRun {
-			isFirstRun = false
-			opts.Timeout = timeout
+		lastAccessed := s.lastAccessed.Load()
+		if force || (now - lastAccessed) > ttlNano {
+			sm.sessions.Delete(key)
+			cleaned++
 		}
-	}
+		return true
+	})
+
+	return cleaned
 }
 
-func (d *Dispatcher) instance(chatID int64) Bot {
-	bot, ok := d.sessionMap[chatID]
-	if !ok {
-		bot = d.newBot(chatID)
-		d.mu.Lock()
-		d.sessionMap[chatID] = bot
-		d.mu.Unlock()
-	}
-	return bot
-}
-
-func (d *Dispatcher) listen() {
-	for update := range d.updates {
-		bot := d.instance(update.ChatID())
-		go bot.Update(update)
-	}
-}
-
-// ListenWebhook is a wrapper function for ListenWebhookOptions.
-func (d *Dispatcher) ListenWebhook(webhookURL string) error {
-	return d.ListenWebhookOptions(webhookURL, false, nil)
-}
-
-// ListenWebhookOptions sets a webhook and listens for incoming updates.
-// The webhookUrl should be provided in the following format: '<hostname>:<port>/<path>',
-// eg: 'https://example.com:443/bot_token'.
-// ListenWebhook will then proceed to communicate the webhook url '<hostname>/<path>' to Telegram
-// and run a webserver that listens to ':<port>' and handles the path.
-func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates bool, opts *WebhookOptions) error {
-	u, err := url.Parse(webhookURL)
-	if err != nil {
-		return err
-	}
-
-	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
-	if _, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts); err != nil {
-		return err
-	}
-
-	if d.httpServer != nil {
-		mux := http.NewServeMux()
-		mux.Handle("/", d.httpServer.Handler)
-		mux.HandleFunc(u.EscapedPath(), d.HandleWebhook)
-		d.httpServer.Handler = mux
-		return d.httpServer.ListenAndServe()
-	}
-	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
-	return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
-}
-
-// SetHTTPServer allows to set a custom http.Server for ListenWebhook and ListenWebhookOptions.
-func (d *Dispatcher) SetHTTPServer(s *http.Server) {
-	d.httpServer = s
-}
-
-// HandleWebhook is the http.HandlerFunc for the webhook URL.
-// Useful if you've already a http server running and want to handle the request yourself.
-func (d *Dispatcher) HandleWebhook(w http.ResponseWriter, r *http.Request) {
-	var update Update
-
-	jsn, err := readRequest(r)
-	if err != nil {
-		log.Println("echotron.Dispatcher", "HandleWebhook", err)
-		return
-	}
-
-	if err := json.Unmarshal(jsn, &update); err != nil {
-		log.Println("echotron.Dispatcher", "HandleWebhook", err)
-		return
-	}
-
-	d.updates <- &update
-}
-
-func readRequest(r *http.Request) ([]byte, error) {
-	switch r.Header.Get("Content-Encoding") {
-	case "gzip":
-		reader, err := gzip.NewReader(r.Body)
-		if err != nil {
-			return []byte{}, err
-		}
-		defer reader.Close()
-		return io.ReadAll(reader)
-
-	default:
-		return io.ReadAll(r.Body)
-	}
-}
