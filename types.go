@@ -1637,7 +1637,7 @@ type LinkPreviewOptions struct {
 type ReplyParameters struct {
 	Quote                    string          `json:"quote,omitempty"`
 	QuoteParseMode           string          `json:"quote_parse_mode,omitempty"`
-	QuoteEntities            []MessageEntity `json:"quote_entitites,omitempty"`
+	QuoteEntities            []MessageEntity `json:"quote_entities,omitempty"`
 	MessageID                int             `json:"message_id"`
 	ChatID                   int64           `json:"chat_id,omitempty"`
 	QuotePosition            int             `json:"quote_position,omitempty"`
