@@ -45,6 +45,7 @@ type Update struct {
 	PollAnswer              *PollAnswer                  `json:"poll_answer,omitempty"`
 	MyChatMember            *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
 	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
+	PurchasedPaidMedia      *PaidMediaPurchased          `json:"purchased_paid_media,omitempty"`
 	ID                      int                          `json:"update_id"`
 }
 
@@ -1682,6 +1683,7 @@ type ChatBoostSource struct {
 	User              *User               `json:"user,omitempty"`
 	Source            ChatBoostSourceType `json:"source"`
 	GiveawayMessageID int                 `json:"giveaway_message_id,omitempty"`
+	PrizeStarCount    int                 `json:"prize_star_count,omitempty"`
 	IsUnclaimed       bool                `json:"is_unclaimed,omitempty"`
 }
 
@@ -1726,6 +1728,7 @@ type Giveaway struct {
 	CountryCodes                  *[]string `json:"country_codes,omitempty"`
 	PrizeDescription              string    `json:"prize_description,omitempty"`
 	Chats                         []Chat    `json:"chats"`
+	PrizeStarCount                int       `json:"prize_star_count,omitempty"`
 	WinnersSelectionDate          int       `json:"winners_selection_date"`
 	WinnerCount                   int       `json:"winner_count"`
 	PremiumSubscriptionMonthCount int       `json:"premium_subscription_month_count,omitempty"`
@@ -1734,14 +1737,16 @@ type Giveaway struct {
 }
 
 // GiveawayCreated represents a service message about the creation of a scheduled giveaway.
-// Currently holds no information.
-type GiveawayCreated struct{}
+type GiveawayCreated struct {
+	PrizeStarCount int `json:"prize_star_count,omitempty"`
+}
 
 // GiveawayWinners represents a message about the completion of a giveaway with public winners.
 type GiveawayWinners struct {
 	PrizeDescription              string `json:"prize_description,omitempty"`
 	Chats                         []Chat `json:"chats"`
 	Winners                       []User `json:"winners"`
+	PrizeStarCount                int    `json:"prize_star_count,omitempty"`
 	GiveawayMessageID             int    `json:"giveaway_message_id"`
 	WinnersSelectionDate          int    `json:"winners_selection_date"`
 	WinnerCount                   int    `json:"winner_count"`
@@ -1755,6 +1760,7 @@ type GiveawayWinners struct {
 // GiveawayCompleted represents a service message about the completion of a giveaway without public winners.
 type GiveawayCompleted struct {
 	GiveawayMessage     *Message `json:"giveaway_message,omitempty"`
+	IsStarGiveaway      bool     `json:"is_star_giveaway,omitempty"`
 	WinnerCount         int      `json:"winner_count"`
 	UnclaimedPrizeCount int      `json:"unclaimed_prize_count,omitempty"`
 }

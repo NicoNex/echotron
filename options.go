@@ -469,6 +469,7 @@ type PaidMediaOptions struct {
 	ReplyMarkup           ReplyMarkup     `query:"reply_markup"`
 	BusinessConnectionID  string          `query:"business_connection_id"`
 	Caption               string          `query:"caption"`
+	Payload               string          `query:"payload"`
 	ParseMode             ParseMode       `query:"parse_mode"`
 	CaptionEntities       []MessageEntity `query:"caption_entities"`
 	ReplyParameters       ReplyParameters `query:"reply_parameters"`

@@ -105,6 +105,12 @@ type PreCheckoutQuery struct {
 	TotalAmount      int       `json:"total_amount"`
 }
 
+// PaidMediaPurchased contains information about a paid media purchase.
+type PaidMediaPurchased struct {
+	PaidMediaPayload string `json:"paid_media_payload"`
+	From             User   `json:"from"`
+}
+
 // RevenueWithdrawalState describes the state of a revenue withdrawal operation.
 type RevenueWithdrawalState interface {
 	ImplementsRevenueWithdrawalState()
