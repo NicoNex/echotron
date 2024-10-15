@@ -20,7 +20,7 @@ func TestNewDispatcher(t *testing.T) {
 func TestAddSession(t *testing.T) {
 	dsp.AddSession(0)
 
-	if len(dsp.sessionMap) == 0 {
+	if _, ok := dsp.sessions.load(0); !ok {
 		t.Fatal("could not add session")
 	}
 }
@@ -28,7 +28,7 @@ func TestAddSession(t *testing.T) {
 func TestDelSession(t *testing.T) {
 	dsp.DelSession(0)
 
-	if len(dsp.sessionMap) != 0 {
+	if _, ok := dsp.sessions.load(0); ok {
 		t.Fatal("could not delete session")
 	}
 }

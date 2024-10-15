@@ -29,6 +29,26 @@ import (
 	"sync"
 )
 
+type smap struct {
+	m sync.Map
+}
+
+func (s *smap) load(id int64) (Bot, bool) {
+	bot, ok := s.m.Load(id)
+	if ok {
+		return bot.(Bot), ok
+	}
+	return nil, ok
+}
+
+func (s *smap) store(id int64, bot Bot) {
+	s.m.Store(id, bot)
+}
+
+func (s *smap) delete(id int64) {
+	s.m.Delete(id)
+}
+
 // Bot is the interface that must be implemented by your definition of
 // the struct thus it represent each open session with a user on Telegram.
 type Bot interface {
@@ -44,12 +64,12 @@ type NewBotFn func(chatId int64) Bot
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	sessionMap map[int64]Bot
+	// sessions   map[int64]Bot
+	sessions   smap
 	newBot     NewBotFn
 	updates    chan *Update
 	httpServer *http.Server
 	api        API
-	mu         sync.Mutex
 }
 
 // NewDispatcher returns a new instance of the Dispatcher object.
@@ -57,10 +77,9 @@ type Dispatcher struct {
 // If a new chat ID is found, newBotFn will be called first.
 func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 	d := &Dispatcher{
-		api:        NewAPI(token),
-		sessionMap: make(map[int64]Bot),
-		newBot:     newBotFn,
-		updates:    make(chan *Update),
+		api:     NewAPI(token),
+		newBot:  newBotFn,
+		updates: make(chan *Update),
 	}
 	go d.listen()
 	return d
@@ -69,18 +88,12 @@ func NewDispatcher(token string, newBotFn NewBotFn) *Dispatcher {
 // DelSession deletes the Bot instance, seen as a session, from the
 // map with all of them.
 func (d *Dispatcher) DelSession(chatID int64) {
-	d.mu.Lock()
-	delete(d.sessionMap, chatID)
-	d.mu.Unlock()
+	d.sessions.delete(chatID)
 }
 
 // AddSession allows to arbitrarily create a new Bot instance.
 func (d *Dispatcher) AddSession(chatID int64) {
-	d.mu.Lock()
-	if _, isIn := d.sessionMap[chatID]; !isIn {
-		d.sessionMap[chatID] = d.newBot(chatID)
-	}
-	d.mu.Unlock()
+	d.sessions.store(chatID, d.newBot(chatID))
 }
 
 // Poll is a wrapper function for PollOptions.
@@ -129,12 +142,10 @@ func (d *Dispatcher) PollOptions(dropPendingUpdates bool, opts UpdateOptions) er
 }
 
 func (d *Dispatcher) instance(chatID int64) Bot {
-	bot, ok := d.sessionMap[chatID]
+	bot, ok := d.sessions.load(chatID)
 	if !ok {
 		bot = d.newBot(chatID)
-		d.mu.Lock()
-		d.sessionMap[chatID] = bot
-		d.mu.Unlock()
+		d.sessions.store(chatID, bot)
 	}
 	return bot
 }
