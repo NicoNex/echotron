@@ -116,7 +116,7 @@ func (a API) SendSticker(stickerID string, chatID int64, opts *StickerOptions) (
 
 	vals.Set("sticker", stickerID)
 	vals.Set("chat_id", itoa(chatID))
-	return res, a.client.get(a.base, "sendSticker", addValues(vals, opts), &res)
+	return res, client.get(a.base, "sendSticker", addValues(vals, opts), &res)
 }
 
 // GetStickerSet is used to get a sticker set.
@@ -124,7 +124,7 @@ func (a API) GetStickerSet(name string) (res APIResponseStickerSet, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("name", name)
-	return res, a.client.get(a.base, "getStickerSet", vals, &res)
+	return res, client.get(a.base, "getStickerSet", vals, &res)
 }
 
 // GetCustomEmojiStickers is used to get information about custom emoji stickers by their identifiers.
@@ -133,7 +133,7 @@ func (a API) GetCustomEmojiStickers(customEmojiIDs ...string) (res APIResponseSt
 
 	jsn, _ := json.Marshal(customEmojiIDs)
 	vals.Set("custom_emoji_ids", string(jsn))
-	return res, a.client.get(a.base, "getCustomEmojiStickers", vals, &res)
+	return res, client.get(a.base, "getCustomEmojiStickers", vals, &res)
 }
 
 // UploadStickerFile is used to upload a .PNG file with a sticker for later use in
@@ -143,7 +143,7 @@ func (a API) UploadStickerFile(userID int64, sticker InputFile, format StickerFo
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("sticker_format", string(format))
-	return res, a.client.postFile(a.base, "uploadStickerFile", "sticker", sticker, InputFile{}, vals, &res)
+	return res, client.postFile(a.base, "uploadStickerFile", "sticker", sticker, InputFile{}, vals, &res)
 }
 
 // CreateNewStickerSet is used to create a new sticker set owned by a user.
@@ -153,7 +153,7 @@ func (a API) CreateNewStickerSet(userID int64, name, title string, stickers []In
 	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("title", title)
-	return res, a.client.postStickers(a.base, "createNewStickerSet", addValues(vals, opts), &res, stickers...)
+	return res, client.postStickers(a.base, "createNewStickerSet", addValues(vals, opts), &res, stickers...)
 }
 
 // AddStickerToSet is used to add a new sticker to a set created by the bot.
@@ -162,7 +162,7 @@ func (a API) AddStickerToSet(userID int64, name string, sticker InputSticker) (r
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
-	return res, a.client.postStickers(a.base, "addStickerToSet", vals, &res, sticker)
+	return res, client.postStickers(a.base, "addStickerToSet", vals, &res, sticker)
 }
 
 // SetStickerPositionInSet is used to move a sticker in a set created by the bot to a specific position.
@@ -171,7 +171,7 @@ func (a API) SetStickerPositionInSet(sticker string, position int) (res APIRespo
 
 	vals.Set("sticker", sticker)
 	vals.Set("position", itoa(int64(position)))
-	return res, a.client.get(a.base, "setStickerPositionInSet", vals, &res)
+	return res, client.get(a.base, "setStickerPositionInSet", vals, &res)
 }
 
 // DeleteStickerFromSet is used to delete a sticker from a set created by the bot.
@@ -179,7 +179,7 @@ func (a API) DeleteStickerFromSet(sticker string) (res APIResponseBase, err erro
 	var vals = make(url.Values)
 
 	vals.Set("sticker", sticker)
-	return res, a.client.get(a.base, "deleteStickerFromSet", vals, &res)
+	return res, client.get(a.base, "deleteStickerFromSet", vals, &res)
 }
 
 // ReplaceStickerInSet is used to replace an existing sticker in a sticker set with a new one.
@@ -190,7 +190,7 @@ func (a API) ReplaceStickerInSet(userID int64, name string, old_sticker string, 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("name", name)
 	vals.Set("old_sticker", old_sticker)
-	return res, a.client.postStickers(a.base, "replaceStickerInSet", vals, &res, sticker)
+	return res, client.postStickers(a.base, "replaceStickerInSet", vals, &res, sticker)
 }
 
 // SetStickerEmojiList is used to change the list of emoji assigned to a regular or custom emoji sticker.
@@ -202,7 +202,7 @@ func (a API) SetStickerEmojiList(sticker string, emojis []string) (res APIRespon
 
 	vals.Set("sticker", sticker)
 	vals.Set("emoji_list", string(jsn))
-	return res, a.client.get(a.base, "setStickerEmojiList", vals, &res)
+	return res, client.get(a.base, "setStickerEmojiList", vals, &res)
 }
 
 // SetStickerKeywords is used to change search keywords assigned to a regular or custom emoji sticker.
@@ -214,7 +214,7 @@ func (a API) SetStickerKeywords(sticker string, keywords []string) (res APIRespo
 
 	vals.Set("sticker", sticker)
 	vals.Set("keywords", string(jsn))
-	return res, a.client.get(a.base, "setStickerKeywords", vals, &res)
+	return res, client.get(a.base, "setStickerKeywords", vals, &res)
 }
 
 // SetStickerMaskPosition is used to change the mask position of a mask sticker.
@@ -226,7 +226,7 @@ func (a API) SetStickerMaskPosition(sticker string, mask MaskPosition) (res APIR
 
 	vals.Set("sticker", sticker)
 	vals.Set("mask_position", string(jsn))
-	return res, a.client.get(a.base, "setStickerMaskPosition", vals, &res)
+	return res, client.get(a.base, "setStickerMaskPosition", vals, &res)
 }
 
 // SetStickerSetTitle is used to set the title of a created sticker set.
@@ -235,7 +235,7 @@ func (a API) SetStickerSetTitle(name, title string) (res APIResponseBool, err er
 
 	vals.Set("name", name)
 	vals.Set("title", title)
-	return res, a.client.get(a.base, "setStickerSetTitle", vals, &res)
+	return res, client.get(a.base, "setStickerSetTitle", vals, &res)
 }
 
 // SetStickerSetThumbnail is used to set the thumbnail of a sticker set.
@@ -245,7 +245,7 @@ func (a API) SetStickerSetThumbnail(name string, userID int64, thumbnail InputFi
 	vals.Set("name", name)
 	vals.Set("user_id", itoa(userID))
 	vals.Set("format", string(format))
-	return res, a.client.postFile(a.base, "setStickerSetThumbnail", "thumbnail", thumbnail, InputFile{}, vals, &res)
+	return res, client.postFile(a.base, "setStickerSetThumbnail", "thumbnail", thumbnail, InputFile{}, vals, &res)
 }
 
 // SetCustomEmojiStickerSetThumbnail is used to set the thumbnail of a custom emoji sticker set.
@@ -254,7 +254,7 @@ func (a API) SetCustomEmojiStickerSetThumbnail(name, emojiID string) (res APIRes
 
 	vals.Set("name", name)
 	vals.Set("custom_emoji_id", emojiID)
-	return res, a.client.get(a.base, "setCustomEmojiStickerSetThumbnail", vals, &res)
+	return res, client.get(a.base, "setCustomEmojiStickerSetThumbnail", vals, &res)
 }
 
 // DeleteStickerSet is used to delete a sticker set that was created by the bot.
@@ -262,10 +262,10 @@ func (a API) DeleteStickerSet(name string) (res APIResponseBool, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("name", name)
-	return res, a.client.get(a.base, "DeleteStickerSet", vals, &res)
+	return res, client.get(a.base, "DeleteStickerSet", vals, &res)
 }
 
 // GetForumTopicIconStickers is used to get custom emoji stickers, which can be used as a forum topic icon by any user.
 func (a API) GetForumTopicIconStickers() (res APIResponseStickers, err error) {
-	return res, a.client.get(a.base, "getForumTopicIconStickers", nil, &res)
+	return res, client.get(a.base, "getForumTopicIconStickers", nil, &res)
 }

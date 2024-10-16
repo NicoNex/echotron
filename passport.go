@@ -224,5 +224,5 @@ func (a API) SetPassportDataErrors(userID int64, errors []PassportElementError) 
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("errors", string(errorsArr))
-	return res, a.client.get(a.base, "setPassportDataErrors", vals, &res)
+	return res, client.get(a.base, "setPassportDataErrors", vals, &res)
 }

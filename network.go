@@ -35,7 +35,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
-type client struct {
+type lclient struct {
 	*http.Client
 	*sync.RWMutex
 	cl       map[string]*rate.Limiter // chat based limiter
@@ -43,42 +43,38 @@ type client struct {
 	climiter func() *rate.Limiter
 }
 
-var lclient = newClient()
+var client = &lclient{
+	Client:  new(http.Client),
+	RWMutex: new(sync.RWMutex),
+	cl:      make(map[string]*rate.Limiter),
+	gl:      rate.NewLimiter(rate.Every(time.Second/30), 10),
+	climiter: func() *rate.Limiter {
+		return rate.NewLimiter(rate.Every(time.Minute/20), 1)
+	},
+}
 
 // SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
 // A duration of 0 disables the rate limiter, allowing unlimited requests.
 // By default the duration of this limiter is set to time.Second/30.
 func SetGlobalRequestLimit(d time.Duration) {
-	lclient.Lock()
-	lclient.gl = rate.NewLimiter(rate.Every(d), 10)
-	lclient.Unlock()
+	client.Lock()
+	client.gl = rate.NewLimiter(rate.Every(d), 10)
+	client.Unlock()
 }
 
 // SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
 // A duration of 0 disables the rate limiter, allowing unlimited requests.
 // By default the duration of this limiter is set to time.Minute/20.
 func SetChatRequestLimit(d time.Duration) {
-	lclient.Lock()
-	lclient.cl = make(map[string]*rate.Limiter)
-	lclient.climiter = func() *rate.Limiter {
+	client.Lock()
+	client.cl = make(map[string]*rate.Limiter)
+	client.climiter = func() *rate.Limiter {
 		return rate.NewLimiter(rate.Every(d), 1)
 	}
-	lclient.Unlock()
+	client.Unlock()
 }
 
-func newClient() *client {
-	return &client{
-		Client:  new(http.Client),
-		RWMutex: new(sync.RWMutex),
-		cl:      make(map[string]*rate.Limiter),
-		gl:      rate.NewLimiter(rate.Every(time.Second/30), 10),
-		climiter: func() *rate.Limiter {
-			return rate.NewLimiter(rate.Every(time.Minute/20), 1)
-		},
-	}
-}
-
-func (c client) wait(chatID string) error {
+func (c lclient) wait(chatID string) error {
 	c.RLock()
 	defer c.RUnlock()
 
@@ -103,7 +99,7 @@ func (c client) wait(chatID string) error {
 	return c.gl.Wait(ctx)
 }
 
-func (c client) doGet(reqURL string) ([]byte, error) {
+func (c lclient) doGet(reqURL string) ([]byte, error) {
 	resp, err := c.Get(reqURL)
 	if err != nil {
 		return nil, err
@@ -117,7 +113,7 @@ func (c client) doGet(reqURL string) ([]byte, error) {
 	return data, nil
 }
 
-func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
+func (c lclient) doPost(reqURL string, files ...content) ([]byte, error) {
 	var (
 		buf = new(bytes.Buffer)
 		w   = multipart.NewWriter(buf)
@@ -146,7 +142,7 @@ func (c client) doPost(reqURL string, files ...content) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
+func (c lclient) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 	var form = make(url.Values)
 
 	for k, v := range keyVals {
@@ -168,7 +164,7 @@ func (c client) doPostForm(reqURL string, keyVals map[string]string) ([]byte, er
 	return io.ReadAll(res.Body)
 }
 
-func (c client) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
+func (c lclient) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
 	var cnt []content
 
 	if file.id != "" {
@@ -195,7 +191,7 @@ func (c client) sendFile(file, thumbnail InputFile, url, fileType string) (res [
 	return
 }
 
-func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error {
+func (c lclient) get(base, endpoint string, vals url.Values, v APIResponse) error {
 	url, err := url.JoinPath(base, endpoint)
 	if err != nil {
 		return err
@@ -222,7 +218,7 @@ func (c client) get(base, endpoint string, vals url.Values, v APIResponse) error
 	return check(v)
 }
 
-func (c client) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
+func (c lclient) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
@@ -243,7 +239,7 @@ func (c client) postFile(base, endpoint, fileType string, file, thumbnail InputF
 	return check(v)
 }
 
-func (c client) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
+func (c lclient) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
@@ -264,7 +260,7 @@ func (c client) postMedia(base, endpoint string, editSingle bool, vals url.Value
 	return check(v)
 }
 
-func (c client) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
+func (c lclient) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
 	url, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
@@ -284,7 +280,7 @@ func (c client) postStickers(base, endpoint string, vals url.Values, v APIRespon
 	return check(v)
 }
 
-func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
+func (c lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
 	var (
 		med []mediaEnvelope
 		cnt []content
@@ -327,7 +323,7 @@ func (c client) sendMediaFiles(url string, editSingle bool, files ...InputMedia)
 	return c.doGet(url)
 }
 
-func (c client) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
+func (c lclient) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
 	var (
 		sti []stickerEnvelope
 		cnt []content

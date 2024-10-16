@@ -222,7 +222,7 @@ func (a API) SendInvoice(chatID int64, title, description, payload, currency str
 	vals.Set("payload", payload)
 	vals.Set("currency", currency)
 	vals.Set("prices", string(p))
-	return res, a.client.get(a.base, "sendInvoice", addValues(vals, opts), &res)
+	return res, client.get(a.base, "sendInvoice", addValues(vals, opts), &res)
 }
 
 // CreateInvoiceLink creates a link for an invoice.
@@ -239,7 +239,7 @@ func (a API) CreateInvoiceLink(title, description, payload, currency string, pri
 	vals.Set("payload", payload)
 	vals.Set("currency", currency)
 	vals.Set("prices", string(p))
-	return res, a.client.get(a.base, "createInvoiceLink", addValues(vals, opts), &res)
+	return res, client.get(a.base, "createInvoiceLink", addValues(vals, opts), &res)
 }
 
 // AnswerShippingQuery is used to reply to shipping queries.
@@ -250,7 +250,7 @@ func (a API) AnswerShippingQuery(shippingQueryID string, ok bool, opts *Shipping
 
 	vals.Set("shipping_query_id", shippingQueryID)
 	vals.Set("ok", btoa(ok))
-	return res, a.client.get(a.base, "answerShippingQuery", addValues(vals, opts), &res)
+	return res, client.get(a.base, "answerShippingQuery", addValues(vals, opts), &res)
 }
 
 // AnswerPreCheckoutQuery is used to respond to such pre-checkout queries.
@@ -262,12 +262,12 @@ func (a API) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool, opts *Pr
 
 	vals.Set("pre_checkout_query_id", preCheckoutQueryID)
 	vals.Set("ok", btoa(ok))
-	return res, a.client.get(a.base, "answerPreCheckoutQuery", addValues(vals, opts), &res)
+	return res, client.get(a.base, "answerPreCheckoutQuery", addValues(vals, opts), &res)
 }
 
 // GetStarTransactions returns the bot's Telegram Star transactions in chronological order.
 func (a API) GetStarTransactions(opts *StarTransactionsOptions) (res APIResponseStarTransactions, err error) {
-	return res, a.client.get(a.base, "getStarTransactions", urlValues(opts), &res)
+	return res, client.get(a.base, "getStarTransactions", urlValues(opts), &res)
 }
 
 // RefundStarPayment refunds a successful payment in Telegram Stars.
@@ -276,5 +276,5 @@ func (a API) RefundStarPayment(userID int64, telegramPaymentChargeID string) (re
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("telegram_payment_charge_id", telegramPaymentChargeID)
-	return res, a.client.get(a.base, "refundStarPayment", vals, &res)
+	return res, client.get(a.base, "refundStarPayment", vals, &res)
 }
