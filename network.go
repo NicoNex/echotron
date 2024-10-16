@@ -47,29 +47,31 @@ var client = &lclient{
 	Client:  new(http.Client),
 	RWMutex: new(sync.RWMutex),
 	cl:      make(map[string]*rate.Limiter),
-	gl:      rate.NewLimiter(rate.Every(time.Second/30), 10),
+	gl:      rate.NewLimiter(rate.Every(time.Second/30), 30),
 	climiter: func() *rate.Limiter {
-		return rate.NewLimiter(rate.Every(time.Minute/20), 1)
+		return rate.NewLimiter(rate.Every(time.Minute/20), 20)
 	},
 }
 
 // SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
-// A duration of 0 disables the rate limiter, allowing unlimited requests.
-// By default the duration of this limiter is set to time.Second/30.
-func SetGlobalRequestLimit(d time.Duration) {
+// An interval of 0 disables the rate limiter, allowing unlimited requests.
+// By default the interval of this limiter is set to time.Second/30 and the
+// burstSize is set to 30.
+func SetGlobalRequestLimit(interval time.Duration, burstSize int) {
 	client.Lock()
-	client.gl = rate.NewLimiter(rate.Every(d), 10)
+	client.gl = rate.NewLimiter(rate.Every(interval), burstSize)
 	client.Unlock()
 }
 
 // SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
-// A duration of 0 disables the rate limiter, allowing unlimited requests.
-// By default the duration of this limiter is set to time.Minute/20.
-func SetChatRequestLimit(d time.Duration) {
+// An interval of 0 disables the rate limiter, allowing unlimited requests.
+// By default the interval of this limiter is set to time.Minute/20 and the
+// burstSize is set to 20.
+func SetChatRequestLimit(interval time.Duration, burstSize int) {
 	client.Lock()
 	client.cl = make(map[string]*rate.Limiter)
 	client.climiter = func() *rate.Limiter {
-		return rate.NewLimiter(rate.Every(d), 1)
+		return rate.NewLimiter(rate.Every(interval), burstSize)
 	}
 	client.Unlock()
 }
