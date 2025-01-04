@@ -137,6 +137,16 @@ func TestAPIResponseStarTransactions(_ *testing.T) {
 	a.Base()
 }
 
+func TestAPIResponsePreparedInlineMessage(_ *testing.T) {
+	a := APIResponsePreparedInlineMessage{}
+	a.Base()
+}
+
+func TestAPIResponseGifts(_ *testing.T) {
+	a := APIResponseGifts{}
+	a.Base()
+}
+
 func TestInputMediaPhoto(_ *testing.T) {
 	i := InputMediaPhoto{}
 	i.media()
