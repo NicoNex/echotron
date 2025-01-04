@@ -503,6 +503,30 @@ func (a APIResponseStarTransactions) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponsePreparedInlineMessage represents the incoming response from Telegram servers.
+// Used by all methods that return a PreparedInlineMessage object on success.
+type APIResponsePreparedInlineMessage struct {
+	Result *PreparedInlineMessage `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponsePreparedInlineMessage) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponseGifts represents the incoming response from Telegram servers.
+// Used by all methods that return a Gifts object on success.
+type APIResponseGifts struct {
+	Result *Gifts `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseGifts) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName               string `json:"first_name"`
@@ -1763,4 +1787,18 @@ type GiveawayCompleted struct {
 	IsStarGiveaway      bool     `json:"is_star_giveaway,omitempty"`
 	WinnerCount         int      `json:"winner_count"`
 	UnclaimedPrizeCount int      `json:"unclaimed_prize_count,omitempty"`
+}
+
+// Gift represents a gift that can be sent by the bot.
+type Gift struct {
+	ID             string  `json:"id"`
+	Sticker        Sticker `json:"sticker"`
+	StarCount      int     `json:"star_count"`
+	TotalCount     int     `json:"total_count,omitempty"`
+	RemainingCount int     `json:"remaining_count,omitempty"`
+}
+
+// Gifts represents a list of gifts.
+type Gifts struct {
+	Gifts []Gift `json:"gifts"`
 }

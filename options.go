@@ -644,6 +644,12 @@ type UserProfileOptions struct {
 	Limit  int `query:"limit"`
 }
 
+// UserEmojiStatusOptions contains the optional parameters used by the SetUserEmojiStatus method.
+type UserEmojiStatusOptions struct {
+	EmojiStatusCustomEmojiID  string `query:"emoji_status_custom_emoji_id"`
+	EmojiStatusExpirationDate string `query:"emoji_status_expiration_date"`
+}
+
 // ChatPermissionsOptions contains the optional parameters used by the SetChatPermissions method.
 type ChatPermissionsOptions struct {
 	UseIndependentChatPermissions bool `query:"use_independent_chat_permissions"`
@@ -752,15 +758,18 @@ type InvoiceOptions struct {
 }
 
 // CreateInvoiceLinkOptions contains the optional parameters used by the CreateInvoiceLink API method.
+// Currently, SubscriptionPeriod should always be set to 2592000 (30 days) if specified.
 type CreateInvoiceLinkOptions struct {
 	ProviderData              string `query:"provider_data"`
 	PhotoURL                  string `query:"photo_url"`
 	ProviderToken             string `query:"provider_token"`
+	BusinessConnectionID      string `query:"business_connection_id"`
 	SuggestedTipAmounts       []int  `query:"suggested_tip_amounts"`
 	PhotoSize                 int    `query:"photo_size"`
 	PhotoWidth                int    `query:"photo_width"`
 	PhotoHeight               int    `query:"photo_height"`
 	MaxTipAmount              int    `query:"max_tip_amount"`
+	SubscriptionPeriod        int    `query:"subscription_period"`
 	NeedPhoneNumber           bool   `query:"need_phone_number"`
 	NeepShippingAddress       bool   `query:"need_shipping_address"`
 	SendPhoneNumberToProvider bool   `query:"send_phone_number_to_provider"`
@@ -810,4 +819,11 @@ type ChatActionOptions struct {
 type MessageReactionOptions struct {
 	Reaction []ReactionType `query:"reaction"`
 	IsBig    bool           `query:"is_big"`
+}
+
+// GiftOptions contains the optional parameters used by the SendGift API method.
+type GiftOptions struct {
+	Text          string          `query:"text"`
+	TextParseMode string          `query:"text_parse_mode"`
+	TextEntities  []MessageEntity `query:"text_entities"`
 }

@@ -68,13 +68,16 @@ type OrderInfo struct {
 
 // SuccessfulPayment contains basic information about a successful payment.
 type SuccessfulPayment struct {
-	OrderInfo               OrderInfo `json:"order_info"`
-	Currency                string    `json:"currency"`
-	InvoicePayload          string    `json:"invoice_payload"`
-	ShippingOptionID        string    `json:"shipping_option_id"`
-	TelegramPaymentChargeID string    `json:"telegram_payment_charge_id"`
-	ProviderPaymentChargeID string    `json:"provider_payment_charge_id"`
-	TotalAmount             int       `json:"total_amount"`
+	OrderInfo                  OrderInfo `json:"order_info"`
+	Currency                   string    `json:"currency"`
+	InvoicePayload             string    `json:"invoice_payload"`
+	ShippingOptionID           string    `json:"shipping_option_id"`
+	TelegramPaymentChargeID    string    `json:"telegram_payment_charge_id"`
+	ProviderPaymentChargeID    string    `json:"provider_payment_charge_id"`
+	TotalAmount                int       `json:"total_amount"`
+	SubscriptionExpirationDate int       `json:"subscription_expiration_date,omitempty"`
+	IsRecurring                bool      `json:"is_recurring,omitempty"`
+	IsFirstRecurring           bool      `json:"is_first_recurring,omitempty"`
 }
 
 // RefundedPayment contains basic information about a refunded payment.
@@ -160,10 +163,12 @@ func (t TransactionPartnerFragment) ImplementsTransactionPartner() {}
 // TransactionPartnerUser describes a transaction with a user.
 // Type MUST be "user".
 type TransactionPartnerUser struct {
-	PaidMedia      *[]PaidMedia `json:"paid_media,omitempty"`
-	Type           string       `json:"type"`
-	InvoicePayload string       `json:"invoice_payload,omitempty"`
-	User           User         `json:"user"`
+	PaidMedia          *[]PaidMedia `json:"paid_media,omitempty"`
+	Type               string       `json:"type"`
+	InvoicePayload     string       `json:"invoice_payload,omitempty"`
+	User               User         `json:"user"`
+	Gift               Gift         `json:"gift,omitempty"`
+	SubscriptionPeriod int          `json:"subscription_period,omitempty"`
 }
 
 // ImplementsTransactionPartner is used to implement the TransactionPartner interface.
@@ -287,4 +292,14 @@ func (a API) RefundStarPayment(userID int64, telegramPaymentChargeID string) (re
 	vals.Set("user_id", itoa(userID))
 	vals.Set("telegram_payment_charge_id", telegramPaymentChargeID)
 	return res, client.get(a.base, "refundStarPayment", vals, &res)
+}
+
+// EditUserStarSubscription allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars.
+func (a API) EditUserStarSubscription(userID int64, telegramPaymentChargeID string, isCanceled bool) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("telegram_payment_charge_id", telegramPaymentChargeID)
+	vals.Set("is_canceled", btoa(isCanceled))
+	return res, client.get(a.base, "editUserStarSubscription", vals, &res)
 }

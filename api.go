@@ -399,6 +399,14 @@ func (a API) GetUserProfilePhotos(userID int64, opts *UserProfileOptions) (res A
 	return res, client.get(a.base, "getUserProfilePhotos", addValues(vals, opts), &res)
 }
 
+// SetUserEmojiStatus
+func (a API) SetUserEmojiStatus(userID int64, opts *UserEmojiStatusOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, client.get(a.base, "setUserEmojiStatus", addValues(vals, opts), &res)
+}
+
 // GetFile returns the basic info about a file and prepares it for downloading.
 // For the moment, bots can download files of up to 20MB in size.
 // The file can then be downloaded with DownloadFile where filePath is taken from the response.
@@ -1018,4 +1026,19 @@ func (a API) DeleteMessages(chatID int64, messageIDs []int) (res APIResponseBool
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("message_ids", string(msgIDs))
 	return res, client.get(a.base, "deleteMessages", vals, &res)
+}
+
+// GetAvailableGifts returns the list of gifts that can be sent by the bot to users.
+func (a API) GetAvailableGifts() (res APIResponseGifts, err error) {
+	return res, client.get(a.base, "getAvailableGifts", nil, &res)
+}
+
+// SendGift sends a gift to the given user.
+// The gift can't be converted to Telegram Stars by the user.
+func (a API) SendGift(userID int64, giftID string, opts *GiftOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("gift_id", giftID)
+	return res, client.get(a.base, "sendGift", addValues(vals, opts), &res)
 }

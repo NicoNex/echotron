@@ -559,12 +559,26 @@ type InlineQueryResultsButton struct {
 	Text           string     `json:"text"`
 }
 
+// PreparedInlineMessage describes an inline message to be sent by a user of a Mini App.
+type PreparedInlineMessage struct {
+	ID             string `json:"id"`
+	ExpirationDate int    `json:"expiration_date"`
+}
+
 // InlineQueryOptions is a custom type which contains the various options required by the AnswerInlineQuery method.
 type InlineQueryOptions struct {
 	Button     InlineQueryResultsButton `query:"button"`
 	NextOffset string                   `query:"next_offset"`
 	CacheTime  int                      `query:"cache_time"`
 	IsPersonal bool                     `query:"is_personal"`
+}
+
+// PreparedInlineMessageOptions is a custom type which contains the various options required by the SavePreparedInlineMessage method.
+type PreparedInlineMessageOptions struct {
+	AllowUserChats    bool `query:"allow_user_chats"`
+	AllowBotChats     bool `query:"allow_bot_chats"`
+	AllowGroupChats   bool `query:"allow_group_chats"`
+	AllowChannelChats bool `query:"allow_channel_chats"`
 }
 
 // AnswerInlineQuery is used to send answers to an inline query.
@@ -575,4 +589,14 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 	vals.Set("inline_query_id", inlineQueryID)
 	vals.Set("results", string(jsn))
 	return res, client.get(a.base, "answerInlineQuery", addValues(vals, opts), &res)
+}
+
+// SavePreparedInlineMessage stores a message that can be sent by a user of a Mini App.
+func (a API) SavePreparedInlineMessage(userID int64, result InlineQueryResult, opts *PreparedInlineMessageOptions) (res APIResponsePreparedInlineMessage, err error) {
+	var vals = make(url.Values)
+
+	jsn, _ := json.Marshal(result)
+	vals.Set("user_id", itoa(userID))
+	vals.Set("result", string(jsn))
+	return res, client.get(a.base, "savePreparedInlineMessage", addValues(vals, opts), &res)
 }
