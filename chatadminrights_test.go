@@ -7,15 +7,17 @@ import (
 
 var (
 	rights = ChatAdministratorRights{
-		CanManageChat:        true,
-		CanDeleteMessages:    true,
-		CanManageVideo_chats: true,
-		CanRestrictMembers:   true,
-		CanPromoteMembers:    true,
-		CanChangeInfo:        true,
-		CanInviteUsers:       true,
-		CanPinMessages:       true,
-		CanManageTopics:      true,
+		IsAnonymous:         true,
+		CanManageChat:       true,
+		CanDeleteMessages:   true,
+		CanManageVideoChats: true,
+		CanRestrictMembers:  true,
+		CanPromoteMembers:   true,
+		CanChangeInfo:       true,
+		CanInviteUsers:      true,
+		CanPostStories:      true,
+		CanEditStories:      true,
+		CanDeleteStories:    true,
 	}
 )
 
@@ -39,8 +41,8 @@ func TestGetMyDefaultAdministratorRights(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(*res.Result, rights) {
-		t.Logf("expected rights: %+v", rights)
-		t.Logf("got rights: %+v", res.Result)
-		t.Fatal("error: rights mismatch")
+		t.Logf("expected: %+v", rights)
+		t.Logf("got: %+v", res.Result)
+		t.Fatal("error: chat administrator rights mismatch")
 	}
 }
