@@ -145,10 +145,30 @@ type RevenueWithdrawalStateFailed struct {
 // ImplementsRevenueWithdrawalState is used to implement the RevenueWithdrawalState interface.
 func (r RevenueWithdrawalStateFailed) ImplementsRevenueWithdrawalState() {}
 
+// AffiliateInfo
+type AffiliateInfo struct {
+	AffiliateUser      *User `json:"affiliate_user,omitempty"`
+	AffiliateChat      *Chat `json:"affiliate_chat,omitempty"`
+	CommissionPerMille int   `json:"commission_per_mille"`
+	Amount             int   `json:"amount"`
+	NanostarAmount     int   `json:"nanostar_amount,omitempty"`
+}
+
 // TransactionPartner describes the source of a transaction, or its recipient for outgoing transactions.
 type TransactionPartner interface {
 	ImplementsTransactionPartner()
 }
+
+// TransactionPartnerAffiliateProgram describes the affiliate program that issued the affiliate commission received via this transaction.
+// Type MUST be "affiliate_program".
+type TransactionPartnerAffiliateProgram struct {
+	SponsorUser        *User  `json:"sponsor_user,omitempty"`
+	Type               string `json:"type"`
+	CommissionPerMille int    `json:"commission_per_mille,omitempty"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerAffiliateProgram) ImplementsTransactionPartner() {}
 
 // TransactionPartnerFragment describes a withdrawal transaction with Fragment.
 // Type MUST be "fragment".
@@ -163,12 +183,14 @@ func (t TransactionPartnerFragment) ImplementsTransactionPartner() {}
 // TransactionPartnerUser describes a transaction with a user.
 // Type MUST be "user".
 type TransactionPartnerUser struct {
-	PaidMedia          *[]PaidMedia `json:"paid_media,omitempty"`
-	Type               string       `json:"type"`
-	InvoicePayload     string       `json:"invoice_payload,omitempty"`
-	User               User         `json:"user"`
-	Gift               Gift         `json:"gift,omitempty"`
-	SubscriptionPeriod int          `json:"subscription_period,omitempty"`
+	PaidMedia          *[]PaidMedia   `json:"paid_media,omitempty"`
+	Type               string         `json:"type"`
+	InvoicePayload     string         `json:"invoice_payload,omitempty"`
+	PaidMediaPayload   string         `json:"paid_media_payload,omitempty"`
+	User               User           `json:"user"`
+	Affiliate          *AffiliateInfo `json:"affiliate,omitempty"`
+	Gift               Gift           `json:"gift,omitempty"`
+	SubscriptionPeriod int            `json:"subscription_period,omitempty"`
 }
 
 // ImplementsTransactionPartner is used to implement the TransactionPartner interface.
@@ -204,11 +226,12 @@ func (t TransactionPartnerOther) ImplementsTransactionPartner() {}
 
 // StarTransaction describes a Telegram Star transaction.
 type StarTransaction struct {
-	Source   TransactionPartner `json:"source"`
-	Receiver TransactionPartner `json:"receiver"`
-	ID       string             `json:"id"`
-	Amount   int                `json:"amount"`
-	Date     int                `json:"date"`
+	Source         TransactionPartner `json:"source"`
+	Receiver       TransactionPartner `json:"receiver"`
+	ID             string             `json:"id"`
+	Amount         int                `json:"amount"`
+	NanostarAmount int                `json:"nanostar_amount,omitempty"`
+	Date           int                `json:"date"`
 }
 
 // StarTransactions contains a list of Telegram Star transactions.
