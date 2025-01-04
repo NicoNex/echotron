@@ -191,6 +191,7 @@ func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
+	CopyText                     *CopyTextButton              `json:"copy_text,omitempty"`
 	CallbackGame                 *CallbackGame                `json:"callback_game,omitempty"`
 	WebApp                       *WebAppInfo                  `json:"web_app,omitempty"`
 	LoginURL                     *LoginURL                    `json:"login_url,omitempty"`
@@ -201,6 +202,11 @@ type InlineKeyboardButton struct {
 	SwitchInlineQueryCurrentChat string                       `json:"switch_inline_query_current_chat,omitempty"`
 	URL                          string                       `json:"url,omitempty"`
 	Pay                          bool                         `json:"pay,omitempty"`
+}
+
+// CopyTextButton represents an inline keyboard button that copies specified text to the clipboard.
+type CopyTextButton struct {
+	Text string `json:"text"`
 }
 
 // InlineKeyboardMarkup represents an inline keyboard.
@@ -248,6 +254,7 @@ type BaseOptions struct {
 	MessageThreadID      int             `query:"message_thread_id"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // MessageOptions contains the optional parameters used by some Telegram API methods.
@@ -262,6 +269,7 @@ type MessageOptions struct {
 	MessageThreadID      int64              `query:"message_thread_id"`
 	DisableNotification  bool               `query:"disable_notification"`
 	ProtectContent       bool               `query:"protect_content"`
+	AllowPaidBroadcast   bool               `query:"allow_paid_broadcast"`
 }
 
 // PinMessageOptions contains the optional parameters used by the PinChatMember method.
@@ -294,6 +302,7 @@ type CopyOptions struct {
 	DisableNotification   bool            `query:"disable_notification"`
 	ProtectContent        bool            `query:"protect_content"`
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // CopyMessagesOptions contains the optional parameters used by the CopyMessages methods.
@@ -314,6 +323,7 @@ type StickerOptions struct {
 	MessageThreadID      int             `query:"message_thread_id"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // InputFile is a struct which contains data about a file to be sent.
@@ -358,6 +368,7 @@ type PhotoOptions struct {
 	DisableNotification   bool            `query:"disable_notification"`
 	ProtectContent        bool            `query:"protect_content"`
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // AudioOptions contains the optional parameters used by the SendAudio method.
@@ -376,6 +387,7 @@ type AudioOptions struct {
 	Duration             int             `query:"duration"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
@@ -392,6 +404,7 @@ type DocumentOptions struct {
 	DisableNotification         bool            `query:"disable_notification"`
 	ProtectContent              bool            `query:"protect_content"`
 	DisableContentTypeDetection bool            `query:"disable_content_type_detection"`
+	AllowPaidBroadcast          bool            `query:"allow_paid_broadcast"`
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
@@ -413,6 +426,7 @@ type VideoOptions struct {
 	DisableNotification   bool            `query:"disable_notification"`
 	ProtectContent        bool            `query:"protect_content"`
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
@@ -433,6 +447,7 @@ type AnimationOptions struct {
 	DisableNotification   bool            `query:"disable_notification"`
 	ProtectContent        bool            `query:"protect_content"`
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
@@ -448,6 +463,7 @@ type VoiceOptions struct {
 	Duration             int             `query:"duration"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
@@ -462,6 +478,7 @@ type VideoNoteOptions struct {
 	Length               int             `query:"length"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // PaidMediaOptions contains the optional parameters used by the SendPaidMedia method.
@@ -476,6 +493,7 @@ type PaidMediaOptions struct {
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
 	DisableNotification   bool            `query:"disable_notification"`
 	ProtectContent        bool            `query:"protect_content"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // MediaGroupOptions contains the optional parameters used by the SendMediaGroup method.
@@ -486,6 +504,7 @@ type MediaGroupOptions struct {
 	MessageThreadID      int             `query:"message_thread_id"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // This is a custom constant to set an infinite live period value in LocationOptions and EditLocationOptions.
@@ -504,6 +523,7 @@ type LocationOptions struct {
 	Heading              int             `query:"heading"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
@@ -535,6 +555,7 @@ type VenueOptions struct {
 	MessageThreadID      int             `query:"message_thread_id"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // ContactOptions contains the optional parameters used by the SendContact method.
@@ -548,6 +569,7 @@ type ContactOptions struct {
 	MessageThreadID      int             `query:"message_thread_id"`
 	DisableNotification  bool            `query:"disable_notification"`
 	ProtectContent       bool            `query:"protect_content"`
+	AllowPaidBroadcast   bool            `query:"allow_paid_broadcast"`
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
@@ -571,6 +593,7 @@ type PollOptions struct {
 	ProtectContent        bool            `query:"protect_content"`
 	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
 	IsAnonymous           bool            `query:"is_anonymous"`
+	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
 }
 
 // StopPollOptions contains the optional parameters used by the StopPoll method.
@@ -725,6 +748,7 @@ type InvoiceOptions struct {
 	ProtectContent            bool                 `query:"protect_content"`
 	NeedName                  bool                 `query:"need_name"`
 	NeedEmail                 bool                 `query:"need_email"`
+	AllowPaidBroadcast        bool                 `query:"allow_paid_broadcast"`
 }
 
 // CreateInvoiceLinkOptions contains the optional parameters used by the CreateInvoiceLink API method.

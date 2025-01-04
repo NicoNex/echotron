@@ -178,6 +178,16 @@ type TransactionPartnerTelegramAds struct {
 // ImplementsTransactionPartner is used to implement the TransactionPartner interface.
 func (t TransactionPartnerTelegramAds) ImplementsTransactionPartner() {}
 
+// TransactionPartnerTelegramApi describes a transaction with payment for paid broadcasting.
+// Type MUST be "telegram_api".
+type TransactionPartnerTelegramApi struct {
+	Type         string `json:"type"`
+	RequestCount int    `json:"request_count"`
+}
+
+// ImplementsTransactionPartner is used to implement the TransactionPartner interface.
+func (t TransactionPartnerTelegramApi) ImplementsTransactionPartner() {}
+
 // TransactionPartnerOther describes a transaction with an unknown source or recipient.
 // Type MUST be "other".
 type TransactionPartnerOther struct {

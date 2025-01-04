@@ -966,10 +966,10 @@ func (a API) EditMessageCaption(msg MessageIDOptions, opts *MessageCaptionOption
 	return res, client.get(a.base, "editMessageCaption", addValues(urlValues(msg), opts), &res)
 }
 
-// EditMessageMedia is used to edit animation, audio, document, photo or video messages.
+// EditMessageMedia is used to edit animation, audio, document, photo or video messages, or to add media to text messages.
 // If a message is part of a message album, then it can be edited only to an audio for audio albums,
 // only to a document for document albums and to a photo or a video otherwise.
-// When an inline message is edited, a new file can't be uploaded.
+// When an inline message is edited, a new file can't be uploaded;
 // Use a previously uploaded file via its file_id or specify a URL.
 func (a API) EditMessageMedia(msg MessageIDOptions, media InputMedia, opts *MessageMediaOptions) (res APIResponseMessage, err error) {
 	return res, client.postMedia(a.base, "editMessageMedia", true, addValues(urlValues(msg), opts), &res, media)
