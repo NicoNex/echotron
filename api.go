@@ -1042,3 +1042,35 @@ func (a API) SendGift(userID int64, giftID string, opts *GiftOptions) (res APIRe
 	vals.Set("gift_id", giftID)
 	return res, client.get(a.base, "sendGift", addValues(vals, opts), &res)
 }
+
+// VerifyUser verifies a user on behalf of the organization which is represented by the bot.
+func (a API) VerifyUser(userID int64, opts *VerifyOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, client.get(a.base, "verifyUser", addValues(vals, opts), &res)
+}
+
+// VerifyChat verifies a chat on behalf of the organization which is represented by the bot.
+func (a API) VerifyChat(chatID int64, opts *VerifyOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return res, client.get(a.base, "verifyChat", addValues(vals, opts), &res)
+}
+
+// RemoveUserVerification removes verification from a user who is currently verified on behalf of the organization represented by the bot.
+func (a API) RemoveUserVerification(userID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, client.get(a.base, "verifyUser", vals, &res)
+}
+
+// RemoveChatVerification removes verification from a chat who is currently verified on behalf of the organization represented by the bot.
+func (a API) RemoveChatVerification(chatID int64) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return res, client.get(a.base, "verifyChat", vals, &res)
+}

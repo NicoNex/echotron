@@ -80,7 +80,6 @@ type InlineQueryResultArticle struct {
 	URL                 string              `json:"url,omitempty"`
 	ThumbnailWidth      int                 `json:"thumbnail_width,omitempty"`
 	ThumbnailHeight     int                 `json:"thumbnail_height,omitempty"`
-	HideURL             bool                `json:"hide_url,omitempty"`
 }
 
 // ImplementsInlineQueryResult is used to implement the InlineQueryResult interface.

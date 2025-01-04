@@ -826,4 +826,10 @@ type GiftOptions struct {
 	Text          string          `query:"text"`
 	TextParseMode string          `query:"text_parse_mode"`
 	TextEntities  []MessageEntity `query:"text_entities"`
+	PayForUpgrade bool            `query:"pay_for_upgrade"`
+}
+
+// VerifyOptions contains the optional parameters used by the VerifyUser and VerifyChat API methods.
+type VerifyOptions struct {
+	CustomDescription string `query:"custom_description"`
 }
