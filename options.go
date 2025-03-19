@@ -746,7 +746,7 @@ type InvoiceOptions struct {
 	PhotoHeight               int                  `query:"photo_height"`
 	MessageThreadID           int                  `query:"message_thread_id"`
 	SendPhoneNumberToProvider bool                 `query:"send_phone_number_to_provider"`
-	NeepShippingAddress       bool                 `query:"need_shipping_address"`
+	NeedShippingAddress       bool                 `query:"need_shipping_address"`
 	NeedPhoneNumber           bool                 `query:"need_phone_number"`
 	SendEmailToProvider       bool                 `query:"send_email_to_provider"`
 	IsFlexible                bool                 `query:"is_flexible"`
