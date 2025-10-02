@@ -601,6 +601,14 @@ type ChatFullInfo struct {
 	JoinToSendMessages                 bool                  `json:"join_to_send_messages,omitempty"`
 	JoinByRequest                      bool                  `json:"join_by_request,omitempty"`
 	HasRestrictedVoiceAndVideoMessages bool                  `json:"has_restricted_voice_and_video_messages,omitempty"`
+	AcceptedGiftTypes                  AcceptedGiftTypes     `json:"accepted_gift_types,omitempty"`
+}
+
+type AcceptedGiftTypes struct {
+	UnlimitedGifts      bool `json:"unlimited_gifs,omitempty"`
+	LimitedGifts        bool `json:"limited_gifts,omitempty"`
+	UniqueGifts         bool `json:"unique_gifs,omitempty"`
+	PremiumSubscription bool `json:"premium_subscription,omitempty"`
 }
 
 // Message represents a message.
@@ -755,15 +763,17 @@ type Document struct {
 
 // Video represents a video file.
 type Video struct {
-	Thumbnail    *PhotoSize `json:"thumbnail,omitempty"`
-	FileID       string     `json:"file_id"`
-	FileUniqueID string     `json:"file_unique_id"`
-	FileName     string     `json:"file_name,omitempty"`
-	MimeType     string     `json:"mime_type,omitempty"`
-	Width        int        `json:"width"`
-	Height       int        `json:"height"`
-	Duration     int        `json:"duration"`
-	FileSize     int64      `json:"file_size,omitempty"`
+	Thumbnail      *PhotoSize  `json:"thumbnail,omitempty"`
+	FileID         string      `json:"file_id"`
+	FileUniqueID   string      `json:"file_unique_id"`
+	FileName       string      `json:"file_name,omitempty"`
+	MimeType       string      `json:"mime_type,omitempty"`
+	Width          int         `json:"width"`
+	Height         int         `json:"height"`
+	Duration       int         `json:"duration"`
+	FileSize       int64       `json:"file_size,omitempty"`
+	Cover          []PhotoSize `json:"cover,omitempty"`
+	StartTimestamp int         `json:"start_timestamp,omitempty"`
 }
 
 // VideoNote represents a video message (available in Telegram apps as of v.4.0).
@@ -1237,6 +1247,8 @@ type InputMediaVideo struct {
 	SupportsStreaming     bool             `json:"supports_streaming,omitempty"`
 	HasSpoiler            bool             `json:"has_spoiler,omitempty"`
 	ShowCaptionAboveMedia bool             `json:"show_caption_above_media,omitempty"`
+	Cover                 string           `json:"cover,omitempty"`
+	StartTimestamp        int              `json:"start_timestamp,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -1347,6 +1359,8 @@ type InputPaidMediaVideo struct {
 	Height            int                `json:"height,omitempty"`
 	Duration          int                `json:"duration,omitempty"`
 	SupportsStreaming bool               `json:"supports_streaming,omitempty"`
+	Cover             string             `json:"cover,omitempty"`
+	StartTimestamp    int                `json:"start_timestamp,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.

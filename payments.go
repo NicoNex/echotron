@@ -193,6 +193,13 @@ type TransactionPartnerUser struct {
 	SubscriptionPeriod int            `json:"subscription_period,omitempty"`
 }
 
+// TransactionPartnerChat describes a transaction with a chat.
+type TransactionPartnerChat struct {
+	Type string `json:"type"`
+	Chat Chat   `json:"chat"`
+	Gift Gift   `json:"gift,omitempty"`
+}
+
 // ImplementsTransactionPartner is used to implement the TransactionPartner interface.
 func (t TransactionPartnerUser) ImplementsTransactionPartner() {}
 

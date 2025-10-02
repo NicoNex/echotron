@@ -289,6 +289,7 @@ type ForwardOptions struct {
 	MessageThreadID     int  `query:"message_thread_id"`
 	DisableNotification bool `query:"disable_notification"`
 	ProtectContent      bool `query:"protect_content"`
+	VideoStartTimestamp int  `query:"video_start_timestamp"`
 }
 
 // CopyOptions contains the optional parameters used by the CopyMessage method.
@@ -311,6 +312,7 @@ type CopyMessagesOptions struct {
 	DisableNotification bool `query:"disable_notification"`
 	ProtectContent      bool `query:"protect_content"`
 	RemoveCaption       bool `query:"remove_caption"`
+	VideoStartTimestamp int  `query:"video_start_timestamp"`
 }
 
 // StickerOptions contains the optional parameters used by the SendSticker method.
@@ -408,6 +410,7 @@ type DocumentOptions struct {
 }
 
 // VideoOptions contains the optional parameters used by the SendVideo method.
+// TODO: handle the cover correctly.
 type VideoOptions struct {
 	ReplyMarkup           ReplyMarkup `query:"reply_markup"`
 	BusinessConnectionID  string      `query:"business_connection_id"`
@@ -427,6 +430,8 @@ type VideoOptions struct {
 	ProtectContent        bool            `query:"protect_content"`
 	ShowCaptionAboveMedia bool            `query:"show_caption_above_media"`
 	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
+	Cover                 InputFile
+	StartTimestamp        int `query:"start_timestamp"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
@@ -826,6 +831,7 @@ type GiftOptions struct {
 	Text          string          `query:"text"`
 	TextParseMode string          `query:"text_parse_mode"`
 	TextEntities  []MessageEntity `query:"text_entities"`
+	ChatID        int64           `query:"chat_id"`
 	PayForUpgrade bool            `query:"pay_for_upgrade"`
 }
 
