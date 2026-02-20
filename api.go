@@ -1074,3 +1074,271 @@ func (a API) RemoveChatVerification(chatID int64) (res APIResponseBool, err erro
 	vals.Set("chat_id", itoa(chatID))
 	return res, client.get(a.base, "verifyChat", vals, &res)
 }
+
+// GetMyStarBalance returns the current Telegram Stars balance of the bot.
+func (a API) GetMyStarBalance() (res APIResponseStarAmount, err error) {
+	return res, client.get(a.base, "getMyStarBalance", nil, &res)
+}
+
+// SetMyProfilePhoto changes the profile photo of the bot.
+func (a API) SetMyProfilePhoto(photo InputProfilePhoto) (res APIResponseBool, err error) {
+	return res, client.postProfilePhoto(a.base, "setMyProfilePhoto", "photo", photo, nil, &res)
+}
+
+// RemoveMyProfilePhoto removes the profile photo of the bot.
+func (a API) RemoveMyProfilePhoto() (res APIResponseBool, err error) {
+	return res, client.get(a.base, "removeMyProfilePhoto", nil, &res)
+}
+
+// GetUserProfileAudios returns a list of audios added to the profile of a user.
+func (a API) GetUserProfileAudios(userID int64, opts *UserProfileAudiosOptions) (res APIResponseUserProfileAudios, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, client.get(a.base, "getUserProfileAudios", addValues(vals, opts), &res)
+}
+
+// SendMessageDraft streams a partial message to a user while the message is being generated.
+func (a API) SendMessageDraft(chatID int64, draftID int, text string, opts *SendMessageDraftOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("draft_id", itoa(int64(draftID)))
+	vals.Set("text", text)
+	return res, client.get(a.base, "sendMessageDraft", addValues(vals, opts), &res)
+}
+
+// SendChecklist sends a checklist on behalf of a connected business account.
+func (a API) SendChecklist(businessConnectionID string, chatID int64, checklist InputChecklist, opts *SendChecklistOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
+	c, err := json.Marshal(checklist)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("checklist", string(c))
+	return res, client.get(a.base, "sendChecklist", addValues(vals, opts), &res)
+}
+
+// EditMessageChecklist edits a checklist on behalf of a connected business account.
+func (a API) EditMessageChecklist(businessConnectionID string, chatID int64, messageID int, checklist InputChecklist, opts *EditMessageChecklistOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
+	c, err := json.Marshal(checklist)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	vals.Set("checklist", string(c))
+	return res, client.get(a.base, "editMessageChecklist", addValues(vals, opts), &res)
+}
+
+// ApproveSuggestedPost approves an incoming suggested post in a direct messages chat.
+func (a API) ApproveSuggestedPost(chatID int64, messageID int, opts *ApproveSuggestedPostOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	return res, client.get(a.base, "approveSuggestedPost", addValues(vals, opts), &res)
+}
+
+// DeclineSuggestedPost declines an incoming suggested post in a direct messages chat.
+func (a API) DeclineSuggestedPost(chatID int64, messageID int, opts *DeclineSuggestedPostOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	return res, client.get(a.base, "declineSuggestedPost", addValues(vals, opts), &res)
+}
+
+// GetUserGifts returns the gifts owned and hosted by a user.
+func (a API) GetUserGifts(userID int64, opts *GetUserGiftsOptions) (res APIResponseOwnedGifts, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, client.get(a.base, "getUserGifts", addValues(vals, opts), &res)
+}
+
+// GetChatGifts returns the gifts owned by a chat.
+func (a API) GetChatGifts(chatID int64, opts *GetChatGiftsOptions) (res APIResponseOwnedGifts, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return res, client.get(a.base, "getChatGifts", addValues(vals, opts), &res)
+}
+
+// DeleteBusinessMessages deletes messages on behalf of a business account.
+func (a API) DeleteBusinessMessages(businessConnectionID string, messageIDs []int) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	ids, err := json.Marshal(messageIDs)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("message_ids", string(ids))
+	return res, client.get(a.base, "deleteBusinessMessages", vals, &res)
+}
+
+// SetBusinessAccountName changes the first and last name of a managed business account.
+func (a API) SetBusinessAccountName(businessConnectionID, firstName, lastName string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("first_name", firstName)
+	if lastName != "" {
+		vals.Set("last_name", lastName)
+	}
+	return res, client.get(a.base, "setBusinessAccountName", vals, &res)
+}
+
+// SetBusinessAccountUsername changes the username of a managed business account.
+func (a API) SetBusinessAccountUsername(businessConnectionID, username string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	if username != "" {
+		vals.Set("username", username)
+	}
+	return res, client.get(a.base, "setBusinessAccountUsername", vals, &res)
+}
+
+// SetBusinessAccountBio changes the bio of a managed business account.
+func (a API) SetBusinessAccountBio(businessConnectionID, bio string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	if bio != "" {
+		vals.Set("bio", bio)
+	}
+	return res, client.get(a.base, "setBusinessAccountBio", vals, &res)
+}
+
+// SetBusinessAccountProfilePhoto changes the profile photo of a managed business account.
+func (a API) SetBusinessAccountProfilePhoto(businessConnectionID string, photo InputProfilePhoto, opts *SetBusinessAccountProfilePhotoOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	return res, client.postProfilePhoto(a.base, "setBusinessAccountProfilePhoto", "photo", photo, addValues(vals, opts), &res)
+}
+
+// RemoveBusinessAccountProfilePhoto removes the current profile photo of a managed business account.
+func (a API) RemoveBusinessAccountProfilePhoto(businessConnectionID string, opts *RemoveBusinessAccountProfilePhotoOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	return res, client.get(a.base, "removeBusinessAccountProfilePhoto", addValues(vals, opts), &res)
+}
+
+// SetBusinessAccountGiftSettings changes the privacy settings pertaining to incoming gifts in a managed business account.
+func (a API) SetBusinessAccountGiftSettings(businessConnectionID string, showGiftButton bool, acceptedGiftTypes AcceptedGiftTypes) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	agt, err := json.Marshal(acceptedGiftTypes)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("show_gift_button", btoa(showGiftButton))
+	vals.Set("accepted_gift_types", string(agt))
+	return res, client.get(a.base, "setBusinessAccountGiftSettings", vals, &res)
+}
+
+// GetBusinessAccountStarBalance returns the amount of Telegram Stars owned by a managed business account.
+func (a API) GetBusinessAccountStarBalance(businessConnectionID string) (res APIResponseStarAmount, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	return res, client.get(a.base, "getBusinessAccountStarBalance", vals, &res)
+}
+
+// TransferBusinessAccountStars transfers Telegram Stars from the business account balance to the bot's balance.
+func (a API) TransferBusinessAccountStars(businessConnectionID string, starCount int) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("star_count", itoa(int64(starCount)))
+	return res, client.get(a.base, "transferBusinessAccountStars", vals, &res)
+}
+
+// GetBusinessAccountGifts returns the gifts received and owned by a managed business account.
+func (a API) GetBusinessAccountGifts(businessConnectionID string, opts *GetBusinessAccountGiftsOptions) (res APIResponseOwnedGifts, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	return res, client.get(a.base, "getBusinessAccountGifts", addValues(vals, opts), &res)
+}
+
+// ConvertGiftToStars converts a given regular gift to Telegram Stars.
+func (a API) ConvertGiftToStars(businessConnectionID, ownedGiftID string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("owned_gift_id", ownedGiftID)
+	return res, client.get(a.base, "convertGiftToStars", vals, &res)
+}
+
+// UpgradeGift upgrades a given regular gift to a unique gift.
+func (a API) UpgradeGift(businessConnectionID, ownedGiftID string, opts *UpgradeGiftOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("owned_gift_id", ownedGiftID)
+	return res, client.get(a.base, "upgradeGift", addValues(vals, opts), &res)
+}
+
+// TransferGift transfers an owned unique gift to another user.
+func (a API) TransferGift(businessConnectionID, ownedGiftID string, newOwnerChatID int64, opts *TransferGiftOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("owned_gift_id", ownedGiftID)
+	vals.Set("new_owner_chat_id", itoa(newOwnerChatID))
+	return res, client.get(a.base, "transferGift", addValues(vals, opts), &res)
+}
+
+// PostStory posts a story on behalf of a managed business account.
+func (a API) PostStory(businessConnectionID string, content InputStoryContent, activePeriod int, opts *PostStoryOptions) (res APIResponseStory, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("active_period", itoa(int64(activePeriod)))
+	return res, client.postStoryContent(a.base, "postStory", content, addValues(vals, opts), &res)
+}
+
+// RepostStory reposts a story on behalf of a business account from another business account.
+func (a API) RepostStory(businessConnectionID string, fromChatID int64, fromStoryID, activePeriod int, opts *PostStoryOptions) (res APIResponseStory, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("from_chat_id", itoa(fromChatID))
+	vals.Set("from_story_id", itoa(int64(fromStoryID)))
+	vals.Set("active_period", itoa(int64(activePeriod)))
+	return res, client.get(a.base, "repostStory", addValues(vals, opts), &res)
+}
+
+// EditStory edits a story previously posted by the bot on behalf of a managed business account.
+func (a API) EditStory(businessConnectionID string, storyID int, content InputStoryContent, opts *EditStoryOptions) (res APIResponseStory, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("story_id", itoa(int64(storyID)))
+	return res, client.postStoryContent(a.base, "editStory", content, addValues(vals, opts), &res)
+}
+
+// DeleteStory deletes a story previously posted by the bot on behalf of a managed business account.
+func (a API) DeleteStory(businessConnectionID string, storyID int) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("story_id", itoa(int64(storyID)))
+	return res, client.get(a.base, "deleteStory", vals, &res)
+}

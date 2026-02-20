@@ -325,6 +325,86 @@ func (c lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia
 	return c.doGet(url)
 }
 
+func (c lclient) postProfilePhoto(base, endpoint, param string, photo InputProfilePhoto, vals url.Values, v APIResponse) error {
+	u, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	if err := c.wait(vals.Get("chat_id")); err != nil {
+		return err
+	}
+
+	cnt, err := c.sendProfilePhotoFile(u, param, photo)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+func (c lclient) sendProfilePhotoFile(u, param string, photo InputProfilePhoto) ([]byte, error) {
+	env, cnt, err := processProfilePhoto(photo)
+	if err != nil {
+		return nil, err
+	}
+
+	jsn, err := json.Marshal(env)
+	if err != nil {
+		return nil, err
+	}
+
+	u = fmt.Sprintf("%s&%s=%s", u, param, jsn)
+
+	if len(cnt) > 0 {
+		return c.doPost(u, cnt...)
+	}
+	return c.doGet(u)
+}
+
+func (c lclient) postStoryContent(base, endpoint string, sc InputStoryContent, vals url.Values, v APIResponse) error {
+	u, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	if err := c.wait(vals.Get("chat_id")); err != nil {
+		return err
+	}
+
+	cnt, err := c.sendStoryContentFile(u, sc)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+func (c lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, error) {
+	env, cnt, err := processStoryContent(sc)
+	if err != nil {
+		return nil, err
+	}
+
+	jsn, err := json.Marshal(env)
+	if err != nil {
+		return nil, err
+	}
+
+	u = fmt.Sprintf("%s&content=%s", u, jsn)
+
+	if len(cnt) > 0 {
+		return c.doPost(u, cnt...)
+	}
+	return c.doGet(u)
+}
+
 func (c lclient) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
 	var (
 		sti []stickerEnvelope
