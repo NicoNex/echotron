@@ -56,10 +56,10 @@ type GetMyDefaultAdministratorRightsOptions struct {
 // These rights will be suggested to users, but they are are free to modify the list
 // before adding the bot.
 func (a API) SetMyDefaultAdministratorRights(opts *SetMyDefaultAdministratorRightsOptions) (res APIResponseBool, err error) {
-	return res, client.get(a.base, "setMyDefaultAdministratorRights", urlValues(opts), &res)
+	return res, a.lclient.get(a.base, "setMyDefaultAdministratorRights", urlValues(opts), &res)
 }
 
 // GetMyDefaultAdministratorRights is used to get the current default administrator rights of the bot.
 func (a API) GetMyDefaultAdministratorRights(opts *GetMyDefaultAdministratorRightsOptions) (res APIResponseChatAdministratorRights, err error) {
-	return res, client.get(a.base, "getMyDefaultAdministratorRights", urlValues(opts), &res)
+	return res, a.lclient.get(a.base, "getMyDefaultAdministratorRights", urlValues(opts), &res)
 }

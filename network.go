@@ -43,37 +43,46 @@ type lclient struct {
 	climiter func() *rate.Limiter
 }
 
-var client = &lclient{
-	Client:  new(http.Client),
-	RWMutex: new(sync.RWMutex),
-	cl:      make(map[string]*rate.Limiter),
-	gl:      rate.NewLimiter(rate.Every(time.Second/30), 30),
-	climiter: func() *rate.Limiter {
-		return rate.NewLimiter(rate.Every(time.Minute/20), 20)
-	},
+var clients smap[string, *lclient]
+
+func loadClient(url string) *lclient {
+	c, ok := clients.load(url)
+	if !ok {
+		c = &lclient{
+			Client:  new(http.Client),
+			RWMutex: new(sync.RWMutex),
+			cl:      make(map[string]*rate.Limiter),
+			gl:      rate.NewLimiter(rate.Every(time.Second/30), 30),
+			climiter: func() *rate.Limiter {
+				return rate.NewLimiter(rate.Every(time.Minute/20), 20)
+			},
+		}
+		clients.store(url, c)
+	}
+	return c
 }
 
 // SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
 // An interval of 0 disables the rate limiter, allowing unlimited requests.
 // By default the interval of this limiter is set to time.Second/30 and the
 // burstSize is set to 30.
-func SetGlobalRequestLimit(interval time.Duration, burstSize int) {
-	client.Lock()
-	client.gl = rate.NewLimiter(rate.Every(interval), burstSize)
-	client.Unlock()
+func (lc *lclient) SetGlobalRequestLimit(interval time.Duration, burstSize int) {
+	lc.Lock()
+	lc.gl = rate.NewLimiter(rate.Every(interval), burstSize)
+	lc.Unlock()
 }
 
 // SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
 // An interval of 0 disables the rate limiter, allowing unlimited requests.
 // By default the interval of this limiter is set to time.Minute/20 and the
 // burstSize is set to 20.
-func SetChatRequestLimit(interval time.Duration, burstSize int) {
-	client.Lock()
-	client.cl = make(map[string]*rate.Limiter)
-	client.climiter = func() *rate.Limiter {
+func (lc *lclient) SetChatRequestLimit(interval time.Duration, burstSize int) {
+	lc.Lock()
+	lc.cl = make(map[string]*rate.Limiter)
+	lc.climiter = func() *rate.Limiter {
 		return rate.NewLimiter(rate.Every(interval), burstSize)
 	}
-	client.Unlock()
+	lc.Unlock()
 }
 
 func (c lclient) wait(chatID string) error {

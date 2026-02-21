@@ -53,5 +53,5 @@ func (a API) AnswerWebAppQuery(webAppQueryID string, result InlineQueryResult) (
 
 	vals.Set("web_app_query_id", webAppQueryID)
 	vals.Set("result", string(resultJson))
-	return res, client.get(a.base, "answerWebAppQuery", vals, &res)
+	return res, a.lclient.get(a.base, "answerWebAppQuery", vals, &res)
 }

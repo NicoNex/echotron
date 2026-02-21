@@ -52,7 +52,7 @@ func (a API) SendGame(gameShortName string, chatID int64, opts *BaseOptions) (re
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("game_short_name", gameShortName)
-	return res, client.get(a.base, "sendGame", addValues(vals, opts), &res)
+	return res, a.lclient.get(a.base, "sendGame", addValues(vals, opts), &res)
 }
 
 // SetGameScore is used to set the score of the specified user in a game.
@@ -61,7 +61,7 @@ func (a API) SetGameScore(userID int64, score int, msgID MessageIDOptions, opts 
 
 	vals.Set("user_id", itoa(userID))
 	vals.Set("score", itoa(int64(score)))
-	return res, client.get(a.base, "setGameScore", addValues(addValues(vals, msgID), opts), &res)
+	return res, a.lclient.get(a.base, "setGameScore", addValues(addValues(vals, msgID), opts), &res)
 }
 
 // GetGameHighScores is used to get data for high score tables.
@@ -69,5 +69,5 @@ func (a API) GetGameHighScores(userID int64, opts MessageIDOptions) (res APIResp
 	var vals = make(url.Values)
 
 	vals.Set("user_id", itoa(userID))
-	return res, client.get(a.base, "getGameHighScores", addValues(vals, opts), &res)
+	return res, a.lclient.get(a.base, "getGameHighScores", addValues(vals, opts), &res)
 }

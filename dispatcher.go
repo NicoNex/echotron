@@ -26,26 +26,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"sync"
 )
-
-type smap sync.Map
-
-func (s *smap) load(id int64) (Bot, bool) {
-	bot, ok := (*sync.Map)(s).Load(id)
-	if ok {
-		return bot.(Bot), ok
-	}
-	return nil, ok
-}
-
-func (s *smap) store(id int64, bot Bot) {
-	(*sync.Map)(s).Store(id, bot)
-}
-
-func (s *smap) delete(id int64) {
-	(*sync.Map)(s).Delete(id)
-}
 
 // Bot is the interface that must be implemented by your definition of
 // the struct thus it represent each open session with a user on Telegram.
@@ -62,7 +43,7 @@ type NewBotFn func(chatId int64) Bot
 // associated with each chatID. When a new chat ID is found, the provided function
 // of type NewBotFn will be called.
 type Dispatcher struct {
-	sessions   smap
+	sessions   smap[int64, Bot]
 	newBot     NewBotFn
 	updates    chan *Update
 	httpServer *http.Server
