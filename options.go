@@ -122,15 +122,15 @@ type ReplyMarkup interface {
 
 // KeyboardButton represents a button in a keyboard.
 type KeyboardButton struct {
-	RequestPoll     *KeyboardButtonPollType     `json:"request_poll,omitempty"`
-	WebApp          *WebAppInfo                 `json:"web_app,omitempty"`
-	RequestUsers    *KeyboardButtonRequestUsers `json:"request_users,omitempty"`
-	RequestChat     *KeyboardButtonRequestChat  `json:"request_chat,omitempty"`
-	Text            string                      `json:"text"`
-	IconCustomEmojiID string                   `json:"icon_custom_emoji_id,omitempty"`
-	Style           string                      `json:"style,omitempty"`
-	RequestContact  bool                        `json:"request_contact,omitempty"`
-	RequestLocation bool                        `json:"request_location,omitempty"`
+	RequestPoll       *KeyboardButtonPollType     `json:"request_poll,omitempty"`
+	WebApp            *WebAppInfo                 `json:"web_app,omitempty"`
+	RequestUsers      *KeyboardButtonRequestUsers `json:"request_users,omitempty"`
+	RequestChat       *KeyboardButtonRequestChat  `json:"request_chat,omitempty"`
+	Text              string                      `json:"text"`
+	IconCustomEmojiID string                      `json:"icon_custom_emoji_id,omitempty"`
+	Style             string                      `json:"style,omitempty"`
+	RequestContact    bool                        `json:"request_contact,omitempty"`
+	RequestLocation   bool                        `json:"request_location,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -266,18 +266,18 @@ type BaseOptions struct {
 // MessageOptions contains the optional parameters used by some Telegram API methods.
 type MessageOptions struct {
 	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup               `query:"reply_markup"`
-	BusinessConnectionID    string                    `query:"business_connection_id"`
-	MessageEffectID         string                    `query:"message_effect_id"`
-	ParseMode               ParseMode                 `query:"parse_mode"`
-	LinkPreviewOptions      LinkPreviewOptions         `query:"link_preview_options"`
-	Entities                []MessageEntity           `query:"entities"`
-	ReplyParameters         ReplyParameters           `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                     `query:"direct_messages_topic_id"`
-	MessageThreadID         int64                     `query:"message_thread_id"`
-	DisableNotification     bool                      `query:"disable_notification"`
-	ProtectContent          bool                      `query:"protect_content"`
-	AllowPaidBroadcast      bool                      `query:"allow_paid_broadcast"`
+	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
+	BusinessConnectionID    string                   `query:"business_connection_id"`
+	MessageEffectID         string                   `query:"message_effect_id"`
+	ParseMode               ParseMode                `query:"parse_mode"`
+	LinkPreviewOptions      LinkPreviewOptions       `query:"link_preview_options"`
+	Entities                []MessageEntity          `query:"entities"`
+	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
+	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
+	MessageThreadID         int64                    `query:"message_thread_id"`
+	DisableNotification     bool                     `query:"disable_notification"`
+	ProtectContent          bool                     `query:"protect_content"`
+	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
 }
 
 // PinMessageOptions contains the optional parameters used by the PinChatMember method.
@@ -450,7 +450,7 @@ type VideoOptions struct {
 	Width                   int             `query:"width"`
 	Height                  int             `query:"height"`
 	HasSpoiler              bool            `query:"has_spoiler"`
-	SupportsStreaming        bool            `query:"supports_streaming"`
+	SupportsStreaming       bool            `query:"supports_streaming"`
 	DisableNotification     bool            `query:"disable_notification"`
 	ProtectContent          bool            `query:"protect_content"`
 	ShowCaptionAboveMedia   bool            `query:"show_caption_above_media"`
@@ -961,11 +961,11 @@ type TransferGiftOptions struct {
 
 // SendChecklistOptions contains the optional parameters used by the SendChecklist method.
 type SendChecklistOptions struct {
-	ReplyParameters   *ReplyParameters    `query:"reply_parameters"`
-	ReplyMarkup       *InlineKeyboardMarkup `query:"reply_markup"`
-	MessageEffectID   string              `query:"message_effect_id"`
-	DisableNotification bool             `query:"disable_notification"`
-	ProtectContent    bool               `query:"protect_content"`
+	ReplyParameters     *ReplyParameters      `query:"reply_parameters"`
+	ReplyMarkup         *InlineKeyboardMarkup `query:"reply_markup"`
+	MessageEffectID     string                `query:"message_effect_id"`
+	DisableNotification bool                  `query:"disable_notification"`
+	ProtectContent      bool                  `query:"protect_content"`
 }
 
 // EditMessageChecklistOptions contains the optional parameters used by the EditMessageChecklist method.
@@ -1000,6 +1000,3 @@ type SetBusinessAccountProfilePhotoOptions struct {
 type RemoveBusinessAccountProfilePhotoOptions struct {
 	IsPublic bool `query:"is_public"`
 }
-
-
-

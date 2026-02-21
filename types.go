@@ -568,21 +568,21 @@ func (a APIResponseStarAmount) Base() APIResponseBase {
 
 // User represents a Telegram user or bot.
 type User struct {
-	FirstName                   string `json:"first_name"`
-	LastName                    string `json:"last_name,omitempty"`
-	Username                    string `json:"username,omitempty"`
-	LanguageCode                string `json:"language_code,omitempty"`
-	ID                          int64  `json:"id"`
-	IsBot                       bool   `json:"is_bot"`
-	IsPremium                   bool   `json:"is_premium,omitempty"`
-	AddedToAttachmentMenu       bool   `json:"added_to_attachment_menu,omitempty"`
-	CanJoinGroups               bool   `json:"can_join_groups,omitempty"`
-	CanReadAllGroupMessages      bool   `json:"can_read_all_group_messages,omitempty"`
-	SupportsInlineQueries        bool   `json:"supports_inline_queries,omitempty"`
-	CanConnectToBusiness         bool   `json:"can_connect_to_business,omitempty"`
-	HasMainWebApp               bool   `json:"has_main_web_app,omitempty"`
-	HasTopicsEnabled            bool   `json:"has_topics_enabled,omitempty"`
-	AllowsUsersToCreateTopics   bool   `json:"allows_users_to_create_topics,omitempty"`
+	FirstName                 string `json:"first_name"`
+	LastName                  string `json:"last_name,omitempty"`
+	Username                  string `json:"username,omitempty"`
+	LanguageCode              string `json:"language_code,omitempty"`
+	ID                        int64  `json:"id"`
+	IsBot                     bool   `json:"is_bot"`
+	IsPremium                 bool   `json:"is_premium,omitempty"`
+	AddedToAttachmentMenu     bool   `json:"added_to_attachment_menu,omitempty"`
+	CanJoinGroups             bool   `json:"can_join_groups,omitempty"`
+	CanReadAllGroupMessages   bool   `json:"can_read_all_group_messages,omitempty"`
+	SupportsInlineQueries     bool   `json:"supports_inline_queries,omitempty"`
+	CanConnectToBusiness      bool   `json:"can_connect_to_business,omitempty"`
+	HasMainWebApp             bool   `json:"has_main_web_app,omitempty"`
+	HasTopicsEnabled          bool   `json:"has_topics_enabled,omitempty"`
+	AllowsUsersToCreateTopics bool   `json:"allows_users_to_create_topics,omitempty"`
 }
 
 // Chat represents a chat.
@@ -1830,12 +1830,12 @@ type UserChatBoosts struct {
 
 // BusinessConnection describes the connection of the bot with a business account.
 type BusinessConnection struct {
-	ID         string            `json:"id"`
-	User       User              `json:"user"`
-	UserChatID int64             `json:"user_chat_id"`
-	Date       int64             `json:"date"`
+	ID         string             `json:"id"`
+	User       User               `json:"user"`
+	UserChatID int64              `json:"user_chat_id"`
+	Date       int64              `json:"date"`
 	Rights     *BusinessBotRights `json:"rights,omitempty"`
-	IsEnabled  bool              `json:"is_enabled"`
+	IsEnabled  bool               `json:"is_enabled"`
 }
 
 // BusinessMessagesDeleted is received when messages are deleted from a connected business account.
@@ -1889,19 +1889,19 @@ type GiveawayCompleted struct {
 
 // Gift represents a gift that can be sent by the bot.
 type Gift struct {
-	ID                    string        `json:"id"`
-	Sticker               Sticker       `json:"sticker"`
-	StarCount             int           `json:"star_count"`
-	UpgradeStarCount      int           `json:"upgrade_star_count,omitempty"`
-	TotalCount            int           `json:"total_count,omitempty"`
-	RemainingCount        int           `json:"remaining_count,omitempty"`
-	IsPremium             bool          `json:"is_premium,omitempty"`
-	HasColors             bool          `json:"has_colors,omitempty"`
-	PersonalTotalCount    int           `json:"personal_total_count,omitempty"`
-	PersonalRemainingCount int          `json:"personal_remaining_count,omitempty"`
-	Background            *GiftBackground `json:"background,omitempty"`
-	UniqueGiftVariantCount int          `json:"unique_gift_variant_count,omitempty"`
-	PublisherChat         *Chat         `json:"publisher_chat,omitempty"`
+	ID                     string          `json:"id"`
+	Sticker                Sticker         `json:"sticker"`
+	StarCount              int             `json:"star_count"`
+	UpgradeStarCount       int             `json:"upgrade_star_count,omitempty"`
+	TotalCount             int             `json:"total_count,omitempty"`
+	RemainingCount         int             `json:"remaining_count,omitempty"`
+	IsPremium              bool            `json:"is_premium,omitempty"`
+	HasColors              bool            `json:"has_colors,omitempty"`
+	PersonalTotalCount     int             `json:"personal_total_count,omitempty"`
+	PersonalRemainingCount int             `json:"personal_remaining_count,omitempty"`
+	Background             *GiftBackground `json:"background,omitempty"`
+	UniqueGiftVariantCount int             `json:"unique_gift_variant_count,omitempty"`
+	PublisherChat          *Chat           `json:"publisher_chat,omitempty"`
 }
 
 // Gifts represents a list of gifts.
@@ -1964,32 +1964,32 @@ type UniqueGiftColors struct {
 
 // UniqueGift describes a unique gift that was upgraded from a regular gift.
 type UniqueGift struct {
-	PublisherChat *Chat              `json:"publisher_chat,omitempty"`
-	Colors        *UniqueGiftColors  `json:"colors,omitempty"`
-	GiftID        string             `json:"gift_id"`
-	BaseName      string             `json:"base_name"`
-	Name          string             `json:"name"`
-	Model         UniqueGiftModel    `json:"model"`
-	Symbol        UniqueGiftSymbol   `json:"symbol"`
-	Backdrop      UniqueGiftBackdrop `json:"backdrop"`
-	Number        int                `json:"number"`
-	IsPremium     bool               `json:"is_premium,omitempty"`
-	IsBurned      bool               `json:"is_burned,omitempty"`
-	IsFromBlockchain bool            `json:"is_from_blockchain,omitempty"`
+	PublisherChat    *Chat              `json:"publisher_chat,omitempty"`
+	Colors           *UniqueGiftColors  `json:"colors,omitempty"`
+	GiftID           string             `json:"gift_id"`
+	BaseName         string             `json:"base_name"`
+	Name             string             `json:"name"`
+	Model            UniqueGiftModel    `json:"model"`
+	Symbol           UniqueGiftSymbol   `json:"symbol"`
+	Backdrop         UniqueGiftBackdrop `json:"backdrop"`
+	Number           int                `json:"number"`
+	IsPremium        bool               `json:"is_premium,omitempty"`
+	IsBurned         bool               `json:"is_burned,omitempty"`
+	IsFromBlockchain bool               `json:"is_from_blockchain,omitempty"`
 }
 
 // GiftInfo describes a service message about a regular gift that was sent or received.
 type GiftInfo struct {
-	Gift                  Gift             `json:"gift"`
-	OwnedGiftID           string           `json:"owned_gift_id,omitempty"`
-	Text                  string           `json:"text,omitempty"`
-	Entities              []*MessageEntity `json:"entities,omitempty"`
-	ConvertStarCount      int              `json:"convert_star_count,omitempty"`
-	PrepaidUpgradeStarCount int            `json:"prepaid_upgrade_star_count,omitempty"`
-	UniqueGiftNumber      int              `json:"unique_gift_number,omitempty"`
-	IsUpgradeSeparate     bool             `json:"is_upgrade_separate,omitempty"`
-	CanBeUpgraded         bool             `json:"can_be_upgraded,omitempty"`
-	IsPrivate             bool             `json:"is_private,omitempty"`
+	Gift                    Gift             `json:"gift"`
+	OwnedGiftID             string           `json:"owned_gift_id,omitempty"`
+	Text                    string           `json:"text,omitempty"`
+	Entities                []*MessageEntity `json:"entities,omitempty"`
+	ConvertStarCount        int              `json:"convert_star_count,omitempty"`
+	PrepaidUpgradeStarCount int              `json:"prepaid_upgrade_star_count,omitempty"`
+	UniqueGiftNumber        int              `json:"unique_gift_number,omitempty"`
+	IsUpgradeSeparate       bool             `json:"is_upgrade_separate,omitempty"`
+	CanBeUpgraded           bool             `json:"can_be_upgraded,omitempty"`
+	IsPrivate               bool             `json:"is_private,omitempty"`
 }
 
 // UniqueGiftInfo describes a service message about a unique gift that was sent or received.
@@ -2095,9 +2095,9 @@ type InputChecklist struct {
 
 // ChecklistTasksDone describes a service message about checklist tasks marked as done or not done.
 type ChecklistTasksDone struct {
-	ChecklistMessage      *Message `json:"checklist_message,omitempty"`
-	MarkedAsDoneTaskIDs   []int    `json:"marked_as_done_task_ids,omitempty"`
-	MarkedAsNotDoneTaskIDs []int   `json:"marked_as_not_done_task_ids,omitempty"`
+	ChecklistMessage       *Message `json:"checklist_message,omitempty"`
+	MarkedAsDoneTaskIDs    []int    `json:"marked_as_done_task_ids,omitempty"`
+	MarkedAsNotDoneTaskIDs []int    `json:"marked_as_not_done_task_ids,omitempty"`
 }
 
 // ChecklistTasksAdded describes a service message about tasks added to a checklist.
@@ -2187,14 +2187,14 @@ type ChatOwnerChanged struct {
 
 // BusinessBotRights represents the rights of a business bot.
 type BusinessBotRights struct {
-	CanReply                 bool `json:"can_reply,omitempty"`
-	CanReadMessages          bool `json:"can_read_messages,omitempty"`
-	CanDeleteSentMessages    bool `json:"can_delete_sent_messages,omitempty"`
-	CanDeleteAllMessages     bool `json:"can_delete_all_messages,omitempty"`
-	CanEditName              bool `json:"can_edit_name,omitempty"`
-	CanEditBio               bool `json:"can_edit_bio,omitempty"`
-	CanEditProfilePhoto      bool `json:"can_edit_profile_photo,omitempty"`
-	CanEditUsername          bool `json:"can_edit_username,omitempty"`
+	CanReply                   bool `json:"can_reply,omitempty"`
+	CanReadMessages            bool `json:"can_read_messages,omitempty"`
+	CanDeleteSentMessages      bool `json:"can_delete_sent_messages,omitempty"`
+	CanDeleteAllMessages       bool `json:"can_delete_all_messages,omitempty"`
+	CanEditName                bool `json:"can_edit_name,omitempty"`
+	CanEditBio                 bool `json:"can_edit_bio,omitempty"`
+	CanEditProfilePhoto        bool `json:"can_edit_profile_photo,omitempty"`
+	CanEditUsername            bool `json:"can_edit_username,omitempty"`
 	CanChangeGiftSettings      bool `json:"can_change_gift_settings,omitempty"`
 	CanViewGiftsAndStars       bool `json:"can_view_gifts_and_stars,omitempty"`
 	CanConvertGiftsToStars     bool `json:"can_convert_gifts_to_stars,omitempty"`
@@ -2281,12 +2281,12 @@ func (s StoryAreaTypeUniqueGift) ImplementsStoryAreaType() {}
 
 // StoryAreaPosition describes the position of a clickable area within a story.
 type StoryAreaPosition struct {
-	XPercentage              float64 `json:"x_percentage"`
-	YPercentage              float64 `json:"y_percentage"`
-	WidthPercentage          float64 `json:"width_percentage"`
-	HeightPercentage         float64 `json:"height_percentage"`
-	RotationAngle            float64 `json:"rotation_angle"`
-	CornerRadiusPercentage   float64 `json:"corner_radius_percentage"`
+	XPercentage            float64 `json:"x_percentage"`
+	YPercentage            float64 `json:"y_percentage"`
+	WidthPercentage        float64 `json:"width_percentage"`
+	HeightPercentage       float64 `json:"height_percentage"`
+	RotationAngle          float64 `json:"rotation_angle"`
+	CornerRadiusPercentage float64 `json:"corner_radius_percentage"`
 }
 
 // StoryArea describes a clickable area on a story media.
