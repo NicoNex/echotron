@@ -39,12 +39,24 @@ func NewAPI(token string) API {
 	}
 }
 
+// CustomAPI returns an API object with a custom base URL from input.
+func CustomAPI(url, token string) API {
+	return API{token: token, base: url}
+}
+
 // NewLocalAPI is like NewAPI but allows to use a local API server.
+//
+// Deprecated: Use CustomAPI instead.
 func NewLocalAPI(url, token string) API {
-	return API{
-		token: token,
-		base:  url,
-	}
+	return CustomAPI(url, token)
+}
+
+// TestAPI is like NewAPI but returns an API object for testing purposes.
+func TestAPI(token string) API {
+	return CustomAPI(
+		fmt.Sprintf("https://api.telegram.org/bot%s/test/", token),
+		token,
+	)
 }
 
 // GetUpdates is used to receive incoming updates using long polling.

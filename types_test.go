@@ -229,3 +229,68 @@ func TestBackgroundTypeChatTheme(_ *testing.T) {
 	b := BackgroundTypeChatTheme{}
 	b.ImplementsBackgroundType()
 }
+
+func TestAPIResponseUserProfileAudios(_ *testing.T) {
+	a := APIResponseUserProfileAudios{}
+	a.Base()
+}
+
+func TestAPIResponseOwnedGifts(_ *testing.T) {
+	a := APIResponseOwnedGifts{}
+	a.Base()
+}
+
+func TestAPIResponseStarAmount(_ *testing.T) {
+	a := APIResponseStarAmount{}
+	a.Base()
+}
+
+func TestAPIResponseStory(_ *testing.T) {
+	a := APIResponseStory{}
+	a.Base()
+}
+
+func TestStoryAreaTypeLocation(_ *testing.T) {
+	s := StoryAreaTypeLocation{}
+	s.ImplementsStoryAreaType()
+}
+
+func TestStoryAreaTypeSuggestedReaction(_ *testing.T) {
+	s := StoryAreaTypeSuggestedReaction{}
+	s.ImplementsStoryAreaType()
+}
+
+func TestStoryAreaTypeLink(_ *testing.T) {
+	s := StoryAreaTypeLink{}
+	s.ImplementsStoryAreaType()
+}
+
+func TestStoryAreaTypeWeather(_ *testing.T) {
+	s := StoryAreaTypeWeather{}
+	s.ImplementsStoryAreaType()
+}
+
+func TestStoryAreaTypeUniqueGift(_ *testing.T) {
+	s := StoryAreaTypeUniqueGift{}
+	s.ImplementsStoryAreaType()
+}
+
+func TestInputStoryContentPhoto(_ *testing.T) {
+	i := InputStoryContentPhoto{}
+	i.ImplementsInputStoryContent()
+}
+
+func TestInputStoryContentVideo(_ *testing.T) {
+	i := InputStoryContentVideo{}
+	i.ImplementsInputStoryContent()
+}
+
+func TestInputProfilePhotoStatic(_ *testing.T) {
+	i := InputProfilePhotoStatic{}
+	i.ImplementsInputProfilePhoto()
+}
+
+func TestInputProfilePhotoAnimated(_ *testing.T) {
+	i := InputProfilePhotoAnimated{}
+	i.ImplementsInputProfilePhoto()
+}
