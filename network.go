@@ -35,14 +35,17 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// lclient is an HTTP client with built-in dual-level rate limiting.
+// One instance is shared across all API objects for the same bot token.
 type lclient struct {
-	*http.Client
-	*sync.RWMutex
-	cl       map[string]*rate.Limiter // chat based limiter
-	gl       *rate.Limiter            // global limiter
-	climiter func() *rate.Limiter
+	mu       sync.RWMutex
+	cl       map[string]*rate.Limiter // per-chat rate limiter, keyed by chat_id
+	gl       *rate.Limiter            // global rate limiter across all chats
+	climiter func() *rate.Limiter     // factory for new per-chat limiters
+	http     *http.Client
 }
 
+// clients caches one lclient per base URL (i.e. one per bot token).
 var clients smap[string, *lclient]
 
 func loadClient(url string) *lclient {
@@ -57,10 +60,9 @@ func loadClient(url string) *lclient {
 	lc, _ := clients.loadOrStore(
 		url,
 		&lclient{
-			Client:  new(http.Client),
-			RWMutex: new(sync.RWMutex),
-			cl:      make(map[string]*rate.Limiter),
-			gl:      rate.NewLimiter(rate.Every(time.Second/30), 30),
+			http: new(http.Client),
+			cl:   make(map[string]*rate.Limiter),
+			gl:   rate.NewLimiter(rate.Every(time.Second/30), 30),
 			climiter: func() *rate.Limiter {
 				return rate.NewLimiter(rate.Every(time.Minute/20), 20)
 			},
@@ -73,43 +75,45 @@ func loadClient(url string) *lclient {
 // An interval of 0 disables the rate limiter, allowing unlimited requests.
 // By default the interval of this limiter is set to time.Second/30 and the
 // burstSize is set to 30.
-func (lc *lclient) SetGlobalRequestLimit(interval time.Duration, burstSize int) {
-	lc.Lock()
-	lc.gl = rate.NewLimiter(rate.Every(interval), burstSize)
-	lc.Unlock()
+func (c *lclient) SetGlobalRequestLimit(interval time.Duration, burstSize int) {
+	c.mu.Lock()
+	c.gl = rate.NewLimiter(rate.Every(interval), burstSize)
+	c.mu.Unlock()
 }
 
 // SetChatRequestLimit sets the per-chat rate limit for requests to the Telegram API.
 // An interval of 0 disables the rate limiter, allowing unlimited requests.
 // By default the interval of this limiter is set to time.Minute/20 and the
 // burstSize is set to 20.
-func (lc *lclient) SetChatRequestLimit(interval time.Duration, burstSize int) {
-	lc.Lock()
-	lc.cl = make(map[string]*rate.Limiter)
-	lc.climiter = func() *rate.Limiter {
+func (c *lclient) SetChatRequestLimit(interval time.Duration, burstSize int) {
+	c.mu.Lock()
+	// Reset the existing limiters so the new factory applies to all chats.
+	c.cl = make(map[string]*rate.Limiter)
+	c.climiter = func() *rate.Limiter {
 		return rate.NewLimiter(rate.Every(interval), burstSize)
 	}
-	lc.Unlock()
+	c.mu.Unlock()
 }
 
-func (c lclient) wait(chatID string) error {
+// wait blocks until both the per-chat and global rate limiters allow the request.
+func (c *lclient) wait(chatID string) error {
 	ctx := context.Background()
 	// If the chatID is empty, it's a general API call like GetUpdates, GetMe
 	// and similar, so skip the per-chat request limit wait.
 	if chatID != "" {
-		c.RLock()
+		c.mu.RLock()
 		l, ok := c.cl[chatID]
-		c.RUnlock()
+		c.mu.RUnlock()
 
 		if !ok {
-			c.Lock()
+			c.mu.Lock()
 			// Re-check after acquiring the write lock to avoid overwriting
 			// a limiter created by another goroutine in the meantime.
 			if l, ok = c.cl[chatID]; !ok {
 				l = c.climiter()
 				c.cl[chatID] = l
 			}
-			c.Unlock()
+			c.mu.Unlock()
 		}
 
 		// Make sure to respect the single chat limit of requests.
@@ -122,8 +126,24 @@ func (c lclient) wait(chatID string) error {
 	return c.gl.Wait(ctx)
 }
 
-func (c lclient) doGet(reqURL string) ([]byte, error) {
-	resp, err := c.Get(reqURL)
+// dispatch is the common path for all API calls: rate-limit, send, decode, check.
+func (c *lclient) dispatch(chatID string, send func() ([]byte, error), v APIResponse) error {
+	if err := c.wait(chatID); err != nil {
+		return err
+	}
+	cnt, err := send()
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(cnt, v); err != nil {
+		return err
+	}
+	return check(v)
+}
+
+// doGet performs a raw HTTP GET and returns the response body.
+func (c *lclient) doGet(reqURL string) ([]byte, error) {
+	resp, err := c.http.Get(reqURL)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +156,8 @@ func (c lclient) doGet(reqURL string) ([]byte, error) {
 	return data, nil
 }
 
-func (c lclient) doPost(reqURL string, files ...content) ([]byte, error) {
+// doPost sends a multipart/form-data POST with the given files and returns the response body.
+func (c *lclient) doPost(reqURL string, files ...content) ([]byte, error) {
 	var (
 		buf = new(bytes.Buffer)
 		w   = multipart.NewWriter(buf)
@@ -157,7 +178,7 @@ func (c lclient) doPost(reqURL string, files ...content) ([]byte, error) {
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
 
-	res, err := c.Do(req)
+	res, err := c.http.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +186,8 @@ func (c lclient) doPost(reqURL string, files ...content) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func (c lclient) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
+// doPostForm sends an application/x-www-form-urlencoded POST and returns the response body.
+func (c *lclient) doPostForm(reqURL string, keyVals map[string]string) ([]byte, error) {
 	var form = make(url.Values)
 
 	for k, v := range keyVals {
@@ -176,10 +198,9 @@ func (c lclient) doPostForm(reqURL string, keyVals map[string]string) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-	req.PostForm = form
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	res, err := c.Do(req)
+	res, err := c.http.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -187,23 +208,25 @@ func (c lclient) doPostForm(reqURL string, keyVals map[string]string) ([]byte, e
 	return io.ReadAll(res.Body)
 }
 
-func (c lclient) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
+// sendFile sends a single file to Telegram.
+// If the file is identified by an ID or URL it is passed as a query parameter;
+// otherwise it is uploaded via multipart. The thumbnail, if present, is always uploaded.
+func (c *lclient) sendFile(file, thumbnail InputFile, url, fileType string) (res []byte, err error) {
 	var cnt []content
 
 	if file.id != "" {
 		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
 	} else if file.url != "" {
 		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
-	} else if c, e := toContent(fileType, file); e == nil {
-		cnt = append(cnt, c)
+	} else if f, e := toContent(fileType, file); e == nil {
+		cnt = append(cnt, f)
 	} else {
 		err = e
 	}
 
-	if c, e := toContent("thumbnail", thumbnail); e == nil {
-		cnt = append(cnt, c)
-	} else {
-		err = e
+	// Thumbnail is optional; conversion errors are silently ignored.
+	if t, e := toContent("thumbnail", thumbnail); e == nil {
+		cnt = append(cnt, t)
 	}
 
 	if len(cnt) > 0 {
@@ -214,96 +237,63 @@ func (c lclient) sendFile(file, thumbnail InputFile, url, fileType string) (res 
 	return
 }
 
-func (c lclient) get(base, endpoint string, vals url.Values, v APIResponse) error {
-	url, err := url.JoinPath(base, endpoint)
+// get calls a Telegram API endpoint that requires no file upload.
+func (c *lclient) get(base, endpoint string, vals url.Values, v APIResponse) error {
+	u, err := url.JoinPath(base, endpoint)
 	if err != nil {
 		return err
 	}
 
 	if vals != nil {
-		if queries := vals.Encode(); queries != "" {
-			url = fmt.Sprintf("%s?%s", url, queries)
+		if q := vals.Encode(); q != "" {
+			u = fmt.Sprintf("%s?%s", u, q)
 		}
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.doGet(url)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.doGet(u)
+	}, v)
 }
 
-func (c lclient) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
-	url, err := joinURL(base, endpoint, vals)
+// postFile calls a Telegram API endpoint that requires uploading a single file.
+func (c *lclient) postFile(base, endpoint, fileType string, file, thumbnail InputFile, vals url.Values, v APIResponse) error {
+	u, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.sendFile(file, thumbnail, url, fileType)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendFile(file, thumbnail, u, fileType)
+	}, v)
 }
 
-func (c lclient) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
-	url, err := joinURL(base, endpoint, vals)
+// postMedia calls a Telegram API endpoint that sends a media group or edits a single media item.
+// editSingle serialises only the first element instead of the full array.
+func (c *lclient) postMedia(base, endpoint string, editSingle bool, vals url.Values, v APIResponse, files ...InputMedia) error {
+	u, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.sendMediaFiles(url, editSingle, files...)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendMediaFiles(u, editSingle, files...)
+	}, v)
 }
 
-func (c lclient) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
-	url, err := joinURL(base, endpoint, vals)
+// postStickers calls a Telegram API endpoint that sends one or more stickers.
+func (c *lclient) postStickers(base, endpoint string, vals url.Values, v APIResponse, stickers ...InputSticker) error {
+	u, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.sendStickers(url, stickers...)
-	if err != nil {
-		return err
-	}
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendStickers(u, stickers...)
+	}, v)
 }
 
-func (c lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
+// sendMediaFiles serialises the media group into JSON and uploads any local files via multipart.
+func (c *lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia) (res []byte, err error) {
 	var (
 		med []mediaEnvelope
 		cnt []content
@@ -328,6 +318,8 @@ func (c lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia
 		cnt = append(cnt, cntArr...)
 	}
 
+	// editSingle is set when editing a single media message; Telegram expects
+	// the object directly rather than wrapped in an array.
 	if editSingle {
 		jsn, err = json.Marshal(med[0])
 	} else {
@@ -346,28 +338,20 @@ func (c lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedia
 	return c.doGet(url)
 }
 
-func (c lclient) postProfilePhoto(base, endpoint, param string, photo InputProfilePhoto, vals url.Values, v APIResponse) error {
+// postProfilePhoto calls a Telegram API endpoint that sets a profile photo.
+func (c *lclient) postProfilePhoto(base, endpoint, param string, photo InputProfilePhoto, vals url.Values, v APIResponse) error {
 	u, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.sendProfilePhotoFile(u, param, photo)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendProfilePhotoFile(u, param, photo)
+	}, v)
 }
 
-func (c lclient) sendProfilePhotoFile(u, param string, photo InputProfilePhoto) ([]byte, error) {
+// sendProfilePhotoFile serialises the profile photo and uploads it if it's a local file.
+func (c *lclient) sendProfilePhotoFile(u, param string, photo InputProfilePhoto) ([]byte, error) {
 	env, cnt, err := processProfilePhoto(photo)
 	if err != nil {
 		return nil, err
@@ -386,28 +370,20 @@ func (c lclient) sendProfilePhotoFile(u, param string, photo InputProfilePhoto) 
 	return c.doGet(u)
 }
 
-func (c lclient) postStoryContent(base, endpoint string, sc InputStoryContent, vals url.Values, v APIResponse) error {
+// postStoryContent calls a Telegram API endpoint that posts or edits a story.
+func (c *lclient) postStoryContent(base, endpoint string, sc InputStoryContent, vals url.Values, v APIResponse) error {
 	u, err := joinURL(base, endpoint, vals)
 	if err != nil {
 		return err
 	}
 
-	if err := c.wait(vals.Get("chat_id")); err != nil {
-		return err
-	}
-
-	cnt, err := c.sendStoryContentFile(u, sc)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(cnt, v); err != nil {
-		return err
-	}
-	return check(v)
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendStoryContentFile(u, sc)
+	}, v)
 }
 
-func (c lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, error) {
+// sendStoryContentFile serialises the story content and uploads it if it's a local file.
+func (c *lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, error) {
 	env, cnt, err := processStoryContent(sc)
 	if err != nil {
 		return nil, err
@@ -426,7 +402,9 @@ func (c lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, e
 	return c.doGet(u)
 }
 
-func (c lclient) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
+// sendStickers serialises the stickers and uploads any local files via multipart.
+// A single sticker uses the "sticker" parameter; multiple use "stickers".
+func (c *lclient) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
 	var (
 		sti []stickerEnvelope
 		cnt []content
@@ -448,6 +426,7 @@ func (c lclient) sendStickers(url string, stickers ...InputSticker) (res []byte,
 		cnt = append(cnt, cntArr...)
 	}
 
+	// Telegram uses different parameter names for one vs many stickers.
 	if len(sti) == 1 {
 		jsn, _ = json.Marshal(sti[0])
 		url = fmt.Sprintf("%s&sticker=%s", url, jsn)
