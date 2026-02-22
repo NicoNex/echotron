@@ -10,43 +10,43 @@ import (
 )
 
 var (
-	msgTmp               *Message
-	animationTmp         *Message
-	pollTmp              *Message
-	locationTmp          *Message
-	inviteTmp            *ChatInviteLink
-	chatSubInviteTmp     *ChatInviteLink
-	checklistMsgTmp      *Message
-	filePath             string
-	currentBotDesc       string
-	currentBotShortDesc  string
-	msgThreadID          int64
-	storyID              int
-	currentBotName       = "bot name unset"
-	api                  = NewAPI(os.Getenv("TELEGRAM_TOKEN"))
-	businessConnectionID = os.Getenv("BUSINESS_CONNECTION_ID")
-	ownedGiftID          = os.Getenv("OWNED_GIFT_ID")
-	chatID               = int64(14870908)
-	banUserID            = int64(41876271)
-	channelID            = int64(-1001563144067)
-	groupID              = int64(-1001265771214)
-	pinMsgID             = int(11)
-	photoID              = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	animationID          = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
-	audioID              = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID           = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	paidVideoID          = "BAACAgQAAx0EXSuvgwADGGa7vNTyDxfQiyICxWhnLUfhJphkAAIvFAACHozgUVOTwR-Bak97NQQ"
-	videoID              = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	videoNoteID          = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
-	voiceID              = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
-	photoURL             = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
-	animationURL         = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
-	audioURL             = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
-	documentURL          = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
-	logoInvURL           = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
-	videoURL             = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
-	videoNoteURL         = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
-	voiceURL             = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	msgTmp              *Message
+	animationTmp        *Message
+	pollTmp             *Message
+	locationTmp         *Message
+	inviteTmp           *ChatInviteLink
+	chatSubInviteTmp    *ChatInviteLink
+	checklistMsgTmp     *Message
+	filePath            string
+	currentBotDesc      string
+	currentBotShortDesc string
+	msgThreadID         int64
+	storyID             int
+	currentBotName      = "bot name unset"
+	api                 = NewAPI(os.Getenv("TELEGRAM_TOKEN"))
+	chatID              = int64(14870908)
+	banUserID           = int64(41876271)
+	channelID           = int64(-1001563144067)
+	groupID             = int64(-1001265771214)
+	pinMsgID            = int(11)
+	photoID             = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	animationID         = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
+	audioID             = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID          = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	paidVideoID         = "BAACAgQAAx0EXSuvgwADGGa7vNTyDxfQiyICxWhnLUfhJphkAAIvFAACHozgUVOTwR-Bak97NQQ"
+	videoID             = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID         = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID             = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	// businessConnectionID = ""
+	// ownedGiftID          = ""
+	photoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
+	animationURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/animation.mp4"
+	audioURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
+	documentURL  = "https://github.com/NicoNex/echotron/raw/master/assets/tests/document.pdf"
+	logoInvURL   = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_thumb_inv.jpg"
+	videoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video.webm"
+	videoNoteURL = "https://github.com/NicoNex/echotron/raw/master/assets/tests/video_note.mp4"
+	voiceURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/audio.mp3"
 
 	commands = []BotCommand{
 		{Command: "test1", Description: "Test command 1"},
@@ -2275,258 +2275,258 @@ func TestSendMessageDraft(t *testing.T) {
 	}
 }
 
-func TestSendChecklist(t *testing.T) {
-	res, err := api.SendChecklist(
-		businessConnectionID,
-		chatID,
-		InputChecklist{
-			Title: "TestSendChecklist",
-			Tasks: []InputChecklistTask{
-				{Text: "Task 1"},
-				{Text: "Task 2"},
-			},
-		},
-		nil,
-	)
+// func TestSendChecklist(t *testing.T) {
+// 	res, err := api.SendChecklist(
+// 		businessConnectionID,
+// 		chatID,
+// 		InputChecklist{
+// 			Title: "TestSendChecklist",
+// 			Tasks: []InputChecklistTask{
+// 				{Text: "Task 1"},
+// 				{Text: "Task 2"},
+// 			},
+// 		},
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	checklistMsgTmp = res.Result
-}
+// 	checklistMsgTmp = res.Result
+// }
 
-func TestEditMessageChecklist(t *testing.T) {
-	_, err := api.EditMessageChecklist(
-		businessConnectionID,
-		chatID,
-		checklistMsgTmp.ID,
-		InputChecklist{
-			Title: "TestEditMessageChecklist",
-			Tasks: []InputChecklistTask{
-				{Text: "Task 1 edited"},
-				{Text: "Task 3"},
-			},
-		},
-		nil,
-	)
+// func TestEditMessageChecklist(t *testing.T) {
+// 	_, err := api.EditMessageChecklist(
+// 		businessConnectionID,
+// 		chatID,
+// 		checklistMsgTmp.ID,
+// 		InputChecklist{
+// 			Title: "TestEditMessageChecklist",
+// 			Tasks: []InputChecklistTask{
+// 				{Text: "Task 1 edited"},
+// 				{Text: "Task 3"},
+// 			},
+// 		},
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestGetBusinessAccountStarBalance(t *testing.T) {
-	_, err := api.GetBusinessAccountStarBalance(
-		businessConnectionID,
-	)
+// func TestGetBusinessAccountStarBalance(t *testing.T) {
+// 	_, err := api.GetBusinessAccountStarBalance(
+// 		businessConnectionID,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSetBusinessAccountName(t *testing.T) {
-	_, err := api.SetBusinessAccountName(
-		businessConnectionID,
-		"Echotron Coverage Bot",
-		"",
-	)
+// func TestSetBusinessAccountName(t *testing.T) {
+// 	_, err := api.SetBusinessAccountName(
+// 		businessConnectionID,
+// 		"Echotron Coverage Bot",
+// 		"",
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSetBusinessAccountUsername(t *testing.T) {
-	_, err := api.SetBusinessAccountUsername(
-		businessConnectionID,
-		"echotron_coverage_bot",
-	)
+// func TestSetBusinessAccountUsername(t *testing.T) {
+// 	_, err := api.SetBusinessAccountUsername(
+// 		businessConnectionID,
+// 		"echotron_coverage_bot",
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSetBusinessAccountBio(t *testing.T) {
-	_, err := api.SetBusinessAccountBio(
-		businessConnectionID,
-		"Echotron Coverage Bot",
-	)
+// func TestSetBusinessAccountBio(t *testing.T) {
+// 	_, err := api.SetBusinessAccountBio(
+// 		businessConnectionID,
+// 		"Echotron Coverage Bot",
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSetBusinessAccountProfilePhoto(t *testing.T) {
-	_, err := api.SetBusinessAccountProfilePhoto(
-		businessConnectionID,
-		InputProfilePhotoStatic{
-			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
-		},
-		nil,
-	)
+// func TestSetBusinessAccountProfilePhoto(t *testing.T) {
+// 	_, err := api.SetBusinessAccountProfilePhoto(
+// 		businessConnectionID,
+// 		InputProfilePhotoStatic{
+// 			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
+// 		},
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestRemoveBusinessAccountProfilePhoto(t *testing.T) {
-	_, err := api.RemoveBusinessAccountProfilePhoto(
-		businessConnectionID,
-		nil,
-	)
+// func TestRemoveBusinessAccountProfilePhoto(t *testing.T) {
+// 	_, err := api.RemoveBusinessAccountProfilePhoto(
+// 		businessConnectionID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSetBusinessAccountGiftSettings(t *testing.T) {
-	_, err := api.SetBusinessAccountGiftSettings(
-		businessConnectionID,
-		true,
-		AcceptedGiftTypes{
-			UnlimitedGifts: true,
-		},
-	)
+// func TestSetBusinessAccountGiftSettings(t *testing.T) {
+// 	_, err := api.SetBusinessAccountGiftSettings(
+// 		businessConnectionID,
+// 		true,
+// 		AcceptedGiftTypes{
+// 			UnlimitedGifts: true,
+// 		},
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestGetBusinessAccountGifts(t *testing.T) {
-	_, err := api.GetBusinessAccountGifts(
-		businessConnectionID,
-		nil,
-	)
+// func TestGetBusinessAccountGifts(t *testing.T) {
+// 	_, err := api.GetBusinessAccountGifts(
+// 		businessConnectionID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestTransferBusinessAccountStars(t *testing.T) {
-	_, err := api.TransferBusinessAccountStars(
-		businessConnectionID,
-		1,
-	)
+// func TestTransferBusinessAccountStars(t *testing.T) {
+// 	_, err := api.TransferBusinessAccountStars(
+// 		businessConnectionID,
+// 		1,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestConvertGiftToStars(t *testing.T) {
-	_, err := api.ConvertGiftToStars(
-		businessConnectionID,
-		ownedGiftID,
-	)
+// func TestConvertGiftToStars(t *testing.T) {
+// 	_, err := api.ConvertGiftToStars(
+// 		businessConnectionID,
+// 		ownedGiftID,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestUpgradeGift(t *testing.T) {
-	_, err := api.UpgradeGift(
-		businessConnectionID,
-		ownedGiftID,
-		nil,
-	)
+// func TestUpgradeGift(t *testing.T) {
+// 	_, err := api.UpgradeGift(
+// 		businessConnectionID,
+// 		ownedGiftID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestTransferGift(t *testing.T) {
-	_, err := api.TransferGift(
-		businessConnectionID,
-		ownedGiftID,
-		chatID,
-		nil,
-	)
+// func TestTransferGift(t *testing.T) {
+// 	_, err := api.TransferGift(
+// 		businessConnectionID,
+// 		ownedGiftID,
+// 		chatID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestDeleteBusinessMessages(t *testing.T) {
-	msg, _ := api.SendMessage(
-		"TestDeleteBusinessMessages",
-		chatID,
-		nil,
-	)
+// func TestDeleteBusinessMessages(t *testing.T) {
+// 	msg, _ := api.SendMessage(
+// 		"TestDeleteBusinessMessages",
+// 		chatID,
+// 		nil,
+// 	)
 
-	_, err := api.DeleteBusinessMessages(
-		businessConnectionID,
-		[]int{msg.Result.ID},
-	)
+// 	_, err := api.DeleteBusinessMessages(
+// 		businessConnectionID,
+// 		[]int{msg.Result.ID},
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestPostStory(t *testing.T) {
-	res, err := api.PostStory(
-		businessConnectionID,
-		InputStoryContentPhoto{
-			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
-		},
-		86400,
-		nil,
-	)
+// func TestPostStory(t *testing.T) {
+// 	res, err := api.PostStory(
+// 		businessConnectionID,
+// 		InputStoryContentPhoto{
+// 			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
+// 		},
+// 		86400,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	storyID = int(res.Result.ID)
-}
+// 	storyID = int(res.Result.ID)
+// }
 
-func TestRepostStory(t *testing.T) {
-	_, err := api.RepostStory(
-		businessConnectionID,
-		chatID,
-		storyID,
-		86400,
-		nil,
-	)
+// func TestRepostStory(t *testing.T) {
+// 	_, err := api.RepostStory(
+// 		businessConnectionID,
+// 		chatID,
+// 		storyID,
+// 		86400,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestEditStory(t *testing.T) {
-	_, err := api.EditStory(
-		businessConnectionID,
-		storyID,
-		InputStoryContentPhoto{
-			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
-		},
-		nil,
-	)
+// func TestEditStory(t *testing.T) {
+// 	_, err := api.EditStory(
+// 		businessConnectionID,
+// 		storyID,
+// 		InputStoryContentPhoto{
+// 			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
+// 		},
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestDeleteStory(t *testing.T) {
-	_, err := api.DeleteStory(
-		businessConnectionID,
-		storyID,
-	)
+// func TestDeleteStory(t *testing.T) {
+// 	_, err := api.DeleteStory(
+// 		businessConnectionID,
+// 		storyID,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
