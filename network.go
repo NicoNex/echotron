@@ -46,9 +46,13 @@ type lclient struct {
 var clients smap[string, *lclient]
 
 func loadClient(url string) *lclient {
-	c, ok := clients.load(url)
-	if !ok {
-		c = &lclient{
+	if lc, ok := clients.load(url); ok {
+		return lc
+	}
+
+	lc, _ := clients.loadOrStore(
+		url,
+		&lclient{
 			Client:  new(http.Client),
 			RWMutex: new(sync.RWMutex),
 			cl:      make(map[string]*rate.Limiter),
@@ -56,10 +60,9 @@ func loadClient(url string) *lclient {
 			climiter: func() *rate.Limiter {
 				return rate.NewLimiter(rate.Every(time.Minute/20), 20)
 			},
-		}
-		clients.store(url, c)
-	}
-	return c
+		},
+	)
+	return lc
 }
 
 // SetGlobalRequestLimit sets the global rate limit for requests to the Telegram API.
