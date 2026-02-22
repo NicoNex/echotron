@@ -46,10 +46,14 @@ type lclient struct {
 var clients smap[string, *lclient]
 
 func loadClient(url string) *lclient {
+	// Fast path: client already exists for this base URL.
 	if lc, ok := clients.load(url); ok {
 		return lc
 	}
 
+	// Slow path: first access, create a new client and store it atomically.
+	// If two goroutines race here, loadOrStore guarantees only one wins and
+	// both get back the same *lclient.
 	lc, _ := clients.loadOrStore(
 		url,
 		&lclient{
@@ -89,18 +93,23 @@ func (lc *lclient) SetChatRequestLimit(interval time.Duration, burstSize int) {
 }
 
 func (c lclient) wait(chatID string) error {
-	c.RLock()
-	defer c.RUnlock()
-
 	ctx := context.Background()
 	// If the chatID is empty, it's a general API call like GetUpdates, GetMe
 	// and similar, so skip the per-chat request limit wait.
 	if chatID != "" {
-		// If no limiter exists for a chat, create one.
+		c.RLock()
 		l, ok := c.cl[chatID]
+		c.RUnlock()
+
 		if !ok {
-			l = c.climiter()
-			c.cl[chatID] = l
+			c.Lock()
+			// Re-check after acquiring the write lock to avoid overwriting
+			// a limiter created by another goroutine in the meantime.
+			if l, ok = c.cl[chatID]; !ok {
+				l = c.climiter()
+				c.cl[chatID] = l
+			}
+			c.Unlock()
 		}
 
 		// Make sure to respect the single chat limit of requests.
