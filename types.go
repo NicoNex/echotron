@@ -2404,7 +2404,7 @@ func (p profilePhotoEnvelope) MarshalJSON() ([]byte, error) {
 		})
 
 	case InputProfilePhotoAnimated:
-		tmp := struct {
+		return json.Marshal(struct {
 			Type               string  `json:"type"`
 			Animation          string  `json:"animation"`
 			MainFrameTimestamp float64 `json:"main_frame_timestamp,omitempty"`
@@ -2412,9 +2412,7 @@ func (p profilePhotoEnvelope) MarshalJSON() ([]byte, error) {
 			Type:               "animated",
 			Animation:          p.ref,
 			MainFrameTimestamp: o.MainFrameTimestamp,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	default:
 		return []byte("null"), nil
