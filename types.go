@@ -2334,19 +2334,32 @@ type storyContentEnvelope struct {
 func (s storyContentEnvelope) MarshalJSON() ([]byte, error) {
 	switch o := s.content.(type) {
 	case InputStoryContentPhoto:
-		return json.Marshal(struct {
+		tmp := struct {
 			Type  string `json:"type"`
 			Photo string `json:"photo"`
-		}{"photo", s.ref})
+		}{
+			Type:  "photo",
+			Photo: s.ref,
+		}
+
+		return json.Marshal(tmp)
 
 	case InputStoryContentVideo:
-		return json.Marshal(struct {
+		tmp := struct {
 			Type                string  `json:"type"`
 			Video               string  `json:"video"`
 			Duration            float64 `json:"duration,omitempty"`
 			CoverFrameTimestamp float64 `json:"cover_frame_timestamp,omitempty"`
 			IsAnimation         bool    `json:"is_animation,omitempty"`
-		}{"video", s.ref, o.Duration, o.CoverFrameTimestamp, o.IsAnimation})
+		}{
+			Type:                "video",
+			Video:               s.ref,
+			Duration:            o.Duration,
+			CoverFrameTimestamp: o.CoverFrameTimestamp,
+			IsAnimation:         o.IsAnimation,
+		}
+
+		return json.Marshal(tmp)
 	}
 
 	return nil, fmt.Errorf("unsupported InputStoryContent type")
@@ -2389,18 +2402,28 @@ type profilePhotoEnvelope struct {
 func (p profilePhotoEnvelope) MarshalJSON() ([]byte, error) {
 	switch o := p.content.(type) {
 	case InputProfilePhotoStatic:
-		_ = o
-		return json.Marshal(struct {
+		tmp := struct {
 			Type  string `json:"type"`
 			Photo string `json:"photo"`
-		}{"static", p.ref})
+		}{
+			Type:  "static",
+			Photo: p.ref,
+		}
+
+		return json.Marshal(tmp)
 
 	case InputProfilePhotoAnimated:
-		return json.Marshal(struct {
+		tmp := struct {
 			Type               string  `json:"type"`
 			Animation          string  `json:"animation"`
 			MainFrameTimestamp float64 `json:"main_frame_timestamp,omitempty"`
-		}{"animated", p.ref, o.MainFrameTimestamp})
+		}{
+			Type: "animated",
+			Animation: p.ref,
+			MainFrameTimestamp: o.MainFrameTimestamp
+		}
+
+		return json.Marshal(tmp)
 	}
 
 	return nil, fmt.Errorf("unsupported InputProfilePhoto type")

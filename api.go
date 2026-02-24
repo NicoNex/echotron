@@ -36,12 +36,20 @@ type API struct {
 func NewAPI(token string) API {
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/", token)
 
-	return API{token: token, base: url, lclient: loadClient(url)}
+	return API{
+		token:   token,
+		base:    url,
+		lclient: loadClient(url),
+	}
 }
 
 // CustomAPI returns an API object with a custom base URL from input.
 func CustomAPI(url, token string) API {
-	return API{token: token, base: url, lclient: loadClient(url)}
+	return API{
+		token:   token,
+		base:    url,
+		lclient: loadClient(url),
+	}
 }
 
 // NewLocalAPI is like NewAPI but allows to use a local API server.
