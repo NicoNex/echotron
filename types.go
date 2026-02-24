@@ -18,10 +18,7 @@
 
 package echotron
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "encoding/json"
 
 // Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
@@ -1212,11 +1209,9 @@ type mediaEnvelope struct {
 
 // MarshalJSON is a custom marshaler for the mediaEnvelope struct.
 func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
-	var tmp any
-
 	switch o := i.InputMedia.(type) {
 	case InputMediaPhoto:
-		tmp = struct {
+		tmp := struct {
 			Media string `json:"media"`
 			InputMediaPhoto
 		}{
@@ -1224,8 +1219,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Media:           i.media,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputMediaVideo:
-		tmp = struct {
+		tmp := struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaVideo
@@ -1235,8 +1232,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Thumbnail:       i.thumbnail,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputMediaAnimation:
-		tmp = struct {
+		tmp := struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAnimation
@@ -1246,8 +1245,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Thumbnail:           i.thumbnail,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputMediaAudio:
-		tmp = struct {
+		tmp := struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAudio
@@ -1257,8 +1258,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Thumbnail:       i.thumbnail,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputMediaDocument:
-		tmp = struct {
+		tmp := struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaDocument
@@ -1268,8 +1271,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Thumbnail:          i.thumbnail,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputPaidMediaPhoto:
-		tmp = struct {
+		tmp := struct {
 			Media string `json:"media"`
 			InputPaidMediaPhoto
 		}{
@@ -1277,8 +1282,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Media:               i.media,
 		}
 
+		return json.Marshal(tmp)
+
 	case InputPaidMediaVideo:
-		tmp = struct {
+		tmp := struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputPaidMediaVideo
@@ -1287,9 +1294,12 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			Media:               i.media,
 			Thumbnail:           i.thumbnail,
 		}
-	}
 
-	return json.Marshal(tmp)
+		return json.Marshal(tmp)
+
+	default:
+		return []byte("null"), nil
+	}
 }
 
 // InputMediaPhoto represents a photo to be sent.
@@ -2360,9 +2370,10 @@ func (s storyContentEnvelope) MarshalJSON() ([]byte, error) {
 		}
 
 		return json.Marshal(tmp)
-	}
 
-	return nil, fmt.Errorf("unsupported InputStoryContent type")
+	default:
+		return []byte("null"), nil
+	}
 }
 
 // InputProfilePhoto describes a profile photo to set.
@@ -2418,13 +2429,14 @@ func (p profilePhotoEnvelope) MarshalJSON() ([]byte, error) {
 			Animation          string  `json:"animation"`
 			MainFrameTimestamp float64 `json:"main_frame_timestamp,omitempty"`
 		}{
-			Type: "animated",
-			Animation: p.ref,
-			MainFrameTimestamp: o.MainFrameTimestamp
+			Type:               "animated",
+			Animation:          p.ref,
+			MainFrameTimestamp: o.MainFrameTimestamp,
 		}
 
 		return json.Marshal(tmp)
-	}
 
-	return nil, fmt.Errorf("unsupported InputProfilePhoto type")
+	default:
+		return []byte("null"), nil
+	}
 }
