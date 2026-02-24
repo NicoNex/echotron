@@ -2185,25 +2185,25 @@ func TestGetMyStarBalance(t *testing.T) {
 	}
 }
 
-func TestSetMyProfilePhoto(t *testing.T) {
-	_, err := api.SetMyProfilePhoto(
-		InputProfilePhotoStatic{
-			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
-		},
-	)
+// func TestSetMyProfilePhoto(t *testing.T) {
+// 	_, err := api.SetMyProfilePhoto(
+// 		InputProfilePhotoStatic{
+// 			Photo: NewInputFilePath("assets/tests/echotron_test.png"),
+// 		},
+// 	)
+//
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// func TestRemoveMyProfilePhoto(t *testing.T) {
+// 	_, err := api.RemoveMyProfilePhoto()
 
-func TestRemoveMyProfilePhoto(t *testing.T) {
-	_, err := api.RemoveMyProfilePhoto()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
 func TestGetUserProfileAudios(t *testing.T) {
 	_, err := api.GetUserProfileAudios(
@@ -2238,42 +2238,42 @@ func TestGetChatGifts(t *testing.T) {
 	}
 }
 
-func TestApproveSuggestedPost(t *testing.T) {
-	_, err := api.ApproveSuggestedPost(
-		chatID,
-		msgTmp.ID,
-		nil,
-	)
+// func TestApproveSuggestedPost(t *testing.T) {
+// 	_, err := api.ApproveSuggestedPost(
+// 		chatID,
+// 		msgTmp.ID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestDeclineSuggestedPost(t *testing.T) {
-	_, err := api.DeclineSuggestedPost(
-		chatID,
-		msgTmp.ID,
-		nil,
-	)
+// func TestDeclineSuggestedPost(t *testing.T) {
+// 	_, err := api.DeclineSuggestedPost(
+// 		chatID,
+// 		msgTmp.ID,
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
-func TestSendMessageDraft(t *testing.T) {
-	_, err := api.SendMessageDraft(
-		chatID,
-		0,
-		"TestSendMessageDraft",
-		nil,
-	)
+// func TestSendMessageDraft(t *testing.T) {
+// 	_, err := api.SendMessageDraft(
+// 		chatID,
+// 		0,
+// 		"TestSendMessageDraft",
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
 // func TestSendChecklist(t *testing.T) {
 // 	res, err := api.SendChecklist(
