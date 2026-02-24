@@ -151,6 +151,56 @@ func joinURL(base, endpoint string, vals url.Values) (addr string, err error) {
 	return
 }
 
+func processProfilePhoto(photo InputProfilePhoto) (env profilePhotoEnvelope, cnt []content, err error) {
+	env.content = photo
+	file := photo.profilePhotoFile()
+
+	switch {
+	case file.id != "":
+		env.ref = file.id
+
+	case file.url != "":
+		env.ref = file.url
+
+	case file.path != "" && len(file.content) == 0:
+		if file.content, file.path, err = readFile(file); err != nil {
+			return
+		}
+		fallthrough
+
+	case file.path != "" && len(file.content) > 0:
+		cnt = append(cnt, content{file.path, file.path, file.content})
+		env.ref = fmt.Sprintf("attach://%s", file.path)
+	}
+
+	return
+}
+
+func processStoryContent(sc InputStoryContent) (env storyContentEnvelope, cnt []content, err error) {
+	env.content = sc
+	file := sc.storyContentFile()
+
+	switch {
+	case file.id != "":
+		env.ref = file.id
+
+	case file.url != "":
+		env.ref = file.url
+
+	case file.path != "" && len(file.content) == 0:
+		if file.content, file.path, err = readFile(file); err != nil {
+			return
+		}
+		fallthrough
+
+	case file.path != "" && len(file.content) > 0:
+		cnt = append(cnt, content{file.path, file.path, file.content})
+		env.ref = fmt.Sprintf("attach://%s", file.path)
+	}
+
+	return
+}
+
 func itoa(i int64) string {
 	return strconv.FormatInt(i, 10)
 }

@@ -587,7 +587,7 @@ func (a API) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult
 	jsn, _ := json.Marshal(results)
 	vals.Set("inline_query_id", inlineQueryID)
 	vals.Set("results", string(jsn))
-	return res, client.get(a.base, "answerInlineQuery", addValues(vals, opts), &res)
+	return res, a.lclient.get(a.base, "answerInlineQuery", addValues(vals, opts), &res)
 }
 
 // SavePreparedInlineMessage stores a message that can be sent by a user of a Mini App.
@@ -597,5 +597,5 @@ func (a API) SavePreparedInlineMessage(userID int64, result InlineQueryResult, o
 	jsn, _ := json.Marshal(result)
 	vals.Set("user_id", itoa(userID))
 	vals.Set("result", string(jsn))
-	return res, client.get(a.base, "savePreparedInlineMessage", addValues(vals, opts), &res)
+	return res, a.lclient.get(a.base, "savePreparedInlineMessage", addValues(vals, opts), &res)
 }

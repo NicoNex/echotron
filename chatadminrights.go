@@ -20,21 +20,22 @@ package echotron
 
 // ChatAdministratorRights represents the rights of an administrator in a chat.
 type ChatAdministratorRights struct {
-	IsAnonymous         bool `json:"is_anonymous"`
-	CanManageChat       bool `json:"can_manage_chat"`
-	CanDeleteMessages   bool `json:"can_delete_messages"`
-	CanManageVideoChats bool `json:"can_manage_video_chats"`
-	CanRestrictMembers  bool `json:"can_restrict_members"`
-	CanPromoteMembers   bool `json:"can_promote_members"`
-	CanChangeInfo       bool `json:"can_change_info"`
-	CanInviteUsers      bool `json:"can_invite_users"`
-	CanPostStories      bool `json:"can_post_stories"`
-	CanEditStories      bool `json:"can_edit_stories"`
-	CanDeleteStories    bool `json:"can_delete_stories"`
-	CanPostMessages     bool `json:"can_post_messages,omitempty"`
-	CanEditMessages     bool `json:"can_edit_messages,omitempty"`
-	CanPinMessages      bool `json:"can_pin_messages,omitempty"`
-	CanManageTopics     bool `json:"can_manage_topics,omitempty"`
+	IsAnonymous             bool `json:"is_anonymous"`
+	CanManageChat           bool `json:"can_manage_chat"`
+	CanDeleteMessages       bool `json:"can_delete_messages"`
+	CanManageVideoChats     bool `json:"can_manage_video_chats"`
+	CanRestrictMembers      bool `json:"can_restrict_members"`
+	CanPromoteMembers       bool `json:"can_promote_members"`
+	CanChangeInfo           bool `json:"can_change_info"`
+	CanInviteUsers          bool `json:"can_invite_users"`
+	CanPostStories          bool `json:"can_post_stories"`
+	CanEditStories          bool `json:"can_edit_stories"`
+	CanDeleteStories        bool `json:"can_delete_stories"`
+	CanPostMessages         bool `json:"can_post_messages,omitempty"`
+	CanEditMessages         bool `json:"can_edit_messages,omitempty"`
+	CanPinMessages          bool `json:"can_pin_messages,omitempty"`
+	CanManageTopics         bool `json:"can_manage_topics,omitempty"`
+	CanManageDirectMessages bool `json:"can_manage_direct_messages,omitempty"`
 }
 
 // SetMyDefaultAdministratorRightsOptions contains the optional parameters used by
@@ -55,10 +56,10 @@ type GetMyDefaultAdministratorRightsOptions struct {
 // These rights will be suggested to users, but they are are free to modify the list
 // before adding the bot.
 func (a API) SetMyDefaultAdministratorRights(opts *SetMyDefaultAdministratorRightsOptions) (res APIResponseBool, err error) {
-	return res, client.get(a.base, "setMyDefaultAdministratorRights", urlValues(opts), &res)
+	return res, a.lclient.get(a.base, "setMyDefaultAdministratorRights", urlValues(opts), &res)
 }
 
 // GetMyDefaultAdministratorRights is used to get the current default administrator rights of the bot.
 func (a API) GetMyDefaultAdministratorRights(opts *GetMyDefaultAdministratorRightsOptions) (res APIResponseChatAdministratorRights, err error) {
-	return res, client.get(a.base, "getMyDefaultAdministratorRights", urlValues(opts), &res)
+	return res, a.lclient.get(a.base, "getMyDefaultAdministratorRights", urlValues(opts), &res)
 }
