@@ -1211,18 +1211,16 @@ type mediaEnvelope struct {
 func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 	switch o := i.InputMedia.(type) {
 	case InputMediaPhoto:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media string `json:"media"`
 			InputMediaPhoto
 		}{
 			InputMediaPhoto: o,
 			Media:           i.media,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputMediaVideo:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaVideo
@@ -1230,12 +1228,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			InputMediaVideo: o,
 			Media:           i.media,
 			Thumbnail:       i.thumbnail,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputMediaAnimation:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAnimation
@@ -1243,12 +1239,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			InputMediaAnimation: o,
 			Media:               i.media,
 			Thumbnail:           i.thumbnail,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputMediaAudio:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaAudio
@@ -1256,12 +1250,10 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			InputMediaAudio: o,
 			Media:           i.media,
 			Thumbnail:       i.thumbnail,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputMediaDocument:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputMediaDocument
@@ -1269,23 +1261,19 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			InputMediaDocument: o,
 			Media:              i.media,
 			Thumbnail:          i.thumbnail,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputPaidMediaPhoto:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media string `json:"media"`
 			InputPaidMediaPhoto
 		}{
 			InputPaidMediaPhoto: o,
 			Media:               i.media,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputPaidMediaVideo:
-		tmp := struct {
+		return json.Marshal(struct {
 			Media     string `json:"media"`
 			Thumbnail string `json:"thumbnail,omitempty"`
 			InputPaidMediaVideo
@@ -1293,9 +1281,7 @@ func (i mediaEnvelope) MarshalJSON() (cnt []byte, err error) {
 			InputPaidMediaVideo: o,
 			Media:               i.media,
 			Thumbnail:           i.thumbnail,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	default:
 		return []byte("null"), nil
@@ -2344,18 +2330,16 @@ type storyContentEnvelope struct {
 func (s storyContentEnvelope) MarshalJSON() ([]byte, error) {
 	switch o := s.content.(type) {
 	case InputStoryContentPhoto:
-		tmp := struct {
+		return json.Marshal(struct {
 			Type  string `json:"type"`
 			Photo string `json:"photo"`
 		}{
 			Type:  "photo",
 			Photo: s.ref,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputStoryContentVideo:
-		tmp := struct {
+		return json.Marshal(struct {
 			Type                string  `json:"type"`
 			Video               string  `json:"video"`
 			Duration            float64 `json:"duration,omitempty"`
@@ -2367,9 +2351,7 @@ func (s storyContentEnvelope) MarshalJSON() ([]byte, error) {
 			Duration:            o.Duration,
 			CoverFrameTimestamp: o.CoverFrameTimestamp,
 			IsAnimation:         o.IsAnimation,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	default:
 		return []byte("null"), nil
@@ -2413,15 +2395,13 @@ type profilePhotoEnvelope struct {
 func (p profilePhotoEnvelope) MarshalJSON() ([]byte, error) {
 	switch o := p.content.(type) {
 	case InputProfilePhotoStatic:
-		tmp := struct {
+		return json.Marshal(struct {
 			Type  string `json:"type"`
 			Photo string `json:"photo"`
 		}{
 			Type:  "static",
 			Photo: p.ref,
-		}
-
-		return json.Marshal(tmp)
+		})
 
 	case InputProfilePhotoAnimated:
 		tmp := struct {

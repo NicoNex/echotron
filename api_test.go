@@ -10,33 +10,33 @@ import (
 )
 
 var (
-	msgTmp              *Message
-	animationTmp        *Message
-	pollTmp             *Message
-	locationTmp         *Message
-	inviteTmp           *ChatInviteLink
-	chatSubInviteTmp    *ChatInviteLink
-	checklistMsgTmp     *Message
+	msgTmp           *Message
+	animationTmp     *Message
+	pollTmp          *Message
+	locationTmp      *Message
+	inviteTmp        *ChatInviteLink
+	chatSubInviteTmp *ChatInviteLink
+	// checklistMsgTmp     *Message
 	filePath            string
 	currentBotDesc      string
 	currentBotShortDesc string
 	msgThreadID         int64
-	storyID             int
-	currentBotName      = "bot name unset"
-	api                 = NewAPI(os.Getenv("TELEGRAM_TOKEN"))
-	chatID              = int64(14870908)
-	banUserID           = int64(41876271)
-	channelID           = int64(-1001563144067)
-	groupID             = int64(-1001265771214)
-	pinMsgID            = int(11)
-	photoID             = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
-	animationID         = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
-	audioID             = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
-	documentID          = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
-	paidVideoID         = "BAACAgQAAx0EXSuvgwADGGa7vNTyDxfQiyICxWhnLUfhJphkAAIvFAACHozgUVOTwR-Bak97NQQ"
-	videoID             = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
-	videoNoteID         = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
-	voiceID             = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
+	// storyID             int
+	currentBotName = "bot name unset"
+	api            = NewAPI(os.Getenv("TELEGRAM_TOKEN"))
+	chatID         = int64(14870908)
+	banUserID      = int64(41876271)
+	channelID      = int64(-1001563144067)
+	groupID        = int64(-1001265771214)
+	pinMsgID       = int(11)
+	photoID        = "AgACAgQAAxkDAAMrYFtODxV2LL6-kR_6qSbG9n8dIOIAAti1MRug29lSkNq_9o8PC5uMd7EnXQADAQADAgADbQADeooGAAEeBA"
+	animationID    = "CgACAgQAAxkDAAICQGBcoGs7GFJ-tR5AkbRRLFTbvdxXAAJ1CAAC1zHgUu-ciZqanytIHgQ"
+	audioID        = "CQACAgQAAxkDAAIBCmBbamz_DqKk2GmrzmoM0SrzRN6wAAK9CAACoNvZUgPyk-87OM_YHgQ"
+	documentID     = "BQACAgQAAxkDAANmYFtSXcF5kTtwgHeqVUngyuuJMx4AAnQIAAKg29lSb4HP4x-qMT8eBA"
+	paidVideoID    = "BAACAgQAAx0EXSuvgwADGGa7vNTyDxfQiyICxWhnLUfhJphkAAIvFAACHozgUVOTwR-Bak97NQQ"
+	videoID        = "BAACAgQAAxkDAANxYFtaxF1kfc7nVY_Mtfba3u5dMooAAoYIAAKg29lSpwABJrcveXZlHgQ"
+	videoNoteID    = "DQACAgQAAxkDAAIBumBbfT5jPC_cvyEcr0_8DpmFDz2PAALVCgACOX7hUjGZ_MmnZVVeHgQ"
+	voiceID        = "AwACAgQAAxkDAAPXYFtmoFriwJFVGDgPPpfUBljgnYAAAq8IAAKg29lStEWfrNMMAxgeBA"
 	// businessConnectionID = ""
 	// ownedGiftID          = ""
 	photoURL     = "https://github.com/NicoNex/echotron/raw/master/assets/tests/echotron_test.png"
@@ -192,7 +192,7 @@ func TestSetMessageReaction(t *testing.T) {
 		msgTmp.ID,
 		&MessageReactionOptions{
 			Reaction: []ReactionType{
-				ReactionType{
+				{
 					Type:  "emoji",
 					Emoji: "👍",
 				},
