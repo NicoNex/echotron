@@ -436,28 +436,28 @@ type DocumentOptions struct {
 // VideoOptions contains the optional parameters used by the SendVideo method.
 // TODO: handle the cover correctly.
 type VideoOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
 	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
+	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
 	BusinessConnectionID    string                   `query:"business_connection_id"`
 	Caption                 string                   `query:"caption"`
 	MessageEffectID         string                   `query:"message_effect_id"`
 	ParseMode               ParseMode                `query:"parse_mode"`
 	Thumbnail               InputFile
+	Cover                   InputFile
 	CaptionEntities         []MessageEntity `query:"caption_entities"`
 	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
 	MessageThreadID         int             `query:"message_thread_id"`
 	Duration                int             `query:"duration"`
 	Width                   int             `query:"width"`
 	Height                  int             `query:"height"`
+	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
+	StartTimestamp          int             `query:"start_timestamp"`
 	HasSpoiler              bool            `query:"has_spoiler"`
 	SupportsStreaming       bool            `query:"supports_streaming"`
 	DisableNotification     bool            `query:"disable_notification"`
 	ProtectContent          bool            `query:"protect_content"`
 	ShowCaptionAboveMedia   bool            `query:"show_caption_above_media"`
 	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
-	Cover                   InputFile
-	StartTimestamp          int `query:"start_timestamp"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
@@ -975,20 +975,20 @@ type EditMessageChecklistOptions struct {
 
 // PostStoryOptions contains the optional parameters used by the PostStory method.
 type PostStoryOptions struct {
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Areas           []StoryArea     `query:"areas"`
 	Caption         string          `query:"caption"`
 	ParseMode       ParseMode       `query:"parse_mode"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+	Areas           []StoryArea     `query:"areas"`
 	PostToChatPage  bool            `query:"post_to_chat_page"`
 	ProtectContent  bool            `query:"protect_content"`
 }
 
 // EditStoryOptions contains the optional parameters used by the EditStory method.
 type EditStoryOptions struct {
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Areas           []StoryArea     `query:"areas"`
 	Caption         string          `query:"caption"`
 	ParseMode       ParseMode       `query:"parse_mode"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+	Areas           []StoryArea     `query:"areas"`
 }
 
 // SetBusinessAccountProfilePhotoOptions contains the optional parameters used by the SetBusinessAccountProfilePhoto method.

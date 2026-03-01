@@ -38,11 +38,11 @@ import (
 // lclient is an HTTP client with built-in dual-level rate limiting.
 // One instance is shared across all API objects for the same bot token.
 type lclient struct {
-	mu       sync.RWMutex
-	cl       map[string]*rate.Limiter // per-chat rate limiter, keyed by chat_id
-	gl       *rate.Limiter            // global rate limiter across all chats
-	climiter func() *rate.Limiter     // factory for new per-chat limiters
+	cl       map[string]*rate.Limiter
+	gl       *rate.Limiter
+	climiter func() *rate.Limiter
 	http     *http.Client
+	mu       sync.RWMutex
 }
 
 // clients caches one lclient per base URL (i.e. one per bot token).
