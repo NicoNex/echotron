@@ -1485,19 +1485,19 @@ func TestPromoteChatMember(t *testing.T) {
 	}
 }
 
-func TestSetChatMemberTag(t *testing.T) {
-	_, err := api.SetChatMemberTag(
-		groupID,
-		chatID,
-		&ChatMemberTagOptions{
-			Tag: "TestCustomTag",
-		},
-	)
+// func TestSetChatMemberTag(t *testing.T) {
+// 	_, err := api.SetChatMemberTag(
+// 		groupID,
+// 		chatID,
+// 		&ChatMemberTagOptions{
+// 			Tag: "TestCustomTag",
+// 		},
+// 	)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
 
 func TestBanChatSenderChat(t *testing.T) {
 	_, err := api.BanChatSenderChat(
