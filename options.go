@@ -927,11 +927,9 @@ type GetChatGiftsOptions struct {
 
 // SendMessageDraftOptions contains the optional parameters used by the SendMessageDraft method.
 type SendMessageDraftOptions struct {
-	ReplyParameters *ReplyParameters `query:"reply_parameters"`
-	ReplyMarkup     ReplyMarkup      `query:"reply_markup"`
-	ParseMode       ParseMode        `query:"parse_mode"`
-	Entities        []MessageEntity  `query:"entities"`
-	MessageThreadID int              `query:"message_thread_id"`
+	ParseMode       ParseMode       `query:"parse_mode"`
+	Entities        []MessageEntity `query:"entities"`
+	MessageThreadID int             `query:"message_thread_id"`
 }
 
 // GetBusinessAccountGiftsOptions contains the optional parameters used by the GetBusinessAccountGifts method.
