@@ -27,9 +27,9 @@ import (
 
 // API is the object that contains all the functions that wrap those of the Telegram Bot API.
 type API struct {
+	*lclient
 	token string
 	base  string
-	*lclient
 }
 
 // NewAPI returns a new API object.
@@ -510,6 +510,16 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 	vals.Set("user_id", itoa(userID))
 	vals.Set("custom_title", customTitle)
 	return res, a.lclient.get(a.base, "setChatAdministratorCustomTitle", vals, &res)
+}
+
+// SetChatMemberTag is used to set a tag for a regular member in a group or a supergroup.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_tags administrator right.
+func (a API) SetChatMemberTag(chatID, userID int64, opts *ChatMemberTagOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
+	return res, a.lclient.get(a.base, "setChatMemberTag", vals, &res)
 }
 
 // BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.

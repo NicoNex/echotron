@@ -23,8 +23,8 @@ import "encoding/json"
 // Update represents an incoming update.
 // At most one of the optional parameters can be present in any given update.
 type Update struct {
-	ChatJoinRequest         *ChatJoinRequest             `json:"chat_join_request,omitempty"`
-	ChatBoost               *ChatBoostUpdated            `json:"chat_boost,omitempty"`
+	MessageReactionCount    *MessageReactionCountUpdated `json:"message_reaction_count,omitempty"`
+	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
 	RemovedChatBoost        *ChatBoostRemoved            `json:"removed_chat_boost,omitempty"`
 	Message                 *Message                     `json:"message,omitempty"`
 	EditedMessage           *Message                     `json:"edited_message,omitempty"`
@@ -35,17 +35,18 @@ type Update struct {
 	EditedBusinessMessage   *Message                     `json:"edited_business_message,omitempty"`
 	DeletedBusinessMessages *BusinessMessagesDeleted     `json:"deleted_business_messages,omitempty"`
 	MessageReaction         *MessageReactionUpdated      `json:"message_reaction,omitempty"`
-	MessageReactionCount    *MessageReactionCountUpdated `json:"message_reaction_count,omitempty"`
-	InlineQuery             *InlineQuery                 `json:"inline_query,omitempty"`
+	ChatBoost               *ChatBoostUpdated            `json:"chat_boost,omitempty"`
 	ChosenInlineResult      *ChosenInlineResult          `json:"chosen_inline_result,omitempty"`
+	ChatJoinRequest         *ChatJoinRequest             `json:"chat_join_request,omitempty"`
 	CallbackQuery           *CallbackQuery               `json:"callback_query,omitempty"`
 	ShippingQuery           *ShippingQuery               `json:"shipping_query,omitempty"`
 	PreCheckoutQuery        *PreCheckoutQuery            `json:"pre_checkout_query,omitempty"`
 	Poll                    *Poll                        `json:"poll,omitempty"`
 	PollAnswer              *PollAnswer                  `json:"poll_answer,omitempty"`
 	MyChatMember            *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
-	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
+	InlineQuery             *InlineQuery                 `json:"inline_query,omitempty"`
 	PurchasedPaidMedia      *PaidMediaPurchased          `json:"purchased_paid_media,omitempty"`
+	SenderTag               string                       `json:"sender_tag,omitempty"`
 	ID                      int                          `json:"update_id"`
 }
 
@@ -607,8 +608,11 @@ type ChatFullInfo struct {
 	BusinessOpeningHours               *BusinessOpeningHours `json:"business_opening_hours,omitempty"`
 	PersonalChat                       *Chat                 `json:"personal_chat,omitempty"`
 	Birthdate                          *Birthdate            `json:"birthdate,omitempty"`
-	BackgroundCustomEmojiID            string                `json:"background_custom_emoji_id,omitempty"`
-	ProfileBackgroundCustomEmojiID     string                `json:"profile_background_custom_emoji_id,omitempty"`
+	ParentChat                         *Chat                 `json:"parent_chat,omitempty"`
+	Rating                             *UserRating           `json:"rating,omitempty"`
+	UniqueGiftColors                   *UniqueGiftColors     `json:"unique_gift_colors,omitempty"`
+	FirstProfileAudio                  *Audio                `json:"first_profile_audio,omitempty"`
+	EmojiStatusCustomEmojiID           string                `json:"emoji_status_custom_emoji_id,omitempty"`
 	Bio                                string                `json:"bio,omitempty"`
 	Username                           string                `json:"username,omitempty"`
 	Title                              string                `json:"title,omitempty"`
@@ -617,36 +621,33 @@ type ChatFullInfo struct {
 	FirstName                          string                `json:"first_name,omitempty"`
 	LastName                           string                `json:"last_name,omitempty"`
 	InviteLink                         string                `json:"invite_link,omitempty"`
-	EmojiStatusCustomEmojiID           string                `json:"emoji_status_custom_emoji_id,omitempty"`
+	ProfileBackgroundCustomEmojiID     string                `json:"profile_background_custom_emoji_id,omitempty"`
 	Type                               string                `json:"type"`
 	CustomEmojiStickerSetName          string                `json:"custom_emoji_sticker_set_name,omitempty"`
-	AccentColorID                      int                   `json:"accent_color_id,omitempty"`
-	MaxReactionCount                   int                   `json:"max_reaction_count,omitempty"`
+	BackgroundCustomEmojiID            string                `json:"background_custom_emoji_id,omitempty"`
+	SlowModeDelay                      int                   `json:"slow_mode_delay,omitempty"`
 	ProfileAccentColorID               int                   `json:"profile_accent_color_id,omitempty"`
 	EmojiStatusExpirationDate          int                   `json:"emoji_status_expiration_date,omitempty"`
 	MessageAutoDeleteTime              int                   `json:"message_auto_delete_time,omitempty"`
-	SlowModeDelay                      int                   `json:"slow_mode_delay,omitempty"`
+	MaxReactionCount                   int                   `json:"max_reaction_count,omitempty"`
 	UnrestrictBoostCount               int                   `json:"unrestrict_boost_count,omitempty"`
 	LinkedChatID                       int64                 `json:"linked_chat_id,omitempty"`
 	ID                                 int64                 `json:"id"`
-	IsForum                            bool                  `json:"is_forum,omitempty"`
+	PaidMessageStarCount               int                   `json:"paid_message_star_count,omitempty"`
+	AccentColorID                      int                   `json:"accent_color_id,omitempty"`
+	AcceptedGiftTypes                  AcceptedGiftTypes     `json:"accepted_gift_types,omitempty"`
 	CanSendPaidMedia                   bool                  `json:"can_send_paid_media,omitempty"`
 	HasAggressiveAntiSpamEnabled       bool                  `json:"has_aggressive_anti_spam_enabled,omitempty"`
 	HasHiddenMembers                   bool                  `json:"has_hidden_members,omitempty"`
 	HasProtectedContent                bool                  `json:"has_protected_content,omitempty"`
 	HasVisibleHistory                  bool                  `json:"has_visible_history,omitempty"`
 	HasPrivateForwards                 bool                  `json:"has_private_forwards,omitempty"`
+	IsForum                            bool                  `json:"is_forum,omitempty"`
 	CanSetStickerSet                   bool                  `json:"can_set_sticker_set,omitempty"`
 	JoinToSendMessages                 bool                  `json:"join_to_send_messages,omitempty"`
 	JoinByRequest                      bool                  `json:"join_by_request,omitempty"`
 	HasRestrictedVoiceAndVideoMessages bool                  `json:"has_restricted_voice_and_video_messages,omitempty"`
 	IsDirectMessages                   bool                  `json:"is_direct_messages,omitempty"`
-	PaidMessageStarCount               int                   `json:"paid_message_star_count,omitempty"`
-	AcceptedGiftTypes                  AcceptedGiftTypes     `json:"accepted_gift_types,omitempty"`
-	ParentChat                         *Chat                 `json:"parent_chat,omitempty"`
-	Rating                             *UserRating           `json:"rating,omitempty"`
-	UniqueGiftColors                   *UniqueGiftColors     `json:"unique_gift_colors,omitempty"`
-	FirstProfileAudio                  *Audio                `json:"first_profile_audio,omitempty"`
 }
 
 // AcceptedGiftTypes describes the types of gifts that can be gifted to a user or a chat.
@@ -660,8 +661,8 @@ type AcceptedGiftTypes struct {
 
 // Message represents a message.
 type Message struct {
-	MessageAutoDeleteTimerChanged *MessageAutoDeleteTimerChanged `json:"message_auto_delete_timer_changed,omitempty"`
-	Contact                       *Contact                       `json:"contact,omitempty"`
+	BoostAdded                    *ChatBoostAdded                `json:"boost_added,omitempty"`
+	Gift                          *GiftInfo                      `json:"gift,omitempty"`
 	SenderChat                    *Chat                          `json:"sender_chat,omitempty"`
 	WebAppData                    *WebAppData                    `json:"web_app_data,omitempty"`
 	From                          *User                          `json:"from,omitempty"`
@@ -710,50 +711,50 @@ type Message struct {
 	Quote                         *TextQuote                     `json:"quote,omitempty"`
 	LinkPreviewOptions            *LinkPreviewOptions            `json:"link_preview_options,omitempty"`
 	ForwardOrigin                 *MessageOrigin                 `json:"forward_origin,omitempty"`
-	BoostAdded                    *ChatBoostAdded                `json:"boost_added,omitempty"`
-	ChatBackgroundSet             *ChatBackground                `json:"chat_background_set,omitempty"`
+	Contact                       *Contact                       `json:"contact,omitempty"`
 	SenderBusinessBot             *User                          `json:"sender_business_bot,omitempty"`
-	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
-	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
-	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
-	AuthorSignature               string                         `json:"author_signature,omitempty"`
-	Caption                       string                         `json:"caption,omitempty"`
-	Text                          string                         `json:"text,omitempty"`
-	BusinessConnectionID          string                         `json:"business_connection_id,omitempty"`
-	EffectID                      string                         `json:"effect_id,omitempty"`
-	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
-	NewChatPhoto                  []*PhotoSize                   `json:"new_chat_photo,omitempty"`
-	NewChatMembers                []*User                        `json:"new_chat_members,omitempty"`
-	Photo                         []*PhotoSize                   `json:"photo,omitempty"`
-	Entities                      []*MessageEntity               `json:"entities,omitempty"`
-	Chat                          Chat                           `json:"chat"`
-	ID                            int                            `json:"message_id"`
-	ThreadID                      int                            `json:"message_thread_id,omitempty"`
-	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
-	Date                          int                            `json:"date"`
-	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
-	EditDate                      int                            `json:"edit_date,omitempty"`
-	SenderBoostCount              int                            `json:"sender_boost_count,omitempty"`
+	ChatBackgroundSet             *ChatBackground                `json:"chat_background_set,omitempty"`
 	Checklist                     *Checklist                     `json:"checklist,omitempty"`
 	ChecklistTasksDone            *ChecklistTasksDone            `json:"checklist_tasks_done,omitempty"`
 	ChecklistTasksAdded           *ChecklistTasksAdded           `json:"checklist_tasks_added,omitempty"`
 	PaidMessagePriceChanged       *PaidMessagePriceChanged       `json:"paid_message_price_changed,omitempty"`
 	DirectMessagePriceChanged     *DirectMessagePriceChanged     `json:"direct_message_price_changed,omitempty"`
-	ChatOwnerLeft                 *ChatOwnerLeft                 `json:"chat_owner_left,omitempty"`
-	ChatOwnerChanged              *ChatOwnerChanged              `json:"chat_owner_changed,omitempty"`
-	Gift                          *GiftInfo                      `json:"gift,omitempty"`
-	UniqueGift                    *UniqueGiftInfo                `json:"unique_gift,omitempty"`
-	GiftUpgradeSent               *GiftInfo                      `json:"gift_upgrade_sent,omitempty"`
-	SuggestedPostApproved         *SuggestedPostApproved         `json:"suggested_post_approved,omitempty"`
-	SuggestedPostApprovalFailed   *SuggestedPostApprovalFailed   `json:"suggested_post_approval_failed,omitempty"`
-	SuggestedPostDeclined         *SuggestedPostDeclined         `json:"suggested_post_declined,omitempty"`
-	SuggestedPostPaid             *SuggestedPostPaid             `json:"suggested_post_paid,omitempty"`
-	SuggestedPostRefunded         *SuggestedPostRefunded         `json:"suggested_post_refunded,omitempty"`
-	SuggestedPostInfo             *SuggestedPostInfo             `json:"suggested_post_info,omitempty"`
 	DirectMessagesTopic           *DirectMessagesTopic           `json:"direct_messages_topic,omitempty"`
+	SuggestedPostInfo             *SuggestedPostInfo             `json:"suggested_post_info,omitempty"`
+	SuggestedPostRefunded         *SuggestedPostRefunded         `json:"suggested_post_refunded,omitempty"`
+	SuggestedPostPaid             *SuggestedPostPaid             `json:"suggested_post_paid,omitempty"`
+	SuggestedPostDeclined         *SuggestedPostDeclined         `json:"suggested_post_declined,omitempty"`
+	SuggestedPostApprovalFailed   *SuggestedPostApprovalFailed   `json:"suggested_post_approval_failed,omitempty"`
+	SuggestedPostApproved         *SuggestedPostApproved         `json:"suggested_post_approved,omitempty"`
+	GiftUpgradeSent               *GiftInfo                      `json:"gift_upgrade_sent,omitempty"`
+	UniqueGift                    *UniqueGiftInfo                `json:"unique_gift,omitempty"`
+	MessageAutoDeleteTimerChanged *MessageAutoDeleteTimerChanged `json:"message_auto_delete_timer_changed,omitempty"`
+	ChatOwnerChanged              *ChatOwnerChanged              `json:"chat_owner_changed,omitempty"`
+	ChatOwnerLeft                 *ChatOwnerLeft                 `json:"chat_owner_left,omitempty"`
+	EffectID                      string                         `json:"effect_id,omitempty"`
+	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
+	BusinessConnectionID          string                         `json:"business_connection_id,omitempty"`
+	MediaGroupID                  string                         `json:"media_group_id,omitempty"`
+	AuthorSignature               string                         `json:"author_signature,omitempty"`
+	Caption                       string                         `json:"caption,omitempty"`
+	ConnectedWebsite              string                         `json:"connected_website,omitempty"`
+	Text                          string                         `json:"text,omitempty"`
+	NewChatPhoto                  []*PhotoSize                   `json:"new_chat_photo,omitempty"`
+	Entities                      []*MessageEntity               `json:"entities,omitempty"`
+	CaptionEntities               []*MessageEntity               `json:"caption_entities,omitempty"`
+	NewChatMembers                []*User                        `json:"new_chat_members,omitempty"`
+	Photo                         []*PhotoSize                   `json:"photo,omitempty"`
+	Chat                          Chat                           `json:"chat"`
+	Date                          int                            `json:"date"`
+	MigrateFromChatID             int                            `json:"migrate_from_chat_id,omitempty"`
+	ThreadID                      int                            `json:"message_thread_id,omitempty"`
+	ID                            int                            `json:"message_id"`
+	MigrateToChatID               int                            `json:"migrate_to_chat_id,omitempty"`
+	EditDate                      int                            `json:"edit_date,omitempty"`
+	SenderBoostCount              int                            `json:"sender_boost_count,omitempty"`
 	ReplyToChecklistTaskID        int                            `json:"reply_to_checklist_task_id,omitempty"`
-	DeleteChatPhoto               bool                           `json:"delete_chat_photo,omitempty"`
 	IsTopicMessage                bool                           `json:"is_topic_message,omitempty"`
+	DeleteChatPhoto               bool                           `json:"delete_chat_photo,omitempty"`
 	IsAutomaticForward            bool                           `json:"is_automatic_forward,omitempty"`
 	GroupChatCreated              bool                           `json:"group_chat_created,omitempty"`
 	SupergroupChatCreated         bool                           `json:"supergroup_chat_created,omitempty"`
@@ -773,13 +774,15 @@ type MessageID struct {
 // MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	User          *User             `json:"user,omitempty"`
-	Type          MessageEntityType `json:"type"`
-	URL           string            `json:"url,omitempty"`
-	Language      string            `json:"language,omitempty"`
-	CustomEmojiID string            `json:"custom_emoji_id,omitempty"`
-	Offset        int               `json:"offset"`
-	Length        int               `json:"length"`
+	User           *User             `json:"user,omitempty"`
+	Type           MessageEntityType `json:"type"`
+	URL            string            `json:"url,omitempty"`
+	Language       string            `json:"language,omitempty"`
+	CustomEmojiID  string            `json:"custom_emoji_id,omitempty"`
+	DateTimeFormat string            `json:"date_time_format,omitempty"`
+	Offset         int               `json:"offset"`
+	Length         int               `json:"length"`
+	UnixTime       int               `json:"unix_time,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
@@ -844,13 +847,13 @@ type Video struct {
 	FileUniqueID   string         `json:"file_unique_id"`
 	FileName       string         `json:"file_name,omitempty"`
 	MimeType       string         `json:"mime_type,omitempty"`
+	Cover          []PhotoSize    `json:"cover,omitempty"`
+	Qualities      []VideoQuality `json:"qualities,omitempty"`
 	Width          int            `json:"width"`
 	Height         int            `json:"height"`
 	Duration       int            `json:"duration"`
 	FileSize       int64          `json:"file_size,omitempty"`
-	Cover          []PhotoSize    `json:"cover,omitempty"`
 	StartTimestamp int            `json:"start_timestamp,omitempty"`
-	Qualities      []VideoQuality `json:"qualities,omitempty"`
 }
 
 // VideoNote represents a video message (available in Telegram apps as of v.4.0).
@@ -1065,10 +1068,10 @@ type ChatMember struct {
 	User                    *User  `json:"user"`
 	Status                  string `json:"status"`
 	CustomTitle             string `json:"custom_title,omitempty"`
-	IsAnonymous             bool   `json:"is_anonymous,omitempty"`
-	CanBeEdited             bool   `json:"can_be_edited,omitempty"`
-	CanManageChat           bool   `json:"can_manage_chat,omitempty"`
-	CanPostMessages         bool   `json:"can_post_messages,omitempty"`
+	Tag                     string `json:"tag,omitempty"`
+	UntilDate               int    `json:"until_date,omitempty"`
+	CanSendMessages         bool   `json:"can_send_messages,omitempty"`
+	CanSendVideos           bool   `json:"can_send_videos,omitempty"`
 	CanEditMessages         bool   `json:"can_edit_messages,omitempty"`
 	CanDeleteMessages       bool   `json:"can_delete_messages,omitempty"`
 	CanManageVideoChats     bool   `json:"can_manage_video_chats,omitempty"`
@@ -1078,11 +1081,11 @@ type ChatMember struct {
 	CanInviteUsers          bool   `json:"can_invite_users,omitempty"`
 	CanPinMessages          bool   `json:"can_pin_messages,omitempty"`
 	IsMember                bool   `json:"is_member,omitempty"`
-	CanSendMessages         bool   `json:"can_send_messages,omitempty"`
+	CanManageChat           bool   `json:"can_manage_chat,omitempty"`
 	CanSendAudios           bool   `json:"can_send_audios,omitempty"`
 	CanSendDocuments        bool   `json:"can_send_documents,omitempty"`
 	CanSendPhotos           bool   `json:"can_send_photos,omitempty"`
-	CanSendVideos           bool   `json:"can_send_videos,omitempty"`
+	CanPostMessages         bool   `json:"can_post_messages,omitempty"`
 	CanSendVideoNotes       bool   `json:"can_send_video_notes,omitempty"`
 	CanSendVoiceNotes       bool   `json:"can_send_voice_notes,omitempty"`
 	CanSendPolls            bool   `json:"can_send_polls,omitempty"`
@@ -1093,16 +1096,19 @@ type ChatMember struct {
 	CanEditStories          bool   `json:"can_edit_stories,omitempty"`
 	CanDeleteStories        bool   `json:"can_delete_stories,omitempty"`
 	CanManageDirectMessages bool   `json:"can_manage_direct_messages,omitempty"`
-	UntilDate               int    `json:"until_date,omitempty"`
+	CanBeEdited             bool   `json:"can_be_edited,omitempty"`
+	IsAnonymous             bool   `json:"is_anonymous,omitempty"`
+	CanEditTag              bool   `json:"can_edit_tag,omitempty"`
+	CanManageTags           bool   `json:"can_manage_tags,omitempty"`
 }
 
 // ChatMemberUpdated represents changes in the status of a chat member.
 type ChatMemberUpdated struct {
 	InviteLink              *ChatInviteLink `json:"invite_link,omitempty"`
-	Chat                    Chat            `json:"chat"`
-	From                    User            `json:"from"`
 	OldChatMember           ChatMember      `json:"old_chat_member"`
 	NewChatMember           ChatMember      `json:"new_chat_member"`
+	Chat                    Chat            `json:"chat"`
+	From                    User            `json:"from"`
 	Date                    int             `json:"date"`
 	ViaChatFolderInviteLink bool            `json:"via_chat_folder_invite_link,omitempty"`
 	ViaJoinRequest          bool            `json:"via_join_request,omitempty"`
@@ -1124,6 +1130,7 @@ type ChatPermissions struct {
 	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
 	CanManageTopics       bool `json:"can_manage_topics,omitempty"`
+	CanManageTags         bool `json:"can_manage_tags,omitempty"`
 }
 
 // Birthdate
@@ -1312,20 +1319,20 @@ func (i InputMediaPhoto) groupable() {}
 // InputMediaVideo represents a video to be sent.
 // Type MUST BE "video".
 type InputMediaVideo struct {
+	Cover                 string           `json:"cover,omitempty"`
+	Caption               string           `json:"caption,omitempty"`
+	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
 	Type                  InputMediaType   `json:"type"`
 	Media                 InputFile        `json:"-"`
 	Thumbnail             InputFile        `json:"-"`
-	Caption               string           `json:"caption,omitempty"`
-	ParseMode             ParseMode        `json:"parse_mode,omitempty"`
 	CaptionEntities       []*MessageEntity `json:"caption_entities,omitempty"`
 	Width                 int              `json:"width,omitempty"`
-	Height                int              `json:"height,omitempty"`
 	Duration              int              `json:"duration,omitempty"`
+	Height                int              `json:"height,omitempty"`
+	StartTimestamp        int              `json:"start_timestamp,omitempty"`
 	SupportsStreaming     bool             `json:"supports_streaming,omitempty"`
 	HasSpoiler            bool             `json:"has_spoiler,omitempty"`
 	ShowCaptionAboveMedia bool             `json:"show_caption_above_media,omitempty"`
-	Cover                 string           `json:"cover,omitempty"`
-	StartTimestamp        int              `json:"start_timestamp,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputMedia* struct.
@@ -1430,14 +1437,14 @@ func (i InputPaidMediaPhoto) groupable() {}
 // InputPaidMediaVideo represents a paid video to send.
 type InputPaidMediaVideo struct {
 	Type              InputPaidMediaType `json:"type"`
+	Cover             string             `json:"cover,omitempty"`
 	Media             InputFile          `json:"-"`
 	Thumbnail         InputFile          `json:"-"`
 	Width             int                `json:"width,omitempty"`
 	Height            int                `json:"height,omitempty"`
 	Duration          int                `json:"duration,omitempty"`
-	SupportsStreaming bool               `json:"supports_streaming,omitempty"`
-	Cover             string             `json:"cover,omitempty"`
 	StartTimestamp    int                `json:"start_timestamp,omitempty"`
+	SupportsStreaming bool               `json:"supports_streaming,omitempty"`
 }
 
 // media is a method which allows to obtain the Media (type InputFile) field from the InputPaidMedia* struct.
@@ -1826,11 +1833,11 @@ type UserChatBoosts struct {
 
 // BusinessConnection describes the connection of the bot with a business account.
 type BusinessConnection struct {
+	Rights     *BusinessBotRights `json:"rights,omitempty"`
 	ID         string             `json:"id"`
 	User       User               `json:"user"`
 	UserChatID int64              `json:"user_chat_id"`
 	Date       int64              `json:"date"`
-	Rights     *BusinessBotRights `json:"rights,omitempty"`
 	IsEnabled  bool               `json:"is_enabled"`
 }
 
@@ -1885,19 +1892,19 @@ type GiveawayCompleted struct {
 
 // Gift represents a gift that can be sent by the bot.
 type Gift struct {
+	PublisherChat          *Chat           `json:"publisher_chat,omitempty"`
+	Background             *GiftBackground `json:"background,omitempty"`
 	ID                     string          `json:"id"`
 	Sticker                Sticker         `json:"sticker"`
-	StarCount              int             `json:"star_count"`
-	UpgradeStarCount       int             `json:"upgrade_star_count,omitempty"`
-	TotalCount             int             `json:"total_count,omitempty"`
+	PersonalRemainingCount int             `json:"personal_remaining_count,omitempty"`
 	RemainingCount         int             `json:"remaining_count,omitempty"`
+	PersonalTotalCount     int             `json:"personal_total_count,omitempty"`
+	TotalCount             int             `json:"total_count,omitempty"`
+	UpgradeStarCount       int             `json:"upgrade_star_count,omitempty"`
+	UniqueGiftVariantCount int             `json:"unique_gift_variant_count,omitempty"`
+	StarCount              int             `json:"star_count"`
 	IsPremium              bool            `json:"is_premium,omitempty"`
 	HasColors              bool            `json:"has_colors,omitempty"`
-	PersonalTotalCount     int             `json:"personal_total_count,omitempty"`
-	PersonalRemainingCount int             `json:"personal_remaining_count,omitempty"`
-	Background             *GiftBackground `json:"background,omitempty"`
-	UniqueGiftVariantCount int             `json:"unique_gift_variant_count,omitempty"`
-	PublisherChat          *Chat           `json:"publisher_chat,omitempty"`
 }
 
 // Gifts represents a list of gifts.
@@ -1920,16 +1927,16 @@ type GiftBackground struct {
 
 // UniqueGiftModel describes the model of a unique gift.
 type UniqueGiftModel struct {
-	Sticker        Sticker `json:"sticker"`
 	Name           string  `json:"name"`
 	Rarity         string  `json:"rarity,omitempty"`
+	Sticker        Sticker `json:"sticker"`
 	RarityPerMille int     `json:"rarity_per_mille"`
 }
 
 // UniqueGiftSymbol describes the symbol shown on the pattern of a unique gift.
 type UniqueGiftSymbol struct {
-	Sticker        Sticker `json:"sticker"`
 	Name           string  `json:"name"`
+	Sticker        Sticker `json:"sticker"`
 	RarityPerMille int     `json:"rarity_per_mille"`
 }
 
@@ -1943,8 +1950,8 @@ type UniqueGiftBackdropColors struct {
 
 // UniqueGiftBackdrop describes the backdrop of a unique gift.
 type UniqueGiftBackdrop struct {
-	Colors         UniqueGiftBackdropColors `json:"colors"`
 	Name           string                   `json:"name"`
+	Colors         UniqueGiftBackdropColors `json:"colors"`
 	RarityPerMille int                      `json:"rarity_per_mille"`
 }
 
@@ -1952,10 +1959,10 @@ type UniqueGiftBackdrop struct {
 type UniqueGiftColors struct {
 	ModelCustomEmojiID    string `json:"model_custom_emoji_id"`
 	SymbolCustomEmojiID   string `json:"symbol_custom_emoji_id"`
-	LightThemeMainColor   int    `json:"light_theme_main_color"`
-	DarkThemeMainColor    int    `json:"dark_theme_main_color"`
 	LightThemeOtherColors []int  `json:"light_theme_other_colors"`
 	DarkThemeOtherColors  []int  `json:"dark_theme_other_colors"`
+	LightThemeMainColor   int    `json:"light_theme_main_color"`
+	DarkThemeMainColor    int    `json:"dark_theme_main_color"`
 }
 
 // UniqueGift describes a unique gift that was upgraded from a regular gift.
@@ -1990,10 +1997,10 @@ type GiftInfo struct {
 
 // UniqueGiftInfo describes a service message about a unique gift that was sent or received.
 type UniqueGiftInfo struct {
-	Gift               UniqueGift `json:"gift"`
 	OwnedGiftID        string     `json:"owned_gift_id,omitempty"`
 	LastResaleCurrency string     `json:"last_resale_currency,omitempty"`
 	Origin             string     `json:"origin"`
+	Gift               UniqueGift `json:"gift"`
 	LastResaleAmount   int        `json:"last_resale_amount,omitempty"`
 	TransferStarCount  int        `json:"transfer_star_count,omitempty"`
 	NextTransferDate   int        `json:"next_transfer_date,omitempty"`
@@ -2021,9 +2028,9 @@ type OwnedGiftRegular struct {
 // OwnedGiftUnique describes a unique gift received and owned by a user or a chat.
 type OwnedGiftUnique struct {
 	SenderUser        *User      `json:"sender_user,omitempty"`
-	Gift              UniqueGift `json:"gift"`
 	OwnedGiftID       string     `json:"owned_gift_id,omitempty"`
 	Type              string     `json:"type"`
+	Gift              UniqueGift `json:"gift"`
 	SendDate          int        `json:"send_date"`
 	TransferStarCount int        `json:"transfer_star_count,omitempty"`
 	NextTransferDate  int        `json:"next_transfer_date,omitempty"`
@@ -2033,8 +2040,8 @@ type OwnedGiftUnique struct {
 
 // OwnedGifts contains the list of gifts received and owned by a user or a chat.
 type OwnedGifts struct {
-	Gifts      []json.RawMessage `json:"gifts"`
 	NextOffset string            `json:"next_offset,omitempty"`
+	Gifts      []json.RawMessage `json:"gifts"`
 	TotalCount int               `json:"total_count"`
 }
 
@@ -2056,35 +2063,35 @@ type UserRating struct {
 type ChecklistTask struct {
 	CompletedByUser *User            `json:"completed_by_user,omitempty"`
 	CompletedByChat *Chat            `json:"completed_by_chat,omitempty"`
-	TextEntities    []*MessageEntity `json:"text_entities,omitempty"`
 	Text            string           `json:"text"`
+	TextEntities    []*MessageEntity `json:"text_entities,omitempty"`
 	ID              int              `json:"id"`
 	CompletionDate  int              `json:"completion_date,omitempty"`
 }
 
 // Checklist describes a checklist.
 type Checklist struct {
+	Title                    string           `json:"title"`
 	TitleEntities            []*MessageEntity `json:"title_entities,omitempty"`
 	Tasks                    []ChecklistTask  `json:"tasks"`
-	Title                    string           `json:"title"`
 	OthersCanAddTasks        bool             `json:"others_can_add_tasks,omitempty"`
 	OthersCanMarkTasksAsDone bool             `json:"others_can_mark_tasks_as_done,omitempty"`
 }
 
 // InputChecklistTask describes a task to add to a checklist.
 type InputChecklistTask struct {
-	TextEntities []*MessageEntity `json:"text_entities,omitempty"`
 	Text         string           `json:"text"`
 	ParseMode    ParseMode        `json:"parse_mode,omitempty"`
+	TextEntities []*MessageEntity `json:"text_entities,omitempty"`
 	ID           int              `json:"id"`
 }
 
 // InputChecklist describes a checklist to create.
 type InputChecklist struct {
-	TitleEntities            []*MessageEntity     `json:"title_entities,omitempty"`
-	Tasks                    []InputChecklistTask `json:"tasks"`
 	Title                    string               `json:"title"`
 	ParseMode                ParseMode            `json:"parse_mode,omitempty"`
+	TitleEntities            []*MessageEntity     `json:"title_entities,omitempty"`
+	Tasks                    []InputChecklistTask `json:"tasks"`
 	OthersCanAddTasks        bool                 `json:"others_can_add_tasks,omitempty"`
 	OthersCanMarkTasksAsDone bool                 `json:"others_can_mark_tasks_as_done,omitempty"`
 }
@@ -2287,8 +2294,8 @@ type StoryAreaPosition struct {
 
 // StoryArea describes a clickable area on a story media.
 type StoryArea struct {
-	Position StoryAreaPosition `json:"position"`
 	Type     StoryAreaType     `json:"type"`
+	Position StoryAreaPosition `json:"position"`
 }
 
 // InputStoryContent describes the content of a story to post.

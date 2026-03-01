@@ -93,6 +93,7 @@ const (
 	TextLinkEntity                               = "text_link"
 	TextMentionEntity                            = "text_mention"
 	CustomEmojiEntity                            = "custom_emoji"
+	DateTimeEntity                               = "date_time"
 )
 
 // UpdateType is a custom type for the various update types that a bot can be subscribed to.
@@ -435,28 +436,28 @@ type DocumentOptions struct {
 // VideoOptions contains the optional parameters used by the SendVideo method.
 // TODO: handle the cover correctly.
 type VideoOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
 	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
+	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
 	BusinessConnectionID    string                   `query:"business_connection_id"`
 	Caption                 string                   `query:"caption"`
 	MessageEffectID         string                   `query:"message_effect_id"`
 	ParseMode               ParseMode                `query:"parse_mode"`
 	Thumbnail               InputFile
+	Cover                   InputFile
 	CaptionEntities         []MessageEntity `query:"caption_entities"`
 	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
 	MessageThreadID         int             `query:"message_thread_id"`
 	Duration                int             `query:"duration"`
 	Width                   int             `query:"width"`
 	Height                  int             `query:"height"`
+	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
+	StartTimestamp          int             `query:"start_timestamp"`
 	HasSpoiler              bool            `query:"has_spoiler"`
 	SupportsStreaming       bool            `query:"supports_streaming"`
 	DisableNotification     bool            `query:"disable_notification"`
 	ProtectContent          bool            `query:"protect_content"`
 	ShowCaptionAboveMedia   bool            `query:"show_caption_above_media"`
 	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
-	Cover                   InputFile
-	StartTimestamp          int `query:"start_timestamp"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
@@ -682,6 +683,7 @@ type PromoteOptions struct {
 	CanDeleteStories        bool `query:"can_delete_stories,omitempty"`
 	CanManageTopics         bool `query:"can_manage_topics,omitempty"`
 	CanManageDirectMessages bool `query:"can_manage_direct_messages,omitempty"`
+	CanManageTags           bool `json:"can_manage_tags,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
@@ -927,11 +929,9 @@ type GetChatGiftsOptions struct {
 
 // SendMessageDraftOptions contains the optional parameters used by the SendMessageDraft method.
 type SendMessageDraftOptions struct {
-	ReplyParameters *ReplyParameters `query:"reply_parameters"`
-	ReplyMarkup     ReplyMarkup      `query:"reply_markup"`
-	ParseMode       ParseMode        `query:"parse_mode"`
-	Entities        []MessageEntity  `query:"entities"`
-	MessageThreadID int              `query:"message_thread_id"`
+	ParseMode       ParseMode       `query:"parse_mode"`
+	Entities        []MessageEntity `query:"entities"`
+	MessageThreadID int             `query:"message_thread_id"`
 }
 
 // GetBusinessAccountGiftsOptions contains the optional parameters used by the GetBusinessAccountGifts method.
@@ -975,20 +975,20 @@ type EditMessageChecklistOptions struct {
 
 // PostStoryOptions contains the optional parameters used by the PostStory method.
 type PostStoryOptions struct {
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Areas           []StoryArea     `query:"areas"`
 	Caption         string          `query:"caption"`
 	ParseMode       ParseMode       `query:"parse_mode"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+	Areas           []StoryArea     `query:"areas"`
 	PostToChatPage  bool            `query:"post_to_chat_page"`
 	ProtectContent  bool            `query:"protect_content"`
 }
 
 // EditStoryOptions contains the optional parameters used by the EditStory method.
 type EditStoryOptions struct {
-	CaptionEntities []MessageEntity `query:"caption_entities"`
-	Areas           []StoryArea     `query:"areas"`
 	Caption         string          `query:"caption"`
 	ParseMode       ParseMode       `query:"parse_mode"`
+	CaptionEntities []MessageEntity `query:"caption_entities"`
+	Areas           []StoryArea     `query:"areas"`
 }
 
 // SetBusinessAccountProfilePhotoOptions contains the optional parameters used by the SetBusinessAccountProfilePhoto method.
@@ -999,4 +999,9 @@ type SetBusinessAccountProfilePhotoOptions struct {
 // RemoveBusinessAccountProfilePhotoOptions contains the optional parameters used by the RemoveBusinessAccountProfilePhoto method.
 type RemoveBusinessAccountProfilePhotoOptions struct {
 	IsPublic bool `query:"is_public"`
+}
+
+// ChatMemberTagOptions contains the optional parameters used by the SetChatMemberTag method.
+type ChatMemberTagOptions struct {
+	Tag string `query:"tag"`
 }
