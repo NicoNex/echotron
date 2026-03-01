@@ -93,6 +93,7 @@ const (
 	TextLinkEntity                               = "text_link"
 	TextMentionEntity                            = "text_mention"
 	CustomEmojiEntity                            = "custom_emoji"
+	DateTimeEntity                               = "date_time"
 )
 
 // UpdateType is a custom type for the various update types that a bot can be subscribed to.
@@ -682,6 +683,7 @@ type PromoteOptions struct {
 	CanDeleteStories        bool `query:"can_delete_stories,omitempty"`
 	CanManageTopics         bool `query:"can_manage_topics,omitempty"`
 	CanManageDirectMessages bool `query:"can_manage_direct_messages,omitempty"`
+	CanManageTags           bool `json:"can_manage_tags,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
@@ -997,4 +999,9 @@ type SetBusinessAccountProfilePhotoOptions struct {
 // RemoveBusinessAccountProfilePhotoOptions contains the optional parameters used by the RemoveBusinessAccountProfilePhoto method.
 type RemoveBusinessAccountProfilePhotoOptions struct {
 	IsPublic bool `query:"is_public"`
+}
+
+// ChatMemberTagOptions contains the optional parameters used by the SetChatMemberTag method.
+type ChatMemberTagOptions struct {
+	Tag string `query:"tag"`
 }

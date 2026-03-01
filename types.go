@@ -47,6 +47,7 @@ type Update struct {
 	ChatMember              *ChatMemberUpdated           `json:"chat_member,omitempty"`
 	PurchasedPaidMedia      *PaidMediaPurchased          `json:"purchased_paid_media,omitempty"`
 	ID                      int                          `json:"update_id"`
+	SenderTag               string                       `json:"sender_tag,omitempty"`
 }
 
 // ChatID returns the ID of the chat the update is coming from.
@@ -773,13 +774,15 @@ type MessageID struct {
 // MessageEntity represents one special entity in a text message.
 // For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	User          *User             `json:"user,omitempty"`
-	Type          MessageEntityType `json:"type"`
-	URL           string            `json:"url,omitempty"`
-	Language      string            `json:"language,omitempty"`
-	CustomEmojiID string            `json:"custom_emoji_id,omitempty"`
-	Offset        int               `json:"offset"`
-	Length        int               `json:"length"`
+	User           *User             `json:"user,omitempty"`
+	Type           MessageEntityType `json:"type"`
+	URL            string            `json:"url,omitempty"`
+	Language       string            `json:"language,omitempty"`
+	CustomEmojiID  string            `json:"custom_emoji_id,omitempty"`
+	Offset         int               `json:"offset"`
+	Length         int               `json:"length"`
+	UnixTime       int               `json:"unix_time,omitempty"`
+	DateTimeFormat string            `json:"date_time_format,omitempty"`
 }
 
 // PhotoSize represents one size of a photo or a file / sticker thumbnail.
@@ -1094,6 +1097,9 @@ type ChatMember struct {
 	CanDeleteStories        bool   `json:"can_delete_stories,omitempty"`
 	CanManageDirectMessages bool   `json:"can_manage_direct_messages,omitempty"`
 	UntilDate               int    `json:"until_date,omitempty"`
+	Tag                     string `json:"tag,omitempty"`
+	CanEditTag              bool   `json:"can_edit_tag,omitempty"`
+	CanManageTags           bool   `json:"can_manage_tags,omitempty"`
 }
 
 // ChatMemberUpdated represents changes in the status of a chat member.
@@ -1124,6 +1130,7 @@ type ChatPermissions struct {
 	CanInviteUsers        bool `json:"can_invite_users,omitempty"`
 	CanPinMessages        bool `json:"can_pin_messages,omitempty"`
 	CanManageTopics       bool `json:"can_manage_topics,omitempty"`
+	CanManageTags         bool `json:"can_manage_tags,omitempty"`
 }
 
 // Birthdate

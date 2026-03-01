@@ -512,6 +512,16 @@ func (a API) SetChatAdministratorCustomTitle(chatID, userID int64, customTitle s
 	return res, a.lclient.get(a.base, "setChatAdministratorCustomTitle", vals, &res)
 }
 
+// SetChatMemberTag is used to set a tag for a regular member in a group or a supergroup.
+// The bot must be an administrator in the chat for this to work and must have the can_manage_tags administrator right.
+func (a API) SetChatMemberTag(chatID, userID int64, opts *ChatMemberTagOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("user_id", itoa(userID))
+	return res, a.lclient.get(a.base, "setChatMemberTag", vals, &res)
+}
+
 // BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.
 // The owner of the chat will not be able to send messages and join live streams on behalf of the chat, unless it is unbanned first.
 // The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights.
