@@ -10,7 +10,7 @@
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 [![Telegram](https://img.shields.io/badge/Echotron%20News-blue?logo=telegram&style=flat)](https://t.me/echotronnews)
 
-**The idiomatic, concurrent Telegram Bot library for Go.**
+**The idiomatic, concurrent Telegram Bot library for Go.**<br/>
 Zero boilerplate. Built-in rate limiting. One instance per chat, by design.
 
 </div>
@@ -137,9 +137,9 @@ That one line is the entire contract. Every other piece of Echotron is additive:
 
 The `Dispatcher` stores one `Bot` per `chatID` in a lock-free `sync.Map`. `Update()` is dispatched in a fresh goroutine for every incoming message:
 
-- No chat ever blocks another. A deadlock in chat A has zero effect on chat B.
-- State lives in struct fields. No need for maps, mutexes, or context keys to correlate users.
-- Crashes are isolated. A panic in one goroutine does not bring down the whole bot.
+- No chat ever blocks another: a deadlock in chat A has zero effect on chat B.
+- State lives in struct fields: no need for maps, mutexes, or context keys to correlate users.
+- Crashes are isolated: a panic in one goroutine does not bring down the whole bot.
 
 ### Built-in dual-level rate limiting
 
@@ -323,9 +323,9 @@ The `ChatID()` method on `Update` inspects every possible update variant, from p
 `InputFile` has only unexported fields. The only way to create one is through:
 
 ```go
-echotron.NewInputFileID("AgACAgI...")    // existing Telegram file
-echotron.NewInputFilePath("photo.jpg")  // local file on disk
-echotron.NewInputFileBytes("img.png", data) // in-memory bytes
+echotron.NewInputFileID("AgACAgI...")        // existing Telegram file
+echotron.NewInputFilePath("photo.jpg")       // local file on disk
+echotron.NewInputFileBytes("img.png", data)  // in-memory bytes
 ```
 
 It is structurally impossible to create an `InputFile` in an invalid state from outside the package.
@@ -355,7 +355,6 @@ Every API call, whether a plain GET, a form-encoded POST, or a multipart file up
 | Local API server support | ✅ | ✅ | ✅ | ✅ |
 | No mandatory abstractions | ✅ | ✅ | ❌ | ✅ |
 | External dependencies | 1 | 0 | several | 0 |
-| Awesome Go | ✅ | ✅ | ✅ | ✅ |
 | License | LGPL-3.0 | MIT | MIT | MIT |
 
 On the topic of dependencies: Echotron's single dependency is [`golang.org/x/time`](https://pkg.go.dev/golang.org/x/time), which lives in the `golang.org/x` namespace. That namespace is maintained by the Go team itself, under the same review standards and stability guarantees as the standard library. In practice, adding Echotron to your project means depending on the Go team's own code and nothing else.
@@ -424,7 +423,7 @@ func (b *bot) Update(u *echotron.Update) {
 api := echotron.NewAPI("MY_TOKEN")
 
 api.SetGlobalRequestLimit(time.Second/50, 50)  // 50 req/s globally
-api.SetChatRequestLimit(time.Second, 1)          // 1 msg/s per chat
+api.SetChatRequestLimit(time.Second, 1)        // 1 msg/s per chat
 ```
 
 ## Installation
