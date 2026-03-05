@@ -10,7 +10,7 @@
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 [![Telegram](https://img.shields.io/badge/Echotron%20News-blue?logo=telegram&style=flat)](https://t.me/echotronnews)
 
-**The idiomatic, concurrent Telegram Bot library for Go.**<br/>
+**The idiomatic, concurrent Telegram Bot library for Go.**  
 Zero boilerplate. Built-in rate limiting. One instance per chat, by design.
 
 </div>
