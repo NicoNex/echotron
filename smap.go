@@ -2,7 +2,7 @@ package echotron
 
 import "sync"
 
-type smap[K, V any] sync.Map
+type smap[K comparable, V any] sync.Map
 
 func (s *smap[K, V]) load(key K) (val V, ok bool) {
 	v, ok := (*sync.Map)(s).Load(key)
