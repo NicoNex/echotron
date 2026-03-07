@@ -434,6 +434,39 @@ go get github.com/NicoNex/echotron/v3
 
 Go 1.21 or later is required.
 
+## Starter templates
+
+Every example in the [`example/`](./example/) directory is a self-contained Go
+module usable as a project skeleton with
+[`gonew`](https://pkg.go.dev/golang.org/x/tools/cmd/gonew).
+
+```bash
+go install golang.org/x/tools/cmd/gonew@latest
+```
+
+| Template | What it gives you |
+|---|---|
+| `polling-simple` | Minimal stateless bot, plain update channel, no `Dispatcher` |
+| `polling` | Per-chat stateful bot with `Dispatcher` and long-polling |
+| `polling-keyboard` | Inline keyboards and callback query handling |
+| `polling-inline` | Inline mode (`@botname <query>` from any chat) |
+| `polling-ratelimit` | Rate limiter configuration |
+| `polling-fsm` | Multi-step conversations via functional state machines |
+| `polling-fsm-lifecycle` | FSM + session self-destruction on idle timeout |
+| `polling-fsm-persistence` | FSM + disk persistence with [katalis](https://github.com/NicoNex/katalis) |
+| `webhook` | `Dispatcher` with webhook delivery |
+| `webhook-simple` | Minimal stateless bot on webhooks |
+
+Clone any template and rename the module in one command:
+
+```bash
+gonew github.com/NicoNex/echotron/v3/example/polling github.com/you/mybot
+cd mybot
+TELEGRAM_TOKEN=<your-token> go run .
+```
+
+See [`example/README.md`](example/README.md) for the full list and a suggested reading order.
+
 ## Links
 
 - [pkg.go.dev documentation](https://pkg.go.dev/github.com/NicoNex/echotron/v3)

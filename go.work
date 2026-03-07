@@ -1,0 +1,15 @@
+go 1.23
+
+use (
+	.
+	./example/polling
+	./example/polling-fsm
+	./example/polling-fsm-lifecycle
+	./example/polling-fsm-persistence
+	./example/polling-inline
+	./example/polling-keyboard
+	./example/polling-ratelimit
+	./example/polling-simple
+	./example/webhook
+	./example/webhook-simple
+)

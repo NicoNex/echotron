@@ -1,0 +1,10 @@
+/example/polling/polling
+/example/polling-fsm/polling-fsm
+/example/polling-fsm-lifecycle/polling-fsm-lifecycle
+/example/polling-fsm-persistence/polling-fsm-persistence
+/example/polling-inline/polling-inline
+/example/polling-keyboard/polling-keyboard
+/example/polling-ratelimit/polling-ratelimit
+/example/polling-simple/polling-simple
+/example/webhook/webhook
+/example/webhook-simple/webhook-simple
