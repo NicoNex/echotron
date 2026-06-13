@@ -1372,3 +1372,169 @@ func (a API) DeleteStory(businessConnectionID string, storyID int) (res APIRespo
 	vals.Set("story_id", itoa(int64(storyID)))
 	return res, a.lclient.get(a.base, "deleteStory", vals, &res)
 }
+
+// AnswerChatJoinRequestQuery is used to answer a chat join request query sent from a Mini App.
+func (a API) AnswerChatJoinRequestQuery(chatJoinRequestQueryID, result string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_join_request_query_id", chatJoinRequestQueryID)
+	vals.Set("result", result)
+	return res, a.lclient.get(a.base, "answerChatJoinRequestQuery", vals, &res)
+}
+
+// AnswerGuestQuery is used to send a message on behalf of a guest bot.
+func (a API) AnswerGuestQuery(guestQueryID string, result InlineQueryResult) (res APIResponseSentGuestMessage, err error) {
+	var vals = make(url.Values)
+
+	jsn, err := json.Marshal(result)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("guest_query_id", guestQueryID)
+	vals.Set("result", string(jsn))
+	return res, a.lclient.get(a.base, "answerGuestQuery", vals, &res)
+}
+
+// DeleteMessageReaction is used to remove a reaction from a message.
+func (a API) DeleteMessageReaction(chatID int64, messageID int, opts *DeleteMessageReactionOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	return res, a.lclient.get(a.base, "deleteMessageReaction", addValues(vals, opts), &res)
+}
+
+// DeleteAllMessageReactions is used to remove all reactions from a message.
+func (a API) DeleteAllMessageReactions(chatID int64, opts *DeleteAllMessageReactionsOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return res, a.lclient.get(a.base, "deleteAllMessageReactions", addValues(vals, opts), &res)
+}
+
+// GetManagedBotToken is used to get the token of a managed bot.
+func (a API) GetManagedBotToken(userID int64) (res APIResponseString, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, a.lclient.get(a.base, "getManagedBotToken", vals, &res)
+}
+
+// GetManagedBotAccessSettings is used to get the access settings of a managed bot.
+func (a API) GetManagedBotAccessSettings(userID int64) (res APIResponseBotAccessSettings, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, a.lclient.get(a.base, "getManagedBotAccessSettings", vals, &res)
+}
+
+// SetManagedBotAccessSettings is used to change the access settings of a managed bot.
+func (a API) SetManagedBotAccessSettings(userID int64, isAccessRestricted bool, opts *SetManagedBotAccessSettingsOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("is_access_restricted", btoa(isAccessRestricted))
+	return res, a.lclient.get(a.base, "setManagedBotAccessSettings", addValues(vals, opts), &res)
+}
+
+// ReplaceManagedBotToken is used to replace the token of a managed bot.
+func (a API) ReplaceManagedBotToken(userID int64) (res APIResponseString, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	return res, a.lclient.get(a.base, "replaceManagedBotToken", vals, &res)
+}
+
+// GetUserPersonalChatMessages is used to get messages from the personal chat of a user.
+func (a API) GetUserPersonalChatMessages(userID int64, limit int) (res APIResponseMessageArray, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("limit", itoa(int64(limit)))
+	return res, a.lclient.get(a.base, "getUserPersonalChatMessages", vals, &res)
+}
+
+// GiftPremiumSubscription is used to gift a Telegram Premium subscription to a user.
+func (a API) GiftPremiumSubscription(userID int64, monthCount, starCount int, opts *GiftPremiumSubscriptionOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("month_count", itoa(int64(monthCount)))
+	vals.Set("star_count", itoa(int64(starCount)))
+	return res, a.lclient.get(a.base, "giftPremiumSubscription", addValues(vals, opts), &res)
+}
+
+// ReadBusinessMessage is used to mark an incoming message from a connected business account as read on behalf of the bot.
+func (a API) ReadBusinessMessage(businessConnectionID string, chatID int64, messageID int) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("business_connection_id", businessConnectionID)
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("message_id", itoa(int64(messageID)))
+	return res, a.lclient.get(a.base, "readBusinessMessage", vals, &res)
+}
+
+// SavePreparedKeyboardButton is used to store a keyboard button to be used in a future request.
+func (a API) SavePreparedKeyboardButton(userID int64, button KeyboardButton) (res APIResponsePreparedKeyboardButton, err error) {
+	var vals = make(url.Values)
+
+	jsn, err := json.Marshal(button)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("user_id", itoa(userID))
+	vals.Set("button", string(jsn))
+	return res, a.lclient.get(a.base, "savePreparedKeyboardButton", vals, &res)
+}
+
+// SendChatJoinRequestWebApp is used to send a Mini App URL in response to a chat join request query.
+func (a API) SendChatJoinRequestWebApp(chatJoinRequestQueryID, webAppURL string) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_join_request_query_id", chatJoinRequestQueryID)
+	vals.Set("web_app_url", webAppURL)
+	return res, a.lclient.get(a.base, "sendChatJoinRequestWebApp", vals, &res)
+}
+
+// SendLivePhoto is used to send a live photo (a video with a static preview).
+func (a API) SendLivePhoto(livePhoto, photo InputFile, chatID int64, opts *SendLivePhotoOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
+	vals.Set("chat_id", itoa(chatID))
+	return res, a.lclient.postNamedFiles(
+		a.base, "sendLivePhoto", addValues(vals, opts), &res,
+		namedFile{file: livePhoto, typ: "live_photo"},
+		namedFile{file: photo, typ: "photo"},
+	)
+}
+
+// SendRichMessage is used to send a rich message on behalf of a business account.
+func (a API) SendRichMessage(chatID int64, richMessage InputRichMessage, opts *SendRichMessageOptions) (res APIResponseMessage, err error) {
+	var vals = make(url.Values)
+
+	jsn, err := json.Marshal(richMessage)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("rich_message", string(jsn))
+	return res, a.lclient.get(a.base, "sendRichMessage", addValues(vals, opts), &res)
+}
+
+// SendRichMessageDraft is used to stream a rich message draft to a private chat.
+func (a API) SendRichMessageDraft(chatID int64, draftID int, richMessage InputRichMessage, opts *SendRichMessageDraftOptions) (res APIResponseBool, err error) {
+	var vals = make(url.Values)
+
+	jsn, err := json.Marshal(richMessage)
+	if err != nil {
+		return res, err
+	}
+
+	vals.Set("chat_id", itoa(chatID))
+	vals.Set("draft_id", itoa(int64(draftID)))
+	vals.Set("rich_message", string(jsn))
+	return res, a.lclient.get(a.base, "sendRichMessageDraft", addValues(vals, opts), &res)
+}

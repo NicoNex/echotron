@@ -123,15 +123,16 @@ type ReplyMarkup interface {
 
 // KeyboardButton represents a button in a keyboard.
 type KeyboardButton struct {
-	RequestPoll       *KeyboardButtonPollType     `json:"request_poll,omitempty"`
-	WebApp            *WebAppInfo                 `json:"web_app,omitempty"`
-	RequestUsers      *KeyboardButtonRequestUsers `json:"request_users,omitempty"`
-	RequestChat       *KeyboardButtonRequestChat  `json:"request_chat,omitempty"`
-	Text              string                      `json:"text"`
-	IconCustomEmojiID string                      `json:"icon_custom_emoji_id,omitempty"`
-	Style             string                      `json:"style,omitempty"`
-	RequestContact    bool                        `json:"request_contact,omitempty"`
-	RequestLocation   bool                        `json:"request_location,omitempty"`
+	RequestPoll       *KeyboardButtonPollType          `json:"request_poll,omitempty"`
+	WebApp            *WebAppInfo                      `json:"web_app,omitempty"`
+	RequestUsers      *KeyboardButtonRequestUsers      `json:"request_users,omitempty"`
+	RequestChat       *KeyboardButtonRequestChat       `json:"request_chat,omitempty"`
+	RequestManagedBot *KeyboardButtonRequestManagedBot `json:"request_managed_bot,omitempty"`
+	Text              string                           `json:"text"`
+	IconCustomEmojiID string                           `json:"icon_custom_emoji_id,omitempty"`
+	Style             string                           `json:"style,omitempty"`
+	RequestContact    bool                             `json:"request_contact,omitempty"`
+	RequestLocation   bool                             `json:"request_location,omitempty"`
 }
 
 // KeyboardButtonPollType represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -149,6 +150,14 @@ type KeyboardButtonRequestUsers struct {
 	RequestName     bool `json:"request_name,omitempty"`
 	RequestUsername bool `json:"request_username,omitempty"`
 	RequestPhoto    bool `json:"request_photo,omitempty"`
+}
+
+// KeyboardButtonRequestManagedBot defines the criteria used to request a managed bot.
+// The identifier of the selected bot will be shared with the bot when the corresponding button is pressed.
+type KeyboardButtonRequestManagedBot struct {
+	SuggestedName     string `json:"suggested_name,omitempty"`
+	SuggestedUsername string `json:"suggested_username,omitempty"`
+	RequestID         int    `json:"request_id"`
 }
 
 // KeyboardButtonRequestChat defines the criteria used to request a suitable chat.
@@ -1004,4 +1013,66 @@ type RemoveBusinessAccountProfilePhotoOptions struct {
 // ChatMemberTagOptions contains the optional parameters used by the SetChatMemberTag method.
 type ChatMemberTagOptions struct {
 	Tag string `query:"tag"`
+}
+
+// SendLivePhotoOptions contains the optional parameters used by the SendLivePhoto method.
+type SendLivePhotoOptions struct {
+	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
+	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
+	BusinessConnectionID    string                   `query:"business_connection_id"`
+	MessageEffectID         string                   `query:"message_effect_id"`
+	ParseMode               ParseMode                `query:"parse_mode"`
+	Caption                 string                   `query:"caption"`
+	CaptionEntities         []MessageEntity          `query:"caption_entities"`
+	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
+	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
+	MessageThreadID         int                      `query:"message_thread_id"`
+	HasSpoiler              bool                     `query:"has_spoiler"`
+	ShowCaptionAboveMedia   bool                     `query:"show_caption_above_media"`
+	DisableNotification     bool                     `query:"disable_notification"`
+	ProtectContent          bool                     `query:"protect_content"`
+	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+}
+
+// SendRichMessageOptions contains the optional parameters used by the SendRichMessage method.
+type SendRichMessageOptions struct {
+	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
+	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
+	BusinessConnectionID    string                   `query:"business_connection_id"`
+	MessageEffectID         string                   `query:"message_effect_id"`
+	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
+	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
+	MessageThreadID         int                      `query:"message_thread_id"`
+	DisableNotification     bool                     `query:"disable_notification"`
+	ProtectContent          bool                     `query:"protect_content"`
+	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+}
+
+// SendRichMessageDraftOptions contains the optional parameters used by the SendRichMessageDraft method.
+type SendRichMessageDraftOptions struct {
+	MessageThreadID int `query:"message_thread_id"`
+}
+
+// GiftPremiumSubscriptionOptions contains the optional parameters used by the GiftPremiumSubscription method.
+type GiftPremiumSubscriptionOptions struct {
+	TextParseMode string          `query:"text_parse_mode"`
+	Text          string          `query:"text"`
+	TextEntities  []MessageEntity `query:"text_entities"`
+}
+
+// DeleteMessageReactionOptions contains the optional parameters used by the DeleteMessageReaction method.
+type DeleteMessageReactionOptions struct {
+	UserID      int64 `query:"user_id"`
+	ActorChatID int64 `query:"actor_chat_id"`
+}
+
+// DeleteAllMessageReactionsOptions contains the optional parameters used by the DeleteAllMessageReactions method.
+type DeleteAllMessageReactionsOptions struct {
+	UserID      int64 `query:"user_id"`
+	ActorChatID int64 `query:"actor_chat_id"`
+}
+
+// SetManagedBotAccessSettingsOptions contains the optional parameters used by the SetManagedBotAccessSettings method.
+type SetManagedBotAccessSettingsOptions struct {
+	AddedUserIDs []int64 `query:"added_user_ids"`
 }

@@ -2544,3 +2544,161 @@ func TestGetChatGifts(t *testing.T) {
 // 		t.Fatal(err)
 // 	}
 // }
+
+func TestSendLivePhoto(t *testing.T) {
+	_, err := api.SendLivePhoto(
+		NewInputFilePath("assets/tests/video_note.mp4"),
+		NewInputFilePath("assets/tests/echotron_test.png"),
+		chatID,
+		&SendLivePhotoOptions{
+			Caption: "TestSendLivePhoto",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendLivePhotoURL(t *testing.T) {
+	_, err := api.SendLivePhoto(
+		NewInputFileURL(videoNoteURL),
+		NewInputFileURL(photoURL),
+		chatID,
+		&SendLivePhotoOptions{
+			Caption: "TestSendLivePhotoURL",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendLivePhotoBytes(t *testing.T) {
+	video, err := openBytes("assets/tests/video_note.mp4")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	photo, err := openBytes("assets/tests/echotron_test.png")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.SendLivePhoto(
+		NewInputFileBytes("video_note.mp4", video),
+		NewInputFileBytes("echotron_test.png", photo),
+		chatID,
+		&SendLivePhotoOptions{
+			Caption: "TestSendLivePhotoBytes",
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendRichMessage(t *testing.T) {
+	_, err := api.SendRichMessage(
+		chatID,
+		InputRichMessage{
+			HTML: "<b>TestSendRichMessage</b> <i>bold and italic</i>",
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendRichMessageMarkdown(t *testing.T) {
+	_, err := api.SendRichMessage(
+		chatID,
+		InputRichMessage{
+			Markdown: "*TestSendRichMessageMarkdown* _italic_",
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteMessageReaction(t *testing.T) {
+	msg, err := api.SendMessage("TestDeleteMessageReaction", chatID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.SetMessageReaction(
+		chatID,
+		msg.Result.ID,
+		&MessageReactionOptions{
+			Reaction: []ReactionType{{Type: "emoji", Emoji: "👍"}},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.DeleteMessageReaction(chatID, msg.Result.ID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteAllMessageReactions(t *testing.T) {
+	msg, err := api.SendMessage("TestDeleteAllMessageReactions", chatID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.SetMessageReaction(
+		chatID,
+		msg.Result.ID,
+		&MessageReactionOptions{
+			Reaction: []ReactionType{{Type: "emoji", Emoji: "👍"}},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	me, err := api.GetMe()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.DeleteAllMessageReactions(
+		chatID,
+		&DeleteAllMessageReactionsOptions{UserID: me.Result.ID},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetUserPersonalChatMessages(t *testing.T) {
+	_, err := api.GetUserPersonalChatMessages(chatID, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSavePreparedKeyboardButton(t *testing.T) {
+	_, err := api.SavePreparedKeyboardButton(
+		chatID,
+		KeyboardButton{
+			Text:         "TestSavePreparedKeyboardButton",
+			RequestUsers: &KeyboardButtonRequestUsers{RequestID: 1},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
