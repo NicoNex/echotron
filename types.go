@@ -564,6 +564,42 @@ func (a APIResponseStarAmount) Base() APIResponseBase {
 	return a.APIResponseBase
 }
 
+// APIResponseSentGuestMessage represents the incoming response from Telegram servers.
+// Used by all methods that return a SentGuestMessage object on success.
+type APIResponseSentGuestMessage struct {
+	Result *SentGuestMessage `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseSentGuestMessage) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponseBotAccessSettings represents the incoming response from Telegram servers.
+// Used by all methods that return a BotAccessSettings object on success.
+type APIResponseBotAccessSettings struct {
+	Result *BotAccessSettings `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponseBotAccessSettings) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
+// APIResponsePreparedKeyboardButton represents the incoming response from Telegram servers.
+// Used by all methods that return a PreparedKeyboardButton object on success.
+type APIResponsePreparedKeyboardButton struct {
+	Result *PreparedKeyboardButton `json:"result,omitempty"`
+	APIResponseBase
+}
+
+// Base returns the contained object of type APIResponseBase.
+func (a APIResponsePreparedKeyboardButton) Base() APIResponseBase {
+	return a.APIResponseBase
+}
+
 // User represents a Telegram user or bot.
 type User struct {
 	FirstName                 string `json:"first_name"`
@@ -2369,6 +2405,30 @@ func (s storyContentEnvelope) MarshalJSON() ([]byte, error) {
 type InputProfilePhoto interface {
 	ImplementsInputProfilePhoto()
 	profilePhotoFile() InputFile
+}
+
+// SentGuestMessage contains information about a message sent by a guest bot.
+type SentGuestMessage struct {
+	InlineMessageID string `json:"inline_message_id"`
+}
+
+// BotAccessSettings contains information about the access settings of a managed bot.
+type BotAccessSettings struct {
+	AddedUsers         []User `json:"added_users,omitempty"`
+	IsAccessRestricted bool   `json:"is_access_restricted"`
+}
+
+// PreparedKeyboardButton describes a prepared keyboard button.
+type PreparedKeyboardButton struct {
+	ID string `json:"id"`
+}
+
+// InputRichMessage describes an input rich message that can contain both HTML and Markdown.
+type InputRichMessage struct {
+	HTML                string `json:"html,omitempty"`
+	Markdown            string `json:"markdown,omitempty"`
+	IsRTL               bool   `json:"is_rtl,omitempty"`
+	SkipEntityDetection bool   `json:"skip_entity_detection,omitempty"`
 }
 
 // InputProfilePhotoStatic describes a static profile photo in the .JPG format.

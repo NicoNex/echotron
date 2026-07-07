@@ -402,6 +402,52 @@ func (c *lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, 
 	return c.doGet(u)
 }
 
+// namedFile pairs an InputFile with its multipart field name.
+type namedFile struct {
+	file InputFile
+	typ  string
+}
+
+// sendNamedFiles sends one or more named files to Telegram. Each file is appended
+// as a query parameter if identified by ID or URL, or uploaded via multipart if local.
+func (c *lclient) sendNamedFiles(url string, files ...namedFile) (res []byte, err error) {
+	var cnt []content
+
+	for _, nf := range files {
+		switch {
+		case nf.file.id != "":
+			url = fmt.Sprintf("%s&%s=%s", url, nf.typ, nf.file.id)
+		case nf.file.url != "":
+			url = fmt.Sprintf("%s&%s=%s", url, nf.typ, nf.file.url)
+		default:
+			if f, e := toContent(nf.typ, nf.file); e == nil {
+				cnt = append(cnt, f)
+			} else {
+				err = e
+			}
+		}
+	}
+
+	if len(cnt) > 0 {
+		res, err = c.doPost(url, cnt...)
+	} else {
+		res, err = c.doGet(url)
+	}
+	return
+}
+
+// postNamedFiles calls a Telegram API endpoint that requires uploading one or more named files.
+func (c *lclient) postNamedFiles(base, endpoint string, vals url.Values, v APIResponse, files ...namedFile) error {
+	u, err := joinURL(base, endpoint, vals)
+	if err != nil {
+		return err
+	}
+
+	return c.dispatch(vals.Get("chat_id"), func() ([]byte, error) {
+		return c.sendNamedFiles(u, files...)
+	}, v)
+}
+
 // sendStickers serialises the stickers and uploads any local files via multipart.
 // A single sticker uses the "sticker" parameter; multiple use "stickers".
 func (c *lclient) sendStickers(url string, stickers ...InputSticker) (res []byte, err error) {
