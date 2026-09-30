@@ -344,7 +344,28 @@ func TestInputPollOptionMedia(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if exp := `{"media":{"media":"id","type":"photo"},"text":"a"}`; string(out) != exp {
+	if exp := `{"text":"a","media":{"media":"id","type":"photo"}}`; string(out) != exp {
+		t.Fatalf("expected %s, got %s", exp, out)
+	}
+}
+
+func TestInputRichBlockJSON(t *testing.T) {
+	blocks := []InputRichBlock{
+		{Type: "table", TableCaption: &RichText{Plain: "t"}, Caption: &RichBlockCaption{}},
+		{
+			Type:    "photo",
+			Media:   InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFileURL("https://t.me/p.jpg")},
+			Caption: &RichBlockCaption{Text: RichText{Plain: "c"}},
+		},
+	}
+
+	out, err := json.Marshal(blocks)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	exp := `[{"type":"table","caption":"t"},{"caption":{"text":"c"},"photo":{"media":"https://t.me/p.jpg","type":"photo"},"type":"photo"}]`
+	if string(out) != exp {
 		t.Fatalf("expected %s, got %s", exp, out)
 	}
 }

@@ -1541,3 +1541,38 @@ func (a API) SendRichMessageDraft(chatID int64, draftID int, richMessage InputRi
 	vals.Set("rich_message", string(jsn))
 	return res, a.lclient.get(a.base, "sendRichMessageDraft", addValues(vals, opts), &res)
 }
+
+// EditEphemeralMessageText is used to edit an ephemeral text or rich message.
+// The text can be empty when editing a rich message with the RichMessage option.
+func (a API) EditEphemeralMessageText(text string, chatID, receiverUserID int64, ephemeralMessageID int, opts *EphemeralTextOptions) (res APIResponseBool, err error) {
+	var vals = urlValues(ephemeralMessage{chatID, receiverUserID, ephemeralMessageID})
+
+	if text != "" {
+		vals.Set("text", text)
+	}
+	return res, a.lclient.get(a.base, "editEphemeralMessageText", addValues(vals, opts), &res)
+}
+
+// EditEphemeralMessageMedia is used to edit the media of an ephemeral message.
+func (a API) EditEphemeralMessageMedia(media InputMedia, chatID, receiverUserID int64, ephemeralMessageID int, opts *EphemeralReplyMarkupOptions) (res APIResponseBool, err error) {
+	vals := urlValues(ephemeralMessage{chatID, receiverUserID, ephemeralMessageID})
+	return res, a.lclient.postMedia(a.base, "editEphemeralMessageMedia", true, addValues(vals, opts), &res, media)
+}
+
+// EditEphemeralMessageCaption is used to edit the caption of an ephemeral message.
+func (a API) EditEphemeralMessageCaption(chatID, receiverUserID int64, ephemeralMessageID int, opts *EphemeralCaptionOptions) (res APIResponseBool, err error) {
+	vals := urlValues(ephemeralMessage{chatID, receiverUserID, ephemeralMessageID})
+	return res, a.lclient.get(a.base, "editEphemeralMessageCaption", addValues(vals, opts), &res)
+}
+
+// EditEphemeralMessageReplyMarkup is used to edit only the reply markup of an ephemeral message.
+func (a API) EditEphemeralMessageReplyMarkup(chatID, receiverUserID int64, ephemeralMessageID int, opts *EphemeralReplyMarkupOptions) (res APIResponseBool, err error) {
+	vals := urlValues(ephemeralMessage{chatID, receiverUserID, ephemeralMessageID})
+	return res, a.lclient.get(a.base, "editEphemeralMessageReplyMarkup", addValues(vals, opts), &res)
+}
+
+// DeleteEphemeralMessage is used to delete an ephemeral message.
+func (a API) DeleteEphemeralMessage(chatID, receiverUserID int64, ephemeralMessageID int) (res APIResponseBool, err error) {
+	vals := urlValues(ephemeralMessage{chatID, receiverUserID, ephemeralMessageID})
+	return res, a.lclient.get(a.base, "deleteEphemeralMessage", vals, &res)
+}

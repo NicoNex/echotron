@@ -185,6 +185,7 @@ type ReplyKeyboardMarkup struct {
 	ResizeKeyboard        bool               `json:"resize_keyboard,omitempty"`
 	OneTimeKeyboard       bool               `json:"one_time_keyboard,omitempty"`
 	Selective             bool               `json:"selective,omitempty"`
+	ForceReply            bool               `json:"force_reply,omitempty"`
 }
 
 // ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
@@ -205,6 +206,7 @@ func (r ReplyKeyboardRemove) ImplementsReplyMarkup() {}
 // InlineKeyboardButton represents a button in an inline keyboard.
 type InlineKeyboardButton struct {
 	CopyText                     *CopyTextButton              `json:"copy_text,omitempty"`
+	Disabled                     *DisabledButton              `json:"disabled,omitempty"`
 	CallbackGame                 *CallbackGame                `json:"callback_game,omitempty"`
 	WebApp                       *WebAppInfo                  `json:"web_app,omitempty"`
 	LoginURL                     *LoginURL                    `json:"login_url,omitempty"`
@@ -219,6 +221,9 @@ type InlineKeyboardButton struct {
 	Pay                          bool                         `json:"pay,omitempty"`
 }
 
+// DisabledButton represents a disabled button which does nothing.
+type DisabledButton struct{}
+
 // CopyTextButton represents an inline keyboard button that copies specified text to the clipboard.
 type CopyTextButton struct {
 	Text string `json:"text"`
@@ -227,6 +232,7 @@ type CopyTextButton struct {
 // InlineKeyboardMarkup represents an inline keyboard.
 type InlineKeyboardMarkup struct {
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard" query:"inline_keyboard"`
+	ForceReply     bool                     `json:"force_reply,omitempty"`
 }
 
 // ImplementsReplyMarkup is a dummy method which exists to implement the interface ReplyMarkup.
@@ -276,19 +282,20 @@ type BaseOptions struct {
 
 // MessageOptions contains the optional parameters used by some Telegram API methods.
 type MessageOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	LinkPreviewOptions      LinkPreviewOptions       `query:"link_preview_options"`
-	Entities                []MessageEntity          `query:"entities"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int64                    `query:"message_thread_id"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	LinkPreviewOptions         LinkPreviewOptions          `query:"link_preview_options"`
+	Entities                   []MessageEntity             `query:"entities"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int64                       `query:"message_thread_id"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // PinMessageOptions contains the optional parameters used by the PinChatMember method.
@@ -344,17 +351,18 @@ type CopyMessagesOptions struct {
 
 // StickerOptions contains the optional parameters used by the SendSticker method.
 type StickerOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	Emoji                   string                   `query:"emoji"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	Emoji                      string                      `query:"emoji"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // InputFile is a struct which contains data about a file to be sent.
@@ -395,52 +403,55 @@ func NewInputFileBytes(fileName string, content []byte) InputFile {
 
 // PhotoOptions contains the optional parameters used by the SendPhoto method.
 type PhotoOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Caption                 string                   `query:"caption"`
-	CaptionEntities         []MessageEntity          `query:"caption_entities"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	HasSpoiler              bool                     `query:"has_spoiler"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	ShowCaptionAboveMedia   bool                     `query:"show_caption_above_media"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Caption                    string                      `query:"caption"`
+	CaptionEntities            []MessageEntity             `query:"caption_entities"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	HasSpoiler                 bool                        `query:"has_spoiler"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	ShowCaptionAboveMedia      bool                        `query:"show_caption_above_media"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // AudioOptions contains the optional parameters used by the SendAudio method.
 type AudioOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	Title                   string                   `query:"title"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Caption                 string                   `query:"caption"`
-	Performer               string                   `query:"performer"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	Thumbnail               InputFile
-	CaptionEntities         []MessageEntity `query:"caption_entities"`
-	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
-	MessageThreadID         int             `query:"message_thread_id"`
-	Duration                int             `query:"duration"`
-	DisableNotification     bool            `query:"disable_notification"`
-	ProtectContent          bool            `query:"protect_content"`
-	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	Title                      string                      `query:"title"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Caption                    string                      `query:"caption"`
+	Performer                  string                      `query:"performer"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	Thumbnail                  InputFile
+	CaptionEntities            []MessageEntity `query:"caption_entities"`
+	ReplyParameters            ReplyParameters `query:"reply_parameters"`
+	DirectMessagesTopicID      int64           `query:"direct_messages_topic_id"`
+	MessageThreadID            int             `query:"message_thread_id"`
+	Duration                   int             `query:"duration"`
+	DisableNotification        bool            `query:"disable_notification"`
+	ProtectContent             bool            `query:"protect_content"`
+	AllowPaidBroadcast         bool            `query:"allow_paid_broadcast"`
 }
 
 // DocumentOptions contains the optional parameters used by the SendDocument method.
 type DocumentOptions struct {
-	SuggestedPostParameters     *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup                 ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID        string                   `query:"business_connection_id"`
-	MessageEffectID             string                   `query:"message_effect_id"`
-	ParseMode                   ParseMode                `query:"parse_mode"`
-	Caption                     string                   `query:"caption"`
+	EphemeralMessageParameters  *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters     *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                 ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID        string                      `query:"business_connection_id"`
+	MessageEffectID             string                      `query:"message_effect_id"`
+	ParseMode                   ParseMode                   `query:"parse_mode"`
+	Caption                     string                      `query:"caption"`
 	Thumbnail                   InputFile
 	CaptionEntities             []MessageEntity `query:"caption_entities"`
 	ReplyParameters             ReplyParameters `query:"reply_parameters"`
@@ -455,86 +466,90 @@ type DocumentOptions struct {
 // VideoOptions contains the optional parameters used by the SendVideo method.
 // TODO: handle the cover correctly.
 type VideoOptions struct {
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	Caption                 string                   `query:"caption"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Thumbnail               InputFile
-	Cover                   InputFile
-	CaptionEntities         []MessageEntity `query:"caption_entities"`
-	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	MessageThreadID         int             `query:"message_thread_id"`
-	Duration                int             `query:"duration"`
-	Width                   int             `query:"width"`
-	Height                  int             `query:"height"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
-	StartTimestamp          int             `query:"start_timestamp"`
-	HasSpoiler              bool            `query:"has_spoiler"`
-	SupportsStreaming       bool            `query:"supports_streaming"`
-	DisableNotification     bool            `query:"disable_notification"`
-	ProtectContent          bool            `query:"protect_content"`
-	ShowCaptionAboveMedia   bool            `query:"show_caption_above_media"`
-	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	Caption                    string                      `query:"caption"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Thumbnail                  InputFile
+	Cover                      InputFile
+	CaptionEntities            []MessageEntity `query:"caption_entities"`
+	ReplyParameters            ReplyParameters `query:"reply_parameters"`
+	MessageThreadID            int             `query:"message_thread_id"`
+	Duration                   int             `query:"duration"`
+	Width                      int             `query:"width"`
+	Height                     int             `query:"height"`
+	DirectMessagesTopicID      int64           `query:"direct_messages_topic_id"`
+	StartTimestamp             int             `query:"start_timestamp"`
+	HasSpoiler                 bool            `query:"has_spoiler"`
+	SupportsStreaming          bool            `query:"supports_streaming"`
+	DisableNotification        bool            `query:"disable_notification"`
+	ProtectContent             bool            `query:"protect_content"`
+	ShowCaptionAboveMedia      bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast         bool            `query:"allow_paid_broadcast"`
 }
 
 // AnimationOptions contains the optional parameters used by the SendAnimation method.
 type AnimationOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Caption                 string                   `query:"caption"`
-	Thumbnail               InputFile
-	CaptionEntities         []MessageEntity `query:"caption_entities"`
-	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
-	MessageThreadID         int             `query:"message_thread_id"`
-	Duration                int             `query:"duration"`
-	Width                   int             `query:"width"`
-	Height                  int             `query:"height"`
-	HasSpoiler              bool            `query:"has_spoiler"`
-	DisableNotification     bool            `query:"disable_notification"`
-	ProtectContent          bool            `query:"protect_content"`
-	ShowCaptionAboveMedia   bool            `query:"show_caption_above_media"`
-	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Caption                    string                      `query:"caption"`
+	Thumbnail                  InputFile
+	CaptionEntities            []MessageEntity `query:"caption_entities"`
+	ReplyParameters            ReplyParameters `query:"reply_parameters"`
+	DirectMessagesTopicID      int64           `query:"direct_messages_topic_id"`
+	MessageThreadID            int             `query:"message_thread_id"`
+	Duration                   int             `query:"duration"`
+	Width                      int             `query:"width"`
+	Height                     int             `query:"height"`
+	HasSpoiler                 bool            `query:"has_spoiler"`
+	DisableNotification        bool            `query:"disable_notification"`
+	ProtectContent             bool            `query:"protect_content"`
+	ShowCaptionAboveMedia      bool            `query:"show_caption_above_media"`
+	AllowPaidBroadcast         bool            `query:"allow_paid_broadcast"`
 }
 
 // VoiceOptions contains the optional parameters used by the SendVoice method.
 type VoiceOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Caption                 string                   `query:"caption"`
-	CaptionEntities         []MessageEntity          `query:"caption_entities"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	Duration                int                      `query:"duration"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Caption                    string                      `query:"caption"`
+	CaptionEntities            []MessageEntity             `query:"caption_entities"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	Duration                   int                         `query:"duration"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // VideoNoteOptions contains the optional parameters used by the SendVideoNote method.
 type VideoNoteOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	Thumbnail               InputFile
-	ReplyParameters         ReplyParameters `query:"reply_parameters"`
-	DirectMessagesTopicID   int64           `query:"direct_messages_topic_id"`
-	MessageThreadID         int             `query:"message_thread_id"`
-	Duration                int             `query:"duration"`
-	Length                  int             `query:"length"`
-	DisableNotification     bool            `query:"disable_notification"`
-	ProtectContent          bool            `query:"protect_content"`
-	AllowPaidBroadcast      bool            `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	Thumbnail                  InputFile
+	ReplyParameters            ReplyParameters `query:"reply_parameters"`
+	DirectMessagesTopicID      int64           `query:"direct_messages_topic_id"`
+	MessageThreadID            int             `query:"message_thread_id"`
+	Duration                   int             `query:"duration"`
+	Length                     int             `query:"length"`
+	DisableNotification        bool            `query:"disable_notification"`
+	ProtectContent             bool            `query:"protect_content"`
+	AllowPaidBroadcast         bool            `query:"allow_paid_broadcast"`
 }
 
 // PaidMediaOptions contains the optional parameters used by the SendPaidMedia method.
@@ -572,20 +587,21 @@ const InfiniteLivePeriod = 0x7FFFFFFF
 
 // LocationOptions contains the optional parameters used by the SendLocation method.
 type LocationOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	HorizontalAccuracy      float64                  `query:"horizontal_accuracy"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	LivePeriod              int                      `query:"live_period"`
-	ProximityAlertRadius    int                      `query:"proximity_alert_radius"`
-	Heading                 int                      `query:"heading"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	HorizontalAccuracy         float64                     `query:"horizontal_accuracy"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	LivePeriod                 int                         `query:"live_period"`
+	ProximityAlertRadius       int                         `query:"proximity_alert_radius"`
+	Heading                    int                         `query:"heading"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // EditLocationOptions contains the optional parameters used by the EditMessageLiveLocation method.
@@ -606,36 +622,38 @@ type StopLocationOptions struct {
 
 // VenueOptions contains the optional parameters used by the SendVenue method.
 type VenueOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	FoursquareID            string                   `query:"foursquare_id"`
-	FoursquareType          string                   `query:"foursquare_type"`
-	GooglePlaceType         string                   `query:"google_place_type"`
-	GooglePlaceID           string                   `query:"google_place_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	FoursquareID               string                      `query:"foursquare_id"`
+	FoursquareType             string                      `query:"foursquare_type"`
+	GooglePlaceType            string                      `query:"google_place_type"`
+	GooglePlaceID              string                      `query:"google_place_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // ContactOptions contains the optional parameters used by the SendContact method.
 type ContactOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	VCard                   string                   `query:"vcard"`
-	LastName                string                   `query:"last_name"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	VCard                      string                      `query:"vcard"`
+	LastName                   string                      `query:"last_name"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
@@ -717,6 +735,7 @@ type PromoteOptions struct {
 	CanManageTopics         bool `query:"can_manage_topics,omitempty"`
 	CanManageDirectMessages bool `query:"can_manage_direct_messages,omitempty"`
 	CanManageTags           bool `query:"can_manage_tags,omitempty"`
+	CanSendWelcomeMessages  bool `query:"can_send_welcome_messages,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
@@ -966,6 +985,8 @@ type SendMessageDraftOptions struct {
 	ParseMode       ParseMode       `query:"parse_mode"`
 	Entities        []MessageEntity `query:"entities"`
 	MessageThreadID int             `query:"message_thread_id"`
+	CanStop         bool            `query:"can_stop"`
+	KeepOnStop      bool            `query:"keep_on_stop"`
 }
 
 // GetBusinessAccountGiftsOptions contains the optional parameters used by the GetBusinessAccountGifts method.
@@ -1042,40 +1063,44 @@ type ChatMemberTagOptions struct {
 
 // SendLivePhotoOptions contains the optional parameters used by the SendLivePhoto method.
 type SendLivePhotoOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ParseMode               ParseMode                `query:"parse_mode"`
-	Caption                 string                   `query:"caption"`
-	CaptionEntities         []MessageEntity          `query:"caption_entities"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	HasSpoiler              bool                     `query:"has_spoiler"`
-	ShowCaptionAboveMedia   bool                     `query:"show_caption_above_media"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ParseMode                  ParseMode                   `query:"parse_mode"`
+	Caption                    string                      `query:"caption"`
+	CaptionEntities            []MessageEntity             `query:"caption_entities"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	HasSpoiler                 bool                        `query:"has_spoiler"`
+	ShowCaptionAboveMedia      bool                        `query:"show_caption_above_media"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // SendRichMessageOptions contains the optional parameters used by the SendRichMessage method.
 type SendRichMessageOptions struct {
-	SuggestedPostParameters *SuggestedPostParameters `query:"suggested_post_parameters"`
-	ReplyMarkup             ReplyMarkup              `query:"reply_markup"`
-	BusinessConnectionID    string                   `query:"business_connection_id"`
-	MessageEffectID         string                   `query:"message_effect_id"`
-	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
-	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
-	MessageThreadID         int                      `query:"message_thread_id"`
-	DisableNotification     bool                     `query:"disable_notification"`
-	ProtectContent          bool                     `query:"protect_content"`
-	AllowPaidBroadcast      bool                     `query:"allow_paid_broadcast"`
+	EphemeralMessageParameters *EphemeralMessageParameters `query:"ephemeral_message_parameters"`
+	SuggestedPostParameters    *SuggestedPostParameters    `query:"suggested_post_parameters"`
+	ReplyMarkup                ReplyMarkup                 `query:"reply_markup"`
+	BusinessConnectionID       string                      `query:"business_connection_id"`
+	MessageEffectID            string                      `query:"message_effect_id"`
+	ReplyParameters            ReplyParameters             `query:"reply_parameters"`
+	DirectMessagesTopicID      int64                       `query:"direct_messages_topic_id"`
+	MessageThreadID            int                         `query:"message_thread_id"`
+	DisableNotification        bool                        `query:"disable_notification"`
+	ProtectContent             bool                        `query:"protect_content"`
+	AllowPaidBroadcast         bool                        `query:"allow_paid_broadcast"`
 }
 
 // SendRichMessageDraftOptions contains the optional parameters used by the SendRichMessageDraft method.
 type SendRichMessageDraftOptions struct {
-	MessageThreadID int `query:"message_thread_id"`
+	MessageThreadID int  `query:"message_thread_id"`
+	CanStop         bool `query:"can_stop"`
+	KeepOnStop      bool `query:"keep_on_stop"`
 }
 
 // GiftPremiumSubscriptionOptions contains the optional parameters used by the GiftPremiumSubscription method.
@@ -1105,4 +1130,43 @@ type SetManagedBotAccessSettingsOptions struct {
 // ChatAdministratorsOptions contains the optional parameters used by the GetChatAdministrators method.
 type ChatAdministratorsOptions struct {
 	ReturnBots bool `query:"return_bots"`
+}
+
+// EphemeralMessageParameters describes the parameters of an ephemeral message,
+// which is visible only to a specific user and the bot.
+type EphemeralMessageParameters struct {
+	CallbackQueryID             string `json:"callback_query_id,omitempty"`
+	ReceiverUserID              int64  `json:"receiver_user_id"`
+	ReplaceCallbackQueryMessage bool   `json:"replace_callback_query_message,omitempty"`
+}
+
+// ephemeralMessage identifies an ephemeral message in the EditEphemeralMessage* and DeleteEphemeralMessage methods.
+type ephemeralMessage struct {
+	chatID             int64 `query:"chat_id"`
+	receiverUserID     int64 `query:"receiver_user_id"`
+	ephemeralMessageID int   `query:"ephemeral_message_id"`
+}
+
+// EphemeralTextOptions contains the optional parameters used by the EditEphemeralMessageText method.
+type EphemeralTextOptions struct {
+	RichMessage        *InputRichMessage    `query:"rich_message"`
+	ParseMode          ParseMode            `query:"parse_mode"`
+	Entities           []MessageEntity      `query:"entities"`
+	LinkPreviewOptions LinkPreviewOptions   `query:"link_preview_options"`
+	ReplyMarkup        InlineKeyboardMarkup `query:"reply_markup"`
+}
+
+// EphemeralCaptionOptions contains the optional parameters used by the EditEphemeralMessageCaption method.
+type EphemeralCaptionOptions struct {
+	Caption               string               `query:"caption"`
+	ParseMode             ParseMode            `query:"parse_mode"`
+	CaptionEntities       []MessageEntity      `query:"caption_entities"`
+	ReplyMarkup           InlineKeyboardMarkup `query:"reply_markup"`
+	ShowCaptionAboveMedia bool                 `query:"show_caption_above_media"`
+}
+
+// EphemeralReplyMarkupOptions contains the optional parameters used by the
+// EditEphemeralMessageMedia and EditEphemeralMessageReplyMarkup methods.
+type EphemeralReplyMarkupOptions struct {
+	ReplyMarkup InlineKeyboardMarkup `query:"reply_markup"`
 }

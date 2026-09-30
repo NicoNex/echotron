@@ -70,3 +70,22 @@ func TestAddValuesNil(t *testing.T) {
 		t.Fatalf("expected %+v, got %+v", vals, ret)
 	}
 }
+
+func TestScanPointer(t *testing.T) {
+	vals := urlValues(MessageOptions{
+		EphemeralMessageParameters: &EphemeralMessageParameters{ReceiverUserID: 42},
+	})
+
+	if exp := `{"receiver_user_id":42}`; vals.Get("ephemeral_message_parameters") != exp {
+		t.Fatalf("expected %s, got %s", exp, vals.Get("ephemeral_message_parameters"))
+	}
+}
+
+func TestScanEphemeralMessage(t *testing.T) {
+	vals := urlValues(ephemeralMessage{1, 2, 3})
+	exp := url.Values{"chat_id": {"1"}, "receiver_user_id": {"2"}, "ephemeral_message_id": {"3"}}
+
+	if !reflect.DeepEqual(vals, exp) {
+		t.Fatalf("expected %v, got %v", exp, vals)
+	}
+}

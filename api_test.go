@@ -2703,3 +2703,89 @@ func TestSavePreparedKeyboardButton(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestSendRichMessageBlocks(t *testing.T) {
+	_, err := api.SendRichMessage(
+		chatID,
+		InputRichMessage{
+			Blocks: []InputRichBlock{
+				{Type: "heading", Size: 1, Text: &RichText{Plain: "TestSendRichMessageBlocks"}},
+				{
+					Type: "paragraph",
+					Text: &RichText{Texts: []RichText{
+						{Plain: "plain "},
+						{Type: "bold", Text: &RichText{Plain: "bold"}},
+					}},
+				},
+				{
+					Type:    "photo",
+					Media:   InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFileURL(photoURL)},
+					Caption: &RichBlockCaption{Text: RichText{Plain: "photo"}},
+				},
+			},
+		},
+		nil,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendPollWithMedia(t *testing.T) {
+	_, err := api.SendPoll(
+		chatID,
+		"TestSendPollWithMedia",
+		[]InputPollOption{
+			{Text: "Photo", Media: InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFileURL(photoURL)}},
+			{Text: "Link", Media: InputMediaLink{Type: MediaTypeLink, URL: "https://github.com/NicoNex/echotron"}},
+		},
+		&PollOptions{
+			IsAnonymous: false,
+			Media:       InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFileURL(photoURL)},
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestEphemeralMessage(t *testing.T) {
+	msg, err := api.SendMessage(
+		"TestEphemeralMessage",
+		groupID,
+		&MessageOptions{
+			EphemeralMessageParameters: &EphemeralMessageParameters{ReceiverUserID: chatID},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	id := msg.Result.EphemeralMessageID
+
+	_, err = api.EditEphemeralMessageText("TestEphemeralMessage edited", groupID, chatID, id, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.EditEphemeralMessageReplyMarkup(
+		groupID,
+		chatID,
+		id,
+		&EphemeralReplyMarkupOptions{
+			ReplyMarkup: InlineKeyboardMarkup{
+				InlineKeyboard: [][]InlineKeyboardButton{{{Text: "test", CallbackData: "test"}}},
+			},
+		},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = api.DeleteEphemeralMessage(groupID, chatID, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+}

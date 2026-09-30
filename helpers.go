@@ -19,7 +19,6 @@
 package echotron
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -138,22 +137,13 @@ func inlineMedia(m InputMedia) mediaEnvelope {
 	}
 }
 
-// marshalWithMedia serialises v adding the media m under the given key.
-func marshalWithMedia(v any, key string, m InputMedia) ([]byte, error) {
-	b, err := json.Marshal(v)
-	if err != nil || m == nil {
-		return b, err
+// inlineMediaPtr is like inlineMedia but returns nil when there's no media, so that it can be omitted.
+func inlineMediaPtr(m InputMedia) *mediaEnvelope {
+	if m == nil {
+		return nil
 	}
-
-	var obj map[string]json.RawMessage
-	if err = json.Unmarshal(b, &obj); err != nil {
-		return nil, err
-	}
-
-	if obj[key], err = json.Marshal(inlineMedia(m)); err != nil {
-		return nil, err
-	}
-	return json.Marshal(obj)
+	e := inlineMedia(m)
+	return &e
 }
 
 func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {
