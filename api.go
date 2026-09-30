@@ -731,11 +731,11 @@ func (a API) GetChat(chatID int64) (res APIResponseChat, err error) {
 }
 
 // GetChatAdministrators is used to get a list of administrators in a chat.
-func (a API) GetChatAdministrators(chatID int64) (res APIResponseAdministrators, err error) {
+func (a API) GetChatAdministrators(chatID int64, opts *ChatAdministratorsOptions) (res APIResponseAdministrators, err error) {
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
-	return res, a.lclient.get(a.base, "getChatAdministrators", vals, &res)
+	return res, a.lclient.get(a.base, "getChatAdministrators", addValues(vals, opts), &res)
 }
 
 // GetChatMemberCount is used to get the number of members in a chat.
@@ -991,11 +991,14 @@ func (a API) GetMyShortDescription(languageCode string) (res APIResponseBotShort
 	return res, a.lclient.get(a.base, "getMyShortDescription", vals, &res)
 }
 
-// EditMessageText is used to edit text and game messages.
+// EditMessageText is used to edit text, rich and game messages.
+// The text can be empty when editing a rich message with the RichMessage option.
 func (a API) EditMessageText(text string, msg MessageIDOptions, opts *MessageTextOptions) (res APIResponseMessage, err error) {
 	var vals = make(url.Values)
 
-	vals.Set("text", text)
+	if text != "" {
+		vals.Set("text", text)
+	}
 	return res, a.lclient.get(a.base, "editMessageText", addValues(addValues(vals, msg), opts), &res)
 }
 

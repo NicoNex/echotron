@@ -1727,6 +1727,7 @@ func TestGetChat(t *testing.T) {
 func TestGetChatAdministrators(t *testing.T) {
 	_, err := api.GetChatAdministrators(
 		groupID,
+		nil,
 	)
 
 	if err != nil {

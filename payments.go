@@ -183,14 +183,16 @@ func (t TransactionPartnerFragment) ImplementsTransactionPartner() {}
 // TransactionPartnerUser describes a transaction with a user.
 // Type MUST be "user".
 type TransactionPartnerUser struct {
-	Gift               Gift           `json:"gift,omitempty"`
-	PaidMedia          *[]PaidMedia   `json:"paid_media,omitempty"`
-	Affiliate          *AffiliateInfo `json:"affiliate,omitempty"`
-	Type               string         `json:"type"`
-	InvoicePayload     string         `json:"invoice_payload,omitempty"`
-	PaidMediaPayload   string         `json:"paid_media_payload,omitempty"`
-	User               User           `json:"user"`
-	SubscriptionPeriod int            `json:"subscription_period,omitempty"`
+	Gift                        Gift           `json:"gift,omitempty"`
+	PaidMedia                   *[]PaidMedia   `json:"paid_media,omitempty"`
+	Affiliate                   *AffiliateInfo `json:"affiliate,omitempty"`
+	Type                        string         `json:"type"`
+	InvoicePayload              string         `json:"invoice_payload,omitempty"`
+	PaidMediaPayload            string         `json:"paid_media_payload,omitempty"`
+	TransactionType             string         `json:"transaction_type"`
+	User                        User           `json:"user"`
+	SubscriptionPeriod          int            `json:"subscription_period,omitempty"`
+	PremiumSubscriptionDuration int            `json:"premium_subscription_duration,omitempty"`
 }
 
 // TransactionPartnerChat describes a transaction with a chat.

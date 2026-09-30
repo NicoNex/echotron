@@ -19,6 +19,7 @@
 package echotron
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -124,6 +125,35 @@ func toContent(ftype string, f InputFile) (content, error) {
 	}
 
 	return content{f.path, ftype, f.content}, nil
+}
+
+// inlineMedia prepares a media to be serialised inside another JSON parameter.
+// Nested media only accept file IDs and URLs, uploading local files
+// would need multipart plumbing through every parameter that embeds media.
+func inlineMedia(m InputMedia) mediaEnvelope {
+	return mediaEnvelope{
+		InputMedia: m,
+		media:      m.media().ref(),
+		thumbnail:  m.thumbnail().ref(),
+	}
+}
+
+// marshalWithMedia serialises v adding the media m under the given key.
+func marshalWithMedia(v any, key string, m InputMedia) ([]byte, error) {
+	b, err := json.Marshal(v)
+	if err != nil || m == nil {
+		return b, err
+	}
+
+	var obj map[string]json.RawMessage
+	if err = json.Unmarshal(b, &obj); err != nil {
+		return nil, err
+	}
+
+	if obj[key], err = json.Marshal(inlineMedia(m)); err != nil {
+		return nil, err
+	}
+	return json.Marshal(obj)
 }
 
 func toInputMedia(media []GroupableInputMedia) (ret []InputMedia) {

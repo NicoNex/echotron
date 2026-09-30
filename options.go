@@ -172,6 +172,7 @@ type KeyboardButtonRequestChat struct {
 	ChatIsCreated           bool                     `json:"chat_is_created,omitempty"`
 	BotIsMember             bool                     `json:"bot_is_member,omitempty"`
 	RequestName             bool                     `json:"request_name,omitempty"`
+	RequestTitle            bool                     `json:"request_title,omitempty"`
 	RequestUsername         bool                     `json:"request_username,omitempty"`
 	RequestPhoto            bool                     `json:"request_photo,omitempty"`
 }
@@ -324,6 +325,7 @@ type CopyOptions struct {
 	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
 	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
 	MessageThreadID         int                      `query:"message_thread_id"`
+	VideoStartTimestamp     int                      `query:"video_start_timestamp"`
 	DisableNotification     bool                     `query:"disable_notification"`
 	ProtectContent          bool                     `query:"protect_content"`
 	ShowCaptionAboveMedia   bool                     `query:"show_caption_above_media"`
@@ -361,6 +363,14 @@ type InputFile struct {
 	path    string
 	url     string
 	content []byte
+}
+
+// ref returns the reference to a file already on the Telegram servers or on the web.
+func (i InputFile) ref() string {
+	if i.id != "" {
+		return i.id
+	}
+	return i.url
 }
 
 // NewInputFileID is a wrapper for InputFile which only fills the id field.
@@ -538,6 +548,7 @@ type PaidMediaOptions struct {
 	CaptionEntities         []MessageEntity          `query:"caption_entities"`
 	ReplyParameters         ReplyParameters          `query:"reply_parameters"`
 	DirectMessagesTopicID   int64                    `query:"direct_messages_topic_id"`
+	MessageThreadID         int                      `query:"message_thread_id"`
 	ShowCaptionAboveMedia   bool                     `query:"show_caption_above_media"`
 	DisableNotification     bool                     `query:"disable_notification"`
 	ProtectContent          bool                     `query:"protect_content"`
@@ -628,27 +639,40 @@ type ContactOptions struct {
 }
 
 // PollOptions contains the optional parameters used by the SendPoll method.
+// Media and ExplanationMedia can be an InputMediaAnimation, InputMediaAudio, InputMediaDocument,
+// InputMediaLivePhoto, InputMediaLocation, InputMediaPhoto, InputMediaVenue or InputMediaVideo.
 type PollOptions struct {
-	ReplyMarkup           ReplyMarkup     `query:"reply_markup"`
-	BusinessConnectionID  string          `query:"business_connection_id"`
-	Explanation           string          `query:"explanation"`
-	MessageEffectID       string          `query:"message_effect_id"`
-	ExplanationParseMode  ParseMode       `query:"explanation_parse_mode"`
-	QuestionParseMode     ParseMode       `query:"question_parse_mode"`
-	Type                  PollType        `query:"type"`
-	ExplanationEntities   []MessageEntity `query:"explanation_entities"`
-	QuestionEntities      []MessageEntity `query:"question_entities"`
-	ReplyParameters       ReplyParameters `query:"reply_parameters"`
-	CorrectOptionID       int             `query:"correct_option_id"`
-	MessageThreadID       int             `query:"message_thread_id"`
-	CloseDate             int             `query:"close_date"`
-	OpenPeriod            int             `query:"open_period"`
-	IsClosed              bool            `query:"is_closed"`
-	DisableNotification   bool            `query:"disable_notification"`
-	ProtectContent        bool            `query:"protect_content"`
-	AllowsMultipleAnswers bool            `query:"allows_multiple_answers"`
-	IsAnonymous           bool            `query:"is_anonymous"`
-	AllowPaidBroadcast    bool            `query:"allow_paid_broadcast"`
+	ReplyMarkup            ReplyMarkup     `query:"reply_markup"`
+	Media                  InputMedia      `query:"media"`
+	ExplanationMedia       InputMedia      `query:"explanation_media"`
+	BusinessConnectionID   string          `query:"business_connection_id"`
+	Explanation            string          `query:"explanation"`
+	Description            string          `query:"description"`
+	MessageEffectID        string          `query:"message_effect_id"`
+	ExplanationParseMode   ParseMode       `query:"explanation_parse_mode"`
+	QuestionParseMode      ParseMode       `query:"question_parse_mode"`
+	DescriptionParseMode   ParseMode       `query:"description_parse_mode"`
+	Type                   PollType        `query:"type"`
+	ExplanationEntities    []MessageEntity `query:"explanation_entities"`
+	QuestionEntities       []MessageEntity `query:"question_entities"`
+	DescriptionEntities    []MessageEntity `query:"description_entities"`
+	CountryCodes           []string        `query:"country_codes"`
+	CorrectOptionIDs       []int           `query:"correct_option_ids"`
+	ReplyParameters        ReplyParameters `query:"reply_parameters"`
+	MessageThreadID        int             `query:"message_thread_id"`
+	CloseDate              int             `query:"close_date"`
+	OpenPeriod             int             `query:"open_period"`
+	IsClosed               bool            `query:"is_closed"`
+	DisableNotification    bool            `query:"disable_notification"`
+	ProtectContent         bool            `query:"protect_content"`
+	AllowsMultipleAnswers  bool            `query:"allows_multiple_answers"`
+	AllowsRevoting         bool            `query:"allows_revoting"`
+	ShuffleOptions         bool            `query:"shuffle_options"`
+	AllowAddingOptions     bool            `query:"allow_adding_options"`
+	HideResultsUntilCloses bool            `query:"hide_results_until_closes"`
+	MembersOnly            bool            `query:"members_only"`
+	IsAnonymous            bool            `query:"is_anonymous"`
+	AllowPaidBroadcast     bool            `query:"allow_paid_broadcast"`
 }
 
 // StopPollOptions contains the optional parameters used by the StopPoll method.
@@ -752,6 +776,7 @@ func NewInlineMessageID(ID string) MessageIDOptions {
 
 // MessageTextOptions contains the optional parameters used by the EditMessageText method.
 type MessageTextOptions struct {
+	RichMessage          *InputRichMessage    `query:"rich_message"`
 	ParseMode            ParseMode            `query:"parse_mode"`
 	BusinessConnectionID string               `query:"business_connection_id"`
 	Entities             []MessageEntity      `query:"entities"`
@@ -1075,4 +1100,9 @@ type DeleteAllMessageReactionsOptions struct {
 // SetManagedBotAccessSettingsOptions contains the optional parameters used by the SetManagedBotAccessSettings method.
 type SetManagedBotAccessSettingsOptions struct {
 	AddedUserIDs []int64 `query:"added_user_ids"`
+}
+
+// ChatAdministratorsOptions contains the optional parameters used by the GetChatAdministrators method.
+type ChatAdministratorsOptions struct {
+	ReturnBots bool `query:"return_bots"`
 }

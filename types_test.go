@@ -1,6 +1,9 @@
 package echotron
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 func TestAPIResponseBase(_ *testing.T) {
 	a := APIResponseBase{}
@@ -293,4 +296,55 @@ func TestInputProfilePhotoStatic(_ *testing.T) {
 func TestInputProfilePhotoAnimated(_ *testing.T) {
 	i := InputProfilePhotoAnimated{}
 	i.ImplementsInputProfilePhoto()
+}
+
+func TestRichTextJSON(t *testing.T) {
+	in := `["plain",{"text":"b","type":"bold"},{"text":["x"],"type":"url","url":"https://t.me"}]`
+
+	var r RichText
+	if err := json.Unmarshal([]byte(in), &r); err != nil {
+		t.Fatal(err)
+	}
+
+	if len(r.Texts) != 3 || r.Texts[0].Plain != "plain" || r.Texts[1].Text.Plain != "b" || r.Texts[2].Text.Texts[0].Plain != "x" {
+		t.Fatalf("unexpected RichText: %+v", r)
+	}
+
+	out, err := json.Marshal(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(out) != in {
+		t.Fatalf("expected %s, got %s", in, out)
+	}
+}
+
+func TestRichBlockCaption(t *testing.T) {
+	in := `[{"type":"table","caption":"t"},{"type":"photo","caption":{"text":"p"}}]`
+
+	var b []RichBlock
+	if err := json.Unmarshal([]byte(in), &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if b[0].TableCaption.Plain != "t" || b[0].Caption != nil || b[1].Caption.Text.Plain != "p" || b[1].TableCaption != nil {
+		t.Fatalf("unexpected RichBlocks: %+v", b)
+	}
+}
+
+func TestInputPollOptionMedia(t *testing.T) {
+	o := InputPollOption{
+		Text:  "a",
+		Media: InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFileID("id")},
+	}
+
+	out, err := json.Marshal(o)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if exp := `{"media":{"media":"id","type":"photo"},"text":"a"}`; string(out) != exp {
+		t.Fatalf("expected %s, got %s", exp, out)
+	}
 }

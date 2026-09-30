@@ -36,6 +36,7 @@ type ChatAdministratorRights struct {
 	CanPinMessages          bool `json:"can_pin_messages,omitempty"`
 	CanManageTopics         bool `json:"can_manage_topics,omitempty"`
 	CanManageDirectMessages bool `json:"can_manage_direct_messages,omitempty"`
+	CanManageTags           bool `json:"can_manage_tags,omitempty"`
 }
 
 // SetMyDefaultAdministratorRightsOptions contains the optional parameters used by

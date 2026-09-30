@@ -550,6 +550,14 @@ type InputInvoiceMessageContent struct {
 // ImplementsInputMessageContent is used to implement the InputMessageContent interface.
 func (i InputInvoiceMessageContent) ImplementsInputMessageContent() {}
 
+// InputRichMessageContent represents the content of a rich message to be sent as the result of an inline query.
+type InputRichMessageContent struct {
+	RichMessage InputRichMessage `json:"rich_message"`
+}
+
+// ImplementsInputMessageContent is used to implement the InputMessageContent interface.
+func (i InputRichMessageContent) ImplementsInputMessageContent() {}
+
 // InlineQueryResultsButton represents a button to be shown above inline query results.
 // You MUST use exactly one of the fields.
 type InlineQueryResultsButton struct {
