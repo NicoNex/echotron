@@ -528,7 +528,7 @@ type InputInvoiceMessageContent struct {
 	SuggestedTipAmounts       *[]int         `json:"suggested_tip_amounts,omitempty"`
 	PhotoURL                  string         `json:"photo_url,omitempty"`
 	Description               string         `json:"description"`
-	Payload                   string         `json:"string"`
+	Payload                   string         `json:"payload"`
 	ProviderToken             string         `json:"provider_token,omitempty"`
 	Currency                  string         `json:"currency"`
 	Title                     string         `json:"title"`

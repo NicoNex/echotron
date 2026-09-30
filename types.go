@@ -46,7 +46,6 @@ type Update struct {
 	MyChatMember            *ChatMemberUpdated           `json:"my_chat_member,omitempty"`
 	InlineQuery             *InlineQuery                 `json:"inline_query,omitempty"`
 	PurchasedPaidMedia      *PaidMediaPurchased          `json:"purchased_paid_media,omitempty"`
-	SenderTag               string                       `json:"sender_tag,omitempty"`
 	ID                      int                          `json:"update_id"`
 }
 
@@ -767,6 +766,7 @@ type Message struct {
 	MessageAutoDeleteTimerChanged *MessageAutoDeleteTimerChanged `json:"message_auto_delete_timer_changed,omitempty"`
 	ChatOwnerChanged              *ChatOwnerChanged              `json:"chat_owner_changed,omitempty"`
 	ChatOwnerLeft                 *ChatOwnerLeft                 `json:"chat_owner_left,omitempty"`
+	SenderTag                     string                         `json:"sender_tag,omitempty"`
 	EffectID                      string                         `json:"effect_id,omitempty"`
 	NewChatTitle                  string                         `json:"new_chat_title,omitempty"`
 	BusinessConnectionID          string                         `json:"business_connection_id,omitempty"`
@@ -959,7 +959,7 @@ type InputPollOption struct {
 // PollAnswer represents an answer of a user in a non-anonymous poll.
 type PollAnswer struct {
 	PollID    string `json:"poll_id"`
-	VoterChat *Chat  `json:"chat,omitempty"`
+	VoterChat *Chat  `json:"voter_chat,omitempty"`
 	User      *User  `json:"user,omitempty"`
 	OptionIDs []int  `json:"option_ids"`
 }
@@ -1533,7 +1533,7 @@ type ChatJoinRequest struct {
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
 	Bio        string          `json:"bio,omitempty"`
 	Chat       Chat            `json:"chat"`
-	From       User            `json:"user"`
+	From       User            `json:"from"`
 	Date       int             `json:"date"`
 	UserChatID int64           `json:"user_chat_id"`
 }
@@ -1809,8 +1809,8 @@ type ReplyParameters struct {
 // SharedUser contains information about a user that was shared with the bot using a KeyboardButtonRequestUser button.
 type SharedUser struct {
 	Photo     *[]PhotoSize `json:"photo,omitempty"`
-	FirstName string       `json:"firstname,omitempty"`
-	LastName  string       `json:"lastname,omitempty"`
+	FirstName string       `json:"first_name,omitempty"`
+	LastName  string       `json:"last_name,omitempty"`
 	Username  string       `json:"username,omitempty"`
 	UserID    int64        `json:"user_id"`
 }
@@ -1905,7 +1905,7 @@ type GiveawayCreated struct {
 // GiveawayWinners represents a message about the completion of a giveaway with public winners.
 type GiveawayWinners struct {
 	PrizeDescription              string `json:"prize_description,omitempty"`
-	Chats                         []Chat `json:"chats"`
+	Chat                          Chat   `json:"chat"`
 	Winners                       []User `json:"winners"`
 	PrizeStarCount                int    `json:"prize_star_count,omitempty"`
 	GiveawayMessageID             int    `json:"giveaway_message_id"`

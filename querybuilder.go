@@ -39,7 +39,7 @@ func toString(v reflect.Value) string {
 	case reflect.Bool:
 		return strconv.FormatBool(v.Bool())
 
-	case reflect.Struct, reflect.Interface, reflect.Slice, reflect.Array:
+	case reflect.Struct, reflect.Interface, reflect.Slice, reflect.Array, reflect.Pointer:
 		b, _ := json.Marshal(v.Interface())
 		return string(b)
 

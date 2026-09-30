@@ -519,7 +519,7 @@ func (a API) SetChatMemberTag(chatID, userID int64, opts *ChatMemberTagOptions) 
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("user_id", itoa(userID))
-	return res, a.lclient.get(a.base, "setChatMemberTag", vals, &res)
+	return res, a.lclient.get(a.base, "setChatMemberTag", addValues(vals, opts), &res)
 }
 
 // BanChatSenderChat is used to ban a channel chat in a supergroup or a channel.
@@ -618,7 +618,7 @@ func (a API) RevokeChatInviteLink(chatID int64, inviteLink string) (res APIRespo
 
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("invite_link", inviteLink)
-	return res, a.lclient.get(a.base, "editChatInviteLink", vals, &res)
+	return res, a.lclient.get(a.base, "revokeChatInviteLink", vals, &res)
 }
 
 // ApproveChatJoinRequest is used to approve a chat join request.
@@ -988,7 +988,7 @@ func (a API) GetMyShortDescription(languageCode string) (res APIResponseBotShort
 	var vals = make(url.Values)
 
 	vals.Set("language_code", languageCode)
-	return res, a.lclient.get(a.base, "getMyDescription", vals, &res)
+	return res, a.lclient.get(a.base, "getMyShortDescription", vals, &res)
 }
 
 // EditMessageText is used to edit text and game messages.
@@ -1094,7 +1094,7 @@ func (a API) RemoveUserVerification(userID int64) (res APIResponseBool, err erro
 	var vals = make(url.Values)
 
 	vals.Set("user_id", itoa(userID))
-	return res, a.lclient.get(a.base, "verifyUser", vals, &res)
+	return res, a.lclient.get(a.base, "removeUserVerification", vals, &res)
 }
 
 // RemoveChatVerification removes verification from a chat who is currently verified on behalf of the organization represented by the bot.
@@ -1102,7 +1102,7 @@ func (a API) RemoveChatVerification(chatID int64) (res APIResponseBool, err erro
 	var vals = make(url.Values)
 
 	vals.Set("chat_id", itoa(chatID))
-	return res, a.lclient.get(a.base, "verifyChat", vals, &res)
+	return res, a.lclient.get(a.base, "removeChatVerification", vals, &res)
 }
 
 // GetMyStarBalance returns the current Telegram Stars balance of the bot.

@@ -243,7 +243,7 @@ type StarTransaction struct {
 
 // StarTransactions contains a list of Telegram Star transactions.
 type StarTransactions struct {
-	Transaction []StarTransaction `json:"transaction"`
+	Transactions []StarTransaction `json:"transactions"`
 }
 
 // StarTransactionsOptions contains the optional parameters used by the GetStarTransactions method.

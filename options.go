@@ -692,7 +692,7 @@ type PromoteOptions struct {
 	CanDeleteStories        bool `query:"can_delete_stories,omitempty"`
 	CanManageTopics         bool `query:"can_manage_topics,omitempty"`
 	CanManageDirectMessages bool `query:"can_manage_direct_messages,omitempty"`
-	CanManageTags           bool `json:"can_manage_tags,omitempty"`
+	CanManageTags           bool `query:"can_manage_tags,omitempty"`
 }
 
 // UserProfileOptions contains the optional parameters used by the GetUserProfilePhotos method.
