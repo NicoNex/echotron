@@ -374,6 +374,14 @@ func (a API) SendPoll(chatID int64, question string, options []InputPollOption, 
 		return res, err
 	}
 
+	if opts != nil {
+		for _, m := range []InputMedia{opts.Media, opts.ExplanationMedia} {
+			if _, err = inlineMedia(m); err != nil {
+				return res, err
+			}
+		}
+	}
+
 	vals.Set("chat_id", itoa(chatID))
 	vals.Set("question", question)
 	vals.Set("options", string(pollOpts))

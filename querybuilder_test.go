@@ -89,3 +89,11 @@ func TestScanEphemeralMessage(t *testing.T) {
 		t.Fatalf("expected %v, got %v", exp, vals)
 	}
 }
+
+func TestScanPromoteOptions(t *testing.T) {
+	vals := urlValues(PromoteOptions{CanManageTags: true})
+
+	if vals.Get("can_manage_tags") != "true" {
+		t.Fatalf("unexpected values: %v", vals)
+	}
+}

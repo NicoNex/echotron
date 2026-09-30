@@ -42,7 +42,7 @@ func toString(v reflect.Value) string {
 	case reflect.Struct, reflect.Interface, reflect.Slice, reflect.Array, reflect.Pointer:
 		var i any = v.Interface()
 		if m, ok := i.(InputMedia); ok {
-			i = inlineMedia(m)
+			i, _ = inlineMedia(m) // SendPoll reports the error before the query is built.
 		}
 		b, _ := json.Marshal(i)
 		return string(b)

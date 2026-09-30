@@ -215,9 +215,9 @@ func (c *lclient) sendFile(file, thumbnail InputFile, url, fileType string) (res
 	var cnt []content
 
 	if file.id != "" {
-		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.id)
+		url = withParam(url, fileType, file.id)
 	} else if file.url != "" {
-		url = fmt.Sprintf("%s&%s=%s", url, fileType, file.url)
+		url = withParam(url, fileType, file.url)
 	} else if f, e := toContent(fileType, file); e == nil {
 		cnt = append(cnt, f)
 	} else {
@@ -330,7 +330,7 @@ func (c *lclient) sendMediaFiles(url string, editSingle bool, files ...InputMedi
 		return
 	}
 
-	url = fmt.Sprintf("%s&media=%s", url, jsn)
+	url = withParam(url, "media", string(jsn))
 
 	if len(cnt) > 0 {
 		return c.doPost(url, cnt...)
@@ -362,7 +362,7 @@ func (c *lclient) sendProfilePhotoFile(u, param string, photo InputProfilePhoto)
 		return nil, err
 	}
 
-	u = fmt.Sprintf("%s&%s=%s", u, param, jsn)
+	u = withParam(u, param, string(jsn))
 
 	if len(cnt) > 0 {
 		return c.doPost(u, cnt...)
@@ -394,7 +394,7 @@ func (c *lclient) sendStoryContentFile(u string, sc InputStoryContent) ([]byte, 
 		return nil, err
 	}
 
-	u = fmt.Sprintf("%s&content=%s", u, jsn)
+	u = withParam(u, "content", string(jsn))
 
 	if len(cnt) > 0 {
 		return c.doPost(u, cnt...)
@@ -416,9 +416,9 @@ func (c *lclient) sendNamedFiles(url string, files ...namedFile) (res []byte, er
 	for _, nf := range files {
 		switch {
 		case nf.file.id != "":
-			url = fmt.Sprintf("%s&%s=%s", url, nf.typ, nf.file.id)
+			url = withParam(url, nf.typ, nf.file.id)
 		case nf.file.url != "":
-			url = fmt.Sprintf("%s&%s=%s", url, nf.typ, nf.file.url)
+			url = withParam(url, nf.typ, nf.file.url)
 		default:
 			if f, e := toContent(nf.typ, nf.file); e == nil {
 				cnt = append(cnt, f)
@@ -475,10 +475,10 @@ func (c *lclient) sendStickers(url string, stickers ...InputSticker) (res []byte
 	// Telegram uses different parameter names for one vs many stickers.
 	if len(sti) == 1 {
 		jsn, _ = json.Marshal(sti[0])
-		url = fmt.Sprintf("%s&sticker=%s", url, jsn)
+		url = withParam(url, "sticker", string(jsn))
 	} else {
 		jsn, _ = json.Marshal(sti)
-		url = fmt.Sprintf("%s&stickers=%s", url, jsn)
+		url = withParam(url, "stickers", string(jsn))
 	}
 
 	if len(cnt) > 0 {

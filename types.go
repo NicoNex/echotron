@@ -86,12 +86,16 @@ func (u Update) ChatID() int64 {
 		return u.InlineQuery.From.ID
 	case u.ChosenInlineResult != nil:
 		return u.ChosenInlineResult.From.ID
-	case u.CallbackQuery != nil:
+	case u.CallbackQuery != nil && u.CallbackQuery.Message != nil:
 		return u.CallbackQuery.Message.Chat.ID
+	case u.CallbackQuery != nil:
+		return u.CallbackQuery.From.ID
 	case u.ShippingQuery != nil:
 		return u.ShippingQuery.From.ID
 	case u.PreCheckoutQuery != nil:
 		return u.PreCheckoutQuery.From.ID
+	case u.PollAnswer != nil && u.PollAnswer.VoterChat != nil:
+		return u.PollAnswer.VoterChat.ID
 	case u.PollAnswer != nil:
 		return u.PollAnswer.User.ID
 	case u.MyChatMember != nil:
@@ -1001,10 +1005,16 @@ type InputPollOption struct {
 // MarshalJSON is a custom marshaler for the InputPollOption struct.
 func (i InputPollOption) MarshalJSON() ([]byte, error) {
 	type alias InputPollOption
+
+	media, err := inlineMedia(i.Media)
+	if err != nil {
+		return nil, err
+	}
+
 	return json.Marshal(struct {
 		alias
 		Media *mediaEnvelope `json:"media,omitempty"`
-	}{alias(i), inlineMediaPtr(i.Media)})
+	}{alias(i), media})
 }
 
 // PollAnswer represents an answer of a user in a non-anonymous poll.
@@ -2687,10 +2697,16 @@ type InputRichMessageMedia struct {
 // MarshalJSON is a custom marshaler for the InputRichMessageMedia struct.
 func (i InputRichMessageMedia) MarshalJSON() ([]byte, error) {
 	type alias InputRichMessageMedia
+
+	media, err := inlineMedia(i.Media)
+	if err != nil {
+		return nil, err
+	}
+
 	return json.Marshal(struct {
 		alias
 		Media *mediaEnvelope `json:"media,omitempty"`
-	}{alias(i), inlineMediaPtr(i.Media)})
+	}{alias(i), media})
 }
 
 // InputProfilePhotoStatic describes a static profile photo in the .JPG format.
@@ -2941,6 +2957,28 @@ func (r *RichBlock) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(aux.Caption, &r.Caption)
 }
 
+// MarshalJSON is a custom marshaler for the RichBlock struct.
+func (r RichBlock) MarshalJSON() ([]byte, error) {
+	type alias RichBlock
+
+	return json.Marshal(struct {
+		alias
+		Caption any `json:"caption,omitempty"`
+	}{alias(r), blockCaption(r.TableCaption, r.Caption)})
+}
+
+// blockCaption returns whichever caption of a rich block is set, or nil.
+func blockCaption(table *RichText, caption *RichBlockCaption) any {
+	switch {
+	case table != nil:
+		return table
+	case caption != nil:
+		return caption
+	default:
+		return nil
+	}
+}
+
 // RichMessage represents a rich formatted message.
 type RichMessage struct {
 	Blocks []RichBlock `json:"blocks"`
@@ -3008,20 +3046,18 @@ type InputRichBlock struct {
 // MarshalJSON is a custom marshaler for the InputRichBlock struct.
 func (i InputRichBlock) MarshalJSON() ([]byte, error) {
 	type alias InputRichBlock
-	var caption any
-
-	if i.TableCaption != nil {
-		caption = i.TableCaption
-	} else if i.Caption != nil {
-		caption = i.Caption
-	}
 
 	b, err := json.Marshal(struct {
 		alias
 		Caption any `json:"caption,omitempty"`
-	}{alias(i), caption})
+	}{alias(i), blockCaption(i.TableCaption, i.Caption)})
 	if err != nil || i.Media == nil {
 		return b, err
+	}
+
+	media, err := inlineMedia(i.Media)
+	if err != nil {
+		return nil, err
 	}
 
 	// The media is serialised under the key named after the block type.
@@ -3029,7 +3065,7 @@ func (i InputRichBlock) MarshalJSON() ([]byte, error) {
 	if err = json.Unmarshal(b, &obj); err != nil {
 		return nil, err
 	}
-	if obj[i.Type], err = json.Marshal(inlineMedia(i.Media)); err != nil {
+	if obj[i.Type], err = json.Marshal(media); err != nil {
 		return nil, err
 	}
 	return json.Marshal(obj)

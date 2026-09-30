@@ -369,3 +369,59 @@ func TestInputRichBlockJSON(t *testing.T) {
 		t.Fatalf("expected %s, got %s", exp, out)
 	}
 }
+
+func TestRichBlockRoundTrip(t *testing.T) {
+	in := `{"type":"photo","caption":{"text":"p"}}`
+
+	var b RichBlock
+	if err := json.Unmarshal([]byte(in), &b); err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := json.Marshal(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(out) != in {
+		t.Fatalf("expected %s, got %s", in, out)
+	}
+}
+
+func TestNestedLocalMedia(t *testing.T) {
+	_, err := json.Marshal(InputPollOption{
+		Text:  "a",
+		Media: InputMediaPhoto{Type: MediaTypePhoto, Media: NewInputFilePath("a.jpg")},
+	})
+
+	if err == nil {
+		t.Fatal("expected an error for a nested local file")
+	}
+}
+
+func TestLivePhotoEnvelope(t *testing.T) {
+	m := InputMediaLivePhoto{Type: MediaTypeLivePhoto, Media: NewInputFileID("v"), Photo: NewInputFileID("p")}
+
+	im, _, err := processMedia(m.media(), m.thumbnail())
+	if err != nil {
+		t.Fatal(err)
+	}
+	im.InputMedia = m
+
+	out, err := json.Marshal(im)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if exp := `{"media":"v","photo":"p","type":"live_photo"}`; string(out) != exp {
+		t.Fatalf("expected %s, got %s", exp, out)
+	}
+}
+
+func TestUpdateChatIDAnonymousVoter(t *testing.T) {
+	u := Update{PollAnswer: &PollAnswer{VoterChat: &Chat{ID: 7}}}
+
+	if id := u.ChatID(); id != 7 {
+		t.Fatalf("expected 7, got %d", id)
+	}
+}
