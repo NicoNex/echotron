@@ -151,6 +151,11 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 		return err
 	}
 
+	addr, err := webhookListenAddr(u)
+	if err != nil {
+		return err
+	}
+
 	whURL := fmt.Sprintf("%s%s", u.Hostname(), u.EscapedPath())
 	if _, err = d.api.SetWebhook(whURL, dropPendingUpdates, opts); err != nil {
 		return err
@@ -164,7 +169,7 @@ func (d *Dispatcher) ListenWebhookOptions(webhookURL string, dropPendingUpdates 
 		return d.httpServer.ListenAndServe()
 	}
 	http.HandleFunc(u.EscapedPath(), d.HandleWebhook)
-	return http.ListenAndServe(fmt.Sprintf(":%s", u.Port()), nil)
+	return http.ListenAndServe(addr, nil)
 }
 
 // SetHTTPServer allows to set a custom http.Server for ListenWebhook and ListenWebhookOptions.

@@ -20,7 +20,6 @@ package echotron
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -98,6 +97,11 @@ func WebhookUpdatesOptions(whURL, token string, dropPendingUpdates bool, opts *W
 		panic(err)
 	}
 
+	addr, err := webhookListenAddr(u)
+	if err != nil {
+		panic(err)
+	}
+
 	wURL := u.Hostname() + u.EscapedPath()
 	api := NewAPI(token)
 	if _, err := api.SetWebhook(wURL, dropPendingUpdates, opts); err != nil {
@@ -124,9 +128,8 @@ func WebhookUpdatesOptions(whURL, token string, dropPendingUpdates bool, opts *W
 
 	go func() {
 		defer close(updates)
-		port := fmt.Sprintf(":%s", u.Port())
 		for {
-			if err := http.ListenAndServe(port, nil); err != nil {
+			if err := http.ListenAndServe(addr, nil); err != nil {
 				log.Println("echotron.WebhookUpdates", err)
 				time.Sleep(5 * time.Second)
 			}
